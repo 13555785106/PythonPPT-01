@@ -1,0 +1,257 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>GeoDjango Management Commands &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="GeoDjango&#39;s admin site" href="admin.html" />
+    <link rel="prev" title="GeoJSON Serializer" href="serializers.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="serializers.html" title="&lt;code class=&#34;docutils literal notranslate&#34;&gt;&lt;span class=&#34;pre&#34;&gt;GeoJSON&lt;/span&gt;&lt;/code&gt; Serializer">previous</a>
+     |
+    <a href="../../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="admin.html" title="GeoDjango&#39;s admin site">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="ref-contrib-gis-commands">
+            
+  <div class="section" id="s-geodjango-management-commands">
+<span id="geodjango-management-commands"></span><h1>GeoDjango Management Commands<a class="headerlink" href="#geodjango-management-commands" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="s-inspectdb">
+<span id="inspectdb"></span><h2><code class="docutils literal notranslate"><span class="pre">inspectdb</span></code><a class="headerlink" href="#inspectdb" title="Permalink to this headline">¶</a></h2>
+<dl class="describe">
+<dt>
+<code class="descname">django-admin inspectdb</code></dt>
+<dd></dd></dl>
+
+<p>When <a class="reference internal" href="index.html#module-django.contrib.gis" title="django.contrib.gis: Geographic Information System (GIS) extensions for Django"><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.gis</span></code></a> is in your <a class="reference internal" href="../../settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a>, the
+<a class="reference internal" href="../../django-admin.html#django-admin-inspectdb"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">inspectdb</span></code></a> management command is overridden with one from GeoDjango.
+The overridden command is spatially-aware, and places geometry fields in the
+auto-generated model definition, where appropriate.</p>
+</div>
+<div class="section" id="s-ogrinspect">
+<span id="ogrinspect"></span><h2><code class="docutils literal notranslate"><span class="pre">ogrinspect</span></code><a class="headerlink" href="#ogrinspect" title="Permalink to this headline">¶</a></h2>
+<dl class="django-admin">
+<dt id="django-admin-ogrinspect">
+<code class="descname">django-admin ogrinspect data_source model_name</code><a class="headerlink" href="#django-admin-ogrinspect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The <code class="docutils literal notranslate"><span class="pre">ogrinspect</span></code> management command will inspect the given OGR-compatible
+<a class="reference internal" href="gdal.html#django.contrib.gis.gdal.DataSource" title="django.contrib.gis.gdal.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a> (e.g., a shapefile) and will
+output a GeoDjango model with the given model name.  There's a detailed example
+of using <code class="docutils literal notranslate"><span class="pre">ogrinspect</span></code> <a class="reference internal" href="tutorial.html#ogrinspect-intro"><span class="std std-ref">in the tutorial</span></a>.</p>
+<dl class="django-admin-option">
+<dt id="cmdoption-ogrinspect-blank">
+<code class="descname">--blank</code><code class="descclassname"> BLANK</code><a class="headerlink" href="#cmdoption-ogrinspect-blank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use a comma separated list of OGR field names to add the <code class="docutils literal notranslate"><span class="pre">blank=True</span></code>
+keyword option to the field definition.  Set with <code class="docutils literal notranslate"><span class="pre">true</span></code> to apply
+to all applicable fields.</p>
+</dd></dl>
+
+<dl class="django-admin-option">
+<dt id="cmdoption-ogrinspect-decimal">
+<code class="descname">--decimal</code><code class="descclassname"> DECIMAL</code><a class="headerlink" href="#cmdoption-ogrinspect-decimal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use a comma separated list of OGR float fields to generate
+<a class="reference internal" href="../../models/fields.html#django.db.models.DecimalField" title="django.db.models.DecimalField"><code class="xref py py-class docutils literal notranslate"><span class="pre">DecimalField</span></code></a> instead of the default
+<a class="reference internal" href="../../models/fields.html#django.db.models.FloatField" title="django.db.models.FloatField"><code class="xref py py-class docutils literal notranslate"><span class="pre">FloatField</span></code></a>. Set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to apply to all
+OGR float fields.</p>
+</dd></dl>
+
+<dl class="django-admin-option">
+<dt id="cmdoption-ogrinspect-geom-name">
+<code class="descname">--geom-name</code><code class="descclassname"> GEOM_NAME</code><a class="headerlink" href="#cmdoption-ogrinspect-geom-name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specifies the model attribute name to use for the geometry field.
+Defaults to <code class="docutils literal notranslate"><span class="pre">'geom'</span></code>.</p>
+</dd></dl>
+
+<dl class="django-admin-option">
+<dt id="cmdoption-ogrinspect-layer">
+<code class="descname">--layer</code><code class="descclassname"> LAYER_KEY</code><a class="headerlink" href="#cmdoption-ogrinspect-layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>The key for specifying which layer in the OGR
+<a class="reference internal" href="gdal.html#django.contrib.gis.gdal.DataSource" title="django.contrib.gis.gdal.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a> source to use.
+Defaults to 0 (the first layer). May be an integer or a string identifier
+for the <a class="reference internal" href="gdal.html#django.contrib.gis.gdal.Layer" title="django.contrib.gis.gdal.Layer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Layer</span></code></a>. When inspecting databases,
+<code class="docutils literal notranslate"><span class="pre">layer</span></code> is generally the table name you want to inspect.</p>
+</dd></dl>
+
+<dl class="django-admin-option">
+<dt id="cmdoption-ogrinspect-mapping">
+<code class="descname">--mapping</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-ogrinspect-mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Automatically generate a mapping dictionary for use with
+<a class="reference internal" href="layermapping.html#django.contrib.gis.utils.LayerMapping" title="django.contrib.gis.utils.LayerMapping"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayerMapping</span></code></a>.</p>
+</dd></dl>
+
+<dl class="django-admin-option">
+<dt id="cmdoption-ogrinspect-multi-geom">
+<code class="descname">--multi-geom</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-ogrinspect-multi-geom" title="Permalink to this definition">¶</a></dt>
+<dd><p>When generating the geometry field, treat it as a geometry collection.
+For example, if this setting is enabled then a
+<a class="reference internal" href="model-api.html#django.contrib.gis.db.models.MultiPolygonField" title="django.contrib.gis.db.models.MultiPolygonField"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiPolygonField</span></code></a> will be placed
+in the generated model rather than
+<a class="reference internal" href="model-api.html#django.contrib.gis.db.models.PolygonField" title="django.contrib.gis.db.models.PolygonField"><code class="xref py py-class docutils literal notranslate"><span class="pre">PolygonField</span></code></a>.</p>
+</dd></dl>
+
+<dl class="django-admin-option">
+<dt id="cmdoption-ogrinspect-name-field">
+<code class="descname">--name-field</code><code class="descclassname"> NAME_FIELD</code><a class="headerlink" href="#cmdoption-ogrinspect-name-field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a <code class="docutils literal notranslate"><span class="pre">__str__()</span></code> method on the model that returns the given field
+name.</p>
+</dd></dl>
+
+<dl class="django-admin-option">
+<dt id="cmdoption-ogrinspect-no-imports">
+<code class="descname">--no-imports</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-ogrinspect-no-imports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Suppresses the <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">django.contrib.gis.db</span> <span class="pre">import</span> <span class="pre">models</span></code> import statement.</p>
+</dd></dl>
+
+<dl class="django-admin-option">
+<dt id="cmdoption-ogrinspect-null">
+<code class="descname">--null</code><code class="descclassname"> NULL</code><a class="headerlink" href="#cmdoption-ogrinspect-null" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use a comma separated list of OGR field names to add the <code class="docutils literal notranslate"><span class="pre">null=True</span></code>
+keyword option to the field definition.  Set with <code class="docutils literal notranslate"><span class="pre">true</span></code> to apply to
+all applicable fields.</p>
+</dd></dl>
+
+<dl class="django-admin-option">
+<dt id="cmdoption-ogrinspect-srid">
+<code class="descname">--srid</code><code class="descclassname"> SRID</code><a class="headerlink" href="#cmdoption-ogrinspect-srid" title="Permalink to this definition">¶</a></dt>
+<dd><p>The SRID to use for the geometry field.  If not set, <code class="docutils literal notranslate"><span class="pre">ogrinspect</span></code> attempts
+to automatically determine of the SRID of the data source.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">GeoDjango Management Commands</a><ul>
+<li><a class="reference internal" href="#inspectdb"><code class="docutils literal notranslate"><span class="pre">inspectdb</span></code></a></li>
+<li><a class="reference internal" href="#ogrinspect"><code class="docutils literal notranslate"><span class="pre">ogrinspect</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="serializers.html"
+                        title="previous chapter"><code class="docutils literal notranslate"><span class="pre">GeoJSON</span></code> Serializer</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="admin.html"
+                        title="next chapter">GeoDjango's admin site</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/ref/contrib/gis/commands.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="serializers.html" title="&lt;code class=&#34;docutils literal notranslate&#34;&gt;&lt;span class=&#34;pre&#34;&gt;GeoJSON&lt;/span&gt;&lt;/code&gt; Serializer">previous</a>
+     |
+    <a href="../../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="admin.html" title="GeoDjango&#39;s admin site">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

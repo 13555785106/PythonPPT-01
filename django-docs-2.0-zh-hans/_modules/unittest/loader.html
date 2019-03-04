@@ -1,0 +1,628 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>unittest.loader &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    <a href="../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="_modules-unittest-loader">
+            
+  <h1>Source code for unittest.loader</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Loading unittests.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">fnmatch</span> <span class="k">import</span> <span class="n">fnmatch</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">case</span><span class="p">,</span> <span class="n">suite</span><span class="p">,</span> <span class="n">util</span>
+
+<span class="n">__unittest</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># what about .pyc (etc)</span>
+<span class="c1"># we would need to avoid loading the same tests multiple times</span>
+<span class="c1"># from &#39;.py&#39;, *and* &#39;.pyc&#39;</span>
+<span class="n">VALID_MODULE_NAME</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[_a-z]\w*\.py$&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_FailedTest</span><span class="p">(</span><span class="n">case</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="n">_testMethodName</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method_name</span><span class="p">,</span> <span class="n">exception</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span> <span class="o">=</span> <span class="n">exception</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">_FailedTest</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">method_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_testMethodName</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">_FailedTest</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">testFailure</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span>
+        <span class="k">return</span> <span class="n">testFailure</span>
+
+
+<span class="k">def</span> <span class="nf">_make_failed_import_test</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">suiteClass</span><span class="p">):</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Failed to import test module: </span><span class="si">%s</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">_make_failed_test</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">message</span><span class="p">),</span> <span class="n">suiteClass</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_make_failed_load_tests</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">exception</span><span class="p">,</span> <span class="n">suiteClass</span><span class="p">):</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Failed to call load_tests:</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),)</span>
+    <span class="k">return</span> <span class="n">_make_failed_test</span><span class="p">(</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">exception</span><span class="p">,</span> <span class="n">suiteClass</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_make_failed_test</span><span class="p">(</span><span class="n">methodname</span><span class="p">,</span> <span class="n">exception</span><span class="p">,</span> <span class="n">suiteClass</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">_FailedTest</span><span class="p">(</span><span class="n">methodname</span><span class="p">,</span> <span class="n">exception</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">suiteClass</span><span class="p">((</span><span class="n">test</span><span class="p">,)),</span> <span class="n">message</span>
+
+<span class="k">def</span> <span class="nf">_make_skipped_test</span><span class="p">(</span><span class="n">methodname</span><span class="p">,</span> <span class="n">exception</span><span class="p">,</span> <span class="n">suiteClass</span><span class="p">):</span>
+    <span class="nd">@case</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">exception</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">testSkipped</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="n">methodname</span><span class="p">:</span> <span class="n">testSkipped</span><span class="p">}</span>
+    <span class="n">TestClass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s2">&quot;ModuleSkipped&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">case</span><span class="o">.</span><span class="n">TestCase</span><span class="p">,),</span> <span class="n">attrs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">suiteClass</span><span class="p">((</span><span class="n">TestClass</span><span class="p">(</span><span class="n">methodname</span><span class="p">),))</span>
+
+<span class="k">def</span> <span class="nf">_jython_aware_splitext</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;$py.class&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">path</span><span class="p">[:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">TestLoader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class is responsible for loading tests according to various criteria</span>
+<span class="sd">    and returning them wrapped in a TestSuite</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">testMethodPrefix</span> <span class="o">=</span> <span class="s1">&#39;test&#39;</span>
+    <span class="n">sortTestMethodsUsing</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">three_way_cmp</span><span class="p">)</span>
+    <span class="n">suiteClass</span> <span class="o">=</span> <span class="n">suite</span><span class="o">.</span><span class="n">TestSuite</span>
+    <span class="n">_top_level_dir</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TestLoader</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Tracks packages which we have called into via load_tests, to</span>
+        <span class="c1"># avoid infinite re-entrancy.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loading_packages</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">loadTestsFromTestCase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testCaseClass</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a suite of all tests cases contained in testCaseClass&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">testCaseClass</span><span class="p">,</span> <span class="n">suite</span><span class="o">.</span><span class="n">TestSuite</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Test cases should not be derived from &quot;</span>
+                            <span class="s2">&quot;TestSuite. Maybe you meant to derive from &quot;</span>
+                            <span class="s2">&quot;TestCase?&quot;</span><span class="p">)</span>
+        <span class="n">testCaseNames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getTestCaseNames</span><span class="p">(</span><span class="n">testCaseClass</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">testCaseNames</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">testCaseClass</span><span class="p">,</span> <span class="s1">&#39;runTest&#39;</span><span class="p">):</span>
+            <span class="n">testCaseNames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;runTest&#39;</span><span class="p">]</span>
+        <span class="n">loaded_suite</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">suiteClass</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">testCaseClass</span><span class="p">,</span> <span class="n">testCaseNames</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">loaded_suite</span>
+
+    <span class="c1"># XXX After Python 3.5, remove backward compatibility hacks for</span>
+    <span class="c1"># use_load_tests deprecation via *args and **kws.  See issue 16662.</span>
+    <span class="k">def</span> <span class="nf">loadTestsFromModule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a suite of all tests cases contained in the given module&quot;&quot;&quot;</span>
+        <span class="c1"># This method used to take an undocumented and unofficial</span>
+        <span class="c1"># use_load_tests argument.  For backward compatibility, we still</span>
+        <span class="c1"># accept the argument (which can also be the first position) but we</span>
+        <span class="c1"># ignore it and issue a deprecation warning if it&#39;s present.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="s1">&#39;use_load_tests&#39;</span> <span class="ow">in</span> <span class="n">kws</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;use_load_tests is deprecated and ignored&#39;</span><span class="p">,</span>
+                          <span class="ne">DeprecationWarning</span><span class="p">)</span>
+            <span class="n">kws</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;use_load_tests&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Complain about the number of arguments, but don&#39;t forget the</span>
+            <span class="c1"># required `module` argument.</span>
+            <span class="n">complaint</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;loadTestsFromModule() takes 1 positional argument but </span><span class="si">{}</span><span class="s1"> were given&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">complaint</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kws</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Since the keyword arguments are unsorted (see PEP 468), just</span>
+            <span class="c1"># pick the alphabetically sorted first argument to complain about,</span>
+            <span class="c1"># if multiple were given.  At least the error message will be</span>
+            <span class="c1"># predictable.</span>
+            <span class="n">complaint</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">kws</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;loadTestsFromModule() got an unexpected keyword argument &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">complaint</span><span class="p">))</span>
+        <span class="n">tests</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">case</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+                <span class="n">tests</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loadTestsFromTestCase</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+
+        <span class="n">load_tests</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s1">&#39;load_tests&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">tests</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">suiteClass</span><span class="p">(</span><span class="n">tests</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">load_tests</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">load_tests</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tests</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">error_case</span><span class="p">,</span> <span class="n">error_message</span> <span class="o">=</span> <span class="n">_make_failed_load_tests</span><span class="p">(</span>
+                    <span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">suiteClass</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">error_case</span>
+        <span class="k">return</span> <span class="n">tests</span>
+
+    <span class="k">def</span> <span class="nf">loadTestsFromName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a suite of all tests cases given a string specifier.</span>
+
+<span class="sd">        The name may resolve either to a module, a test case class, a</span>
+<span class="sd">        test method within a test case class, or a callable object which</span>
+<span class="sd">        returns a TestCase or TestSuite instance.</span>
+
+<span class="sd">        The method optionally resolves the names relative to a given module.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="n">error_case</span><span class="p">,</span> <span class="n">error_message</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parts_copy</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[:]</span>
+            <span class="k">while</span> <span class="n">parts_copy</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">module_name</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts_copy</span><span class="p">)</span>
+                    <span class="n">module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+                    <span class="k">break</span>
+                <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                    <span class="n">next_attribute</span> <span class="o">=</span> <span class="n">parts_copy</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                    <span class="c1"># Last error so we can give it to the user if needed.</span>
+                    <span class="n">error_case</span><span class="p">,</span> <span class="n">error_message</span> <span class="o">=</span> <span class="n">_make_failed_import_test</span><span class="p">(</span>
+                        <span class="n">next_attribute</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">suiteClass</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">parts_copy</span><span class="p">:</span>
+                        <span class="c1"># Even the top level import failed: report that error.</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="n">error_case</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">module</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">parent</span><span class="p">,</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="c1"># We can&#39;t traverse some part of the name.</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;__path__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">error_case</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                    <span class="c1"># This is a package (no __path__ per importlib docs), and we</span>
+                    <span class="c1"># encountered an error importing something. We cannot tell</span>
+                    <span class="c1"># the difference between package.WrongNameTestClass and</span>
+                    <span class="c1"># package.wrong_module_name so we just report the</span>
+                    <span class="c1"># ImportError - it is more informative.</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">error_case</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Otherwise, we signal that an AttributeError has occurred.</span>
+                    <span class="n">error_case</span><span class="p">,</span> <span class="n">error_message</span> <span class="o">=</span> <span class="n">_make_failed_test</span><span class="p">(</span>
+                        <span class="n">part</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">suiteClass</span><span class="p">,</span>
+                        <span class="s1">&#39;Failed to access attribute:</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                            <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">error_case</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadTestsFromModule</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">case</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadTestsFromTestCase</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="p">)</span> <span class="ow">and</span>
+              <span class="nb">isinstance</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span>
+              <span class="nb">issubclass</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">case</span><span class="o">.</span><span class="n">TestCase</span><span class="p">)):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">inst</span> <span class="o">=</span> <span class="n">parent</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="c1"># static methods follow a different path</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">inst</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">suiteClass</span><span class="p">([</span><span class="n">inst</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">suite</span><span class="o">.</span><span class="n">TestSuite</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">obj</span>
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="n">test</span> <span class="o">=</span> <span class="n">obj</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">suite</span><span class="o">.</span><span class="n">TestSuite</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">test</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">case</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">suiteClass</span><span class="p">([</span><span class="n">test</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;calling </span><span class="si">%s</span><span class="s2"> returned </span><span class="si">%s</span><span class="s2">, not a test&quot;</span> <span class="o">%</span>
+                                <span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">test</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;don&#39;t know how to make test from: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">obj</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">loadTestsFromNames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a suite of all tests cases found using the given sequence</span>
+<span class="sd">        of string specifiers. See &#39;loadTestsFromName()&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">suites</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loadTestsFromName</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">suiteClass</span><span class="p">(</span><span class="n">suites</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getTestCaseNames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testCaseClass</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a sorted sequence of method names found within testCaseClass</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">isTestMethod</span><span class="p">(</span><span class="n">attrname</span><span class="p">,</span> <span class="n">testCaseClass</span><span class="o">=</span><span class="n">testCaseClass</span><span class="p">,</span>
+                         <span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">testMethodPrefix</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">attrname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span> <span class="ow">and</span> \
+                <span class="n">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">testCaseClass</span><span class="p">,</span> <span class="n">attrname</span><span class="p">))</span>
+        <span class="n">testFnNames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">isTestMethod</span><span class="p">,</span> <span class="nb">dir</span><span class="p">(</span><span class="n">testCaseClass</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sortTestMethodsUsing</span><span class="p">:</span>
+            <span class="n">testFnNames</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">cmp_to_key</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sortTestMethodsUsing</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">testFnNames</span>
+
+    <span class="k">def</span> <span class="nf">discover</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_dir</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;test*.py&#39;</span><span class="p">,</span> <span class="n">top_level_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find and return all test modules from the specified start</span>
+<span class="sd">        directory, recursing into subdirectories to find them and return all</span>
+<span class="sd">        tests found within them. Only test files that match the pattern will</span>
+<span class="sd">        be loaded. (Using shell style pattern matching.)</span>
+
+<span class="sd">        All test modules must be importable from the top level of the project.</span>
+<span class="sd">        If the start directory is not the top level directory then the top</span>
+<span class="sd">        level directory must be specified separately.</span>
+
+<span class="sd">        If a test package name (directory with &#39;__init__.py&#39;) matches the</span>
+<span class="sd">        pattern then the package will be checked for a &#39;load_tests&#39; function. If</span>
+<span class="sd">        this exists then it will be called with (loader, tests, pattern) unless</span>
+<span class="sd">        the package has already had load_tests called from the same discovery</span>
+<span class="sd">        invocation, in which case the package module object is not scanned for</span>
+<span class="sd">        tests - this ensures that when a package uses discover to further</span>
+<span class="sd">        discover child tests that infinite recursion does not happen.</span>
+
+<span class="sd">        If load_tests exists then discovery does *not* recurse into the package,</span>
+<span class="sd">        load_tests is responsible for loading all tests in the package.</span>
+
+<span class="sd">        The pattern is deliberately not stored as a loader attribute so that</span>
+<span class="sd">        packages can continue discovery themselves. top_level_dir is stored so</span>
+<span class="sd">        load_tests does not need to pass this argument in to loader.discover().</span>
+
+<span class="sd">        Paths are sorted before being imported to ensure reproducible execution</span>
+<span class="sd">        order even on filesystems with non-alphabetical ordering like ext3/4.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">set_implicit_top</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">top_level_dir</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_top_level_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># make top_level_dir optional if called from load_tests in a package</span>
+            <span class="n">top_level_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_top_level_dir</span>
+        <span class="k">elif</span> <span class="n">top_level_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">set_implicit_top</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">top_level_dir</span> <span class="o">=</span> <span class="n">start_dir</span>
+
+        <span class="n">top_level_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">top_level_dir</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">top_level_dir</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+            <span class="c1"># all test modules must be importable from the top level directory</span>
+            <span class="c1"># should we *unconditionally* put the start directory in first</span>
+            <span class="c1"># in sys.path to minimise likelihood of conflicts between installed</span>
+            <span class="c1"># modules and development versions?</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">top_level_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_top_level_dir</span> <span class="o">=</span> <span class="n">top_level_dir</span>
+
+        <span class="n">is_not_importable</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">is_namespace</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">tests</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">start_dir</span><span class="p">)):</span>
+            <span class="n">start_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">start_dir</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">start_dir</span> <span class="o">!=</span> <span class="n">top_level_dir</span><span class="p">:</span>
+                <span class="n">is_not_importable</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">start_dir</span><span class="p">,</span> <span class="s1">&#39;__init__.py&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># support for discovery from dotted module names</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">__import__</span><span class="p">(</span><span class="n">start_dir</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                <span class="n">is_not_importable</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">the_module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">start_dir</span><span class="p">]</span>
+                <span class="n">top_part</span> <span class="o">=</span> <span class="n">start_dir</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">start_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
+                       <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">((</span><span class="n">the_module</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)))</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                    <span class="c1"># look for namespace packages</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">spec</span> <span class="o">=</span> <span class="n">the_module</span><span class="o">.</span><span class="n">__spec__</span>
+                    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                        <span class="n">spec</span> <span class="o">=</span> <span class="kc">None</span>
+
+                    <span class="k">if</span> <span class="n">spec</span> <span class="ow">and</span> <span class="n">spec</span><span class="o">.</span><span class="n">loader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">submodule_search_locations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">is_namespace</span> <span class="o">=</span> <span class="kc">True</span>
+
+                            <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">the_module</span><span class="o">.</span><span class="n">__path__</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">set_implicit_top</span> <span class="ow">and</span>
+                                    <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">top_level_dir</span><span class="p">)):</span>
+                                    <span class="k">continue</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">_top_level_dir</span> <span class="o">=</span> \
+                                    <span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">the_module</span><span class="o">.</span><span class="vm">__name__</span>
+                                         <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">))[</span><span class="mi">0</span><span class="p">])</span>
+                                <span class="n">tests</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_find_tests</span><span class="p">(</span><span class="n">path</span><span class="p">,</span>
+                                                              <span class="n">pattern</span><span class="p">,</span>
+                                                              <span class="n">namespace</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+                    <span class="k">elif</span> <span class="n">the_module</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">builtin_module_names</span><span class="p">:</span>
+                        <span class="c1"># builtin module</span>
+                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Can not use builtin modules &#39;</span>
+                                        <span class="s1">&#39;as dotted module names&#39;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">None</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                            <span class="s1">&#39;don</span><span class="se">\&#39;</span><span class="s1">t know how to discover from </span><span class="si">{!r}</span><span class="s1">&#39;</span>
+                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">the_module</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">None</span>
+
+                <span class="k">if</span> <span class="n">set_implicit_top</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_namespace</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_top_level_dir</span> <span class="o">=</span> \
+                           <span class="bp">self</span><span class="o">.</span><span class="n">_get_directory_containing_module</span><span class="p">(</span><span class="n">top_part</span><span class="p">)</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">top_level_dir</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">top_level_dir</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_not_importable</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s1">&#39;Start directory is not importable: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">start_dir</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_namespace</span><span class="p">:</span>
+            <span class="n">tests</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_find_tests</span><span class="p">(</span><span class="n">start_dir</span><span class="p">,</span> <span class="n">pattern</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">suiteClass</span><span class="p">(</span><span class="n">tests</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_directory_containing_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">):</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span>
+        <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__init__.py&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">full_path</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># here we have been given a module rather than a package - so</span>
+            <span class="c1"># all we can do is search the *same* directory the module is in</span>
+            <span class="c1"># should an exception be raised instead</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_name_from_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_top_level_dir</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;.&#39;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">_jython_aware_splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+
+        <span class="n">_relpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_top_level_dir</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">_relpath</span><span class="p">),</span> <span class="s2">&quot;Path must be within the project&quot;</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">_relpath</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">),</span> <span class="s2">&quot;Path must be within the project&quot;</span>
+
+        <span class="n">name</span> <span class="o">=</span> <span class="n">_relpath</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">_get_module_from_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="nb">__import__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_match_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">full_path</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
+        <span class="c1"># override this method to use alternative matching strategy</span>
+        <span class="k">return</span> <span class="n">fnmatch</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_find_tests</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_dir</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Used by discovery. Yields test suites it loads.&quot;&quot;&quot;</span>
+        <span class="c1"># Handle the __init__ in this package</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_name_from_path</span><span class="p">(</span><span class="n">start_dir</span><span class="p">)</span>
+        <span class="c1"># name is &#39;.&#39; when start_dir == top_level_dir (and top_level_dir is by</span>
+        <span class="c1"># definition not a package).</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;.&#39;</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loading_packages</span><span class="p">:</span>
+            <span class="c1"># name is in self._loading_packages while we have called into</span>
+            <span class="c1"># loadTestsFromModule with name.</span>
+            <span class="n">tests</span><span class="p">,</span> <span class="n">should_recurse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_test_path</span><span class="p">(</span>
+                <span class="n">start_dir</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">namespace</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tests</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">tests</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">should_recurse</span><span class="p">:</span>
+                <span class="c1"># Either an error occurred, or load_tests was used by the</span>
+                <span class="c1"># package.</span>
+                <span class="k">return</span>
+        <span class="c1"># Handle the contents.</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">start_dir</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+            <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">start_dir</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="n">tests</span><span class="p">,</span> <span class="n">should_recurse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_test_path</span><span class="p">(</span>
+                <span class="n">full_path</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">namespace</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tests</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">tests</span>
+            <span class="k">if</span> <span class="n">should_recurse</span><span class="p">:</span>
+                <span class="c1"># we found a package that didn&#39;t use load_tests.</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_name_from_path</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_loading_packages</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_tests</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">namespace</span><span class="p">)</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_loading_packages</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_find_test_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full_path</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Used by discovery.</span>
+
+<span class="sd">        Loads tests from a single file, or a directories&#39; __init__.py when</span>
+<span class="sd">        passed the directory.</span>
+
+<span class="sd">        Returns a tuple (None_or_tests_from_file, should_recurse).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">full_path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">VALID_MODULE_NAME</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">basename</span><span class="p">):</span>
+                <span class="c1"># valid Python identifiers only</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match_path</span><span class="p">(</span><span class="n">basename</span><span class="p">,</span> <span class="n">full_path</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span>
+            <span class="c1"># if the test file matches, load it</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_name_from_path</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_module_from_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">case</span><span class="o">.</span><span class="n">SkipTest</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make_skipped_test</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">suiteClass</span><span class="p">),</span> <span class="kc">False</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">error_case</span><span class="p">,</span> <span class="n">error_message</span> <span class="o">=</span> \
+                    <span class="n">_make_failed_import_test</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">suiteClass</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">error_case</span><span class="p">,</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mod_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s1">&#39;__file__&#39;</span><span class="p">,</span> <span class="n">full_path</span><span class="p">))</span>
+                <span class="n">realpath</span> <span class="o">=</span> <span class="n">_jython_aware_splitext</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">mod_file</span><span class="p">))</span>
+                <span class="n">fullpath_noext</span> <span class="o">=</span> <span class="n">_jython_aware_splitext</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">full_path</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">realpath</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">fullpath_noext</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                    <span class="n">module_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">realpath</span><span class="p">)</span>
+                    <span class="n">mod_name</span> <span class="o">=</span> <span class="n">_jython_aware_splitext</span><span class="p">(</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">full_path</span><span class="p">))</span>
+                    <span class="n">expected_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%r</span><span class="s2"> module incorrectly imported from </span><span class="si">%r</span><span class="s2">. Expected &quot;</span>
+                           <span class="s2">&quot;</span><span class="si">%r</span><span class="s2">. Is this module globally installed?&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                        <span class="n">msg</span> <span class="o">%</span> <span class="p">(</span><span class="n">mod_name</span><span class="p">,</span> <span class="n">module_dir</span><span class="p">,</span> <span class="n">expected_dir</span><span class="p">))</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadTestsFromModule</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="n">pattern</span><span class="p">),</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">full_path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">namespace</span> <span class="ow">and</span>
+                <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="s1">&#39;__init__.py&#39;</span><span class="p">))):</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span>
+
+            <span class="n">load_tests</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">tests</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_name_from_path</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">package</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_module_from_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">case</span><span class="o">.</span><span class="n">SkipTest</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make_skipped_test</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">suiteClass</span><span class="p">),</span> <span class="kc">False</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">error_case</span><span class="p">,</span> <span class="n">error_message</span> <span class="o">=</span> \
+                    <span class="n">_make_failed_import_test</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">suiteClass</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">error_case</span><span class="p">,</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">load_tests</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">package</span><span class="p">,</span> <span class="s1">&#39;load_tests&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="c1"># Mark this package as being in load_tests (possibly ;))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_loading_packages</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">tests</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadTestsFromModule</span><span class="p">(</span><span class="n">package</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="n">pattern</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">load_tests</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="c1"># loadTestsFromModule(package) has loaded tests for us.</span>
+                        <span class="k">return</span> <span class="n">tests</span><span class="p">,</span> <span class="kc">False</span>
+                    <span class="k">return</span> <span class="n">tests</span><span class="p">,</span> <span class="kc">True</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_loading_packages</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span>
+
+
+<span class="n">defaultTestLoader</span> <span class="o">=</span> <span class="n">TestLoader</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_makeLoader</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">sortUsing</span><span class="p">,</span> <span class="n">suiteClass</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">TestLoader</span><span class="p">()</span>
+    <span class="n">loader</span><span class="o">.</span><span class="n">sortTestMethodsUsing</span> <span class="o">=</span> <span class="n">sortUsing</span>
+    <span class="n">loader</span><span class="o">.</span><span class="n">testMethodPrefix</span> <span class="o">=</span> <span class="n">prefix</span>
+    <span class="k">if</span> <span class="n">suiteClass</span><span class="p">:</span>
+        <span class="n">loader</span><span class="o">.</span><span class="n">suiteClass</span> <span class="o">=</span> <span class="n">suiteClass</span>
+    <span class="k">return</span> <span class="n">loader</span>
+
+<span class="k">def</span> <span class="nf">getTestCaseNames</span><span class="p">(</span><span class="n">testCaseClass</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">sortUsing</span><span class="o">=</span><span class="n">util</span><span class="o">.</span><span class="n">three_way_cmp</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_makeLoader</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">sortUsing</span><span class="p">)</span><span class="o">.</span><span class="n">getTestCaseNames</span><span class="p">(</span><span class="n">testCaseClass</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">makeSuite</span><span class="p">(</span><span class="n">testCaseClass</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">sortUsing</span><span class="o">=</span><span class="n">util</span><span class="o">.</span><span class="n">three_way_cmp</span><span class="p">,</span>
+              <span class="n">suiteClass</span><span class="o">=</span><span class="n">suite</span><span class="o">.</span><span class="n">TestSuite</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_makeLoader</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">sortUsing</span><span class="p">,</span> <span class="n">suiteClass</span><span class="p">)</span><span class="o">.</span><span class="n">loadTestsFromTestCase</span><span class="p">(</span>
+        <span class="n">testCaseClass</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">findTestCases</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">sortUsing</span><span class="o">=</span><span class="n">util</span><span class="o">.</span><span class="n">three_way_cmp</span><span class="p">,</span>
+                  <span class="n">suiteClass</span><span class="o">=</span><span class="n">suite</span><span class="o">.</span><span class="n">TestSuite</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_makeLoader</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">sortUsing</span><span class="p">,</span> <span class="n">suiteClass</span><span class="p">)</span><span class="o">.</span><span class="n">loadTestsFromModule</span><span class="p">(</span>\
+        <span class="n">module</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    <a href="../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

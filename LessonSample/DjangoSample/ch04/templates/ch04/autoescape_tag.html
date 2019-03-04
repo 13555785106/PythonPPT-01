@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>autoescape标签</title>
+</head>
+<body>
+<H1>autoescape标签</H1>
+autoescape on<br/>
+{% autoescape on %}
+{{ msg }}
+{% endautoescape %}
+<hr>
+autoescape off<br/>
+{% autoescape off %}
+{{ msg }}
+{% endautoescape %}
+<hr>
+{% comment %}
+{% debug %}
+{% endcomment %}
+</body>
+</html>

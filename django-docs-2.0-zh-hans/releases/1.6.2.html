@@ -1,0 +1,182 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Django 1.6.2 release notes &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Django 1.6.1 release notes" href="1.6.1.html" />
+    <link rel="prev" title="Django 1.6.3 release notes" href="1.6.3.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="1.6.3.html" title="Django 1.6.3 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.6.1.html" title="Django 1.6.1 release notes">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="releases-1.6.2">
+            
+  <div class="section" id="s-django-1-6-2-release-notes">
+<span id="django-1-6-2-release-notes"></span><h1>Django 1.6.2 release notes<a class="headerlink" href="#django-1-6-2-release-notes" title="Permalink to this headline">¶</a></h1>
+<p><em>February 6, 2014</em></p>
+<p>This is Django 1.6.2, a bugfix release for Django 1.6. Django 1.6.2 fixes
+several bugs in 1.6.1:</p>
+<ul class="simple">
+<li>Prevented the base geometry object of a prepared geometry to be garbage
+collected, which could lead to crash Django
+(<a class="reference external" href="https://code.djangoproject.com/ticket/21662">#21662</a>).</li>
+<li>Fixed a crash when executing the <a class="reference internal" href="../ref/django-admin.html#django-admin-changepassword"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">changepassword</span></code></a> command when the
+user object representation contained non-ASCII characters
+(<a class="reference external" href="https://code.djangoproject.com/ticket/21627">#21627</a>).</li>
+<li>The <a class="reference internal" href="../ref/contrib/staticfiles.html#django-admin-collectstatic"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">collectstatic</span></code></a> command will raise an error rather than
+default to using the current working directory if <a class="reference internal" href="../ref/settings.html#std:setting-STATIC_ROOT"><code class="xref std std-setting docutils literal notranslate"><span class="pre">STATIC_ROOT</span></code></a> is
+not set. Combined with the <code class="docutils literal notranslate"><span class="pre">--clear</span></code> option, the previous behavior could
+wipe anything below the current working directory
+(<a class="reference external" href="https://code.djangoproject.com/ticket/21581">#21581</a>).</li>
+<li>Fixed mail encoding on Python 3.3.3+
+(<a class="reference external" href="https://code.djangoproject.com/ticket/21093">#21093</a>).</li>
+<li>Fixed an issue where when
+<code class="docutils literal notranslate"><span class="pre">settings.DATABASES['default']['AUTOCOMMIT']</span> <span class="pre">=</span> <span class="pre">False</span></code>, the connection
+wasn't in autocommit mode but Django pretended it was.</li>
+<li>Fixed a regression in multiple-table inheritance <code class="docutils literal notranslate"><span class="pre">exclude()</span></code> queries
+(<a class="reference external" href="https://code.djangoproject.com/ticket/21787">#21787</a>).</li>
+<li>Added missing items to <code class="docutils literal notranslate"><span class="pre">django.utils.timezone.__all__</span></code>
+(<a class="reference external" href="https://code.djangoproject.com/ticket/21880">#21880</a>).</li>
+<li>Fixed a field misalignment issue with <code class="docutils literal notranslate"><span class="pre">select_related()</span></code> and model
+inheritance
+(<a class="reference external" href="https://code.djangoproject.com/ticket/21413">#21413</a>).</li>
+<li>Fixed join promotion for negated <code class="docutils literal notranslate"><span class="pre">AND</span></code> conditions
+(<a class="reference external" href="https://code.djangoproject.com/ticket/21748">#21748</a>).</li>
+<li>Oracle database introspection now works with boolean and float fields
+(<a class="reference external" href="https://code.djangoproject.com/ticket/19884">#19884</a>).</li>
+<li>Fixed an issue where lazy objects weren't actually marked as safe when passed
+through <a class="reference internal" href="../ref/utils.html#django.utils.safestring.mark_safe" title="django.utils.safestring.mark_safe"><code class="xref py py-func docutils literal notranslate"><span class="pre">mark_safe()</span></code></a> and could end up being
+double-escaped (<a class="reference external" href="https://code.djangoproject.com/ticket/21882">#21882</a>).</li>
+</ul>
+<p>Additionally, Django's vendored version of six, <code class="docutils literal notranslate"><span class="pre">django.utils.six</span></code> has been
+upgraded to the latest release (1.5.2).</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="1.6.3.html"
+                        title="previous chapter">Django 1.6.3 release notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="1.6.1.html"
+                        title="next chapter">Django 1.6.1 release notes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/releases/1.6.2.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="1.6.3.html" title="Django 1.6.3 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.6.1.html" title="Django 1.6.1 release notes">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

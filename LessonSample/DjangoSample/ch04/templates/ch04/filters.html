@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>过滤器</title>
+</head>
+<body>
+{% load static %}
+<H1 align="center">过滤器</H1>
+<table border="1" align="center">
+    <tr>
+        <th width="360px">表达式</th>
+        <th>值</th>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ value|add:"2" }}{% endverbatim %}
+        </td>
+        <td>
+            {{ value|add:"2" }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ msg01|addslashes }}{% endverbatim %}
+        </td>
+        <td>
+            {{ msg01|addslashes }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ msg02|capfirst }}{% endverbatim %}
+        </td>
+        <td>
+            {{ msg02|capfirst }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ digits|center:"16" }}{% endverbatim %}
+        </td>
+        <td>
+            <pre>"{{ digits|center:"16" }}"</pre>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ msg02|cut:" "|cut:"a" }}{% endverbatim %}
+        </td>
+        <td>
+            {{ msg02|cut:" "|cut:"a" }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ now|date:"Y-m-d H:i:s.u" }}{% endverbatim %}
+        </td>
+        <td>
+            {{ now|date:"Y-m-d H:i:s.u" }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ novalue|default:"nothing" }}{% endverbatim %}
+        </td>
+        <td>
+            {{ novalue|default:"nothing" }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ novalue|default_if_none:"nothing" }}{% endverbatim %}
+        </td>
+        <td>
+            {{ novalue|default_if_none:"nothing" }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ students|dictsort:"name" }}{% endverbatim %}<br/>
+            {% verbatim %}{{ students|dictsort:"age" }}{% endverbatim %}
+        </td>
+        <td>
+            {{ students|dictsort:"name" }}<br/>
+            {{ students|dictsort:"age" }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ students|dictsortreversed:"age" }}{% endverbatim %}
+        </td>
+        <td>
+            {{ students|dictsortreversed:"age" }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ value|divisibleby:"3" }}{% endverbatim %}
+        </td>
+        <td>
+            {{ value|divisibleby:"3" }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ paragraph|escape }}{% endverbatim %}
+        </td>
+        <td>
+            {{ paragraph|escape }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ javascript|escapejs }}{% endverbatim %}
+        </td>
+        <td>
+            {{ javascript|escapejs }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ 1024|filesizeformat }}{% endverbatim %}<br/>
+            {% verbatim %}{{ 102400000000|filesizeformat }}{% endverbatim %}
+        </td>
+        <td>
+            {{ 1024|filesizeformat }}<br/>
+            {{ 102400000000|filesizeformat }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ words|first }}{% endverbatim %}
+        </td>
+        <td>
+            {{ words|first }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ 34.23294|floatformat:"3" }}{% endverbatim %}<br/>
+            {% verbatim %}{{ 34|floatformat:"3" }}{% endverbatim %}<br/>
+            {% verbatim %}{{ 34.23294|floatformat:"-3" }}{% endverbatim %}<br/>
+            {% verbatim %}{{ 34|floatformat:"-3" }}{% endverbatim %}
+        </td>
+        <td>
+            {{ 34.23294|floatformat:"3" }}<br/>
+            {{ 34|floatformat:"3" }}<br/>
+            {{ 34.23294|floatformat:"-3" }}<br/>
+            {{ 34|floatformat:"-3" }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{% autoescape off %}{{ paragraph|linebreaks|force_escape }}{% endautoescape %}{% endverbatim
+            %}
+        </td>
+        <td>
+            {% autoescape off %}{{ paragraph|linebreaks|force_escape }}{% endautoescape %}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ 423423|get_digit:"4" }}{% endverbatim %}
+        </td>
+        <td>
+            {{ 423423|get_digit:"4" }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ uri|iriencode }}{% endverbatim %}
+        </td>
+        <td>
+            {{ uri|iriencode }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ words|join:" // " }}{% endverbatim %}
+        </td>
+        <td>
+            {{ words|join:" // " }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ words|last }}{% endverbatim %}
+        </td>
+        <td>
+            {{ words|last }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ words|length }}{% endverbatim %}
+        </td>
+        <td>
+            {{ words|length }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ words|length_is:"3" }}{% endverbatim %}
+        </td>
+        <td>
+            {{ words|length_is:"3" }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ paragraph|linebreaks }}{% endverbatim %}
+        </td>
+        <td>
+            {{ paragraph|linebreaks }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ paragraph|linebreaksbr }}{% endverbatim %}
+        </td>
+        <td>
+            {{ paragraph|linebreaksbr }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ paragraph|linenumbers }}{% endverbatim %}
+        </td>
+        <td>
+            {{ paragraph|linenumbers }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ msg01|ljust:"30" }}{% endverbatim %}
+        </td>
+        <td>
+            <pre>"{{ msg01|ljust:"30" }}"</pre>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ msg01|lower }}{% endverbatim %}
+        </td>
+        <td>
+            {{ msg01|lower }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ msg01|make_list }}{% endverbatim %}<br/>
+            {% verbatim %}{{ value|make_list }}{% endverbatim %}<br/>
+        </td>
+        <td>
+            {{ msg01|make_list }}<br/>
+            {{ value|make_list }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}You have {{ value }} message{{ value|pluralize }}.{% endverbatim %}
+        </td>
+        <td>
+            You have {{ value }} message{{ value|pluralize }}.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ words|random }}{% endverbatim %}
+        </td>
+        <td>
+            {{ words|random }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ msg01|rjust:"30" }}{% endverbatim %}
+        </td>
+        <td>
+            <pre>"{{ msg01|rjust:"30" }}"</pre>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ paragraph|safe }}{% endverbatim %}
+        </td>
+        <td>
+            <pre>{{ paragraph|safe }}</pre>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ words|safeseq|join:", " }}{% endverbatim %}
+        </td>
+        <td>
+            {{ words|safeseq|join:", " }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ words|slice:":2" }}{% endverbatim %}
+        </td>
+        <td>
+            {{ words|slice:":2" }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ paragraph|slugify }}{% endverbatim %}
+        </td>
+        <td>
+            {{ paragraph|slugify }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ value|stringformat:"E" }}{% endverbatim %}
+        </td>
+        <td>
+            {{ value|stringformat:"E" }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ paragraph|striptags }}{% endverbatim %}
+        </td>
+        <td>
+            {{ paragraph|striptags }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ now|time:"H:i" }}{% endverbatim %}
+        </td>
+        <td>
+            {{ now|time:"H:i" }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ dt01|timesince:dt02 }}{% endverbatim %}
+        </td>
+        <td>
+            {{ dt01|timesince:dt02 }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ dt03|timeuntil }}{% endverbatim %}<br/>
+            {% verbatim %}{{ dt02|timeuntil:dt01 }}{% endverbatim %}
+        </td>
+        <td>
+            {{ dt03|timeuntil }}<br/>
+            {{ dt02|timeuntil:dt01 }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ msg02|title }}{% endverbatim %}
+        </td>
+        <td>
+            {{ msg02|title }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ msg02|truncatechars:12 }}{% endverbatim %}
+        </td>
+        <td>
+            {{ msg02|truncatechars:12 }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ msg02|truncatechars_html:12 }}{% endverbatim %}
+        </td>
+        <td>
+            {{ msg02|truncatechars_html:12 }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ msg02|truncatewords:2 }}{% endverbatim %}
+        </td>
+        <td>
+            {{ msg02|truncatewords:2 }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ msg02|truncatewords_html:2 }}{% endverbatim %}
+        </td>
+        <td>
+            {{ msg02|truncatewords_html:2 }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ provinces|unordered_list }}{% endverbatim %}
+        </td>
+        <td>
+            {{ provinces|unordered_list }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ uri|urlencode }}{% endverbatim %}
+        </td>
+        <td>
+            {{ uri|urlencode }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ uri|urlize }}{% endverbatim %}
+        </td>
+        <td>
+            {{ uri|urlize }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ uri|urlizetrunc:15 }}{% endverbatim %}
+        </td>
+        <td>
+            {{ uri|urlizetrunc:15 }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ msg02|wordcount }}{% endverbatim %}
+        </td>
+        <td>
+            {{ msg02|wordcount }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ msg02|wordwrap:8|linebreaksbr }}{% endverbatim %}
+        </td>
+        <td>
+            {{ msg02|wordwrap:8|linebreaksbr }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{{ novalue|yesno:"是,否,不知道" }}{% endverbatim %}
+        </td>
+        <td>
+            {{ novalue|yesno:"是,否,不知道" }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{% static "images/hi.jpg" %}{% endverbatim %}
+        </td>
+        <td>
+            {% static "images/hi.jpg" %}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{% get_static_prefix %}{% endverbatim %}
+        </td>
+        <td>
+            {% get_static_prefix %}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% verbatim %}{% get_media_prefix %}{% endverbatim %}
+        </td>
+        <td>
+            {% get_media_prefix %}
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,332 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>The File object &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="File storage API" href="storage.html" />
+    <link rel="prev" title="File handling" href="index.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="index.html" title="File handling">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="storage.html" title="File storage API">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="ref-files-file">
+            
+  <div class="section" id="s-the-file-object">
+<span id="the-file-object"></span><h1>The <code class="docutils literal notranslate"><span class="pre">File</span></code> object<a class="headerlink" href="#the-file-object" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="index.html#module-django.core.files" title="django.core.files: File handling and storage"><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.core.files</span></code></a> module and its submodules contain built-in classes
+for basic file handling in Django.</p>
+<div class="section" id="s-the-file-class">
+<span id="the-file-class"></span><h2>The <code class="docutils literal notranslate"><span class="pre">File</span></code> class<a class="headerlink" href="#the-file-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.core.files.File">
+<em class="property">class </em><code class="descname">File</code>(<em>file_object</em>)<a class="reference internal" href="../../_modules/django/core/files/base.html#File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.File" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#django.core.files.File" title="django.core.files.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> class is a thin wrapper around a Python
+<a class="reference external" href="https://docs.python.org/3/glossary.html#term-file-object" title="(in Python v3.7)"><span class="xref std std-term">file object</span></a> with some Django-specific additions.
+Internally, Django uses this class when it needs to represent a file.</p>
+<p><a class="reference internal" href="#django.core.files.File" title="django.core.files.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> objects have the following attributes and methods:</p>
+<dl class="attribute">
+<dt id="django.core.files.File.name">
+<code class="descname">name</code><a class="headerlink" href="#django.core.files.File.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the file including the relative path from
+<a class="reference internal" href="../settings.html#std:setting-MEDIA_ROOT"><code class="xref std std-setting docutils literal notranslate"><span class="pre">MEDIA_ROOT</span></code></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.core.files.File.size">
+<code class="descname">size</code><a class="headerlink" href="#django.core.files.File.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The size of the file in bytes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.core.files.File.file">
+<code class="descname">file</code><a class="headerlink" href="#django.core.files.File.file" title="Permalink to this definition">¶</a></dt>
+<dd><p>The underlying <a class="reference external" href="https://docs.python.org/3/glossary.html#term-file-object" title="(in Python v3.7)"><span class="xref std std-term">file object</span></a> that this class wraps.</p>
+<div class="admonition-be-careful-with-this-attribute-in-subclasses admonition">
+<p class="first admonition-title">Be careful with this attribute in subclasses.</p>
+<p class="last">Some subclasses of <a class="reference internal" href="#django.core.files.File" title="django.core.files.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a>, including
+<a class="reference internal" href="#django.core.files.base.ContentFile" title="django.core.files.base.ContentFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContentFile</span></code></a> and
+<a class="reference internal" href="../models/fields.html#django.db.models.fields.files.FieldFile" title="django.db.models.fields.files.FieldFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldFile</span></code></a>, may replace this
+attribute with an object other than a Python <a class="reference external" href="https://docs.python.org/3/glossary.html#term-file-object" title="(in Python v3.7)"><span class="xref std std-term">file object</span></a>.
+In these cases, this attribute may itself be a <a class="reference internal" href="#django.core.files.File" title="django.core.files.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a>
+subclass (and not necessarily the same subclass). Whenever
+possible, use the attributes and methods of the subclass itself
+rather than the those of the subclass's <code class="docutils literal notranslate"><span class="pre">file</span></code> attribute.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.core.files.File.mode">
+<code class="descname">mode</code><a class="headerlink" href="#django.core.files.File.mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>The read/write mode for the file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.File.open">
+<code class="descname">open</code>(<em>mode=None</em>)<a class="reference internal" href="../../_modules/django/core/files/base.html#File.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.File.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open or reopen the file (which also does <code class="docutils literal notranslate"><span class="pre">File.seek(0)</span></code>).
+The <code class="docutils literal notranslate"><span class="pre">mode</span></code> argument allows the same values
+as Python's built-in <a class="reference external" href="https://docs.python.org/3/library/functions.html#open" title="(in Python v3.7)"><code class="docutils literal notranslate"><span class="pre">open()</span></code></a>.</p>
+<p>When reopening a file, <code class="docutils literal notranslate"><span class="pre">mode</span></code> will override whatever mode the file
+was originally opened with; <code class="docutils literal notranslate"><span class="pre">None</span></code> means to reopen with the original
+mode.</p>
+<p>It can be used as a context manager, e.g. <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">file.open()</span> <span class="pre">as</span> <span class="pre">f:</span></code>.</p>
+<div class="versionchanged">
+<span class="title">Changed in Django 2.0:</span> <p>Context manager support was added.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.File.__iter__">
+<code class="descname">__iter__</code>()<a class="reference internal" href="../../_modules/django/core/files/base.html#File.__iter__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.File.__iter__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over the file yielding one line at a time.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.File.chunks">
+<code class="descname">chunks</code>(<em>chunk_size=None</em>)<a class="reference internal" href="../../_modules/django/core/files/base.html#File.chunks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.File.chunks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over the file yielding &quot;chunks&quot; of a given size. <code class="docutils literal notranslate"><span class="pre">chunk_size</span></code>
+defaults to 64 KB.</p>
+<p>This is especially useful with very large files since it allows them to
+be streamed off disk and avoids storing the whole file in memory.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.File.multiple_chunks">
+<code class="descname">multiple_chunks</code>(<em>chunk_size=None</em>)<a class="reference internal" href="../../_modules/django/core/files/base.html#File.multiple_chunks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.File.multiple_chunks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if the file is large enough to require multiple chunks
+to access all of its content give some <code class="docutils literal notranslate"><span class="pre">chunk_size</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.File.close">
+<code class="descname">close</code>()<a class="reference internal" href="../../_modules/django/core/files/base.html#File.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.File.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the file.</p>
+</dd></dl>
+
+<p>In addition to the listed methods, <a class="reference internal" href="#django.core.files.File" title="django.core.files.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> exposes
+the following attributes and methods of its <code class="docutils literal notranslate"><span class="pre">file</span></code> object:
+<code class="docutils literal notranslate"><span class="pre">encoding</span></code>, <code class="docutils literal notranslate"><span class="pre">fileno</span></code>, <code class="docutils literal notranslate"><span class="pre">flush</span></code>, <code class="docutils literal notranslate"><span class="pre">isatty</span></code>, <code class="docutils literal notranslate"><span class="pre">newlines</span></code>, <code class="docutils literal notranslate"><span class="pre">read</span></code>,
+<code class="docutils literal notranslate"><span class="pre">readinto</span></code>, <code class="docutils literal notranslate"><span class="pre">readline</span></code>, <code class="docutils literal notranslate"><span class="pre">readlines</span></code>, <code class="docutils literal notranslate"><span class="pre">seek</span></code>, <code class="docutils literal notranslate"><span class="pre">tell</span></code>,
+<code class="docutils literal notranslate"><span class="pre">truncate</span></code>, <code class="docutils literal notranslate"><span class="pre">write</span></code>, <code class="docutils literal notranslate"><span class="pre">writelines</span></code>, <code class="docutils literal notranslate"><span class="pre">readable()</span></code>, <code class="docutils literal notranslate"><span class="pre">writable()</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">seekable()</span></code>.</p>
+<div class="versionchanged">
+<span class="title">Changed in Django 1.11:</span> <p>The <code class="docutils literal notranslate"><span class="pre">readable()</span></code> and <code class="docutils literal notranslate"><span class="pre">writable()</span></code> methods were added.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="s-the-contentfile-class">
+<span id="the-contentfile-class"></span><h2>The <code class="docutils literal notranslate"><span class="pre">ContentFile</span></code> class<a class="headerlink" href="#the-contentfile-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.core.files.base.ContentFile">
+<em class="property">class </em><code class="descname">ContentFile</code>(<em>File</em>)<a class="reference internal" href="../../_modules/django/core/files/base.html#ContentFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.base.ContentFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <code class="docutils literal notranslate"><span class="pre">ContentFile</span></code> class inherits from <a class="reference internal" href="#django.core.files.File" title="django.core.files.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a>,
+but unlike <a class="reference internal" href="#django.core.files.File" title="django.core.files.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> it operates on string content
+(bytes also supported), rather than an actual file. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.core.files.base</span> <span class="k">import</span> <span class="n">ContentFile</span>
+
+<span class="n">f1</span> <span class="o">=</span> <span class="n">ContentFile</span><span class="p">(</span><span class="s2">&quot;esta sentencia está en español&quot;</span><span class="p">)</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="n">ContentFile</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;these are bytes&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="s-the-imagefile-class">
+<span id="the-imagefile-class"></span><h2>The <code class="docutils literal notranslate"><span class="pre">ImageFile</span></code> class<a class="headerlink" href="#the-imagefile-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.core.files.images.ImageFile">
+<em class="property">class </em><code class="descname">ImageFile</code>(<em>file_object</em>)<a class="reference internal" href="../../_modules/django/core/files/images.html#ImageFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.images.ImageFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Django provides a built-in class specifically for images.
+<a class="reference internal" href="#django.core.files.images.ImageFile" title="django.core.files.images.ImageFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.files.images.ImageFile</span></code></a> inherits all the attributes
+and methods of <a class="reference internal" href="#django.core.files.File" title="django.core.files.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a>, and additionally
+provides the following:</p>
+<dl class="attribute">
+<dt id="django.core.files.images.ImageFile.width">
+<code class="descname">width</code><a class="headerlink" href="#django.core.files.images.ImageFile.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Width of the image in pixels.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.core.files.images.ImageFile.height">
+<code class="descname">height</code><a class="headerlink" href="#django.core.files.images.ImageFile.height" title="Permalink to this definition">¶</a></dt>
+<dd><p>Height of the image in pixels.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="s-additional-methods-on-files-attached-to-objects">
+<span id="additional-methods-on-files-attached-to-objects"></span><h2>Additional methods on files attached to objects<a class="headerlink" href="#additional-methods-on-files-attached-to-objects" title="Permalink to this headline">¶</a></h2>
+<p>Any <a class="reference internal" href="#django.core.files.File" title="django.core.files.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> that is associated with an object (as with <code class="docutils literal notranslate"><span class="pre">Car.photo</span></code>,
+below) will also have a couple of extra methods:</p>
+<dl class="method">
+<dt id="django.core.files.File.save">
+<code class="descclassname">File.</code><code class="descname">save</code>(<em>name</em>, <em>content</em>, <em>save=True</em>)<a class="headerlink" href="#django.core.files.File.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a new file with the file name and contents provided. This will not
+replace the existing file, but will create a new file and update the object
+to point to it. If <code class="docutils literal notranslate"><span class="pre">save</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the model's <code class="docutils literal notranslate"><span class="pre">save()</span></code> method will
+be called once the file is saved. That is, these two lines:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">car</span><span class="o">.</span><span class="n">photo</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;myphoto.jpg&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">car</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>are equivalent to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">car</span><span class="o">.</span><span class="n">photo</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;myphoto.jpg&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that the <code class="docutils literal notranslate"><span class="pre">content</span></code> argument must be an instance of either
+<a class="reference internal" href="#django.core.files.File" title="django.core.files.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> or of a subclass of <a class="reference internal" href="#django.core.files.File" title="django.core.files.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a>, such as
+<a class="reference internal" href="#django.core.files.base.ContentFile" title="django.core.files.base.ContentFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContentFile</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.File.delete">
+<code class="descclassname">File.</code><code class="descname">delete</code>(<em>save=True</em>)<a class="headerlink" href="#django.core.files.File.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the file from the model instance and deletes the underlying file.
+If <code class="docutils literal notranslate"><span class="pre">save</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the model's <code class="docutils literal notranslate"><span class="pre">save()</span></code> method will be called once
+the file is deleted.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The <code class="docutils literal notranslate"><span class="pre">File</span></code> object</a><ul>
+<li><a class="reference internal" href="#the-file-class">The <code class="docutils literal notranslate"><span class="pre">File</span></code> class</a></li>
+<li><a class="reference internal" href="#the-contentfile-class">The <code class="docutils literal notranslate"><span class="pre">ContentFile</span></code> class</a></li>
+<li><a class="reference internal" href="#the-imagefile-class">The <code class="docutils literal notranslate"><span class="pre">ImageFile</span></code> class</a></li>
+<li><a class="reference internal" href="#additional-methods-on-files-attached-to-objects">Additional methods on files attached to objects</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">File handling</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="storage.html"
+                        title="next chapter">File storage API</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/ref/files/file.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="index.html" title="File handling">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="storage.html" title="File storage API">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

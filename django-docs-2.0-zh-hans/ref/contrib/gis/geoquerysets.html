@@ -1,0 +1,1237 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>GIS QuerySet API Reference &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Geographic Database Functions" href="functions.html" />
+    <link rel="prev" title="GeoDjango Forms API" href="forms-api.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="forms-api.html" title="GeoDjango Forms API">previous</a>
+     |
+    <a href="../../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="functions.html" title="Geographic Database Functions">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="ref-contrib-gis-geoquerysets">
+            
+  <div class="section" id="s-gis-queryset-api-reference">
+<span id="gis-queryset-api-reference"></span><h1>GIS QuerySet API Reference<a class="headerlink" href="#gis-queryset-api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="s-spatial-lookups">
+<span id="s-id1"></span><span id="spatial-lookups"></span><span id="id1"></span><h2>Spatial Lookups<a class="headerlink" href="#spatial-lookups" title="Permalink to this headline">¶</a></h2>
+<p>The spatial lookups in this section are available for <a class="reference internal" href="model-api.html#django.contrib.gis.db.models.GeometryField" title="django.contrib.gis.db.models.GeometryField"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryField</span></code></a>
+and <a class="reference internal" href="model-api.html#django.contrib.gis.db.models.RasterField" title="django.contrib.gis.db.models.RasterField"><code class="xref py py-class docutils literal notranslate"><span class="pre">RasterField</span></code></a>.</p>
+<p>For an introduction, see the <a class="reference internal" href="db-api.html#spatial-lookups-intro"><span class="std std-ref">spatial lookups introduction</span></a>.  For an overview of what lookups are
+compatible with a particular spatial backend, refer to the
+<a class="reference internal" href="db-api.html#spatial-lookup-compatibility"><span class="std std-ref">spatial lookup compatibility table</span></a>.</p>
+<div class="section" id="s-lookups-with-rasters">
+<span id="lookups-with-rasters"></span><h3>Lookups with rasters<a class="headerlink" href="#lookups-with-rasters" title="Permalink to this headline">¶</a></h3>
+<p>All examples in the reference below are given for geometry fields and inputs,
+but the lookups can be used the same way with rasters on both sides. Whenever
+a lookup doesn't support raster input, the input is automatically
+converted to a geometry where necessary using the <a class="reference external" href="https://postgis.net/docs/RT_ST_Polygon.html">ST_Polygon</a> function. See also the
+<a class="reference internal" href="db-api.html#spatial-lookup-raster"><span class="std std-ref">introduction to raster lookups</span></a>.</p>
+<p>The database operators used by the lookups can be divided into three categories:</p>
+<ul class="simple">
+<li>Native raster support <code class="docutils literal notranslate"><span class="pre">N</span></code>: the operator accepts rasters natively on both
+sides of the lookup, and raster input can be mixed with geometry inputs.</li>
+<li>Bilateral raster support <code class="docutils literal notranslate"><span class="pre">B</span></code>: the operator supports rasters only if both
+sides of the lookup receive raster inputs. Raster data is automatically
+converted to geometries for mixed lookups.</li>
+<li>Geometry conversion support <code class="docutils literal notranslate"><span class="pre">C</span></code>. The lookup does not have native raster
+support, all raster data is automatically converted to geometries.</li>
+</ul>
+<p>The examples below show the SQL equivalent for the lookups in the different
+types of raster support. The same pattern applies to all spatial lookups.</p>
+<table class="docutils">
+<colgroup>
+<col width="4%" />
+<col width="34%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Case</th>
+<th class="head">Lookup</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>N, B</td>
+<td><code class="docutils literal notranslate"><span class="pre">rast__contains=rst</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Contains(rast,</span> <span class="pre">rst)</span></code></td>
+</tr>
+<tr class="row-odd"><td>N, B</td>
+<td><code class="docutils literal notranslate"><span class="pre">rast__1__contains=(rst,</span> <span class="pre">2)</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Contains(rast,</span> <span class="pre">1,</span> <span class="pre">rst,</span> <span class="pre">2)</span></code></td>
+</tr>
+<tr class="row-even"><td>B, C</td>
+<td><code class="docutils literal notranslate"><span class="pre">rast__contains=geom</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Contains(ST_Polygon(rast),</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-odd"><td>B, C</td>
+<td><code class="docutils literal notranslate"><span class="pre">rast__1__contains=geom</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Contains(ST_Polygon(rast,</span> <span class="pre">1),</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-even"><td>B, C</td>
+<td><code class="docutils literal notranslate"><span class="pre">poly__contains=rst</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Contains(poly,</span> <span class="pre">ST_Polygon(rst))</span></code></td>
+</tr>
+<tr class="row-odd"><td>B, C</td>
+<td><code class="docutils literal notranslate"><span class="pre">poly__contains=(rst,</span> <span class="pre">1)</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Contains(poly,</span> <span class="pre">ST_Polygon(rst,</span> <span class="pre">1))</span></code></td>
+</tr>
+<tr class="row-even"><td>C</td>
+<td><code class="docutils literal notranslate"><span class="pre">rast__crosses=rst</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Crosses(ST_Polygon(rast),</span> <span class="pre">ST_Polygon(rst))</span></code></td>
+</tr>
+<tr class="row-odd"><td>C</td>
+<td><code class="docutils literal notranslate"><span class="pre">rast__1__crosses=(rst,</span> <span class="pre">2)</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Crosses(ST_Polygon(rast,</span> <span class="pre">1),</span> <span class="pre">ST_Polygon(rst,</span> <span class="pre">2))</span></code></td>
+</tr>
+<tr class="row-even"><td>C</td>
+<td><code class="docutils literal notranslate"><span class="pre">rast__crosses=geom</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Crosses(ST_Polygon(rast),</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-odd"><td>C</td>
+<td><code class="docutils literal notranslate"><span class="pre">poly__crosses=rst</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Crosses(poly,</span> <span class="pre">ST_Polygon(rst))</span></code></td>
+</tr>
+</tbody>
+</table>
+<p>Spatial lookups with rasters are only supported for PostGIS backends
+(denominated as PGRaster in this section).</p>
+</div>
+<div class="section" id="s-bbcontains">
+<span id="s-std:fieldlookup-bbcontains"></span><span id="bbcontains"></span><span id="std:fieldlookup-bbcontains"></span><h3><code class="docutils literal notranslate"><span class="pre">bbcontains</span></code><a class="headerlink" href="#bbcontains" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Geometry_Contain.html">PostGIS</a>,
+MySQL, SpatiaLite, PGRaster (Native)</p>
+<p>Tests if the geometry or raster field's bounding box completely contains the
+lookup geometry's bounding box.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__bbcontains</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">poly</span> <span class="pre">~</span> <span class="pre">geom</span></code></td>
+</tr>
+<tr class="row-odd"><td>MySQL</td>
+<td><code class="docutils literal notranslate"><span class="pre">MBRContains(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-even"><td>SpatiaLite</td>
+<td><code class="docutils literal notranslate"><span class="pre">MbrContains(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-bboverlaps">
+<span id="s-std:fieldlookup-bboverlaps"></span><span id="bboverlaps"></span><span id="std:fieldlookup-bboverlaps"></span><h3><code class="docutils literal notranslate"><span class="pre">bboverlaps</span></code><a class="headerlink" href="#bboverlaps" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/geometry_overlaps.html">PostGIS</a>,
+MySQL, SpatiaLite, PGRaster (Native)</p>
+<p>Tests if the geometry field's bounding box overlaps the lookup geometry's
+bounding box.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__bboverlaps</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">poly</span> <span class="pre">&amp;&amp;</span> <span class="pre">geom</span></code></td>
+</tr>
+<tr class="row-odd"><td>MySQL</td>
+<td><code class="docutils literal notranslate"><span class="pre">MBROverlaps(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-even"><td>SpatiaLite</td>
+<td><code class="docutils literal notranslate"><span class="pre">MbrOverlaps(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-contained">
+<span id="s-std:fieldlookup-contained"></span><span id="contained"></span><span id="std:fieldlookup-contained"></span><h3><code class="docutils literal notranslate"><span class="pre">contained</span></code><a class="headerlink" href="#contained" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Geometry_Contained.html">PostGIS</a>,
+MySQL, SpatiaLite, PGRaster (Native)</p>
+<p>Tests if the geometry field's bounding box is completely contained by the
+lookup geometry's bounding box.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__contained</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="72%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">poly</span> <span class="pre">&#64;</span> <span class="pre">geom</span></code></td>
+</tr>
+<tr class="row-odd"><td>MySQL</td>
+<td><code class="docutils literal notranslate"><span class="pre">MBRWithin(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-even"><td>SpatiaLite</td>
+<td><code class="docutils literal notranslate"><span class="pre">MbrWithin(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-contains">
+<span id="s-std:fieldlookup-gis-contains"></span><span id="contains"></span><span id="std:fieldlookup-gis-contains"></span><h3><code class="docutils literal notranslate"><span class="pre">contains</span></code><a class="headerlink" href="#contains" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Contains.html">PostGIS</a>,
+Oracle, MySQL, SpatiaLite, PGRaster (Bilateral)</p>
+<p>Tests if the geometry field spatially contains the lookup geometry.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__contains</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Contains(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-odd"><td>Oracle</td>
+<td><code class="docutils literal notranslate"><span class="pre">SDO_CONTAINS(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-even"><td>MySQL</td>
+<td><code class="docutils literal notranslate"><span class="pre">MBRContains(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-odd"><td>SpatiaLite</td>
+<td><code class="docutils literal notranslate"><span class="pre">Contains(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-contains-properly">
+<span id="s-std:fieldlookup-contains_properly"></span><span id="contains-properly"></span><span id="std:fieldlookup-contains_properly"></span><h3><code class="docutils literal notranslate"><span class="pre">contains_properly</span></code><a class="headerlink" href="#contains-properly" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_ContainsProperly.html">PostGIS</a>,
+PGRaster (Bilateral)</p>
+<p>Returns true if the lookup geometry intersects the interior of the
+geometry field, but not the boundary (or exterior).</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__contains_properly</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="78%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_ContainsProperly(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-coveredby">
+<span id="s-std:fieldlookup-coveredby"></span><span id="coveredby"></span><span id="std:fieldlookup-coveredby"></span><h3><code class="docutils literal notranslate"><span class="pre">coveredby</span></code><a class="headerlink" href="#coveredby" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_CoveredBy.html">PostGIS</a>,
+Oracle, PGRaster (Bilateral)</p>
+<p>Tests if no point in the geometry field is outside the lookup geometry.
+<a class="footnote-reference" href="#fncovers" id="id2">[3]</a></p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__coveredby</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_CoveredBy(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-odd"><td>Oracle</td>
+<td><code class="docutils literal notranslate"><span class="pre">SDO_COVEREDBY(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-covers">
+<span id="s-std:fieldlookup-covers"></span><span id="covers"></span><span id="std:fieldlookup-covers"></span><h3><code class="docutils literal notranslate"><span class="pre">covers</span></code><a class="headerlink" href="#covers" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Covers.html">PostGIS</a>,
+Oracle, PGRaster (Bilateral)</p>
+<p>Tests if no point in the lookup geometry is outside the geometry field.
+<a class="footnote-reference" href="#fncovers" id="id3">[3]</a></p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__covers</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="72%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Covers(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-odd"><td>Oracle</td>
+<td><code class="docutils literal notranslate"><span class="pre">SDO_COVERS(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-crosses">
+<span id="s-std:fieldlookup-crosses"></span><span id="crosses"></span><span id="std:fieldlookup-crosses"></span><h3><code class="docutils literal notranslate"><span class="pre">crosses</span></code><a class="headerlink" href="#crosses" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Crosses.html">PostGIS</a>,
+SpatiaLite, PGRaster (Conversion)</p>
+<p>Tests if the geometry field spatially crosses the lookup geometry.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__crosses</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="72%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Crosses(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-odd"><td>SpatiaLite</td>
+<td><code class="docutils literal notranslate"><span class="pre">Crosses(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-disjoint">
+<span id="s-std:fieldlookup-disjoint"></span><span id="disjoint"></span><span id="std:fieldlookup-disjoint"></span><h3><code class="docutils literal notranslate"><span class="pre">disjoint</span></code><a class="headerlink" href="#disjoint" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Disjoint.html">PostGIS</a>,
+Oracle, MySQL, SpatiaLite, PGRaster (Bilateral)</p>
+<p>Tests if the geometry field is spatially disjoint from the lookup geometry.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__disjoint</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Disjoint(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-odd"><td>Oracle</td>
+<td><code class="docutils literal notranslate"><span class="pre">SDO_GEOM.RELATE(poly,</span> <span class="pre">'DISJOINT',</span> <span class="pre">geom,</span> <span class="pre">0.05)</span></code></td>
+</tr>
+<tr class="row-even"><td>MySQL</td>
+<td><code class="docutils literal notranslate"><span class="pre">MBRDisjoint(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-odd"><td>SpatiaLite</td>
+<td><code class="docutils literal notranslate"><span class="pre">Disjoint(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-equals">
+<span id="s-std:fieldlookup-equals"></span><span id="equals"></span><span id="std:fieldlookup-equals"></span><h3><code class="docutils literal notranslate"><span class="pre">equals</span></code><a class="headerlink" href="#equals" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Equals.html">PostGIS</a>,
+Oracle, MySQL, SpatiaLite, PGRaster (Conversion)</p>
+<span class="target" id="std:fieldlookup-exact"></span></div>
+<div class="section" id="s-exact-same-as">
+<span id="s-std:fieldlookup-same_as"></span><span id="exact-same-as"></span><span id="std:fieldlookup-same_as"></span><h3><code class="docutils literal notranslate"><span class="pre">exact</span></code>, <code class="docutils literal notranslate"><span class="pre">same_as</span></code><a class="headerlink" href="#exact-same-as" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Geometry_Same.html">PostGIS</a>,
+Oracle, MySQL, SpatiaLite, PGRaster (Bilateral)</p>
+</div>
+<div class="section" id="s-intersects">
+<span id="s-std:fieldlookup-intersects"></span><span id="intersects"></span><span id="std:fieldlookup-intersects"></span><h3><code class="docutils literal notranslate"><span class="pre">intersects</span></code><a class="headerlink" href="#intersects" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Intersects.html">PostGIS</a>,
+Oracle, MySQL, SpatiaLite, PGRaster (Bilateral)</p>
+<p>Tests if the geometry field spatially intersects the lookup geometry.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__intersects</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Intersects(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-odd"><td>Oracle</td>
+<td><code class="docutils literal notranslate"><span class="pre">SDO_OVERLAPBDYINTERSECT(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-even"><td>MySQL</td>
+<td><code class="docutils literal notranslate"><span class="pre">MBRIntersects(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-odd"><td>SpatiaLite</td>
+<td><code class="docutils literal notranslate"><span class="pre">Intersects(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-isvalid">
+<span id="s-std:fieldlookup-isvalid"></span><span id="isvalid"></span><span id="std:fieldlookup-isvalid"></span><h3><code class="docutils literal notranslate"><span class="pre">isvalid</span></code><a class="headerlink" href="#isvalid" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: MySQL (≥ 5.7.5), <a class="reference external" href="https://postgis.net/docs/ST_IsValid.html">PostGIS</a>, Oracle, SpatiaLite</p>
+<p>Tests if the geometry is valid.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__isvalid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>MySQL, PostGIS, SpatiaLite</td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_IsValid(poly)</span></code></td>
+</tr>
+<tr class="row-odd"><td>Oracle</td>
+<td><code class="docutils literal notranslate"><span class="pre">SDO_GEOM.VALIDATE_GEOMETRY_WITH_CONTEXT(poly,</span> <span class="pre">0.05)</span> <span class="pre">=</span> <span class="pre">'TRUE'</span></code></td>
+</tr>
+</tbody>
+</table>
+<div class="versionchanged">
+<span class="title">Changed in Django 1.11:</span> <p>Oracle and SpatiaLite support was added.</p>
+</div>
+<div class="versionchanged">
+<span class="title">Changed in Django 2.0:</span> <p>MySQL support was added.</p>
+</div>
+</div>
+<div class="section" id="s-overlaps">
+<span id="s-std:fieldlookup-overlaps"></span><span id="overlaps"></span><span id="std:fieldlookup-overlaps"></span><h3><code class="docutils literal notranslate"><span class="pre">overlaps</span></code><a class="headerlink" href="#overlaps" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Overlaps.html">PostGIS</a>,
+Oracle, MySQL, SpatiaLite, PGRaster (Bilateral)</p>
+</div>
+<div class="section" id="s-relate">
+<span id="s-std:fieldlookup-relate"></span><span id="relate"></span><span id="std:fieldlookup-relate"></span><h3><code class="docutils literal notranslate"><span class="pre">relate</span></code><a class="headerlink" href="#relate" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Relate.html">PostGIS</a>,
+Oracle, SpatiaLite, PGRaster (Conversion)</p>
+<p>Tests if the geometry field is spatially related to the lookup geometry by
+the values given in the given pattern.  This lookup requires a tuple parameter,
+<code class="docutils literal notranslate"><span class="pre">(geom,</span> <span class="pre">pattern)</span></code>; the form of <code class="docutils literal notranslate"><span class="pre">pattern</span></code> will depend on the spatial backend:</p>
+<div class="section" id="s-postgis-spatialite">
+<span id="postgis-spatialite"></span><h4>PostGIS &amp; SpatiaLite<a class="headerlink" href="#postgis-spatialite" title="Permalink to this headline">¶</a></h4>
+<p>On these spatial backends the intersection pattern is a string comprising
+nine characters, which  define intersections between  the interior, boundary,
+and exterior of the geometry field and the lookup geometry.
+The intersection pattern matrix may only use the following characters:
+<code class="docutils literal notranslate"><span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">2</span></code>, <code class="docutils literal notranslate"><span class="pre">T</span></code>, <code class="docutils literal notranslate"><span class="pre">F</span></code>, or <code class="docutils literal notranslate"><span class="pre">*</span></code>.  This lookup type allows users to &quot;fine tune&quot;
+a specific geometric relationship consistent with the DE-9IM model. <a class="footnote-reference" href="#fnde9im" id="id4">[1]</a></p>
+<p>Geometry example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># A tuple lookup parameter is used to specify the geometry and</span>
+<span class="c1"># the intersection pattern (the pattern here is for &#39;contains&#39;).</span>
+<span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__relate</span><span class="o">=</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="s1">&#39;T*T***FF*&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>PostGIS SQL equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="o">...</span> <span class="n">WHERE</span> <span class="n">ST_Relate</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="n">geom</span><span class="p">,</span> <span class="s1">&#39;T*T***FF*&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>SpatiaLite SQL equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="o">...</span> <span class="n">WHERE</span> <span class="n">Relate</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="n">geom</span><span class="p">,</span> <span class="s1">&#39;T*T***FF*&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Raster example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__relate</span><span class="o">=</span><span class="p">(</span><span class="n">rast</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;T*T***FF*&#39;</span><span class="p">))</span>
+<span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">rast__2__relate</span><span class="o">=</span><span class="p">(</span><span class="n">rast</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;T*T***FF*&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>PostGIS SQL equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="o">...</span> <span class="n">WHERE</span> <span class="n">ST_Relate</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="n">ST_Polygon</span><span class="p">(</span><span class="n">rast</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;T*T***FF*&#39;</span><span class="p">)</span>
+<span class="n">SELECT</span> <span class="o">...</span> <span class="n">WHERE</span> <span class="n">ST_Relate</span><span class="p">(</span><span class="n">ST_Polygon</span><span class="p">(</span><span class="n">rast</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">ST_Polygon</span><span class="p">(</span><span class="n">rast</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;T*T***FF*&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-oracle">
+<span id="oracle"></span><h4>Oracle<a class="headerlink" href="#oracle" title="Permalink to this headline">¶</a></h4>
+<p>Here the relation pattern is comprised of at least one of the nine relation
+strings: <code class="docutils literal notranslate"><span class="pre">TOUCH</span></code>, <code class="docutils literal notranslate"><span class="pre">OVERLAPBDYDISJOINT</span></code>, <code class="docutils literal notranslate"><span class="pre">OVERLAPBDYINTERSECT</span></code>,
+<code class="docutils literal notranslate"><span class="pre">EQUAL</span></code>, <code class="docutils literal notranslate"><span class="pre">INSIDE</span></code>, <code class="docutils literal notranslate"><span class="pre">COVEREDBY</span></code>, <code class="docutils literal notranslate"><span class="pre">CONTAINS</span></code>, <code class="docutils literal notranslate"><span class="pre">COVERS</span></code>, <code class="docutils literal notranslate"><span class="pre">ON</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">ANYINTERACT</span></code>.   Multiple strings may be combined with the logical Boolean
+operator OR, for example, <code class="docutils literal notranslate"><span class="pre">'inside+touch'</span></code>. <a class="footnote-reference" href="#fnsdorelate" id="id5">[2]</a>  The relation
+strings are case-insensitive.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__relate</span><span class="o">=</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="s1">&#39;anyinteract&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Oracle SQL equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="o">...</span> <span class="n">WHERE</span> <span class="n">SDO_RELATE</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="n">geom</span><span class="p">,</span> <span class="s1">&#39;anyinteract&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="s-touches">
+<span id="s-std:fieldlookup-touches"></span><span id="touches"></span><span id="std:fieldlookup-touches"></span><h3><code class="docutils literal notranslate"><span class="pre">touches</span></code><a class="headerlink" href="#touches" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Touches.html">PostGIS</a>,
+Oracle, MySQL, SpatiaLite</p>
+<p>Tests if the geometry field spatially touches the lookup geometry.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__touches</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="72%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Touches(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-odd"><td>MySQL</td>
+<td><code class="docutils literal notranslate"><span class="pre">MBRTouches(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-even"><td>Oracle</td>
+<td><code class="docutils literal notranslate"><span class="pre">SDO_TOUCH(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-odd"><td>SpatiaLite</td>
+<td><code class="docutils literal notranslate"><span class="pre">Touches(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-within">
+<span id="s-std:fieldlookup-within"></span><span id="within"></span><span id="std:fieldlookup-within"></span><h3><code class="docutils literal notranslate"><span class="pre">within</span></code><a class="headerlink" href="#within" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Within.html">PostGIS</a>,
+Oracle, MySQL, SpatiaLite, PGRaster (Bilateral)</p>
+<p>Tests if the geometry field is spatially within the lookup geometry.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__within</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="72%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Within(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-odd"><td>MySQL</td>
+<td><code class="docutils literal notranslate"><span class="pre">MBRWithin(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-even"><td>Oracle</td>
+<td><code class="docutils literal notranslate"><span class="pre">SDO_INSIDE(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+<tr class="row-odd"><td>SpatiaLite</td>
+<td><code class="docutils literal notranslate"><span class="pre">Within(poly,</span> <span class="pre">geom)</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-left">
+<span id="s-std:fieldlookup-left"></span><span id="left"></span><span id="std:fieldlookup-left"></span><h3><code class="docutils literal notranslate"><span class="pre">left</span></code><a class="headerlink" href="#left" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Geometry_Left.html">PostGIS</a>,
+PGRaster (Conversion)</p>
+<p>Tests if the geometry field's bounding box is strictly to the left of the
+lookup geometry's bounding box.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__left</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>PostGIS equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="o">...</span> <span class="n">WHERE</span> <span class="n">poly</span> <span class="o">&lt;&lt;</span> <span class="n">geom</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-right">
+<span id="s-std:fieldlookup-right"></span><span id="right"></span><span id="std:fieldlookup-right"></span><h3><code class="docutils literal notranslate"><span class="pre">right</span></code><a class="headerlink" href="#right" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Geometry_Right.html">PostGIS</a>,
+PGRaster (Conversion)</p>
+<p>Tests if the geometry field's bounding box is strictly to the right of the
+lookup geometry's bounding box.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__right</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>PostGIS equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="o">...</span> <span class="n">WHERE</span> <span class="n">poly</span> <span class="o">&gt;&gt;</span> <span class="n">geom</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-overlaps-left">
+<span id="s-std:fieldlookup-overlaps_left"></span><span id="overlaps-left"></span><span id="std:fieldlookup-overlaps_left"></span><h3><code class="docutils literal notranslate"><span class="pre">overlaps_left</span></code><a class="headerlink" href="#overlaps-left" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Geometry_Overleft.html">PostGIS</a>,
+PGRaster (Bilateral)</p>
+<p>Tests if the geometry field's bounding box overlaps or is to the left of the lookup
+geometry's bounding box.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__overlaps_left</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>PostGIS equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="o">...</span> <span class="n">WHERE</span> <span class="n">poly</span> <span class="o">&amp;&lt;</span> <span class="n">geom</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-overlaps-right">
+<span id="s-std:fieldlookup-overlaps_right"></span><span id="overlaps-right"></span><span id="std:fieldlookup-overlaps_right"></span><h3><code class="docutils literal notranslate"><span class="pre">overlaps_right</span></code><a class="headerlink" href="#overlaps-right" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Geometry_Overright.html">PostGIS</a>,
+PGRaster (Bilateral)</p>
+<p>Tests if the geometry field's bounding box overlaps or is to the right of the lookup
+geometry's bounding box.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__overlaps_right</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>PostGIS equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="o">...</span> <span class="n">WHERE</span> <span class="n">poly</span> <span class="o">&amp;&gt;</span> <span class="n">geom</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-overlaps-above">
+<span id="s-std:fieldlookup-overlaps_above"></span><span id="overlaps-above"></span><span id="std:fieldlookup-overlaps_above"></span><h3><code class="docutils literal notranslate"><span class="pre">overlaps_above</span></code><a class="headerlink" href="#overlaps-above" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Geometry_Overabove.html">PostGIS</a>,
+PGRaster (Conversion)</p>
+<p>Tests if the geometry field's bounding box overlaps or is above the lookup
+geometry's bounding box.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__overlaps_above</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>PostGIS equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="o">...</span> <span class="n">WHERE</span> <span class="n">poly</span> <span class="o">|&amp;&gt;</span> <span class="n">geom</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-overlaps-below">
+<span id="s-std:fieldlookup-overlaps_below"></span><span id="overlaps-below"></span><span id="std:fieldlookup-overlaps_below"></span><h3><code class="docutils literal notranslate"><span class="pre">overlaps_below</span></code><a class="headerlink" href="#overlaps-below" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Geometry_Overbelow.html">PostGIS</a>,
+PGRaster (Conversion)</p>
+<p>Tests if the geometry field's bounding box overlaps or is below the lookup
+geometry's bounding box.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__overlaps_below</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>PostGIS equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="o">...</span> <span class="n">WHERE</span> <span class="n">poly</span> <span class="o">&amp;&lt;|</span> <span class="n">geom</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-strictly-above">
+<span id="s-std:fieldlookup-strictly_above"></span><span id="strictly-above"></span><span id="std:fieldlookup-strictly_above"></span><h3><code class="docutils literal notranslate"><span class="pre">strictly_above</span></code><a class="headerlink" href="#strictly-above" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Geometry_Above.html">PostGIS</a>,
+PGRaster (Conversion)</p>
+<p>Tests if the geometry field's bounding box is strictly above the lookup
+geometry's bounding box.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__strictly_above</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>PostGIS equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="o">...</span> <span class="n">WHERE</span> <span class="n">poly</span> <span class="o">|&gt;&gt;</span> <span class="n">geom</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-strictly-below">
+<span id="s-std:fieldlookup-strictly_below"></span><span id="strictly-below"></span><span id="std:fieldlookup-strictly_below"></span><h3><code class="docutils literal notranslate"><span class="pre">strictly_below</span></code><a class="headerlink" href="#strictly-below" title="Permalink to this headline">¶</a></h3>
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Geometry_Below.html">PostGIS</a>,
+PGRaster (Conversion)</p>
+<p>Tests if the geometry field's bounding box is strictly below the lookup
+geometry's bounding box.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__strictly_below</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>PostGIS equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="o">...</span> <span class="n">WHERE</span> <span class="n">poly</span> <span class="o">&lt;&lt;|</span> <span class="n">geom</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="s-distance-lookups">
+<span id="s-id6"></span><span id="distance-lookups"></span><span id="id6"></span><h2>Distance Lookups<a class="headerlink" href="#distance-lookups" title="Permalink to this headline">¶</a></h2>
+<p><em>Availability</em>: PostGIS, Oracle, MySQL, SpatiaLite, PGRaster (Native)</p>
+<p>For an overview on performing distance queries, please refer to
+the <a class="reference internal" href="db-api.html#distance-queries"><span class="std std-ref">distance queries introduction</span></a>.</p>
+<p>Distance lookups take the following form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">field</span><span class="o">&gt;</span><span class="n">__</span><span class="o">&lt;</span><span class="n">distance</span> <span class="n">lookup</span><span class="o">&gt;=</span><span class="p">(</span><span class="o">&lt;</span><span class="n">geometry</span><span class="o">/</span><span class="n">raster</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">distance</span> <span class="n">value</span><span class="o">&gt;</span><span class="p">[,</span> <span class="s1">&#39;spheroid&#39;</span><span class="p">])</span>
+<span class="o">&lt;</span><span class="n">field</span><span class="o">&gt;</span><span class="n">__</span><span class="o">&lt;</span><span class="n">distance</span> <span class="n">lookup</span><span class="o">&gt;=</span><span class="p">(</span><span class="o">&lt;</span><span class="n">raster</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">band_index</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">distance</span> <span class="n">value</span><span class="o">&gt;</span><span class="p">[,</span> <span class="s1">&#39;spheroid&#39;</span><span class="p">])</span>
+<span class="o">&lt;</span><span class="n">field</span><span class="o">&gt;</span><span class="n">__</span><span class="o">&lt;</span><span class="n">band_index</span><span class="o">&gt;</span><span class="n">__</span><span class="o">&lt;</span><span class="n">distance</span> <span class="n">lookup</span><span class="o">&gt;=</span><span class="p">(</span><span class="o">&lt;</span><span class="n">raster</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">band_index</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">distance</span> <span class="n">value</span><span class="o">&gt;</span><span class="p">[,</span> <span class="s1">&#39;spheroid&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The value passed into a distance lookup is a tuple; the first two
+values are mandatory, and are the geometry to calculate distances to,
+and a distance value (either a number in units of the field, a
+<a class="reference internal" href="measure.html#django.contrib.gis.measure.Distance" title="django.contrib.gis.measure.Distance"><code class="xref py py-class docutils literal notranslate"><span class="pre">Distance</span></code></a> object, or a <cite>query expression
+&lt;ref/models/expressions&gt;</cite>). To pass a band index to the lookup, use a 3-tuple
+where the second entry is the band index.</p>
+<p>On every distance lookup except <a class="reference internal" href="#std:fieldlookup-dwithin"><code class="xref std std-lookup docutils literal notranslate"><span class="pre">dwithin</span></code></a>, an optional element,
+<code class="docutils literal notranslate"><span class="pre">'spheroid'</span></code>, may be included to use the more accurate spheroid distance
+calculation functions on fields with a geodetic coordinate system.</p>
+<p>On PostgreSQL, the <code class="docutils literal notranslate"><span class="pre">'spheroid'</span></code> option uses <a class="reference external" href="https://postgis.net/docs/ST_Distance_Spheroid.html">ST_DistanceSpheroid</a> instead of
+<a class="reference external" href="https://postgis.net/docs/ST_DistanceSphere.html">ST_DistanceSphere</a>. The
+simpler <a class="reference external" href="https://postgis.net/docs/ST_Distance.html">ST_Distance</a> function is
+used with projected coordinate systems. Rasters are converted to geometries for
+spheroid based lookups.</p>
+<div class="versionadded">
+<span class="title">New in Django 1.11:</span> <p>Support for the <code class="docutils literal notranslate"><span class="pre">'spheroid'</span></code> option on SQLite was added.</p>
+</div>
+<div class="versionadded">
+<span class="title">New in Django 2.0:</span> <p>MySQL support was added.</p>
+</div>
+<div class="section" id="s-distance-gt">
+<span id="s-std:fieldlookup-distance_gt"></span><span id="distance-gt"></span><span id="std:fieldlookup-distance_gt"></span><h3><code class="docutils literal notranslate"><span class="pre">distance_gt</span></code><a class="headerlink" href="#distance-gt" title="Permalink to this headline">¶</a></h3>
+<p>Returns models where the distance to the geometry field from the lookup
+geometry is greater than the given distance value.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__distance_gt</span><span class="o">=</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">D</span><span class="p">(</span><span class="n">m</span><span class="o">=</span><span class="mi">5</span><span class="p">)))</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Distance/ST_Distance_Sphere(poly,</span> <span class="pre">geom)</span> <span class="pre">&gt;</span> <span class="pre">5</span></code></td>
+</tr>
+<tr class="row-odd"><td>Oracle</td>
+<td><code class="docutils literal notranslate"><span class="pre">SDO_GEOM.SDO_DISTANCE(poly,</span> <span class="pre">geom,</span> <span class="pre">0.05)</span> <span class="pre">&gt;</span> <span class="pre">5</span></code></td>
+</tr>
+<tr class="row-even"><td>SpatiaLite</td>
+<td><code class="docutils literal notranslate"><span class="pre">Distance(poly,</span> <span class="pre">geom)</span> <span class="pre">&gt;</span> <span class="pre">5</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-distance-gte">
+<span id="s-std:fieldlookup-distance_gte"></span><span id="distance-gte"></span><span id="std:fieldlookup-distance_gte"></span><h3><code class="docutils literal notranslate"><span class="pre">distance_gte</span></code><a class="headerlink" href="#distance-gte" title="Permalink to this headline">¶</a></h3>
+<p>Returns models where the distance to the geometry field from the lookup
+geometry is greater than or equal to the given distance value.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__distance_gte</span><span class="o">=</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">D</span><span class="p">(</span><span class="n">m</span><span class="o">=</span><span class="mi">5</span><span class="p">)))</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Distance/ST_Distance_Sphere(poly,</span> <span class="pre">geom)</span> <span class="pre">&gt;=</span> <span class="pre">5</span></code></td>
+</tr>
+<tr class="row-odd"><td>Oracle</td>
+<td><code class="docutils literal notranslate"><span class="pre">SDO_GEOM.SDO_DISTANCE(poly,</span> <span class="pre">geom,</span> <span class="pre">0.05)</span> <span class="pre">&gt;=</span> <span class="pre">5</span></code></td>
+</tr>
+<tr class="row-even"><td>SpatiaLite</td>
+<td><code class="docutils literal notranslate"><span class="pre">Distance(poly,</span> <span class="pre">geom)</span> <span class="pre">&gt;=</span> <span class="pre">5</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-distance-lt">
+<span id="s-std:fieldlookup-distance_lt"></span><span id="distance-lt"></span><span id="std:fieldlookup-distance_lt"></span><h3><code class="docutils literal notranslate"><span class="pre">distance_lt</span></code><a class="headerlink" href="#distance-lt" title="Permalink to this headline">¶</a></h3>
+<p>Returns models where the distance to the geometry field from the lookup
+geometry is less than the given distance value.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__distance_lt</span><span class="o">=</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">D</span><span class="p">(</span><span class="n">m</span><span class="o">=</span><span class="mi">5</span><span class="p">)))</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Distance/ST_Distance_Sphere(poly,</span> <span class="pre">geom)</span> <span class="pre">&lt;</span> <span class="pre">5</span></code></td>
+</tr>
+<tr class="row-odd"><td>Oracle</td>
+<td><code class="docutils literal notranslate"><span class="pre">SDO_GEOM.SDO_DISTANCE(poly,</span> <span class="pre">geom,</span> <span class="pre">0.05)</span> <span class="pre">&lt;</span> <span class="pre">5</span></code></td>
+</tr>
+<tr class="row-even"><td>SpatiaLite</td>
+<td><code class="docutils literal notranslate"><span class="pre">Distance(poly,</span> <span class="pre">geom)</span> <span class="pre">&lt;</span> <span class="pre">5</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-distance-lte">
+<span id="s-std:fieldlookup-distance_lte"></span><span id="distance-lte"></span><span id="std:fieldlookup-distance_lte"></span><h3><code class="docutils literal notranslate"><span class="pre">distance_lte</span></code><a class="headerlink" href="#distance-lte" title="Permalink to this headline">¶</a></h3>
+<p>Returns models where the distance to the geometry field from the lookup
+geometry is less than or equal to the given distance value.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__distance_lte</span><span class="o">=</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">D</span><span class="p">(</span><span class="n">m</span><span class="o">=</span><span class="mi">5</span><span class="p">)))</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_Distance/ST_Distance_Sphere(poly,</span> <span class="pre">geom)</span> <span class="pre">&lt;=</span> <span class="pre">5</span></code></td>
+</tr>
+<tr class="row-odd"><td>Oracle</td>
+<td><code class="docutils literal notranslate"><span class="pre">SDO_GEOM.SDO_DISTANCE(poly,</span> <span class="pre">geom,</span> <span class="pre">0.05)</span> <span class="pre">&lt;=</span> <span class="pre">5</span></code></td>
+</tr>
+<tr class="row-even"><td>SpatiaLite</td>
+<td><code class="docutils literal notranslate"><span class="pre">Distance(poly,</span> <span class="pre">geom)</span> <span class="pre">&lt;=</span> <span class="pre">5</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-dwithin">
+<span id="s-std:fieldlookup-dwithin"></span><span id="dwithin"></span><span id="std:fieldlookup-dwithin"></span><h3><code class="docutils literal notranslate"><span class="pre">dwithin</span></code><a class="headerlink" href="#dwithin" title="Permalink to this headline">¶</a></h3>
+<p>Returns models where the distance to the geometry field from the lookup
+geometry are within the given distance from one another. Note that you can only
+provide <a class="reference internal" href="measure.html#django.contrib.gis.measure.Distance" title="django.contrib.gis.measure.Distance"><code class="xref py py-class docutils literal notranslate"><span class="pre">Distance</span></code></a> objects if the targeted
+geometries are in a projected system. For geographic geometries, you should use
+units of the geometry field (e.g. degrees for <code class="docutils literal notranslate"><span class="pre">WGS84</span></code>) .</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__dwithin</span><span class="o">=</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">D</span><span class="p">(</span><span class="n">m</span><span class="o">=</span><span class="mi">5</span><span class="p">)))</span>
+</pre></div>
+</div>
+<table class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="79%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Backend</th>
+<th class="head">SQL Equivalent</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostGIS</td>
+<td><code class="docutils literal notranslate"><span class="pre">ST_DWithin(poly,</span> <span class="pre">geom,</span> <span class="pre">5)</span></code></td>
+</tr>
+<tr class="row-odd"><td>Oracle</td>
+<td><code class="docutils literal notranslate"><span class="pre">SDO_WITHIN_DISTANCE(poly,</span> <span class="pre">geom,</span> <span class="pre">5)</span></code></td>
+</tr>
+<tr class="row-even"><td>SpatiaLite</td>
+<td><code class="docutils literal notranslate"><span class="pre">PtDistWithin(poly,</span> <span class="pre">geom,</span> <span class="pre">5)</span></code></td>
+</tr>
+</tbody>
+</table>
+<div class="versionchanged">
+<span class="title">Changed in Django 1.11:</span> <p>SpatiaLite support was added.</p>
+</div>
+</div>
+<div class="section" id="s-aggregate-functions">
+<span id="aggregate-functions"></span><h3>Aggregate Functions<a class="headerlink" href="#aggregate-functions" title="Permalink to this headline">¶</a></h3>
+<p>Django provides some GIS-specific aggregate functions. For details on how to
+use these aggregate functions, see <a class="reference internal" href="../../../topics/db/aggregation.html"><span class="doc">the topic guide on aggregation</span></a>.</p>
+<table class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="72%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Keyword Argument</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">tolerance</span></code></td>
+<td>This keyword is for Oracle only.  It is for the
+tolerance value used by the <code class="docutils literal notranslate"><span class="pre">SDOAGGRTYPE</span></code>
+procedure; the  <a class="reference external" href="https://docs.oracle.com/database/121/SPATL/GUID-3BD00273-E74F-4830-9444-A3BB15AA0AC4.htm#SPATL466">Oracle documentation</a> has more
+details.</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.contrib.gis.db.models</span> <span class="k">import</span> <span class="n">Extent</span><span class="p">,</span> <span class="n">Union</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WorldBorder</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">Extent</span><span class="p">(</span><span class="s1">&#39;mpoly&#39;</span><span class="p">),</span> <span class="n">Union</span><span class="p">(</span><span class="s1">&#39;mpoly&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="section" id="s-collect">
+<span id="collect"></span><h4><code class="docutils literal notranslate"><span class="pre">Collect</span></code><a class="headerlink" href="#collect" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="django.contrib.gis.db.models.Collect">
+<em class="property">class </em><code class="descname">Collect</code>(<em>geo_field</em>)<a class="headerlink" href="#django.contrib.gis.db.models.Collect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Collect.html">PostGIS</a>,
+SpatiaLite</p>
+<p>Returns a <code class="docutils literal notranslate"><span class="pre">GEOMETRYCOLLECTION</span></code> or a <code class="docutils literal notranslate"><span class="pre">MULTI</span></code> geometry object from the geometry
+column. This is analogous to a simplified version of the <a class="reference internal" href="#django.contrib.gis.db.models.Union" title="django.contrib.gis.db.models.Union"><code class="xref py py-class docutils literal notranslate"><span class="pre">Union</span></code></a>
+aggregate, except it can be several orders of magnitude faster than performing
+a union because it simply rolls up geometries into a collection or multi object,
+not caring about dissolving boundaries.</p>
+</div>
+<div class="section" id="s-extent">
+<span id="extent"></span><h4><code class="docutils literal notranslate"><span class="pre">Extent</span></code><a class="headerlink" href="#extent" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="django.contrib.gis.db.models.Extent">
+<em class="property">class </em><code class="descname">Extent</code>(<em>geo_field</em>)<a class="headerlink" href="#django.contrib.gis.db.models.Extent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Extent.html">PostGIS</a>,
+Oracle, SpatiaLite</p>
+<p>Returns the extent of all <code class="docutils literal notranslate"><span class="pre">geo_field</span></code> in the <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code> as a four-tuple,
+comprising the lower left coordinate and the upper right coordinate.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">qs</span> <span class="o">=</span> <span class="n">City</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name__in</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Houston&#39;</span><span class="p">,</span> <span class="s1">&#39;Dallas&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">Extent</span><span class="p">(</span><span class="s1">&#39;poly&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">qs</span><span class="p">[</span><span class="s1">&#39;poly__extent&#39;</span><span class="p">])</span>
+<span class="go">(-96.8016128540039, 29.7633724212646, -95.3631439208984, 32.782058715820)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-extent3d">
+<span id="extent3d"></span><h4><code class="docutils literal notranslate"><span class="pre">Extent3D</span></code><a class="headerlink" href="#extent3d" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="django.contrib.gis.db.models.Extent3D">
+<em class="property">class </em><code class="descname">Extent3D</code>(<em>geo_field</em>)<a class="headerlink" href="#django.contrib.gis.db.models.Extent3D" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_3DExtent.html">PostGIS</a></p>
+<p>Returns the 3D extent of all <code class="docutils literal notranslate"><span class="pre">geo_field</span></code> in the <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code> as a six-tuple,
+comprising the lower left coordinate and upper right coordinate (each with x, y,
+and z coordinates).</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">qs</span> <span class="o">=</span> <span class="n">City</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name__in</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Houston&#39;</span><span class="p">,</span> <span class="s1">&#39;Dallas&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">Extent3D</span><span class="p">(</span><span class="s1">&#39;poly&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">qs</span><span class="p">[</span><span class="s1">&#39;poly__extent3d&#39;</span><span class="p">])</span>
+<span class="go">(-96.8016128540039, 29.7633724212646, 0, -95.3631439208984, 32.782058715820, 0)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-makeline">
+<span id="makeline"></span><h4><code class="docutils literal notranslate"><span class="pre">MakeLine</span></code><a class="headerlink" href="#makeline" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="django.contrib.gis.db.models.MakeLine">
+<em class="property">class </em><code class="descname">MakeLine</code>(<em>geo_field</em>)<a class="headerlink" href="#django.contrib.gis.db.models.MakeLine" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_MakeLine.html">PostGIS</a>,
+SpatiaLite</p>
+<p>Returns a <code class="docutils literal notranslate"><span class="pre">LineString</span></code> constructed from the point field geometries in the
+<code class="docutils literal notranslate"><span class="pre">QuerySet</span></code>. Currently, ordering the queryset has no effect.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">qs</span> <span class="o">=</span> <span class="n">City</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name__in</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Houston&#39;</span><span class="p">,</span> <span class="s1">&#39;Dallas&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">MakeLine</span><span class="p">(</span><span class="s1">&#39;poly&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">qs</span><span class="p">[</span><span class="s1">&#39;poly__makeline&#39;</span><span class="p">])</span>
+<span class="go">LINESTRING (-95.3631510000000020 29.7633739999999989, -96.8016109999999941 32.7820570000000018)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-union">
+<span id="union"></span><h4><code class="docutils literal notranslate"><span class="pre">Union</span></code><a class="headerlink" href="#union" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="django.contrib.gis.db.models.Union">
+<em class="property">class </em><code class="descname">Union</code>(<em>geo_field</em>)<a class="headerlink" href="#django.contrib.gis.db.models.Union" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p><em>Availability</em>: <a class="reference external" href="https://postgis.net/docs/ST_Union.html">PostGIS</a>,
+Oracle, SpatiaLite</p>
+<p>This method returns a <a class="reference internal" href="geos.html#django.contrib.gis.geos.GEOSGeometry" title="django.contrib.gis.geos.GEOSGeometry"><code class="xref py py-class docutils literal notranslate"><span class="pre">GEOSGeometry</span></code></a> object
+comprising the union of every geometry in the queryset. Please note that use of
+<code class="docutils literal notranslate"><span class="pre">Union</span></code> is processor intensive and may take a significant amount of time on
+large querysets.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If the computation time for using this method is too expensive, consider
+using <a class="reference internal" href="#django.contrib.gis.db.models.Collect" title="django.contrib.gis.db.models.Collect"><code class="xref py py-class docutils literal notranslate"><span class="pre">Collect</span></code></a> instead.</p>
+</div>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">Union</span><span class="p">(</span><span class="n">poly</span><span class="p">))</span>  <span class="c1"># This may take a long time.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Zipcode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">poly__within</span><span class="o">=</span><span class="n">bbox</span><span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">Union</span><span class="p">(</span><span class="n">poly</span><span class="p">))</span>  <span class="c1"># A more sensible approach.</span>
+</pre></div>
+</div>
+<p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="fnde9im" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[1]</a></td><td><em>See</em> <a class="reference external" href="http://www.opengis.org/docs/99-049.pdf">OpenGIS Simple Feature Specification For SQL</a>, at Ch. 2.1.13.2, p. 2-13 (The Dimensionally Extended Nine-Intersection Model).</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="fnsdorelate" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[2]</a></td><td><em>See</em> <a class="reference external" href="https://docs.oracle.com/database/121/SPATL/sdo_relate.htm#SPATL1039">SDO_RELATE documentation</a>, from the Oracle Spatial and Graph Developer's Guide.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="fncovers" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[3]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id3">2</a>)</em> For an explanation of this routine, read <a class="reference external" href="https://lin-ear-th-inking.blogspot.com/2007/06/subtleties-of-ogc-covers-spatial.html">Quirks of the &quot;Contains&quot; Spatial Predicate</a> by Martin Davis (a PostGIS developer).</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">GIS QuerySet API Reference</a><ul>
+<li><a class="reference internal" href="#spatial-lookups">Spatial Lookups</a><ul>
+<li><a class="reference internal" href="#lookups-with-rasters">Lookups with rasters</a></li>
+<li><a class="reference internal" href="#bbcontains"><code class="docutils literal notranslate"><span class="pre">bbcontains</span></code></a></li>
+<li><a class="reference internal" href="#bboverlaps"><code class="docutils literal notranslate"><span class="pre">bboverlaps</span></code></a></li>
+<li><a class="reference internal" href="#contained"><code class="docutils literal notranslate"><span class="pre">contained</span></code></a></li>
+<li><a class="reference internal" href="#contains"><code class="docutils literal notranslate"><span class="pre">contains</span></code></a></li>
+<li><a class="reference internal" href="#contains-properly"><code class="docutils literal notranslate"><span class="pre">contains_properly</span></code></a></li>
+<li><a class="reference internal" href="#coveredby"><code class="docutils literal notranslate"><span class="pre">coveredby</span></code></a></li>
+<li><a class="reference internal" href="#covers"><code class="docutils literal notranslate"><span class="pre">covers</span></code></a></li>
+<li><a class="reference internal" href="#crosses"><code class="docutils literal notranslate"><span class="pre">crosses</span></code></a></li>
+<li><a class="reference internal" href="#disjoint"><code class="docutils literal notranslate"><span class="pre">disjoint</span></code></a></li>
+<li><a class="reference internal" href="#equals"><code class="docutils literal notranslate"><span class="pre">equals</span></code></a></li>
+<li><a class="reference internal" href="#exact-same-as"><code class="docutils literal notranslate"><span class="pre">exact</span></code>, <code class="docutils literal notranslate"><span class="pre">same_as</span></code></a></li>
+<li><a class="reference internal" href="#intersects"><code class="docutils literal notranslate"><span class="pre">intersects</span></code></a></li>
+<li><a class="reference internal" href="#isvalid"><code class="docutils literal notranslate"><span class="pre">isvalid</span></code></a></li>
+<li><a class="reference internal" href="#overlaps"><code class="docutils literal notranslate"><span class="pre">overlaps</span></code></a></li>
+<li><a class="reference internal" href="#relate"><code class="docutils literal notranslate"><span class="pre">relate</span></code></a><ul>
+<li><a class="reference internal" href="#postgis-spatialite">PostGIS &amp; SpatiaLite</a></li>
+<li><a class="reference internal" href="#oracle">Oracle</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#touches"><code class="docutils literal notranslate"><span class="pre">touches</span></code></a></li>
+<li><a class="reference internal" href="#within"><code class="docutils literal notranslate"><span class="pre">within</span></code></a></li>
+<li><a class="reference internal" href="#left"><code class="docutils literal notranslate"><span class="pre">left</span></code></a></li>
+<li><a class="reference internal" href="#right"><code class="docutils literal notranslate"><span class="pre">right</span></code></a></li>
+<li><a class="reference internal" href="#overlaps-left"><code class="docutils literal notranslate"><span class="pre">overlaps_left</span></code></a></li>
+<li><a class="reference internal" href="#overlaps-right"><code class="docutils literal notranslate"><span class="pre">overlaps_right</span></code></a></li>
+<li><a class="reference internal" href="#overlaps-above"><code class="docutils literal notranslate"><span class="pre">overlaps_above</span></code></a></li>
+<li><a class="reference internal" href="#overlaps-below"><code class="docutils literal notranslate"><span class="pre">overlaps_below</span></code></a></li>
+<li><a class="reference internal" href="#strictly-above"><code class="docutils literal notranslate"><span class="pre">strictly_above</span></code></a></li>
+<li><a class="reference internal" href="#strictly-below"><code class="docutils literal notranslate"><span class="pre">strictly_below</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#distance-lookups">Distance Lookups</a><ul>
+<li><a class="reference internal" href="#distance-gt"><code class="docutils literal notranslate"><span class="pre">distance_gt</span></code></a></li>
+<li><a class="reference internal" href="#distance-gte"><code class="docutils literal notranslate"><span class="pre">distance_gte</span></code></a></li>
+<li><a class="reference internal" href="#distance-lt"><code class="docutils literal notranslate"><span class="pre">distance_lt</span></code></a></li>
+<li><a class="reference internal" href="#distance-lte"><code class="docutils literal notranslate"><span class="pre">distance_lte</span></code></a></li>
+<li><a class="reference internal" href="#dwithin"><code class="docutils literal notranslate"><span class="pre">dwithin</span></code></a></li>
+<li><a class="reference internal" href="#aggregate-functions">Aggregate Functions</a><ul>
+<li><a class="reference internal" href="#collect"><code class="docutils literal notranslate"><span class="pre">Collect</span></code></a></li>
+<li><a class="reference internal" href="#extent"><code class="docutils literal notranslate"><span class="pre">Extent</span></code></a></li>
+<li><a class="reference internal" href="#extent3d"><code class="docutils literal notranslate"><span class="pre">Extent3D</span></code></a></li>
+<li><a class="reference internal" href="#makeline"><code class="docutils literal notranslate"><span class="pre">MakeLine</span></code></a></li>
+<li><a class="reference internal" href="#union"><code class="docutils literal notranslate"><span class="pre">Union</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="forms-api.html"
+                        title="previous chapter">GeoDjango Forms API</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="functions.html"
+                        title="next chapter">Geographic Database Functions</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/ref/contrib/gis/geoquerysets.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="forms-api.html" title="GeoDjango Forms API">previous</a>
+     |
+    <a href="../../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="functions.html" title="Geographic Database Functions">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

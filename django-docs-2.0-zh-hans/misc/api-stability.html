@@ -1,0 +1,195 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>API 的稳定性 &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="设计理念" href="design-philosophies.html" />
+    <link rel="prev" title="元文件和杂记" href="index.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="index.html" title="元文件和杂记">previous</a>
+     |
+    <a href="index.html" title="元文件和杂记" accesskey="U">up</a>
+   |
+    <a href="design-philosophies.html" title="设计理念">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="misc-api-stability">
+            
+  <div class="section" id="s-api-stability">
+<span id="api-stability"></span><h1>API 的稳定性<a class="headerlink" href="#api-stability" title="Permalink to this headline">¶</a></h1>
+<p>从 1.0 版本开始，Django 保证 API 的稳定性和向前兼容。简而言之，这意味着你现在写的代码在将来的版本中依旧可以使用。如果你给你的项目升级了 Django 版本，你可能需要更改项目中的小细节，这些可以在每个版本或者你所升级的版本发行说明中的 “向后不兼容改动” 小节进行查看&lt;/releases/index&gt;。</p>
+<div class="section" id="s-what-stable-means">
+<span id="what-stable-means"></span><h2>什么是“稳定性”？<a class="headerlink" href="#what-stable-means" title="Permalink to this headline">¶</a></h2>
+<p>在此处，稳定意味着：</p>
+<ul>
+<li><p class="first">所有发布的API (在文档中的一切API) 在不提供向后兼容的别名的情况下，都不会被移除或者重命名。</p>
+</li>
+<li><p class="first">如果文档中的 API 添加了新特性（这是极有可能的），新特性不会导致现有方法罢工或者修改方法的含义。也就是说，“稳定性”并不意味着“不变性”。</p>
+</li>
+<li><p class="first">假如因为某些原因，一个“稳定的” API 必须被移除或者被代替，它将会被弃用但仍然会被保留直到至少有两个新特性发布。当调用即将被弃用的方法时，会产生警告。</p>
+<p>有关 Django 是如何编写版本号以及一些功能是如何被弃用的详细信息，请看： ref:<cite>official-releases</cite></p>
+</li>
+<li><p class="first">我们只有在某些 API 中的一个 bug 或者 安全问题导致问题完全不能避免的时候，我们才会移除对这些 API 的向后兼容。</p>
+</li>
+</ul>
+</div>
+<div class="section" id="s-stable-apis">
+<span id="stable-apis"></span><h2>稳定的API<a class="headerlink" href="#stable-apis" title="Permalink to this headline">¶</a></h2>
+<p>一般来说，文档中的一切都确定是稳定的，除开 <cite>internals area &lt;/internals/index&gt;</cite>&nbsp;。</p>
+</div>
+<div class="section" id="s-exceptions">
+<span id="exceptions"></span><h2>例外<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<p>这种稳定性和向后兼容性承诺有一些例外。</p>
+<div class="section" id="s-security-fixes">
+<span id="security-fixes"></span><h3>安全修复<a class="headerlink" href="#security-fixes" title="Permalink to this headline">¶</a></h3>
+<p>如果我们发现了安全问题 --希望报告者遵照我们的：ref：<cite>安全报告政策&lt;reporting-security-issues&gt;</cite>--我们会尽一切努力解决它。 这可能意味着打破向后兼容性; 安全性优先于兼容性保证。</p>
+</div>
+<div class="section" id="s-apis-marked-as-internal">
+<span id="apis-marked-as-internal"></span><h3>API标记为内部<a class="headerlink" href="#apis-marked-as-internal" title="Permalink to this headline">¶</a></h3>
+<p>某些API在几种方式中被明确标记为 &quot;内部&quot; :</p>
+<ul class="simple">
+<li>一些文档提及了这些API并标为“内部”，如果确实如此，我们保留权利修改它。</li>
+<li>一些函数，方法以及其他对象以下划线“_”开头，这是Python声明其为“私有”的标准方式，如果一个方法以单下划线“_”开头，那么这意味着它是Django内部的一个API</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API 的稳定性</a><ul>
+<li><a class="reference internal" href="#what-stable-means">什么是“稳定性”？</a></li>
+<li><a class="reference internal" href="#stable-apis">稳定的API</a></li>
+<li><a class="reference internal" href="#exceptions">例外</a><ul>
+<li><a class="reference internal" href="#security-fixes">安全修复</a></li>
+<li><a class="reference internal" href="#apis-marked-as-internal">API标记为内部</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">元文件和杂记</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="design-philosophies.html"
+                        title="next chapter">设计理念</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/misc/api-stability.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="index.html" title="元文件和杂记">previous</a>
+     |
+    <a href="index.html" title="元文件和杂记" accesskey="U">up</a>
+   |
+    <a href="design-philosophies.html" title="设计理念">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

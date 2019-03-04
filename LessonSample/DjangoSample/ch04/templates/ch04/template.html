@@ -1,0 +1,13 @@
+{% extends "ch04/base.html" %}
+
+{% block title %}模板示例{% endblock %}
+
+{% block content %}
+<ul>
+    {% for num in nums %}
+
+    <li>{{ num }}</li>
+
+    {% endfor %}
+</ul>
+{% endblock %}

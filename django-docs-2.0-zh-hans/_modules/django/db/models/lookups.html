@@ -1,0 +1,702 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>django.db.models.lookups &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    <a href="../../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="_modules-django-db-models-lookups">
+            
+  <h1>Source code for django.db.models.lookups</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span>
+
+<span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="k">import</span> <span class="n">EmptyResultSet</span>
+<span class="kn">from</span> <span class="nn">django.db.models.expressions</span> <span class="k">import</span> <span class="n">Func</span><span class="p">,</span> <span class="n">Value</span>
+<span class="kn">from</span> <span class="nn">django.db.models.fields</span> <span class="k">import</span> <span class="n">DateTimeField</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">IntegerField</span>
+<span class="kn">from</span> <span class="nn">django.db.models.query_utils</span> <span class="k">import</span> <span class="n">RegisterLookupMixin</span>
+<span class="kn">from</span> <span class="nn">django.utils.functional</span> <span class="k">import</span> <span class="n">cached_property</span>
+
+
+<div class="viewcode-block" id="Lookup"><a class="viewcode-back" href="../../../../ref/models/lookups.html#django.db.models.Lookup">[docs]</a><span class="k">class</span> <span class="nc">Lookup</span><span class="p">:</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">prepare_rhs</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span> <span class="o">=</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_prep_lookup</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="p">,</span> <span class="s1">&#39;get_bilateral_transforms&#39;</span><span class="p">):</span>
+            <span class="n">bilateral_transforms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">get_bilateral_transforms</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bilateral_transforms</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">bilateral_transforms</span><span class="p">:</span>
+            <span class="c1"># Warn the user as soon as possible if they are trying to apply</span>
+            <span class="c1"># a bilateral transformation on a nested QuerySet: that won&#39;t work.</span>
+            <span class="kn">from</span> <span class="nn">django.db.models.sql.query</span> <span class="k">import</span> <span class="n">Query</span>  <span class="c1"># avoid circular import</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">Query</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Bilateral transformations on nested querysets are not supported.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bilateral_transforms</span> <span class="o">=</span> <span class="n">bilateral_transforms</span>
+
+    <span class="k">def</span> <span class="nf">apply_bilateral_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">transform</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bilateral_transforms</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">batch_process_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">rhs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">rhs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rhs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bilateral_transforms</span><span class="p">:</span>
+            <span class="n">sqls</span><span class="p">,</span> <span class="n">sqls_params</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">rhs</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">Value</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">output_field</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">output_field</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_bilateral_transforms</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">resolve_expression</span><span class="p">(</span><span class="n">compiler</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
+                <span class="n">sql</span><span class="p">,</span> <span class="n">sql_params</span> <span class="o">=</span> <span class="n">compiler</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">sqls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+                <span class="n">sqls_params</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">sql_params</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_db_prep_lookup</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+            <span class="n">sqls</span><span class="p">,</span> <span class="n">sqls_params</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">),</span> <span class="n">params</span>
+        <span class="k">return</span> <span class="n">sqls</span><span class="p">,</span> <span class="n">sqls_params</span>
+
+    <span class="k">def</span> <span class="nf">get_source_expressions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs_is_direct_value</span><span class="p">():</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">set_source_expressions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_exprs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_exprs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span> <span class="o">=</span> <span class="n">new_exprs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span> <span class="o">=</span> <span class="n">new_exprs</span>
+
+    <span class="k">def</span> <span class="nf">get_prep_lookup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="s1">&#39;_prepare&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="o">.</span><span class="n">_prepare</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">output_field</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_rhs</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">output_field</span><span class="p">,</span> <span class="s1">&#39;get_prep_value&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">output_field</span><span class="o">.</span><span class="n">get_prep_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span>
+
+    <span class="k">def</span> <span class="nf">get_db_prep_lookup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">value</span><span class="p">])</span>
+
+<div class="viewcode-block" id="Lookup.process_lhs"><a class="viewcode-back" href="../../../../ref/models/lookups.html#django.db.models.Lookup.process_lhs">[docs]</a>    <span class="k">def</span> <span class="nf">process_lhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">lhs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">lhs</span> <span class="o">=</span> <span class="n">lhs</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">lhs</span><span class="p">,</span> <span class="s1">&#39;resolve_expression&#39;</span><span class="p">):</span>
+            <span class="n">lhs</span> <span class="o">=</span> <span class="n">lhs</span><span class="o">.</span><span class="n">resolve_expression</span><span class="p">(</span><span class="n">compiler</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">compiler</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">lhs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Lookup.process_rhs"><a class="viewcode-back" href="../../../../ref/models/lookups.html#django.db.models.Lookup.process_rhs">[docs]</a>    <span class="k">def</span> <span class="nf">process_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bilateral_transforms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs_is_direct_value</span><span class="p">():</span>
+                <span class="c1"># Do not call get_db_prep_lookup here as the value will be</span>
+                <span class="c1"># transformed before being used for lookup</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">Value</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">output_field</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">output_field</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_bilateral_transforms</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">resolve_expression</span><span class="p">(</span><span class="n">compiler</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;as_sql&#39;</span><span class="p">):</span>
+            <span class="n">sql</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">compiler</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">sql</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="n">params</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_db_prep_lookup</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">rhs_is_direct_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="s1">&#39;as_sql&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">relabeled_clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relabels</span><span class="p">):</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">lhs</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">relabeled_clone</span><span class="p">(</span><span class="n">relabels</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">new</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="s1">&#39;relabeled_clone&#39;</span><span class="p">):</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">rhs</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">rhs</span><span class="o">.</span><span class="n">relabeled_clone</span><span class="p">(</span><span class="n">relabels</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new</span>
+
+    <span class="k">def</span> <span class="nf">get_group_by_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">get_group_by_cols</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="s1">&#39;get_group_by_cols&#39;</span><span class="p">):</span>
+            <span class="n">cols</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="o">.</span><span class="n">get_group_by_cols</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">cols</span>
+
+    <span class="k">def</span> <span class="nf">as_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">contains_aggregate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">contains_aggregate</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="s1">&#39;contains_aggregate&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">contains_over_clause</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">contains_over_clause</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="s1">&#39;contains_over_clause&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">is_summary</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="s1">&#39;is_summary&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Transform"><a class="viewcode-back" href="../../../../ref/models/lookups.html#django.db.models.Transform">[docs]</a><span class="k">class</span> <span class="nc">Transform</span><span class="p">(</span><span class="n">RegisterLookupMixin</span><span class="p">,</span> <span class="n">Func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    RegisterLookupMixin() is first so that get_lookup() and get_transform()</span>
+<span class="sd">    first examine self and then check output_field.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bilateral</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">arity</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lhs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_source_expressions</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_bilateral_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="p">,</span> <span class="s1">&#39;get_bilateral_transforms&#39;</span><span class="p">):</span>
+            <span class="n">bilateral_transforms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">get_bilateral_transforms</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bilateral_transforms</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bilateral</span><span class="p">:</span>
+            <span class="n">bilateral_transforms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bilateral_transforms</span></div>
+
+
+<span class="k">class</span> <span class="nc">BuiltinLookup</span><span class="p">(</span><span class="n">Lookup</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">process_lhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">lhs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">lhs_sql</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">process_lhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">lhs</span><span class="p">)</span>
+        <span class="n">field_internal_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">output_field</span><span class="o">.</span><span class="n">get_internal_type</span><span class="p">()</span>
+        <span class="n">db_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">output_field</span><span class="o">.</span><span class="n">db_type</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="n">connection</span><span class="p">)</span>
+        <span class="n">lhs_sql</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">field_cast_sql</span><span class="p">(</span>
+            <span class="n">db_type</span><span class="p">,</span> <span class="n">field_internal_type</span><span class="p">)</span> <span class="o">%</span> <span class="n">lhs_sql</span>
+        <span class="n">lhs_sql</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">lookup_cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lookup_name</span><span class="p">,</span> <span class="n">field_internal_type</span><span class="p">)</span> <span class="o">%</span> <span class="n">lhs_sql</span>
+        <span class="k">return</span> <span class="n">lhs_sql</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">as_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="n">lhs_sql</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_lhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="n">rhs_sql</span><span class="p">,</span> <span class="n">rhs_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_rhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">rhs_params</span><span class="p">)</span>
+        <span class="n">rhs_sql</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rhs_op</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">rhs_sql</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">lhs_sql</span><span class="p">,</span> <span class="n">rhs_sql</span><span class="p">),</span> <span class="n">params</span>
+
+    <span class="k">def</span> <span class="nf">get_rhs_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">operators</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lookup_name</span><span class="p">]</span> <span class="o">%</span> <span class="n">rhs</span>
+
+
+<span class="k">class</span> <span class="nc">FieldGetDbPrepValueMixin</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Some lookups require Field.get_db_prep_value() to be called on their</span>
+<span class="sd">    inputs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">get_db_prep_lookup_value_is_iterable</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">get_db_prep_lookup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="c1"># For relational fields, use the output_field of the &#39;field&#39; attribute.</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">output_field</span><span class="p">,</span> <span class="s1">&#39;field&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">get_db_prep_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="s1">&#39;get_db_prep_value&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">get_db_prep_value</span><span class="p">:</span>
+            <span class="n">get_db_prep_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">output_field</span><span class="o">.</span><span class="n">get_db_prep_value</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">get_db_prep_value</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">prepared</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_db_prep_lookup_value_is_iterable</span> <span class="k">else</span>
+            <span class="p">[</span><span class="n">get_db_prep_value</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">prepared</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
+        <span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">FieldGetDbPrepValueIterableMixin</span><span class="p">(</span><span class="n">FieldGetDbPrepValueMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Some lookups require Field.get_db_prep_value() to be called on each value</span>
+<span class="sd">    in an iterable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">get_db_prep_lookup_value_is_iterable</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">get_prep_lookup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">prepared_values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="s1">&#39;_prepare&#39;</span><span class="p">):</span>
+            <span class="c1"># A subquery is like an iterable but its items shouldn&#39;t be</span>
+            <span class="c1"># prepared independently.</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="o">.</span><span class="n">_prepare</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">output_field</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">rhs_value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">rhs_value</span><span class="p">,</span> <span class="s1">&#39;resolve_expression&#39;</span><span class="p">):</span>
+                <span class="c1"># An expression will be handled by the database but can coexist</span>
+                <span class="c1"># alongside real values.</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_rhs</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">output_field</span><span class="p">,</span> <span class="s1">&#39;get_prep_value&#39;</span><span class="p">):</span>
+                <span class="n">rhs_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">output_field</span><span class="o">.</span><span class="n">get_prep_value</span><span class="p">(</span><span class="n">rhs_value</span><span class="p">)</span>
+            <span class="n">prepared_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rhs_value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">prepared_values</span>
+
+    <span class="k">def</span> <span class="nf">process_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs_is_direct_value</span><span class="p">():</span>
+            <span class="c1"># rhs should be an iterable of values. Use batch_process_rhs()</span>
+            <span class="c1"># to prepare/transform those values.</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_process_rhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">process_rhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">resolve_expression_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="s1">&#39;resolve_expression&#39;</span><span class="p">):</span>
+            <span class="n">param</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">resolve_expression</span><span class="p">(</span><span class="n">compiler</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="s1">&#39;as_sql&#39;</span><span class="p">):</span>
+            <span class="n">sql</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">as_sql</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sql</span><span class="p">,</span> <span class="n">params</span>
+
+    <span class="k">def</span> <span class="nf">batch_process_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">rhs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">pre_processed</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">batch_process_rhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span>
+        <span class="c1"># The params list may contain expressions which compile to a</span>
+        <span class="c1"># sql/param pair. Zip them to get sql and param pairs that refer to the</span>
+        <span class="c1"># same argument and attempt to replace them with the result of</span>
+        <span class="c1"># compiling the param step.</span>
+        <span class="n">sql</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resolve_expression_parameter</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">sql</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">pre_processed</span><span class="p">)</span>
+        <span class="p">))</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sql</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">Exact</span><span class="p">(</span><span class="n">FieldGetDbPrepValueMixin</span><span class="p">,</span> <span class="n">BuiltinLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;exact&#39;</span>
+
+    <span class="k">def</span> <span class="nf">process_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">django.db.models.sql.query</span> <span class="k">import</span> <span class="n">Query</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="n">Query</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="o">.</span><span class="n">has_limit_one</span><span class="p">():</span>
+                <span class="c1"># The subquery must select only the pk.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="o">.</span><span class="n">clear_select_clause</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="o">.</span><span class="n">add_fields</span><span class="p">([</span><span class="s1">&#39;pk&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;The QuerySet value for an exact lookup must be limited to &#39;</span>
+                    <span class="s1">&#39;one result using slicing.&#39;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">process_rhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">IExact</span><span class="p">(</span><span class="n">BuiltinLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;iexact&#39;</span>
+    <span class="n">prepare_rhs</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">process_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qn</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="n">rhs</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">process_rhs</span><span class="p">(</span><span class="n">qn</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">prep_for_iexact_query</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">params</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">GreaterThan</span><span class="p">(</span><span class="n">FieldGetDbPrepValueMixin</span><span class="p">,</span> <span class="n">BuiltinLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;gt&#39;</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">GreaterThanOrEqual</span><span class="p">(</span><span class="n">FieldGetDbPrepValueMixin</span><span class="p">,</span> <span class="n">BuiltinLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;gte&#39;</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">LessThan</span><span class="p">(</span><span class="n">FieldGetDbPrepValueMixin</span><span class="p">,</span> <span class="n">BuiltinLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;lt&#39;</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">LessThanOrEqual</span><span class="p">(</span><span class="n">FieldGetDbPrepValueMixin</span><span class="p">,</span> <span class="n">BuiltinLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;lte&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">IntegerFieldFloatRounding</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Allow floats to work as query values for IntegerField. Without this, the</span>
+<span class="sd">    decimal portion of the float would always be discarded.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">get_prep_lookup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_prep_lookup</span><span class="p">()</span>
+
+
+<span class="nd">@IntegerField</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">IntegerGreaterThanOrEqual</span><span class="p">(</span><span class="n">IntegerFieldFloatRounding</span><span class="p">,</span> <span class="n">GreaterThanOrEqual</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="nd">@IntegerField</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">IntegerLessThan</span><span class="p">(</span><span class="n">IntegerFieldFloatRounding</span><span class="p">,</span> <span class="n">LessThan</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">In</span><span class="p">(</span><span class="n">FieldGetDbPrepValueIterableMixin</span><span class="p">,</span> <span class="n">BuiltinLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;in&#39;</span>
+
+    <span class="k">def</span> <span class="nf">process_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="n">db_rhs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="s1">&#39;_db&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">db_rhs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">db_rhs</span> <span class="o">!=</span> <span class="n">connection</span><span class="o">.</span><span class="n">alias</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Subqueries aren&#39;t allowed across different databases. Force &quot;</span>
+                <span class="s2">&quot;the inner query to be evaluated using `list(inner_query)`.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs_is_direct_value</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">rhs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>  <span class="c1"># Unhashable items in self.rhs</span>
+                <span class="n">rhs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rhs</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">EmptyResultSet</span>
+
+            <span class="c1"># rhs should be an iterable; use batch_process_rhs() to</span>
+            <span class="c1"># prepare/transform those values.</span>
+            <span class="n">sqls</span><span class="p">,</span> <span class="n">sqls_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_process_rhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span>
+            <span class="n">placeholder</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sqls</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">placeholder</span><span class="p">,</span> <span class="n">sqls_params</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="s1">&#39;has_select_fields&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="o">.</span><span class="n">clear_select_clause</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="o">.</span><span class="n">add_fields</span><span class="p">([</span><span class="s1">&#39;pk&#39;</span><span class="p">])</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">process_rhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_rhs_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;IN </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">rhs</span>
+
+    <span class="k">def</span> <span class="nf">as_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="n">max_in_list_size</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">max_in_list_size</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs_is_direct_value</span><span class="p">()</span> <span class="ow">and</span> <span class="n">max_in_list_size</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_in_list_size</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_parameter_list_as_sql</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">as_sql</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">split_parameter_list_as_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="c1"># This is a special case for databases which limit the number of</span>
+        <span class="c1"># elements which can appear in an &#39;IN&#39; clause.</span>
+        <span class="n">max_in_list_size</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">max_in_list_size</span><span class="p">()</span>
+        <span class="n">lhs</span><span class="p">,</span> <span class="n">lhs_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_lhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="n">rhs</span><span class="p">,</span> <span class="n">rhs_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_process_rhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="n">in_clause_elements</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;(&#39;</span><span class="p">]</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">offset</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rhs_params</span><span class="p">),</span> <span class="n">max_in_list_size</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">offset</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">in_clause_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; OR &#39;</span><span class="p">)</span>
+            <span class="n">in_clause_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> IN (&#39;</span> <span class="o">%</span> <span class="n">lhs</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lhs_params</span><span class="p">)</span>
+            <span class="n">sqls</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">[</span><span class="n">offset</span><span class="p">:</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">max_in_list_size</span><span class="p">]</span>
+            <span class="n">sqls_params</span> <span class="o">=</span> <span class="n">rhs_params</span><span class="p">[</span><span class="n">offset</span><span class="p">:</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">max_in_list_size</span><span class="p">]</span>
+            <span class="n">param_group</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sqls</span><span class="p">)</span>
+            <span class="n">in_clause_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param_group</span><span class="p">)</span>
+            <span class="n">in_clause_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">sqls_params</span><span class="p">)</span>
+        <span class="n">in_clause_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">in_clause_elements</span><span class="p">),</span> <span class="n">params</span>
+
+
+<span class="k">class</span> <span class="nc">PatternLookup</span><span class="p">(</span><span class="n">BuiltinLookup</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_rhs_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="c1"># Assume we are in startswith. We need to produce SQL like:</span>
+        <span class="c1">#     col LIKE %s, [&#39;thevalue%&#39;]</span>
+        <span class="c1"># For python values we can (and should) do that directly in Python,</span>
+        <span class="c1"># but if the value is for example reference to other column, then</span>
+        <span class="c1"># we need to add the % pattern match to the lookup by something like</span>
+        <span class="c1">#     col LIKE othercol || &#39;%%&#39;</span>
+        <span class="c1"># So, for Python values we don&#39;t need any special pattern, but for</span>
+        <span class="c1"># SQL reference values or SQL transformations we need the correct</span>
+        <span class="c1"># pattern added.</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="s1">&#39;as_sql&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">bilateral_transforms</span><span class="p">:</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">pattern_ops</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lookup_name</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">connection</span><span class="o">.</span><span class="n">pattern_esc</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_rhs_op</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">Contains</span><span class="p">(</span><span class="n">PatternLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;contains&#39;</span>
+    <span class="n">prepare_rhs</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">process_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qn</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="n">rhs</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">process_rhs</span><span class="p">(</span><span class="n">qn</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">params</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">bilateral_transforms</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%%%s%%</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">connection</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">prep_for_like_query</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">params</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">IContains</span><span class="p">(</span><span class="n">Contains</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;icontains&#39;</span>
+    <span class="n">prepare_rhs</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">StartsWith</span><span class="p">(</span><span class="n">PatternLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;startswith&#39;</span>
+    <span class="n">prepare_rhs</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">process_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qn</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="n">rhs</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">process_rhs</span><span class="p">(</span><span class="n">qn</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">params</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">bilateral_transforms</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s%%</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">connection</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">prep_for_like_query</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">params</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">IStartsWith</span><span class="p">(</span><span class="n">PatternLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;istartswith&#39;</span>
+    <span class="n">prepare_rhs</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">process_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qn</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="n">rhs</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">process_rhs</span><span class="p">(</span><span class="n">qn</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">params</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">bilateral_transforms</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s%%</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">connection</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">prep_for_like_query</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">params</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">EndsWith</span><span class="p">(</span><span class="n">PatternLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;endswith&#39;</span>
+    <span class="n">prepare_rhs</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">process_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qn</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="n">rhs</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">process_rhs</span><span class="p">(</span><span class="n">qn</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">params</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">bilateral_transforms</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%%%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">connection</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">prep_for_like_query</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">params</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">IEndsWith</span><span class="p">(</span><span class="n">PatternLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;iendswith&#39;</span>
+    <span class="n">prepare_rhs</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">process_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qn</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="n">rhs</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">process_rhs</span><span class="p">(</span><span class="n">qn</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">params</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">bilateral_transforms</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%%%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">connection</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">prep_for_like_query</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">params</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">Range</span><span class="p">(</span><span class="n">FieldGetDbPrepValueIterableMixin</span><span class="p">,</span> <span class="n">BuiltinLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;range&#39;</span>
+
+    <span class="k">def</span> <span class="nf">get_rhs_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;BETWEEN </span><span class="si">%s</span><span class="s2"> AND </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rhs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rhs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">IsNull</span><span class="p">(</span><span class="n">BuiltinLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;isnull&#39;</span>
+    <span class="n">prepare_rhs</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">as_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="n">sql</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">compiler</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> IS NULL&quot;</span> <span class="o">%</span> <span class="n">sql</span><span class="p">,</span> <span class="n">params</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> IS NOT NULL&quot;</span> <span class="o">%</span> <span class="n">sql</span><span class="p">,</span> <span class="n">params</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">Regex</span><span class="p">(</span><span class="n">BuiltinLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;regex&#39;</span>
+    <span class="n">prepare_rhs</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">as_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_name</span> <span class="ow">in</span> <span class="n">connection</span><span class="o">.</span><span class="n">operators</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">as_sql</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lhs</span><span class="p">,</span> <span class="n">lhs_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_lhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+            <span class="n">rhs</span><span class="p">,</span> <span class="n">rhs_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_rhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+            <span class="n">sql_template</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">regex_lookup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lookup_name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">sql_template</span> <span class="o">%</span> <span class="p">(</span><span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">),</span> <span class="n">lhs_params</span> <span class="o">+</span> <span class="n">rhs_params</span>
+
+
+<span class="nd">@Field</span><span class="o">.</span><span class="n">register_lookup</span>
+<span class="k">class</span> <span class="nc">IRegex</span><span class="p">(</span><span class="n">Regex</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;iregex&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">YearLookup</span><span class="p">(</span><span class="n">Lookup</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">year_lookup_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">year</span><span class="p">):</span>
+        <span class="n">output_field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">output_field</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_field</span><span class="p">,</span> <span class="n">DateTimeField</span><span class="p">):</span>
+            <span class="n">bounds</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">year_lookup_bounds_for_datetime_field</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bounds</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">year_lookup_bounds_for_date_field</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bounds</span>
+
+
+<span class="k">class</span> <span class="nc">YearComparisonLookup</span><span class="p">(</span><span class="n">YearLookup</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">as_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="c1"># We will need to skip the extract part and instead go</span>
+        <span class="c1"># directly with the originating field, that is self.lhs.lhs.</span>
+        <span class="n">lhs_sql</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_lhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">lhs</span><span class="p">)</span>
+        <span class="n">rhs_sql</span><span class="p">,</span> <span class="n">rhs_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_rhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="n">rhs_sql</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rhs_op</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">rhs_sql</span><span class="p">)</span>
+        <span class="n">start</span><span class="p">,</span> <span class="n">finish</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">year_lookup_bounds</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">rhs_params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_bound</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">finish</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">lhs_sql</span><span class="p">,</span> <span class="n">rhs_sql</span><span class="p">),</span> <span class="n">params</span>
+
+    <span class="k">def</span> <span class="nf">get_rhs_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">operators</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lookup_name</span><span class="p">]</span> <span class="o">%</span> <span class="n">rhs</span>
+
+    <span class="k">def</span> <span class="nf">get_bound</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">finish</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s1">&#39;subclasses of YearComparisonLookup must provide a get_bound() method&#39;</span>
+        <span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">YearExact</span><span class="p">(</span><span class="n">YearLookup</span><span class="p">,</span> <span class="n">Exact</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;exact&#39;</span>
+
+    <span class="k">def</span> <span class="nf">as_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="c1"># We will need to skip the extract part and instead go</span>
+        <span class="c1"># directly with the originating field, that is self.lhs.lhs.</span>
+        <span class="n">lhs_sql</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_lhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">lhs</span><span class="p">)</span>
+        <span class="n">rhs_sql</span><span class="p">,</span> <span class="n">rhs_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_rhs</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Check that rhs_params[0] exists (IndexError),</span>
+            <span class="c1"># it isn&#39;t None (TypeError), and is a number (ValueError)</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">rhs_params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="c1"># Can&#39;t determine the bounds before executing the query, so skip</span>
+            <span class="c1"># optimizations by falling back to a standard exact comparison.</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">as_sql</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">year_lookup_bounds</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">rhs_params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> BETWEEN </span><span class="si">%%</span><span class="s1">s AND </span><span class="si">%%</span><span class="s1">s&#39;</span> <span class="o">%</span> <span class="n">lhs_sql</span><span class="p">,</span> <span class="n">params</span>
+
+
+<span class="k">class</span> <span class="nc">YearGt</span><span class="p">(</span><span class="n">YearComparisonLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;gt&#39;</span>
+
+    <span class="k">def</span> <span class="nf">get_bound</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">finish</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">finish</span>
+
+
+<span class="k">class</span> <span class="nc">YearGte</span><span class="p">(</span><span class="n">YearComparisonLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;gte&#39;</span>
+
+    <span class="k">def</span> <span class="nf">get_bound</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">finish</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">start</span>
+
+
+<span class="k">class</span> <span class="nc">YearLt</span><span class="p">(</span><span class="n">YearComparisonLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;lt&#39;</span>
+
+    <span class="k">def</span> <span class="nf">get_bound</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">finish</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">start</span>
+
+
+<span class="k">class</span> <span class="nc">YearLte</span><span class="p">(</span><span class="n">YearComparisonLookup</span><span class="p">):</span>
+    <span class="n">lookup_name</span> <span class="o">=</span> <span class="s1">&#39;lte&#39;</span>
+
+    <span class="k">def</span> <span class="nf">get_bound</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">finish</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">finish</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    <a href="../../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,1266 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Archive of security issues &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Django internals" href="../internals/index.html" />
+    <link rel="prev" title="Django version 0.95 release notes" href="0.95.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="0.95.html" title="Django version 0.95 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="../internals/index.html" title="Django internals">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="releases-security">
+            
+  <div class="section" id="s-archive-of-security-issues">
+<span id="archive-of-security-issues"></span><h1>Archive of security issues<a class="headerlink" href="#archive-of-security-issues" title="Permalink to this headline">¶</a></h1>
+<p>Django's development team is strongly committed to responsible
+reporting and disclosure of security-related issues, as outlined in
+<a class="reference internal" href="../internals/security.html"><span class="doc">Django's security policies</span></a>.</p>
+<p>As part of that commitment, we maintain the following historical list
+of issues which have been fixed and disclosed. For each issue, the
+list below includes the date, a brief description, the <a class="reference external" href="https://en.wikipedia.org/wiki/Common_Vulnerabilities_and_Exposures">CVE identifier</a>
+if applicable, a list of affected versions, a link to the full
+disclosure and links to the appropriate patch(es).</p>
+<p>Some important caveats apply to this information:</p>
+<ul class="simple">
+<li>Lists of affected versions include only those versions of Django
+which had stable, security-supported releases at the time of
+disclosure. This means older versions (whose security support had
+expired) and versions which were in pre-release (alpha/beta/RC)
+states at the time of disclosure may have been affected, but are not
+listed.</li>
+<li>The Django project has on occasion issued security advisories,
+pointing out potential security problems which can arise from
+improper configuration or from other issues outside of Django
+itself. Some of these advisories have received CVEs; when that is
+the case, they are listed here, but as they have no accompanying
+patches or releases, only the description, disclosure and CVE will
+be listed.</li>
+</ul>
+<div class="section" id="s-issues-prior-to-django-s-security-process">
+<span id="issues-prior-to-django-s-security-process"></span><h2>Issues prior to Django's security process<a class="headerlink" href="#issues-prior-to-django-s-security-process" title="Permalink to this headline">¶</a></h2>
+<p>Some security issues were handled before Django had a formalized
+security process in use. For these, new releases may not have been
+issued at the time and CVEs may not have been assigned.</p>
+<div class="section" id="s-august-16-2006-cve-2007-0404">
+<span id="august-16-2006-cve-2007-0404"></span><h3>August 16, 2006 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2007-0404">CVE-2007-0404</a><a class="headerlink" href="#august-16-2006-cve-2007-0404" title="Permalink to this headline">¶</a></h3>
+<p>Filename validation issue in translation framework. <a class="reference external" href="https://www.djangoproject.com/weblog/2006/aug/16/compilemessages/">Full description</a></p>
+<div class="section" id="s-versions-affected">
+<span id="versions-affected"></span><h4>Versions affected<a class="headerlink" href="#versions-affected" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 0.90 <a class="reference external" href="https://github.com/django/django/commit/518d406e53">(patch)</a></li>
+<li>Django 0.91 <a class="reference external" href="https://github.com/django/django/commit/518d406e53">(patch)</a></li>
+<li>Django 0.95 <a class="reference external" href="https://github.com/django/django/commit/a132d411c6">(patch)</a> (released January 21 2007)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-january-21-2007-cve-2007-0405">
+<span id="january-21-2007-cve-2007-0405"></span><h3>January 21, 2007 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2007-0405">CVE-2007-0405</a><a class="headerlink" href="#january-21-2007-cve-2007-0405" title="Permalink to this headline">¶</a></h3>
+<p>Apparent &quot;caching&quot; of authenticated user. <a class="reference external" href="https://www.djangoproject.com/weblog/2007/jan/21/0951/">Full description</a></p>
+<div class="section" id="s-id1">
+<span id="id1"></span><h4>Versions affected<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 0.95 <a class="reference external" href="https://github.com/django/django/commit/e89f0a6558">(patch)</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="s-issues-under-django-s-security-process">
+<span id="issues-under-django-s-security-process"></span><h2>Issues under Django's security process<a class="headerlink" href="#issues-under-django-s-security-process" title="Permalink to this headline">¶</a></h2>
+<p>All other security issues have been handled under versions of Django's
+security process. These are listed below.</p>
+<div class="section" id="s-october-26-2007-cve-2007-5712">
+<span id="october-26-2007-cve-2007-5712"></span><h3>October 26, 2007 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2007-5712">CVE-2007-5712</a><a class="headerlink" href="#october-26-2007-cve-2007-5712" title="Permalink to this headline">¶</a></h3>
+<p>Denial-of-service via arbitrarily-large <code class="docutils literal notranslate"><span class="pre">Accept-Language</span></code> header. <a class="reference external" href="https://www.djangoproject.com/weblog/2007/oct/26/security-fix/">Full
+description</a></p>
+<div class="section" id="s-id2">
+<span id="id2"></span><h4>Versions affected<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 0.91 <a class="reference external" href="https://github.com/django/django/commit/8bc36e726c9e8c75c681d3ad232df8e882aaac81">(patch)</a></li>
+<li>Django 0.95 <a class="reference external" href="https://github.com/django/django/commit/412ed22502e11c50dbfee854627594f0e7e2c234">(patch)</a></li>
+<li>Django 0.96 <a class="reference external" href="https://github.com/django/django/commit/7dd2dd08a79e388732ce00e2b5514f15bd6d0f6f">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-may-14-2008-cve-2008-2302">
+<span id="may-14-2008-cve-2008-2302"></span><h3>May 14, 2008 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2008-2302">CVE-2008-2302</a><a class="headerlink" href="#may-14-2008-cve-2008-2302" title="Permalink to this headline">¶</a></h3>
+<p>XSS via admin login redirect. <a class="reference external" href="https://www.djangoproject.com/weblog/2008/may/14/security/">Full description</a></p>
+<div class="section" id="s-id3">
+<span id="id3"></span><h4>Versions affected<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 0.91 <a class="reference external" href="https://github.com/django/django/commit/50ce7fb57d">(patch)</a></li>
+<li>Django 0.95 <a class="reference external" href="https://github.com/django/django/commit/50ce7fb57d">(patch)</a></li>
+<li>Django 0.96 <a class="reference external" href="https://github.com/django/django/commit/7791e5c050">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-september-2-2008-cve-2008-3909">
+<span id="september-2-2008-cve-2008-3909"></span><h3>September 2, 2008 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2008-3909">CVE-2008-3909</a><a class="headerlink" href="#september-2-2008-cve-2008-3909" title="Permalink to this headline">¶</a></h3>
+<p>CSRF via preservation of POST data during admin login. <a class="reference external" href="https://www.djangoproject.com/weblog/2008/sep/02/security/">Full description</a></p>
+<div class="section" id="s-id4">
+<span id="id4"></span><h4>Versions affected<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 0.91 <a class="reference external" href="https://github.com/django/django/commit/44debfeaa4473bd28872c735dd3d9afde6886752">(patch)</a></li>
+<li>Django 0.95 <a class="reference external" href="https://github.com/django/django/commit/aee48854a164382c655acb9f18b3c06c3d238e81">(patch)</a></li>
+<li>Django 0.96 <a class="reference external" href="https://github.com/django/django/commit/7e0972bded362bc4b851c109df2c8a6548481a8e">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-july-28-2009-cve-2009-2659">
+<span id="july-28-2009-cve-2009-2659"></span><h3>July 28, 2009 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2009-2659">CVE-2009-2659</a><a class="headerlink" href="#july-28-2009-cve-2009-2659" title="Permalink to this headline">¶</a></h3>
+<p>Directory-traversal in development server media handler. <a class="reference external" href="https://www.djangoproject.com/weblog/2009/jul/28/security/">Full description</a></p>
+<div class="section" id="s-id5">
+<span id="id5"></span><h4>Versions affected<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 0.96 <a class="reference external" href="https://github.com/django/django/commit/da85d76fd6">(patch)</a></li>
+<li>Django 1.0 <a class="reference external" href="https://github.com/django/django/commit/df7f917b7f">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-october-9-2009-cve-2009-3965">
+<span id="october-9-2009-cve-2009-3965"></span><h3>October 9, 2009 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2009-3965">CVE-2009-3965</a><a class="headerlink" href="#october-9-2009-cve-2009-3965" title="Permalink to this headline">¶</a></h3>
+<p>Denial-of-service via pathological regular expression performance. <a class="reference external" href="https://www.djangoproject.com/weblog/2009/oct/09/security/">Full
+description</a></p>
+<div class="section" id="s-id6">
+<span id="id6"></span><h4>Versions affected<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.0 <a class="reference external" href="https://github.com/django/django/commit/594a28a904">(patch)</a></li>
+<li>Django 1.1 <a class="reference external" href="https://github.com/django/django/commit/e3e992e18b">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-september-8-2010-cve-2010-3082">
+<span id="september-8-2010-cve-2010-3082"></span><h3>September 8, 2010 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2010-3082">CVE-2010-3082</a><a class="headerlink" href="#september-8-2010-cve-2010-3082" title="Permalink to this headline">¶</a></h3>
+<p>XSS via trusting unsafe cookie value. <a class="reference external" href="https://www.djangoproject.com/weblog/2010/sep/08/security-release/">Full description</a></p>
+<div class="section" id="s-id7">
+<span id="id7"></span><h4>Versions affected<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.2 <a class="reference external" href="https://github.com/django/django/commit/7f84657b6b">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-december-22-2010-cve-2010-4534">
+<span id="december-22-2010-cve-2010-4534"></span><h3>December 22, 2010 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2010-4534">CVE-2010-4534</a><a class="headerlink" href="#december-22-2010-cve-2010-4534" title="Permalink to this headline">¶</a></h3>
+<p>Information leakage in administrative interface. <a class="reference external" href="https://www.djangoproject.com/weblog/2010/dec/22/security/">Full description</a></p>
+<div class="section" id="s-id8">
+<span id="id8"></span><h4>Versions affected<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.1 <a class="reference external" href="https://github.com/django/django/commit/17084839fd">(patch)</a></li>
+<li>Django 1.2 <a class="reference external" href="https://github.com/django/django/commit/85207a245b">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-december-22-2010-cve-2010-4535">
+<span id="december-22-2010-cve-2010-4535"></span><h3>December 22, 2010 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2010-4535">CVE-2010-4535</a><a class="headerlink" href="#december-22-2010-cve-2010-4535" title="Permalink to this headline">¶</a></h3>
+<p>Denial-of-service in password-reset mechanism. <a class="reference external" href="https://www.djangoproject.com/weblog/2010/dec/22/security/">Full description</a></p>
+<div class="section" id="s-id9">
+<span id="id9"></span><h4>Versions affected<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.1 <a class="reference external" href="https://github.com/django/django/commit/7f8dd9cbac">(patch)</a></li>
+<li>Django 1.2 <a class="reference external" href="https://github.com/django/django/commit/d5d8942a16">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-february-8-2011-cve-2011-0696">
+<span id="february-8-2011-cve-2011-0696"></span><h3>February 8, 2011 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2011-0696">CVE-2011-0696</a><a class="headerlink" href="#february-8-2011-cve-2011-0696" title="Permalink to this headline">¶</a></h3>
+<p>CSRF via forged HTTP headers. <a class="reference external" href="https://www.djangoproject.com/weblog/2011/feb/08/security/">Full description</a></p>
+<div class="section" id="s-id10">
+<span id="id10"></span><h4>Versions affected<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.1 <a class="reference external" href="https://github.com/django/django/commit/408c5c873c">(patch)</a></li>
+<li>Django 1.2 <a class="reference external" href="https://github.com/django/django/commit/818e70344e">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-february-8-2011-cve-2011-0697">
+<span id="february-8-2011-cve-2011-0697"></span><h3>February 8, 2011 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2011-0697">CVE-2011-0697</a><a class="headerlink" href="#february-8-2011-cve-2011-0697" title="Permalink to this headline">¶</a></h3>
+<p>XSS via unsanitized names of uploaded files. <a class="reference external" href="https://www.djangoproject.com/weblog/2011/feb/08/security/">Full description</a></p>
+<div class="section" id="s-id11">
+<span id="id11"></span><h4>Versions affected<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.1 <a class="reference external" href="https://github.com/django/django/commit/1966786d2d">(patch)</a></li>
+<li>Django 1.2 <a class="reference external" href="https://github.com/django/django/commit/1f814a9547">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-february-8-2011-cve-2011-0698">
+<span id="february-8-2011-cve-2011-0698"></span><h3>February 8, 2011 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2011-0698">CVE-2011-0698</a><a class="headerlink" href="#february-8-2011-cve-2011-0698" title="Permalink to this headline">¶</a></h3>
+<p>Directory-traversal on Windows via incorrect path-separator handling. <a class="reference external" href="https://www.djangoproject.com/weblog/2011/feb/08/security/">Full
+description</a></p>
+<div class="section" id="s-id12">
+<span id="id12"></span><h4>Versions affected<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.1 <a class="reference external" href="https://github.com/django/django/commit/570a32a047">(patch)</a></li>
+<li>Django 1.2 <a class="reference external" href="https://github.com/django/django/commit/194566480b">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-september-9-2011-cve-2011-4136">
+<span id="september-9-2011-cve-2011-4136"></span><h3>September 9, 2011 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2011-4136">CVE-2011-4136</a><a class="headerlink" href="#september-9-2011-cve-2011-4136" title="Permalink to this headline">¶</a></h3>
+<p>Session manipulation when using memory-cache-backed session. <a class="reference external" href="https://www.djangoproject.com/weblog/2011/sep/09/security-releases-issued/">Full description</a></p>
+<div class="section" id="s-id13">
+<span id="id13"></span><h4>Versions affected<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.2 <a class="reference external" href="https://github.com/django/django/commit/ac7c3a110f">(patch)</a></li>
+<li>Django 1.3 <a class="reference external" href="https://github.com/django/django/commit/fbe2eead2f">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-september-9-2011-cve-2011-4137">
+<span id="september-9-2011-cve-2011-4137"></span><h3>September 9, 2011 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2011-4137">CVE-2011-4137</a><a class="headerlink" href="#september-9-2011-cve-2011-4137" title="Permalink to this headline">¶</a></h3>
+<p>Denial-of-service via <code class="docutils literal notranslate"><span class="pre">URLField.verify_exists</span></code>. <a class="reference external" href="https://www.djangoproject.com/weblog/2011/sep/09/security-releases-issued/">Full description</a></p>
+<div class="section" id="s-id14">
+<span id="id14"></span><h4>Versions affected<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.2 <a class="reference external" href="https://github.com/django/django/commit/7268f8af86">(patch)</a></li>
+<li>Django 1.3 <a class="reference external" href="https://github.com/django/django/commit/1a76dbefdf">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-september-9-2011-cve-2011-4138">
+<span id="september-9-2011-cve-2011-4138"></span><h3>September 9, 2011 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2011-4138">CVE-2011-4138</a><a class="headerlink" href="#september-9-2011-cve-2011-4138" title="Permalink to this headline">¶</a></h3>
+<p>Information leakage/arbitrary request issuance via <code class="docutils literal notranslate"><span class="pre">URLField.verify_exists</span></code>.
+<a class="reference external" href="https://www.djangoproject.com/weblog/2011/sep/09/security-releases-issued/">Full description</a></p>
+<div class="section" id="s-id15">
+<span id="id15"></span><h4>Versions affected<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.2: <a class="reference external" href="https://github.com/django/django/commit/7268f8af86">(patch)</a></li>
+<li>Django 1.3: <a class="reference external" href="https://github.com/django/django/commit/1a76dbefdf">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-september-9-2011-cve-2011-4139">
+<span id="september-9-2011-cve-2011-4139"></span><h3>September 9, 2011 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2011-4139">CVE-2011-4139</a><a class="headerlink" href="#september-9-2011-cve-2011-4139" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Host</span></code> header cache poisoning. <a class="reference external" href="https://www.djangoproject.com/weblog/2011/sep/09/security-releases-issued/">Full description</a></p>
+<div class="section" id="s-id16">
+<span id="id16"></span><h4>Versions affected<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.2 <a class="reference external" href="https://github.com/django/django/commit/c613af4d64">(patch)</a></li>
+<li>Django 1.3 <a class="reference external" href="https://github.com/django/django/commit/2f7fadc38e">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-september-9-2011-cve-2011-4140">
+<span id="september-9-2011-cve-2011-4140"></span><h3>September 9, 2011 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2011-4140">CVE-2011-4140</a><a class="headerlink" href="#september-9-2011-cve-2011-4140" title="Permalink to this headline">¶</a></h3>
+<p>Potential CSRF via <code class="docutils literal notranslate"><span class="pre">Host</span></code> header. <a class="reference external" href="https://www.djangoproject.com/weblog/2011/sep/09/security-releases-issued/">Full description</a></p>
+<div class="section" id="s-id17">
+<span id="id17"></span><h4>Versions affected<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h4>
+<p>This notification was an advisory only, so no patches were issued.</p>
+<ul class="simple">
+<li>Django 1.2</li>
+<li>Django 1.3</li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-july-30-2012-cve-2012-3442">
+<span id="july-30-2012-cve-2012-3442"></span><h3>July 30, 2012 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2012-3442">CVE-2012-3442</a><a class="headerlink" href="#july-30-2012-cve-2012-3442" title="Permalink to this headline">¶</a></h3>
+<p>XSS via failure to validate redirect scheme. <a class="reference external" href="https://www.djangoproject.com/weblog/2012/jul/30/security-releases-issued/">Full description</a></p>
+<div class="section" id="s-id18">
+<span id="id18"></span><h4>Versions affected<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.3: <a class="reference external" href="https://github.com/django/django/commit/4dea4883e6c50d75f215a6b9bcbd95273f57c72d">(patch)</a></li>
+<li>Django 1.4: <a class="reference external" href="https://github.com/django/django/commit/e34685034b60be1112160e76091e5aee60149fa1">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-july-30-2012-cve-2012-3443">
+<span id="july-30-2012-cve-2012-3443"></span><h3>July 30, 2012 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2012-3443">CVE-2012-3443</a><a class="headerlink" href="#july-30-2012-cve-2012-3443" title="Permalink to this headline">¶</a></h3>
+<p>Denial-of-service via compressed image files. <a class="reference external" href="https://www.djangoproject.com/weblog/2012/jul/30/security-releases-issued/">Full description</a></p>
+<div class="section" id="s-id19">
+<span id="id19"></span><h4>Versions affected<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.3: <a class="reference external" href="https://github.com/django/django/commit/b2eb4787a0fff9c9993b78be5c698e85108f3446">(patch)</a></li>
+<li>Django 1.4: <a class="reference external" href="https://github.com/django/django/commit/c14f325c4eef628bc7bfd8873c3a72aeb0219141">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-july-30-2012-cve-2012-3444">
+<span id="july-30-2012-cve-2012-3444"></span><h3>July 30, 2012 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2012-3444">CVE-2012-3444</a><a class="headerlink" href="#july-30-2012-cve-2012-3444" title="Permalink to this headline">¶</a></h3>
+<p>Denial-of-service via large image files. <a class="reference external" href="https://www.djangoproject.com/weblog/2012/jul/30/security-releases-issued/">Full description</a></p>
+<div class="section" id="s-id20">
+<span id="id20"></span><h4>Versions affected<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.3 <a class="reference external" href="https://github.com/django/django/commit/9ca0ff6268eeff92d0d0ac2c315d4b6a8e229155">(patch)</a></li>
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/da33d67181b53fe6cc737ac1220153814a1509f6">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-october-17-2012-cve-2012-4520">
+<span id="october-17-2012-cve-2012-4520"></span><h3>October 17, 2012 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2012-4520">CVE-2012-4520</a><a class="headerlink" href="#october-17-2012-cve-2012-4520" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Host</span></code> header poisoning. <a class="reference external" href="https://www.djangoproject.com/weblog/2012/oct/17/security/">Full description</a></p>
+<div class="section" id="s-id21">
+<span id="id21"></span><h4>Versions affected<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.3 <a class="reference external" href="https://github.com/django/django/commit/b45c377f8f488955e0c7069cad3f3dd21910b071">(patch)</a></li>
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/92d3430f12171f16f566c9050c40feefb830a4a3">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-december-10-2012-no-cve-1">
+<span id="december-10-2012-no-cve-1"></span><h3>December 10, 2012 - No CVE 1<a class="headerlink" href="#december-10-2012-no-cve-1" title="Permalink to this headline">¶</a></h3>
+<p>Additional hardening of <code class="docutils literal notranslate"><span class="pre">Host</span></code> header handling. <a class="reference external" href="https://www.djangoproject.com/weblog/2012/dec/10/security/">Full description</a></p>
+<div class="section" id="s-id22">
+<span id="id22"></span><h4>Versions affected<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.3 <a class="reference external" href="https://github.com/django/django/commit/2da4ace0bc1bc1d79bf43b368cb857f6f0cd6b1b">(patch)</a></li>
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/319627c184e71ae267d6b7f000e293168c7b6e09">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-december-10-2012-no-cve-2">
+<span id="december-10-2012-no-cve-2"></span><h3>December 10, 2012 - No CVE 2<a class="headerlink" href="#december-10-2012-no-cve-2" title="Permalink to this headline">¶</a></h3>
+<p>Additional hardening of redirect validation. <a class="reference external" href="https://www.djangoproject.com/weblog/2012/dec/10/security/">Full description</a></p>
+<div class="section" id="s-id23">
+<span id="id23"></span><h4>Versions affected<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.3: <a class="reference external" href="https://github.com/django/django/commit/1515eb46daa0897ba5ad5f0a2db8969255f1b343">(patch)</a></li>
+<li>Django 1.4: <a class="reference external" href="https://github.com/django/django/commit/b2ae0a63aeec741f1e51bac9a95a27fd635f9652">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-february-19-2013-no-cve">
+<span id="february-19-2013-no-cve"></span><h3>February 19, 2013 - No CVE<a class="headerlink" href="#february-19-2013-no-cve" title="Permalink to this headline">¶</a></h3>
+<p>Additional hardening of <code class="docutils literal notranslate"><span class="pre">Host</span></code> header handling. <a class="reference external" href="https://www.djangoproject.com/weblog/2013/feb/19/security/">Full description</a></p>
+<div class="section" id="s-id24">
+<span id="id24"></span><h4>Versions affected<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.3 <a class="reference external" href="https://github.com/django/django/commit/27cd872e6e36a81d0bb6f5b8765a1705fecfc253">(patch)</a></li>
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/9936fdb11d0bbf0bd242f259bfb97bbf849d16f8">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-february-19-2013-cve-2013-1664-cve-2013-1665">
+<span id="february-19-2013-cve-2013-1664-cve-2013-1665"></span><h3>February 19, 2013 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2013-1664">CVE-2013-1664</a> / <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2013-1665">CVE-2013-1665</a><a class="headerlink" href="#february-19-2013-cve-2013-1664-cve-2013-1665" title="Permalink to this headline">¶</a></h3>
+<p>Entity-based attacks against Python XML libraries. <a class="reference external" href="https://www.djangoproject.com/weblog/2013/feb/19/security/">Full description</a></p>
+<div class="section" id="s-id25">
+<span id="id25"></span><h4>Versions affected<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.3 <a class="reference external" href="https://github.com/django/django/commit/d19a27066b2247102e65412aa66917aff0091112">(patch)</a></li>
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/1c60d07ba23e0350351c278ad28d0bd5aa410b40">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-february-19-2013-cve-2013-0305">
+<span id="february-19-2013-cve-2013-0305"></span><h3>February 19, 2013 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2013-0305">CVE-2013-0305</a><a class="headerlink" href="#february-19-2013-cve-2013-0305" title="Permalink to this headline">¶</a></h3>
+<p>Information leakage via admin history log. <a class="reference external" href="https://www.djangoproject.com/weblog/2013/feb/19/security/">Full description</a></p>
+<div class="section" id="s-id26">
+<span id="id26"></span><h4>Versions affected<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.3 <a class="reference external" href="https://github.com/django/django/commit/d3a45e10c8ac8268899999129daa27652ec0da35">(patch)</a></li>
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/0e7861aec73702f7933ce2a93056f7983939f0d6">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-february-19-2013-cve-2013-0306">
+<span id="february-19-2013-cve-2013-0306"></span><h3>February 19, 2013 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2013-0306">CVE-2013-0306</a><a class="headerlink" href="#february-19-2013-cve-2013-0306" title="Permalink to this headline">¶</a></h3>
+<p>Denial-of-service via formset <code class="docutils literal notranslate"><span class="pre">max_num</span></code> bypass. <a class="reference external" href="https://www.djangoproject.com/weblog/2013/feb/19/security/">Full description</a></p>
+<div class="section" id="s-id27">
+<span id="id27"></span><h4>Versions affected<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.3 <a class="reference external" href="https://github.com/django/django/commit/d7094bbce8cb838f3b40f504f198c098ff1cf727">(patch)</a></li>
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/0cc350a896f70ace18280410eb616a9197d862b0">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-august-13-2013-cve-2013-4249">
+<span id="august-13-2013-cve-2013-4249"></span><h3>August 13, 2013 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2013-4249">CVE-2013-4249</a><a class="headerlink" href="#august-13-2013-cve-2013-4249" title="Permalink to this headline">¶</a></h3>
+<p>XSS via admin trusting <code class="docutils literal notranslate"><span class="pre">URLField</span></code> values. <a class="reference external" href="https://www.djangoproject.com/weblog/2013/aug/13/security-releases-issued/">Full description</a></p>
+<div class="section" id="s-id28">
+<span id="id28"></span><h4>Versions affected<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.5 <a class="reference external" href="https://github.com/django/django/commit/90363e388c61874add3f3557ee654a996ec75d78">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-august-13-2013-cve-2013-6044">
+<span id="august-13-2013-cve-2013-6044"></span><h3>August 13, 2013 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2013-6044">CVE-2013-6044</a><a class="headerlink" href="#august-13-2013-cve-2013-6044" title="Permalink to this headline">¶</a></h3>
+<p>Possible XSS via unvalidated URL redirect schemes. <a class="reference external" href="https://www.djangoproject.com/weblog/2013/aug/13/security-releases-issued/">Full description</a></p>
+<div class="section" id="s-id29">
+<span id="id29"></span><h4>Versions affected<a class="headerlink" href="#id29" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/ec67af0bd609c412b76eaa4cc89968a2a8e5ad6a">(patch)</a></li>
+<li>Django 1.5 <a class="reference external" href="https://github.com/django/django/commit/1a274ccd6bc1afbdac80344c9b6e5810c1162b5f">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-september-10-2013-cve-2013-4315">
+<span id="september-10-2013-cve-2013-4315"></span><h3>September 10, 2013 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2013-4315">CVE-2013-4315</a><a class="headerlink" href="#september-10-2013-cve-2013-4315" title="Permalink to this headline">¶</a></h3>
+<p>Directory-traversal via <code class="docutils literal notranslate"><span class="pre">ssi</span></code> template tag. <a class="reference external" href="https://www.djangoproject.com/weblog/2013/sep/10/security-releases-issued/">Full description</a></p>
+<div class="section" id="s-id30">
+<span id="id30"></span><h4>Versions affected<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/87d2750b39f6f2d54b7047225521a44dcd37e896">(patch)</a></li>
+<li>Django 1.5 <a class="reference external" href="https://github.com/django/django/commit/988b61c550d798f9a66d17ee0511fb7a9a7f33ca">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-september-14-2013-cve-2013-1443">
+<span id="september-14-2013-cve-2013-1443"></span><h3>September 14, 2013 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2013-1443">CVE-2013-1443</a><a class="headerlink" href="#september-14-2013-cve-2013-1443" title="Permalink to this headline">¶</a></h3>
+<p>Denial-of-service via large passwords. <a class="reference external" href="https://www.djangoproject.com/weblog/2013/sep/15/security/">Full description</a></p>
+<div class="section" id="s-id31">
+<span id="id31"></span><h4>Versions affected<a class="headerlink" href="#id31" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/3f3d887a6844ec2db743fee64c9e53e04d39a368">(patch</a> and <a class="reference external" href="https://github.com/django/django/commit/6903d1690a92aa040adfb0c8eb37cf62e4206714">Python compatibility fix)</a></li>
+<li>Django 1.5 <a class="reference external" href="https://github.com/django/django/commit/22b74fa09d7ccbc8c52270d648a0da7f3f0fa2bc">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-april-21-2014-cve-2014-0472">
+<span id="april-21-2014-cve-2014-0472"></span><h3>April 21, 2014 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2014-0472">CVE-2014-0472</a><a class="headerlink" href="#april-21-2014-cve-2014-0472" title="Permalink to this headline">¶</a></h3>
+<p>Unexpected code execution using <code class="docutils literal notranslate"><span class="pre">reverse()</span></code>. <a class="reference external" href="https://www.djangoproject.com/weblog/2014/apr/21/security/">Full description</a></p>
+<div class="section" id="s-id32">
+<span id="id32"></span><h4>Versions affected<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/c1a8c420fe4b27fb2caf5e46d23b5712fc0ac535">(patch)</a></li>
+<li>Django 1.5 <a class="reference external" href="https://github.com/django/django/commit/2a5bcb69f42b84464b24b5c835dca6467b6aa7f1">(patch)</a></li>
+<li>Django 1.6 <a class="reference external" href="https://github.com/django/django/commit/4352a50871e239ebcdf64eee6f0b88e714015c1b">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/546740544d7f69254a67b06a3fc7fa0c43512958">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-april-21-2014-cve-2014-0473">
+<span id="april-21-2014-cve-2014-0473"></span><h3>April 21, 2014 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2014-0473">CVE-2014-0473</a><a class="headerlink" href="#april-21-2014-cve-2014-0473" title="Permalink to this headline">¶</a></h3>
+<p>Caching of anonymous pages could reveal CSRF token. <a class="reference external" href="https://www.djangoproject.com/weblog/2014/apr/21/security/">Full description</a></p>
+<div class="section" id="s-id33">
+<span id="id33"></span><h4>Versions affected<a class="headerlink" href="#id33" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/1170f285ddd6a94a65f911a27788ba49ca08c0b0">(patch)</a></li>
+<li>Django 1.5 <a class="reference external" href="https://github.com/django/django/commit/6872f42757d7ef6a97e0b6ec5db4d2615d8a2bd8">(patch)</a></li>
+<li>Django 1.6 <a class="reference external" href="https://github.com/django/django/commit/d63e20942f3024f24cb8cd85a49461ba8a9b6736">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/380545bf85cbf17fc698d136815b7691f8d023ca">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-april-21-2014-cve-2014-0474">
+<span id="april-21-2014-cve-2014-0474"></span><h3>April 21, 2014 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2014-0474">CVE-2014-0474</a><a class="headerlink" href="#april-21-2014-cve-2014-0474" title="Permalink to this headline">¶</a></h3>
+<p>MySQL typecasting causes unexpected query results. <a class="reference external" href="https://www.djangoproject.com/weblog/2014/apr/21/security/">Full description</a></p>
+<div class="section" id="s-id34">
+<span id="id34"></span><h4>Versions affected<a class="headerlink" href="#id34" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/aa80f498de6d687e613860933ac58433ab71ea4b">(patch)</a></li>
+<li>Django 1.5 <a class="reference external" href="https://github.com/django/django/commit/985434fb1d6bf2335bf96c6ebf91c3674f1f399f">(patch)</a></li>
+<li>Django 1.6 <a class="reference external" href="https://github.com/django/django/commit/5f0829a27e85d89ad8c433f5c6a7a7d17c9e9292">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/34526c2f56b863c2103655a0893ac801667e86ea">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-may-18-2014-cve-2014-1418">
+<span id="may-18-2014-cve-2014-1418"></span><h3>May 18, 2014 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2014-1418">CVE-2014-1418</a><a class="headerlink" href="#may-18-2014-cve-2014-1418" title="Permalink to this headline">¶</a></h3>
+<p>Caches may be allowed to store and serve private data. <a class="reference external" href="https://www.djangoproject.com/weblog/2014/may/14/security-releases-issued/">Full description</a></p>
+<div class="section" id="s-id35">
+<span id="id35"></span><h4>Versions affected<a class="headerlink" href="#id35" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/28e23306aa53bbbb8fb87db85f99d970b051026c">(patch)</a></li>
+<li>Django 1.5 <a class="reference external" href="https://github.com/django/django/commit/4001ec8698f577b973c5a540801d8a0bbea1205b">(patch)</a></li>
+<li>Django 1.6 <a class="reference external" href="https://github.com/django/django/commit/1abcf3a808b35abae5d425ed4d44cb6e886dc769">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/7fef18ba9e5a8b47bc24b5bb259c8bf3d3879f2a">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-may-18-2014-cve-2014-3730">
+<span id="may-18-2014-cve-2014-3730"></span><h3>May 18, 2014 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2014-3730">CVE-2014-3730</a><a class="headerlink" href="#may-18-2014-cve-2014-3730" title="Permalink to this headline">¶</a></h3>
+<p>Malformed URLs from user input incorrectly validated. <a class="reference external" href="https://www.djangoproject.com/weblog/2014/may/14/security-releases-issued/">Full description</a></p>
+<div class="section" id="s-id36">
+<span id="id36"></span><h4>Versions affected<a class="headerlink" href="#id36" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/7feb54bbae3f637ab3c4dd4831d4385964f574df">(patch)</a></li>
+<li>Django 1.5 <a class="reference external" href="https://github.com/django/django/commit/ad32c218850ad40972dcef57beb460f8c979dd6d">(patch)</a></li>
+<li>Django 1.6 <a class="reference external" href="https://github.com/django/django/commit/601107524523bca02376a0ddc1a06c6fdb8f22f3">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/e7b0cace455c2da24492660636bfd48c45a19cdf">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-august-20-2014-cve-2014-0480">
+<span id="august-20-2014-cve-2014-0480"></span><h3>August 20, 2014 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2014-0480">CVE-2014-0480</a><a class="headerlink" href="#august-20-2014-cve-2014-0480" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">reverse()</span></code> can generate URLs pointing to other hosts. <a class="reference external" href="https://www.djangoproject.com/weblog/2014/aug/20/security/">Full description</a></p>
+<div class="section" id="s-id37">
+<span id="id37"></span><h4>Versions affected<a class="headerlink" href="#id37" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/c2fe73133b62a1d9e8f7a6b43966570b14618d7e">(patch)</a></li>
+<li>Django 1.5 <a class="reference external" href="https://github.com/django/django/commit/45ac9d4fb087d21902469fc22643f5201d41a0cd">(patch)</a></li>
+<li>Django 1.6 <a class="reference external" href="https://github.com/django/django/commit/da051da8df5e69944745072611351d4cfc6435d5">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/bf650a2ee78c6d1f4544a875dcc777cf27fe93e9">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-august-20-2014-cve-2014-0481">
+<span id="august-20-2014-cve-2014-0481"></span><h3>August 20, 2014 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2014-0481">CVE-2014-0481</a><a class="headerlink" href="#august-20-2014-cve-2014-0481" title="Permalink to this headline">¶</a></h3>
+<p>File upload denial of service. <a class="reference external" href="https://www.djangoproject.com/weblog/2014/aug/20/security/">Full description</a></p>
+<div class="section" id="s-id38">
+<span id="id38"></span><h4>Versions affected<a class="headerlink" href="#id38" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/30042d475bf084c6723c6217a21598d9247a9c41">(patch)</a></li>
+<li>Django 1.5 <a class="reference external" href="https://github.com/django/django/commit/26cd48e166ac4d84317c8ee6d63ac52a87e8da99">(patch)</a></li>
+<li>Django 1.6 <a class="reference external" href="https://github.com/django/django/commit/dd0c3f4ee1a30c1a1e6055061c6ba6e58c6b54d1">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/3123f8452cf49071be9110e277eea60ba0032216">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-august-20-2014-cve-2014-0482">
+<span id="august-20-2014-cve-2014-0482"></span><h3>August 20, 2014 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2014-0482">CVE-2014-0482</a><a class="headerlink" href="#august-20-2014-cve-2014-0482" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">RemoteUserMiddleware</span></code> session hijacking. <a class="reference external" href="https://www.djangoproject.com/weblog/2014/aug/20/security/">Full description</a></p>
+<div class="section" id="s-id39">
+<span id="id39"></span><h4>Versions affected<a class="headerlink" href="#id39" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/c9e3b9949cd55f090591fbdc4a114fcb8368b6d9">(patch)</a></li>
+<li>Django 1.5 <a class="reference external" href="https://github.com/django/django/commit/dd68f319b365f6cb38c5a6c106faf4f6142d7d88">(patch)</a></li>
+<li>Django 1.6 <a class="reference external" href="https://github.com/django/django/commit/0268b855f9eab3377f2821164ef3e66037789e09">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/1a45d059c70385fcd6f4a3955f3b4e4cc96d0150">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-august-20-2014-cve-2014-0483">
+<span id="august-20-2014-cve-2014-0483"></span><h3>August 20, 2014 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2014-0483">CVE-2014-0483</a><a class="headerlink" href="#august-20-2014-cve-2014-0483" title="Permalink to this headline">¶</a></h3>
+<p>Data leakage via querystring manipulation in admin.
+<a class="reference external" href="https://www.djangoproject.com/weblog/2014/aug/20/security/">Full description</a></p>
+<div class="section" id="s-id40">
+<span id="id40"></span><h4>Versions affected<a class="headerlink" href="#id40" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/027bd348642007617518379f8b02546abacaa6e0">(patch)</a></li>
+<li>Django 1.5 <a class="reference external" href="https://github.com/django/django/commit/2a446c896e7c814661fb9c4f212b071b2a7fa446">(patch)</a></li>
+<li>Django 1.6 <a class="reference external" href="https://github.com/django/django/commit/f7c494f2506250b8cb5923714360a3642ed63e0f">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/2b31342cdf14fc20e07c43d258f1e7334ad664a6">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-january-13-2015-cve-2015-0219">
+<span id="january-13-2015-cve-2015-0219"></span><h3>January 13, 2015 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2015-0219">CVE-2015-0219</a><a class="headerlink" href="#january-13-2015-cve-2015-0219" title="Permalink to this headline">¶</a></h3>
+<p>WSGI header spoofing via underscore/dash conflation. <a class="reference external" href="https://www.djangoproject.com/weblog/2015/jan/13/security/">Full description</a></p>
+<div class="section" id="s-id41">
+<span id="id41"></span><h4>Versions affected<a class="headerlink" href="#id41" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/4f6fffc1dc429f1ad428ecf8e6620739e8837450">(patch)</a></li>
+<li>Django 1.6 <a class="reference external" href="https://github.com/django/django/commit/d7597b31d5c03106eeba4be14a33b32a5e25f4ee">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/41b4bc73ee0da7b2e09f4af47fc1fd21144c710f">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-january-13-2015-cve-2015-0220">
+<span id="january-13-2015-cve-2015-0220"></span><h3>January 13, 2015 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2015-0220">CVE-2015-0220</a><a class="headerlink" href="#january-13-2015-cve-2015-0220" title="Permalink to this headline">¶</a></h3>
+<p>Mitigated possible XSS attack via user-supplied redirect URLs. <a class="reference external" href="https://www.djangoproject.com/weblog/2015/jan/13/security/">Full
+description</a></p>
+<div class="section" id="s-id42">
+<span id="id42"></span><h4>Versions affected<a class="headerlink" href="#id42" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/4c241f1b710da6419d9dca160e80b23b82db7758">(patch)</a></li>
+<li>Django 1.6 <a class="reference external" href="https://github.com/django/django/commit/72e0b033662faa11bb7f516f18a132728aa0ae28">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/de67dedc771ad2edec15c1d00c083a1a084e1e89">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-january-13-2015-cve-2015-0221">
+<span id="january-13-2015-cve-2015-0221"></span><h3>January 13, 2015 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2015-0221">CVE-2015-0221</a><a class="headerlink" href="#january-13-2015-cve-2015-0221" title="Permalink to this headline">¶</a></h3>
+<p>Denial-of-service attack against <code class="docutils literal notranslate"><span class="pre">django.views.static.serve()</span></code>. <a class="reference external" href="https://www.djangoproject.com/weblog/2015/jan/13/security/">Full
+description</a></p>
+<div class="section" id="s-id43">
+<span id="id43"></span><h4>Versions affected<a class="headerlink" href="#id43" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/d020da6646c5142bc092247d218a3d1ce3e993f7">(patch)</a></li>
+<li>Django 1.6 <a class="reference external" href="https://github.com/django/django/commit/553779c4055e8742cc832ed525b9ee34b174934f">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/818e59a3f0fbadf6c447754d202d88df025f8f2a">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-january-13-2015-cve-2015-0222">
+<span id="january-13-2015-cve-2015-0222"></span><h3>January 13, 2015 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2015-0222">CVE-2015-0222</a><a class="headerlink" href="#january-13-2015-cve-2015-0222" title="Permalink to this headline">¶</a></h3>
+<p>Database denial-of-service with <code class="docutils literal notranslate"><span class="pre">ModelMultipleChoiceField</span></code>. <a class="reference external" href="https://www.djangoproject.com/weblog/2015/jan/13/security/">Full description</a></p>
+<div class="section" id="s-id44">
+<span id="id44"></span><h4>Versions affected<a class="headerlink" href="#id44" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.6 <a class="reference external" href="https://github.com/django/django/commit/d7a06ee7e571b6dad07c0f5b519b1db02e2a476c">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/bcfb47780ce7caecb409a9e9c1c314266e41d392">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-march-9-2015-cve-2015-2241">
+<span id="march-9-2015-cve-2015-2241"></span><h3>March 9, 2015 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2015-2241">CVE-2015-2241</a><a class="headerlink" href="#march-9-2015-cve-2015-2241" title="Permalink to this headline">¶</a></h3>
+<p>XSS attack via properties in <code class="docutils literal notranslate"><span class="pre">ModelAdmin.readonly_fields</span></code>. <a class="reference external" href="https://www.djangoproject.com/weblog/2015/mar/09/security-releases/">Full description</a></p>
+<div class="section" id="s-id45">
+<span id="id45"></span><h4>Versions affected<a class="headerlink" href="#id45" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/d16e4e1d6f95e6f46bff53cc4fd0ab398b8e5059">(patch)</a></li>
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/2654e1b93923bac55f12b4e66c5e39b16695ace5">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-march-18-2015-cve-2015-2316">
+<span id="march-18-2015-cve-2015-2316"></span><h3>March 18, 2015 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2015-2316">CVE-2015-2316</a><a class="headerlink" href="#march-18-2015-cve-2015-2316" title="Permalink to this headline">¶</a></h3>
+<p>Denial-of-service possibility with <code class="docutils literal notranslate"><span class="pre">strip_tags()</span></code>. <a class="reference external" href="https://www.djangoproject.com/weblog/2015/mar/18/security-releases/">Full description</a></p>
+<div class="section" id="s-id46">
+<span id="id46"></span><h4>Versions affected<a class="headerlink" href="#id46" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.6 <a class="reference external" href="https://github.com/django/django/commit/b6b3cb9899214a23ebb0f4ebf0e0b300b0ee524f">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/e63363f8e075fa8d66326ad6a1cc3391cc95cd97">(patch)</a></li>
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/5447709a571cd5d95971f1d5d21d4a7edcf85bbd">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-march-18-2015-cve-2015-2317">
+<span id="march-18-2015-cve-2015-2317"></span><h3>March 18, 2015 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2015-2317">CVE-2015-2317</a><a class="headerlink" href="#march-18-2015-cve-2015-2317" title="Permalink to this headline">¶</a></h3>
+<p>Mitigated possible XSS attack via user-supplied redirect URLs. <a class="reference external" href="https://www.djangoproject.com/weblog/2015/mar/18/security-releases/">Full
+description</a></p>
+<div class="section" id="s-id47">
+<span id="id47"></span><h4>Versions affected<a class="headerlink" href="#id47" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/2342693b31f740a422abf7267c53b4e7bc487c1b">(patch)</a></li>
+<li>Django 1.6 <a class="reference external" href="https://github.com/django/django/commit/5510f070711540aaa8d3707776cd77494e688ef9">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/2a4113dbd532ce952308992633d802dc169a75f1">(patch)</a></li>
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/770427c2896a078925abfca2317486b284d22f04">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-may-20-2015-cve-2015-3982">
+<span id="may-20-2015-cve-2015-3982"></span><h3>May 20, 2015 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2015-3982">CVE-2015-3982</a><a class="headerlink" href="#may-20-2015-cve-2015-3982" title="Permalink to this headline">¶</a></h3>
+<p>Fixed session flushing in the cached_db backend. <a class="reference external" href="https://www.djangoproject.com/weblog/2015/may/20/security-release/">Full description</a></p>
+<div class="section" id="s-id48">
+<span id="id48"></span><h4>Versions affected<a class="headerlink" href="#id48" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/31cb25adecba930bdeee4556709f5a1c42d88fd6">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-july-8-2015-cve-2015-5143">
+<span id="july-8-2015-cve-2015-5143"></span><h3>July 8, 2015 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2015-5143">CVE-2015-5143</a><a class="headerlink" href="#july-8-2015-cve-2015-5143" title="Permalink to this headline">¶</a></h3>
+<p>Denial-of-service possibility by filling session store. <a class="reference external" href="https://www.djangoproject.com/weblog/2015/jul/08/security-releases/">Full
+description</a></p>
+<div class="section" id="s-id49">
+<span id="id49"></span><h4>Versions affected<a class="headerlink" href="#id49" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/66d12d1ababa8f062857ee5eb43276493720bf16">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/1828f4341ec53a8684112d24031b767eba557663">(patch)</a></li>
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/2e47f3e401c29bc2ba5ab794d483cb0820855fb9">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-july-8-2015-cve-2015-5144">
+<span id="july-8-2015-cve-2015-5144"></span><h3>July 8, 2015 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2015-5144">CVE-2015-5144</a><a class="headerlink" href="#july-8-2015-cve-2015-5144" title="Permalink to this headline">¶</a></h3>
+<p>Header injection possibility since validators accept newlines in input. <a class="reference external" href="https://www.djangoproject.com/weblog/2015/jul/08/security-releases/">Full
+description</a></p>
+<div class="section" id="s-id50">
+<span id="id50"></span><h4>Versions affected<a class="headerlink" href="#id50" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/574dd5e0b0fbb877ae5827b1603d298edc9bb2a0">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/ae49b4d994656bc037513dcd064cb9ce5bb85649">(patch)</a></li>
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/1ba1cdce7d58e6740fe51955d945b56ae51d072a">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-july-8-2015-cve-2015-5145">
+<span id="july-8-2015-cve-2015-5145"></span><h3>July 8, 2015 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2015-5145">CVE-2015-5145</a><a class="headerlink" href="#july-8-2015-cve-2015-5145" title="Permalink to this headline">¶</a></h3>
+<p>Denial-of-service possibility in URL validation. <a class="reference external" href="https://www.djangoproject.com/weblog/2015/jul/08/security-releases/">Full description</a></p>
+<div class="section" id="s-id51">
+<span id="id51"></span><h4>Versions affected<a class="headerlink" href="#id51" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/8f9a4d3a2bc42f14bb437defd30c7315adbff22c">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-august-18-2015-cve-2015-5963-cve-2015-5964">
+<span id="august-18-2015-cve-2015-5963-cve-2015-5964"></span><h3>August 18, 2015 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2015-5963">CVE-2015-5963</a> / <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2015-5964">CVE-2015-5964</a><a class="headerlink" href="#august-18-2015-cve-2015-5963-cve-2015-5964" title="Permalink to this headline">¶</a></h3>
+<p>Denial-of-service possibility in <code class="docutils literal notranslate"><span class="pre">logout()</span></code> view by filling session store.
+<a class="reference external" href="https://www.djangoproject.com/weblog/2015/aug/18/security-releases/">Full description</a></p>
+<div class="section" id="s-id52">
+<span id="id52"></span><h4>Versions affected<a class="headerlink" href="#id52" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/2eb86b01d7b59be06076f6179a454d0fd0afaff6">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/2f5485346ee6f84b4e52068c04e043092daf55f7">(patch)</a></li>
+<li>Django 1.4 <a class="reference external" href="https://github.com/django/django/commit/575f59f9bc7c59a5e41a081d1f5f55fc859c5012">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-november-24-2015-cve-2015-8213">
+<span id="november-24-2015-cve-2015-8213"></span><h3>November 24, 2015 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2015-8213">CVE-2015-8213</a><a class="headerlink" href="#november-24-2015-cve-2015-8213" title="Permalink to this headline">¶</a></h3>
+<p>Settings leak possibility in <code class="docutils literal notranslate"><span class="pre">date</span></code> template filter. <a class="reference external" href="https://www.djangoproject.com/weblog/2015/nov/24/security-releases-issued/">Full description</a></p>
+<div class="section" id="s-id53">
+<span id="id53"></span><h4>Versions affected<a class="headerlink" href="#id53" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/9f83fc2f66f5a0bac7c291aec55df66050bb6991">(patch)</a></li>
+<li>Django 1.7 <a class="reference external" href="https://github.com/django/django/commit/8a01c6b53169ee079cb21ac5919fdafcc8c5e172">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-february-1-2016-cve-2016-2048">
+<span id="february-1-2016-cve-2016-2048"></span><h3>February 1, 2016 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2016-2048">CVE-2016-2048</a><a class="headerlink" href="#february-1-2016-cve-2016-2048" title="Permalink to this headline">¶</a></h3>
+<p>User with &quot;change&quot; but not &quot;add&quot; permission can create objects for
+<code class="docutils literal notranslate"><span class="pre">ModelAdmin</span></code>’s with <code class="docutils literal notranslate"><span class="pre">save_as=True</span></code>. <a class="reference external" href="https://www.djangoproject.com/weblog/2016/feb/01/releases-192-and-189/">Full description</a></p>
+<div class="section" id="s-id54">
+<span id="id54"></span><h4>Versions affected<a class="headerlink" href="#id54" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.9 <a class="reference external" href="https://github.com/django/django/commit/adbca5e4db42542575734b8e5d26961c8ada7265">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-march-1-2016-cve-2016-2512">
+<span id="march-1-2016-cve-2016-2512"></span><h3>March 1, 2016 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2016-2512">CVE-2016-2512</a><a class="headerlink" href="#march-1-2016-cve-2016-2512" title="Permalink to this headline">¶</a></h3>
+<p>Malicious redirect and possible XSS attack via user-supplied redirect URLs
+containing basic auth. <a class="reference external" href="https://www.djangoproject.com/weblog/2016/mar/01/security-releases/">Full description</a></p>
+<div class="section" id="s-id55">
+<span id="id55"></span><h4>Versions affected<a class="headerlink" href="#id55" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.9 <a class="reference external" href="https://github.com/django/django/commit/fc6d147a63f89795dbcdecb0559256470fff4380">(patch)</a></li>
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/382ab137312961ad62feb8109d70a5a581fe8350">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-march-1-2016-cve-2016-2513">
+<span id="march-1-2016-cve-2016-2513"></span><h3>March 1, 2016 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2016-2513">CVE-2016-2513</a><a class="headerlink" href="#march-1-2016-cve-2016-2513" title="Permalink to this headline">¶</a></h3>
+<p>User enumeration through timing difference on password hasher work factor
+upgrade. <a class="reference external" href="https://www.djangoproject.com/weblog/2016/mar/01/security-releases/">Full description</a></p>
+<div class="section" id="s-id56">
+<span id="id56"></span><h4>Versions affected<a class="headerlink" href="#id56" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.9 <a class="reference external" href="https://github.com/django/django/commit/af7d09b0c5c6ab68e629fd9baf736f9dd203b18e">(patch)</a></li>
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/f4e6e02f7713a6924d16540be279909ff4091eb6">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-july-18-2016-cve-2016-6186">
+<span id="july-18-2016-cve-2016-6186"></span><h3>July 18, 2016 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2016-6186">CVE-2016-6186</a><a class="headerlink" href="#july-18-2016-cve-2016-6186" title="Permalink to this headline">¶</a></h3>
+<p>XSS in admin's add/change related popup. <a class="reference external" href="https://www.djangoproject.com/weblog/2016/jul/18/security-releases/">Full description</a></p>
+<div class="section" id="s-id57">
+<span id="id57"></span><h4>Versions affected<a class="headerlink" href="#id57" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.9 <a class="reference external" href="https://github.com/django/django/commit/d03bf6fe4e9bf5b07de62c1a271c4b41a7d3d158">(patch)</a></li>
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/f68e5a99164867ab0e071a936470958ed867479d">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-september-26-2016-cve-2016-7401">
+<span id="september-26-2016-cve-2016-7401"></span><h3>September 26, 2016 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2016-7401">CVE-2016-7401</a><a class="headerlink" href="#september-26-2016-cve-2016-7401" title="Permalink to this headline">¶</a></h3>
+<p>CSRF protection bypass on a site with Google Analytics. <a class="reference external" href="https://www.djangoproject.com/weblog/2016/sep/26/security-releases/">Full description</a></p>
+<div class="section" id="s-id58">
+<span id="id58"></span><h4>Versions affected<a class="headerlink" href="#id58" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.9 <a class="reference external" href="https://github.com/django/django/commit/d1bc980db1c0fffd6d60677e62f70beadb9fe64a">(patch)</a></li>
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/6118ab7d0676f0d622278e5be215f14fb5410b6a">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-november-1-2016-cve-2016-9013">
+<span id="november-1-2016-cve-2016-9013"></span><h3>November 1, 2016 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2016-9013">CVE-2016-9013</a><a class="headerlink" href="#november-1-2016-cve-2016-9013" title="Permalink to this headline">¶</a></h3>
+<p>User with hardcoded password created when running tests on Oracle. <a class="reference external" href="https://www.djangoproject.com/weblog/2016/nov/01/security-releases/">Full
+description</a></p>
+<div class="section" id="s-id59">
+<span id="id59"></span><h4>Versions affected<a class="headerlink" href="#id59" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.10 <a class="reference external" href="https://github.com/django/django/commit/34e10720d81b8d407aa14d763b6a7fe8f13b4f2e">(patch)</a></li>
+<li>Django 1.9 <a class="reference external" href="https://github.com/django/django/commit/4844d86c7728c1a5a3bbce4ad336a8d32304072b">(patch)</a></li>
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/70f99952965a430daf69eeb9947079aae535d2d0">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-november-1-2016-cve-2016-9014">
+<span id="november-1-2016-cve-2016-9014"></span><h3>November 1, 2016 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2016-9014">CVE-2016-9014</a><a class="headerlink" href="#november-1-2016-cve-2016-9014" title="Permalink to this headline">¶</a></h3>
+<p>DNS rebinding vulnerability when <code class="docutils literal notranslate"><span class="pre">DEBUG=True</span></code>. <a class="reference external" href="https://www.djangoproject.com/weblog/2016/nov/01/security-releases/">Full description</a></p>
+<div class="section" id="s-id60">
+<span id="id60"></span><h4>Versions affected<a class="headerlink" href="#id60" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.10 <a class="reference external" href="https://github.com/django/django/commit/884e113838e5a72b4b0ec9e5e87aa480f6aa4472">(patch)</a></li>
+<li>Django 1.9 <a class="reference external" href="https://github.com/django/django/commit/45acd6d836895a4c36575f48b3fb36a3dae98d19">(patch)</a></li>
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/c401ae9a7dfb1a94a8a61927ed541d6f93089587">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-april-4-2017-cve-2017-7233">
+<span id="april-4-2017-cve-2017-7233"></span><h3>April 4, 2017 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2017-7233">CVE-2017-7233</a><a class="headerlink" href="#april-4-2017-cve-2017-7233" title="Permalink to this headline">¶</a></h3>
+<p>Open redirect and possible XSS attack via user-supplied numeric redirect URLs.
+<a class="reference external" href="https://www.djangoproject.com/weblog/2017/apr/04/security-releases/">Full description</a></p>
+<div class="section" id="s-id61">
+<span id="id61"></span><h4>Versions affected<a class="headerlink" href="#id61" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.10 <a class="reference external" href="https://github.com/django/django/commit/f824655bc2c50b19d2f202d7640785caabc82787">(patch)</a></li>
+<li>Django 1.9 <a class="reference external" href="https://github.com/django/django/commit/254326cb3682389f55f886804d2c43f7b9f23e4f">(patch)</a></li>
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/8339277518c7d8ec280070a780915304654e3b66">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-april-4-2017-cve-2017-7234">
+<span id="april-4-2017-cve-2017-7234"></span><h3>April 4, 2017 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2017-7234">CVE-2017-7234</a><a class="headerlink" href="#april-4-2017-cve-2017-7234" title="Permalink to this headline">¶</a></h3>
+<p>Open redirect vulnerability in <code class="docutils literal notranslate"><span class="pre">django.views.static.serve()</span></code>. <a class="reference external" href="https://www.djangoproject.com/weblog/2017/apr/04/security-releases/">Full
+description</a></p>
+<div class="section" id="s-id62">
+<span id="id62"></span><h4>Versions affected<a class="headerlink" href="#id62" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.10 <a class="reference external" href="https://github.com/django/django/commit/2a9f6ef71b8e23fd267ee2be1be26dde8ab67037">(patch)</a></li>
+<li>Django 1.9 <a class="reference external" href="https://github.com/django/django/commit/5f1ffb07afc1e59729ce2b283124116d6c0659e4">(patch)</a></li>
+<li>Django 1.8 <a class="reference external" href="https://github.com/django/django/commit/4a6b945dffe8d10e7cec107d93e6efaebfbded29">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-september-5-2017-cve-2017-12794">
+<span id="september-5-2017-cve-2017-12794"></span><h3>September 5, 2017 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2017-12794">CVE-2017-12794</a><a class="headerlink" href="#september-5-2017-cve-2017-12794" title="Permalink to this headline">¶</a></h3>
+<p>Possible XSS in traceback section of technical 500 debug page. <a class="reference external" href="https://www.djangoproject.com/weblog/2017/sep/05/security-releases/">Full
+description</a></p>
+<div class="section" id="s-id63">
+<span id="id63"></span><h4>Versions affected<a class="headerlink" href="#id63" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 1.11 <a class="reference external" href="https://github.com/django/django/commit/e35a0c56086924f331e9422daa266e907a4784cc">(patch)</a></li>
+<li>Django 1.10 <a class="reference external" href="https://github.com/django/django/commit/58e08e80e362db79eb0fd775dc81faad90dca47a">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-february-1-2018-cve-2018-6188">
+<span id="february-1-2018-cve-2018-6188"></span><h3>February 1, 2018 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2018-6188">CVE-2018-6188</a><a class="headerlink" href="#february-1-2018-cve-2018-6188" title="Permalink to this headline">¶</a></h3>
+<p>Information leakage in <code class="docutils literal notranslate"><span class="pre">AuthenticationForm</span></code>. <a class="reference external" href="https://www.djangoproject.com/weblog/2018/feb/01/security-releases/">Full description</a></p>
+<div class="section" id="s-id64">
+<span id="id64"></span><h4>Versions affected<a class="headerlink" href="#id64" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 2.0 <a class="reference external" href="https://github.com/django/django/commit/c37bb28677295f6edda61d8ac461014ef0d3aeb2">(patch)</a></li>
+<li>Django 1.11 <a class="reference external" href="https://github.com/django/django/commit/57b95fedad5e0b83fc9c81466b7d1751c6427aae">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-march-6-2018-cve-2018-7536">
+<span id="march-6-2018-cve-2018-7536"></span><h3>March 6, 2018 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2018-7536">CVE-2018-7536</a><a class="headerlink" href="#march-6-2018-cve-2018-7536" title="Permalink to this headline">¶</a></h3>
+<p>Denial-of-service possibility in <code class="docutils literal notranslate"><span class="pre">urlize</span></code> and <code class="docutils literal notranslate"><span class="pre">urlizetrunc</span></code> template
+filters. <a class="reference external" href="https://www.djangoproject.com/weblog/2018/mar/06/security-releases/">Full description</a></p>
+<div class="section" id="s-id65">
+<span id="id65"></span><h4>Versions affected<a class="headerlink" href="#id65" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 2.0 <a class="reference external" href="https://github.com/django/django/commit/e157315da3ae7005fa0683ffc9751dbeca7306c8">(patch)</a></li>
+<li>Django 1.11 <a class="reference external" href="https://github.com/django/django/commit/abf89d729f210c692a50e0ad3f75fb6bec6fae16">(patch)</a></li>
+<li>Django 1.8  <a class="reference external" href="https://github.com/django/django/commit/1ca63a66ef3163149ad822701273e8a1844192c2">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-march-6-2018-cve-2018-7537">
+<span id="march-6-2018-cve-2018-7537"></span><h3>March 6, 2018 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2018-7537">CVE-2018-7537</a><a class="headerlink" href="#march-6-2018-cve-2018-7537" title="Permalink to this headline">¶</a></h3>
+<p>Denial-of-service possibility in <code class="docutils literal notranslate"><span class="pre">truncatechars_html</span></code> and
+<code class="docutils literal notranslate"><span class="pre">truncatewords_html</span></code> template filters. <a class="reference external" href="https://www.djangoproject.com/weblog/2018/mar/06/security-releases/">Full description</a></p>
+<div class="section" id="s-id66">
+<span id="id66"></span><h4>Versions affected<a class="headerlink" href="#id66" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 2.0 <a class="reference external" href="https://github.com/django/django/commit/94c5da1d17a6b0d378866c66b605102c19f7988c">(patch)</a></li>
+<li>Django 1.11 <a class="reference external" href="https://github.com/django/django/commit/a91436360b79a6ff995c3e5018bcc666dfaf1539">(patch)</a></li>
+<li>Django 1.8  <a class="reference external" href="https://github.com/django/django/commit/d17974a287a6ea2e361daff88fcc004cbd6835fa">(patch)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-august-1-2018-cve-2018-14574">
+<span id="august-1-2018-cve-2018-14574"></span><h3>August 1, 2018 - <a class="reference external" href="https://nvd.nist.gov/view/vuln/detail?vulnId=2018-14574">CVE-2018-14574</a><a class="headerlink" href="#august-1-2018-cve-2018-14574" title="Permalink to this headline">¶</a></h3>
+<p>Open redirect possibility in <code class="docutils literal notranslate"><span class="pre">CommonMiddleware</span></code>. <a class="reference external" href="https://www.djangoproject.com/weblog/2018/aug/01/security-releases/">Full description</a></p>
+<div class="section" id="s-id67">
+<span id="id67"></span><h4>Versions affected<a class="headerlink" href="#id67" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Django 2.1 <a class="reference external" href="https://github.com/django/django/commit/c4e5ff7fdb5fce447675e90291fd33fddd052b3c">(patch)</a></li>
+<li>Django 2.0 <a class="reference external" href="https://github.com/django/django/commit/6fffc3c6d420e44f4029d5643f38d00a39b08525">(patch)</a></li>
+<li>Django 1.11 <a class="reference external" href="https://github.com/django/django/commit/d6eaee092709aad477a9894598496c6deec532ff">(patch)</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Archive of security issues</a><ul>
+<li><a class="reference internal" href="#issues-prior-to-django-s-security-process">Issues prior to Django's security process</a><ul>
+<li><a class="reference internal" href="#august-16-2006-cve-2007-0404">August 16, 2006 - CVE-2007-0404</a><ul>
+<li><a class="reference internal" href="#versions-affected">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#january-21-2007-cve-2007-0405">January 21, 2007 - CVE-2007-0405</a><ul>
+<li><a class="reference internal" href="#id1">Versions affected</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#issues-under-django-s-security-process">Issues under Django's security process</a><ul>
+<li><a class="reference internal" href="#october-26-2007-cve-2007-5712">October 26, 2007 - CVE-2007-5712</a><ul>
+<li><a class="reference internal" href="#id2">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#may-14-2008-cve-2008-2302">May 14, 2008 - CVE-2008-2302</a><ul>
+<li><a class="reference internal" href="#id3">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#september-2-2008-cve-2008-3909">September 2, 2008 - CVE-2008-3909</a><ul>
+<li><a class="reference internal" href="#id4">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#july-28-2009-cve-2009-2659">July 28, 2009 - CVE-2009-2659</a><ul>
+<li><a class="reference internal" href="#id5">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#october-9-2009-cve-2009-3965">October 9, 2009 - CVE-2009-3965</a><ul>
+<li><a class="reference internal" href="#id6">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#september-8-2010-cve-2010-3082">September 8, 2010 - CVE-2010-3082</a><ul>
+<li><a class="reference internal" href="#id7">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#december-22-2010-cve-2010-4534">December 22, 2010 - CVE-2010-4534</a><ul>
+<li><a class="reference internal" href="#id8">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#december-22-2010-cve-2010-4535">December 22, 2010 - CVE-2010-4535</a><ul>
+<li><a class="reference internal" href="#id9">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#february-8-2011-cve-2011-0696">February 8, 2011 - CVE-2011-0696</a><ul>
+<li><a class="reference internal" href="#id10">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#february-8-2011-cve-2011-0697">February 8, 2011 - CVE-2011-0697</a><ul>
+<li><a class="reference internal" href="#id11">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#february-8-2011-cve-2011-0698">February 8, 2011 - CVE-2011-0698</a><ul>
+<li><a class="reference internal" href="#id12">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#september-9-2011-cve-2011-4136">September 9, 2011 - CVE-2011-4136</a><ul>
+<li><a class="reference internal" href="#id13">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#september-9-2011-cve-2011-4137">September 9, 2011 - CVE-2011-4137</a><ul>
+<li><a class="reference internal" href="#id14">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#september-9-2011-cve-2011-4138">September 9, 2011 - CVE-2011-4138</a><ul>
+<li><a class="reference internal" href="#id15">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#september-9-2011-cve-2011-4139">September 9, 2011 - CVE-2011-4139</a><ul>
+<li><a class="reference internal" href="#id16">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#september-9-2011-cve-2011-4140">September 9, 2011 - CVE-2011-4140</a><ul>
+<li><a class="reference internal" href="#id17">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#july-30-2012-cve-2012-3442">July 30, 2012 - CVE-2012-3442</a><ul>
+<li><a class="reference internal" href="#id18">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#july-30-2012-cve-2012-3443">July 30, 2012 - CVE-2012-3443</a><ul>
+<li><a class="reference internal" href="#id19">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#july-30-2012-cve-2012-3444">July 30, 2012 - CVE-2012-3444</a><ul>
+<li><a class="reference internal" href="#id20">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#october-17-2012-cve-2012-4520">October 17, 2012 - CVE-2012-4520</a><ul>
+<li><a class="reference internal" href="#id21">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#december-10-2012-no-cve-1">December 10, 2012 - No CVE 1</a><ul>
+<li><a class="reference internal" href="#id22">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#december-10-2012-no-cve-2">December 10, 2012 - No CVE 2</a><ul>
+<li><a class="reference internal" href="#id23">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#february-19-2013-no-cve">February 19, 2013 - No CVE</a><ul>
+<li><a class="reference internal" href="#id24">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#february-19-2013-cve-2013-1664-cve-2013-1665">February 19, 2013 - CVE-2013-1664 / CVE-2013-1665</a><ul>
+<li><a class="reference internal" href="#id25">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#february-19-2013-cve-2013-0305">February 19, 2013 - CVE-2013-0305</a><ul>
+<li><a class="reference internal" href="#id26">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#february-19-2013-cve-2013-0306">February 19, 2013 - CVE-2013-0306</a><ul>
+<li><a class="reference internal" href="#id27">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#august-13-2013-cve-2013-4249">August 13, 2013 - CVE-2013-4249</a><ul>
+<li><a class="reference internal" href="#id28">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#august-13-2013-cve-2013-6044">August 13, 2013 - CVE-2013-6044</a><ul>
+<li><a class="reference internal" href="#id29">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#september-10-2013-cve-2013-4315">September 10, 2013 - CVE-2013-4315</a><ul>
+<li><a class="reference internal" href="#id30">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#september-14-2013-cve-2013-1443">September 14, 2013 - CVE-2013-1443</a><ul>
+<li><a class="reference internal" href="#id31">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#april-21-2014-cve-2014-0472">April 21, 2014 - CVE-2014-0472</a><ul>
+<li><a class="reference internal" href="#id32">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#april-21-2014-cve-2014-0473">April 21, 2014 - CVE-2014-0473</a><ul>
+<li><a class="reference internal" href="#id33">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#april-21-2014-cve-2014-0474">April 21, 2014 - CVE-2014-0474</a><ul>
+<li><a class="reference internal" href="#id34">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#may-18-2014-cve-2014-1418">May 18, 2014 - CVE-2014-1418</a><ul>
+<li><a class="reference internal" href="#id35">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#may-18-2014-cve-2014-3730">May 18, 2014 - CVE-2014-3730</a><ul>
+<li><a class="reference internal" href="#id36">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#august-20-2014-cve-2014-0480">August 20, 2014 - CVE-2014-0480</a><ul>
+<li><a class="reference internal" href="#id37">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#august-20-2014-cve-2014-0481">August 20, 2014 - CVE-2014-0481</a><ul>
+<li><a class="reference internal" href="#id38">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#august-20-2014-cve-2014-0482">August 20, 2014 - CVE-2014-0482</a><ul>
+<li><a class="reference internal" href="#id39">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#august-20-2014-cve-2014-0483">August 20, 2014 - CVE-2014-0483</a><ul>
+<li><a class="reference internal" href="#id40">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#january-13-2015-cve-2015-0219">January 13, 2015 - CVE-2015-0219</a><ul>
+<li><a class="reference internal" href="#id41">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#january-13-2015-cve-2015-0220">January 13, 2015 - CVE-2015-0220</a><ul>
+<li><a class="reference internal" href="#id42">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#january-13-2015-cve-2015-0221">January 13, 2015 - CVE-2015-0221</a><ul>
+<li><a class="reference internal" href="#id43">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#january-13-2015-cve-2015-0222">January 13, 2015 - CVE-2015-0222</a><ul>
+<li><a class="reference internal" href="#id44">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#march-9-2015-cve-2015-2241">March 9, 2015 - CVE-2015-2241</a><ul>
+<li><a class="reference internal" href="#id45">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#march-18-2015-cve-2015-2316">March 18, 2015 - CVE-2015-2316</a><ul>
+<li><a class="reference internal" href="#id46">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#march-18-2015-cve-2015-2317">March 18, 2015 - CVE-2015-2317</a><ul>
+<li><a class="reference internal" href="#id47">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#may-20-2015-cve-2015-3982">May 20, 2015 - CVE-2015-3982</a><ul>
+<li><a class="reference internal" href="#id48">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#july-8-2015-cve-2015-5143">July 8, 2015 - CVE-2015-5143</a><ul>
+<li><a class="reference internal" href="#id49">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#july-8-2015-cve-2015-5144">July 8, 2015 - CVE-2015-5144</a><ul>
+<li><a class="reference internal" href="#id50">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#july-8-2015-cve-2015-5145">July 8, 2015 - CVE-2015-5145</a><ul>
+<li><a class="reference internal" href="#id51">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#august-18-2015-cve-2015-5963-cve-2015-5964">August 18, 2015 - CVE-2015-5963 / CVE-2015-5964</a><ul>
+<li><a class="reference internal" href="#id52">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#november-24-2015-cve-2015-8213">November 24, 2015 - CVE-2015-8213</a><ul>
+<li><a class="reference internal" href="#id53">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#february-1-2016-cve-2016-2048">February 1, 2016 - CVE-2016-2048</a><ul>
+<li><a class="reference internal" href="#id54">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#march-1-2016-cve-2016-2512">March 1, 2016 - CVE-2016-2512</a><ul>
+<li><a class="reference internal" href="#id55">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#march-1-2016-cve-2016-2513">March 1, 2016 - CVE-2016-2513</a><ul>
+<li><a class="reference internal" href="#id56">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#july-18-2016-cve-2016-6186">July 18, 2016 - CVE-2016-6186</a><ul>
+<li><a class="reference internal" href="#id57">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#september-26-2016-cve-2016-7401">September 26, 2016 - CVE-2016-7401</a><ul>
+<li><a class="reference internal" href="#id58">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#november-1-2016-cve-2016-9013">November 1, 2016 - CVE-2016-9013</a><ul>
+<li><a class="reference internal" href="#id59">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#november-1-2016-cve-2016-9014">November 1, 2016 - CVE-2016-9014</a><ul>
+<li><a class="reference internal" href="#id60">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#april-4-2017-cve-2017-7233">April 4, 2017 - CVE-2017-7233</a><ul>
+<li><a class="reference internal" href="#id61">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#april-4-2017-cve-2017-7234">April 4, 2017 - CVE-2017-7234</a><ul>
+<li><a class="reference internal" href="#id62">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#september-5-2017-cve-2017-12794">September 5, 2017 - CVE-2017-12794</a><ul>
+<li><a class="reference internal" href="#id63">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#february-1-2018-cve-2018-6188">February 1, 2018 - CVE-2018-6188</a><ul>
+<li><a class="reference internal" href="#id64">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#march-6-2018-cve-2018-7536">March 6, 2018 - CVE-2018-7536</a><ul>
+<li><a class="reference internal" href="#id65">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#march-6-2018-cve-2018-7537">March 6, 2018 - CVE-2018-7537</a><ul>
+<li><a class="reference internal" href="#id66">Versions affected</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#august-1-2018-cve-2018-14574">August 1, 2018 - CVE-2018-14574</a><ul>
+<li><a class="reference internal" href="#id67">Versions affected</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="0.95.html"
+                        title="previous chapter">Django version 0.95 release notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../internals/index.html"
+                        title="next chapter">Django internals</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/releases/security.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="0.95.html" title="Django version 0.95 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="../internals/index.html" title="Django internals">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>表单测试</title>
+</head>
+<body>
+<form method="POST">
+    <input type='hidden' name='csrfmiddlewaretoken'
+           value='mSsiJOEHMXJGpIcs4hPP3DoOKocx6FhkN7t1w0W8T2DVuudCmGjJCDrnZXs6mx8D'/>
+    <table>
+        <li><label for="id_name">作者:</label> <input type="text" name="name" value="345" required id="id_name"
+                                                    maxlength="12"/> <span class="helptext">此处输入作者的姓名</span></li>
+        <li><label for="id_passwd">密码:</label> <input type="text" name="passwd" value="123" required id="id_passwd"
+                                                      maxlength="12"/></li>
+        <li>
+            <ul class="errorlist">
+                <li>Password does not match</li>
+            </ul>
+            <label for="id_confirm_passwd">确认密码:</label> <input type="password" name="confirm_passwd" required
+                                                                id="id_confirm_passwd" maxlength="12"/></li>
+        <li><label for="id_sex_0">性别:</label>
+            <ul id="id_sex">
+                <li><label for="id_sex_0"><input type="radio" name="sex" value="男" required checked id="id_sex_0"/>
+                    男</label>
+
+                </li>
+                <li><label for="id_sex_1"><input type="radio" name="sex" value="女" required id="id_sex_1"/>
+                    女</label>
+
+                </li>
+            </ul>
+        </li>
+        <li><label for="id_birthday">生日:</label> <input type="text" name="birthday" value="2018-07-04" required
+                                                        id="id_birthday"/></li>
+        <li><label for="id_email">邮件:</label> <input type="email" name="email" value="sy_xjf@sohu.com" required
+                                                     id="id_email" maxlength="254"/></li>
+        <li><label for="id_mobile">手机:</label> <input type="text" name="mobile" value="13555785106" required
+                                                      id="id_mobile" maxlength="20"/></li>
+        <li><label for="id_annual_income">年收入:</label> <input type="number" name="annual_income" value="0" step="0.01"
+                                                              required id="id_annual_income"/></li>
+        <li><label>爱好:</label>
+            <ul id="id_hobbies">
+                <li><label for="id_hobbies_0"><input type="checkbox" name="hobbies" value="1" checked
+                                                     id="id_hobbies_0"/>
+                    篮球</label>
+
+                </li>
+                <li><label for="id_hobbies_1"><input type="checkbox" name="hobbies" value="2" checked
+                                                     id="id_hobbies_1"/>
+                    足球</label>
+
+                </li>
+                <li><label for="id_hobbies_2"><input type="checkbox" name="hobbies" value="3" id="id_hobbies_2"/>
+                    排球</label>
+
+                </li>
+            </ul>
+        </li>
+    </table>
+    <input type="submit" value="提交">
+</form>
+</body>
+</html>

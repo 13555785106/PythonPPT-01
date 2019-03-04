@@ -1,0 +1,207 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>FAQ: 管理 &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="FAQ: 贡献代码" href="contributing.html" />
+    <link rel="prev" title="FAQ：数据库和模型" href="models.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="models.html" title="FAQ：数据库和模型">previous</a>
+     |
+    <a href="index.html" title="Django FAQ" accesskey="U">up</a>
+   |
+    <a href="contributing.html" title="FAQ: 贡献代码">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="faq-admin">
+            
+  <div class="section" id="s-faq-the-admin">
+<span id="faq-the-admin"></span><h1>FAQ: 管理<a class="headerlink" href="#faq-the-admin" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="s-i-can-t-log-in-when-i-enter-a-valid-username-and-password-it-just-brings-up-the-login-page-again-with-no-error-messages">
+<span id="i-can-t-log-in-when-i-enter-a-valid-username-and-password-it-just-brings-up-the-login-page-again-with-no-error-messages"></span><h2>无法登录。当我输入有效的用户名和密码后，页面再跳转到登录页面，没有显示任何错误信息。<a class="headerlink" href="#i-can-t-log-in-when-i-enter-a-valid-username-and-password-it-just-brings-up-the-login-page-again-with-no-error-messages" title="Permalink to this headline">¶</a></h2>
+<p>登陆 cookie 没有被正确设置，这是因为由 Django 发出的 cookie 中的域名和浏览器页面的域名不匹配。可以通过修改设置中的 &quot;SESSION_COOKIE_DOMAIN&quot; 选项来匹配你的域名。例如，如果你需要在浏览器中访问 &quot;<a class="reference external" href="https://www.example.com/admin/">https://www.example.com/admin/</a>&quot;，设置 <code class="docutils literal notranslate"><span class="pre">SESSION_COOKIE_DOMAIN</span> <span class="pre">=</span> <span class="pre">'www.example.com'</span></code>。</p>
+</div>
+<div class="section" id="s-i-can-t-log-in-when-i-enter-a-valid-username-and-password-it-brings-up-the-login-page-again-with-a-please-enter-a-correct-username-and-password-error">
+<span id="i-can-t-log-in-when-i-enter-a-valid-username-and-password-it-brings-up-the-login-page-again-with-a-please-enter-a-correct-username-and-password-error"></span><h2>我无法登陆。当我输入有效的用户名和密码后，它又跳转到了登录界面，并且显示一个“请输入正确的用户名和密码”的错误。<a class="headerlink" href="#i-can-t-log-in-when-i-enter-a-valid-username-and-password-it-brings-up-the-login-page-again-with-a-please-enter-a-correct-username-and-password-error" title="Permalink to this headline">¶</a></h2>
+<p>如果你确定你的用户名和密码都是对的，请检查你的用户账户中的“django.contrib.auth.models.User.is_active”和“django.contrib.auth.models.User.is_staff”被设为True。管理员页面只允许这两项同时被设为True的用户访问。</p>
+</div>
+<div class="section" id="s-how-do-i-automatically-set-a-field-s-value-to-the-user-who-last-edited-the-object-in-the-admin">
+<span id="how-do-i-automatically-set-a-field-s-value-to-the-user-who-last-edited-the-object-in-the-admin"></span><h2>在管理面板中，如何将字段的值自动设置为最后编辑它的用户？<a class="headerlink" href="#how-do-i-automatically-set-a-field-s-value-to-the-user-who-last-edited-the-object-in-the-admin" title="Permalink to this headline">¶</a></h2>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">save_model`钩子（hook）来更新一个反映用户编辑了的对象。</span>
+<span class="pre">参见：ref:`the</span> <span class="pre">documentation</span> <span class="pre">on</span> <span class="pre">ModelAdmin</span> <span class="pre">methods</span> <span class="pre">1</span></code> 中的示例。</p>
+</div>
+<div class="section" id="s-how-do-i-limit-admin-access-so-that-objects-can-only-be-edited-by-the-users-who-created-them">
+<span id="how-do-i-limit-admin-access-so-that-objects-can-only-be-edited-by-the-users-who-created-them"></span><h2>我们如何设定管理权限，以便对象只能由创建它们的用户进行编辑？<a class="headerlink" href="#how-do-i-limit-admin-access-so-that-objects-can-only-be-edited-by-the-users-who-created-them" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.ModelAdmin" title="django.contrib.admin.ModelAdmin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelAdmin</span></code></a> 类也提供了自定义沟子(Hook)来控制管理面板中的对象是否可见以及可修改。使用相同的技巧从 request 中提取出当前用户对象，然后自定义:meth:<cite>~django.contrib.admin.ModelAdmin.get_queryset</cite> 和 <a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.ModelAdmin.has_change_permission" title="django.contrib.admin.ModelAdmin.has_change_permission"><code class="xref py py-meth docutils literal notranslate"><span class="pre">has_change_permission()</span></code></a> 来控制管理面板中的对象是否可见以及可修改。</p>
+</div>
+<div class="section" id="s-my-admin-site-css-and-images-showed-up-fine-using-the-development-server-but-they-re-not-displaying-when-using-mod-wsgi">
+<span id="my-admin-site-css-and-images-showed-up-fine-using-the-development-server-but-they-re-not-displaying-when-using-mod-wsgi"></span><h2>管理界面的 CSS 和图片在开发模式下正常加载，但是在使用 mod_wsgi 进行部署的情况下却无法进行加载？<a class="headerlink" href="#my-admin-site-css-and-images-showed-up-fine-using-the-development-server-but-they-re-not-displaying-when-using-mod-wsgi" title="Permalink to this headline">¶</a></h2>
+<p>请仔细阅读“如何通过 mod_wsgi 部署 Django”下的&lt;serving-the-admin-files&gt;“部署 admin 模块的静态文件”</p>
+</div>
+<div class="section" id="s-my-list-filter-contains-a-manytomanyfield-but-the-filter-doesn-t-display">
+<span id="my-list-filter-contains-a-manytomanyfield-but-the-filter-doesn-t-display"></span><h2>我的“list_filter”包含一个 ManyToManyField (多对多字段)，但过滤器不显示<a class="headerlink" href="#my-list-filter-contains-a-manytomanyfield-but-the-filter-doesn-t-display" title="Permalink to this headline">¶</a></h2>
+<p>如果相关联对象少于 2 个，Django 则不会显示``ManyToManyField(多对多字段)``的过滤器</p>
+<p>例如，如果您的：attr：<cite>~django.contrib.admin.ModelAdmin.list_filter`包含：doc：`sites 1</cite>，并且你的数据库中只有一个站点，则不会显示“站点”过滤器。在这种情况下，按网站过滤将毫无意义。</p>
+</div>
+<div class="section" id="s-some-objects-aren-t-appearing-in-the-admin">
+<span id="some-objects-aren-t-appearing-in-the-admin"></span><h2>有些对象没有在管理中出现。<a class="headerlink" href="#some-objects-aren-t-appearing-in-the-admin" title="Permalink to this headline">¶</a></h2>
+<p>不一致的行计数可能由缺少外键值或由将外键字段错误地设置为：attr：<cite>null = False &lt;django.db.models.Field.null&gt;`造成。如果你有一个指向不存在对象的 class：`~django.db.models.ForeignKey</cite> 的记录，并且包含的​​外键是：attr：<cite>~django.contrib.admin.ModelAdmin.list_display</cite>，将不会显示在管理更改列表中，因为 Django 模型正在声明未作用在数据库级别的完整性约束。</p>
+</div>
+<div class="section" id="s-how-can-i-customize-the-functionality-of-the-admin-interface">
+<span id="how-can-i-customize-the-functionality-of-the-admin-interface"></span><h2>如何个性化管理员后台接口的功能？<a class="headerlink" href="#how-can-i-customize-the-functionality-of-the-admin-interface" title="Permalink to this headline">¶</a></h2>
+<p>你有几个选择。 如果您想要在 Django 自动生成的添加/更改表单上加载，您可以通过模型的类 Admin：ref：<a href="#id1"><span class="problematic" id="id2">`</span></a>js parameter &lt;modeladmin-asset-definitions&gt;`将任意 JavaScript 模块附加到页面上。 该参数是一个 URL 列表，作为字符串，指向将通过“&lt;script&gt;”标签包含在管理表单中的 JavaScript 模块。</p>
+<p>如果您想要比简单调整后自动生成的表单更灵活，请随时为 Admin 模块编写自定义视图。 Admin 模版是由Django 官方提供支持的模块，你可以编写自定义的视图关联到认证，检查权限，并完成任何他们需要做的业务逻辑。</p>
+<p>如果您想自定义管理界面的外观，请阅读下一个问题</p>
+</div>
+<div class="section" id="s-the-dynamically-generated-admin-site-is-ugly-how-can-i-change-it">
+<span id="the-dynamically-generated-admin-site-is-ugly-how-can-i-change-it"></span><h2>动态生成的管理页面太丑了。我该怎么换掉它？<a class="headerlink" href="#the-dynamically-generated-admin-site-is-ugly-how-can-i-change-it" title="Permalink to this headline">¶</a></h2>
+<p>如果你不喜欢它，你可以通过修改 CSS 样式文件以及关联的图片来定制管理员界面。这个网站使用 HTML 语法和大量的 CSS 钩子，所以任何你想要的改变都应该可以通过修改 CSS 样式表来实现。</p>
+</div>
+<div class="section" id="s-what-browsers-are-supported-for-using-the-admin">
+<span id="what-browsers-are-supported-for-using-the-admin"></span><h2>Admin 适配了哪些浏览器？<a class="headerlink" href="#what-browsers-are-supported-for-using-the-admin" title="Permalink to this headline">¶</a></h2>
+<p>除了 IE6，admin 为 <cite>YUI's A-grade</cite> 浏览器提供了一个全功能的体验。</p>
+<p>在支持的浏览器之间可能会有细微的风格差异，例如，某些浏览器可能不支持圆角。在渲染页面的时候会认为这些是可接受的差异。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">FAQ: 管理</a><ul>
+<li><a class="reference internal" href="#i-can-t-log-in-when-i-enter-a-valid-username-and-password-it-just-brings-up-the-login-page-again-with-no-error-messages">无法登录。当我输入有效的用户名和密码后，页面再跳转到登录页面，没有显示任何错误信息。</a></li>
+<li><a class="reference internal" href="#i-can-t-log-in-when-i-enter-a-valid-username-and-password-it-brings-up-the-login-page-again-with-a-please-enter-a-correct-username-and-password-error">我无法登陆。当我输入有效的用户名和密码后，它又跳转到了登录界面，并且显示一个“请输入正确的用户名和密码”的错误。</a></li>
+<li><a class="reference internal" href="#how-do-i-automatically-set-a-field-s-value-to-the-user-who-last-edited-the-object-in-the-admin">在管理面板中，如何将字段的值自动设置为最后编辑它的用户？</a></li>
+<li><a class="reference internal" href="#how-do-i-limit-admin-access-so-that-objects-can-only-be-edited-by-the-users-who-created-them">我们如何设定管理权限，以便对象只能由创建它们的用户进行编辑？</a></li>
+<li><a class="reference internal" href="#my-admin-site-css-and-images-showed-up-fine-using-the-development-server-but-they-re-not-displaying-when-using-mod-wsgi">管理界面的 CSS 和图片在开发模式下正常加载，但是在使用 mod_wsgi 进行部署的情况下却无法进行加载？</a></li>
+<li><a class="reference internal" href="#my-list-filter-contains-a-manytomanyfield-but-the-filter-doesn-t-display">我的“list_filter”包含一个 ManyToManyField (多对多字段)，但过滤器不显示</a></li>
+<li><a class="reference internal" href="#some-objects-aren-t-appearing-in-the-admin">有些对象没有在管理中出现。</a></li>
+<li><a class="reference internal" href="#how-can-i-customize-the-functionality-of-the-admin-interface">如何个性化管理员后台接口的功能？</a></li>
+<li><a class="reference internal" href="#the-dynamically-generated-admin-site-is-ugly-how-can-i-change-it">动态生成的管理页面太丑了。我该怎么换掉它？</a></li>
+<li><a class="reference internal" href="#what-browsers-are-supported-for-using-the-admin">Admin 适配了哪些浏览器？</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="models.html"
+                        title="previous chapter">FAQ：数据库和模型</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="contributing.html"
+                        title="next chapter">FAQ: 贡献代码</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/faq/admin.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="models.html" title="FAQ：数据库和模型">previous</a>
+     |
+    <a href="index.html" title="Django FAQ" accesskey="U">up</a>
+   |
+    <a href="contributing.html" title="FAQ: 贡献代码">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

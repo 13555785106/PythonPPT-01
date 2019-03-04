@@ -1,0 +1,178 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Django 1.11.8 release notes &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Django 1.11.7 release notes" href="1.11.7.html" />
+    <link rel="prev" title="Django 1.11.9 release notes" href="1.11.9.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="1.11.9.html" title="Django 1.11.9 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.11.7.html" title="Django 1.11.7 release notes">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="releases-1.11.8">
+            
+  <div class="section" id="s-django-1-11-8-release-notes">
+<span id="django-1-11-8-release-notes"></span><h1>Django 1.11.8 release notes<a class="headerlink" href="#django-1-11-8-release-notes" title="Permalink to this headline">¶</a></h1>
+<p><em>December 2, 2017</em></p>
+<p>Django 1.11.8 fixes several bugs in 1.11.7.</p>
+<div class="section" id="s-bugfixes">
+<span id="bugfixes"></span><h2>Bugfixes<a class="headerlink" href="#bugfixes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Reallowed, following a regression in Django 1.10, <code class="docutils literal notranslate"><span class="pre">AuthenticationForm</span></code> to
+raise the inactive user error when using <code class="docutils literal notranslate"><span class="pre">ModelBackend</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/28645">#28645</a>).</li>
+<li>Added support for <code class="docutils literal notranslate"><span class="pre">QuerySet.values()</span></code> and <code class="docutils literal notranslate"><span class="pre">values_list()</span></code> for
+<code class="docutils literal notranslate"><span class="pre">union()</span></code>, <code class="docutils literal notranslate"><span class="pre">difference()</span></code>, and <code class="docutils literal notranslate"><span class="pre">intersection()</span></code> queries
+(<a class="reference external" href="https://code.djangoproject.com/ticket/28781">#28781</a>).</li>
+<li>Fixed incorrect index name truncation when using a namespaced <code class="docutils literal notranslate"><span class="pre">db_table</span></code>
+(<a class="reference external" href="https://code.djangoproject.com/ticket/28792">#28792</a>).</li>
+<li>Made <code class="docutils literal notranslate"><span class="pre">QuerySet.iterator()</span></code> use server-side cursors on PostgreSQL after
+<code class="docutils literal notranslate"><span class="pre">values()</span></code> and <code class="docutils literal notranslate"><span class="pre">values_list()</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/28817">#28817</a>).</li>
+<li>Fixed crash on SQLite and MySQL when ordering by a filtered subquery that
+uses <code class="docutils literal notranslate"><span class="pre">nulls_first</span></code> or <code class="docutils literal notranslate"><span class="pre">nulls_last</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/28848">#28848</a>).</li>
+<li>Made query lookups for <code class="docutils literal notranslate"><span class="pre">CICharField</span></code>, <code class="docutils literal notranslate"><span class="pre">CIEmailField</span></code>, and <code class="docutils literal notranslate"><span class="pre">CITextField</span></code>
+use a <code class="docutils literal notranslate"><span class="pre">citext</span></code> cast (<a class="reference external" href="https://code.djangoproject.com/ticket/28702">#28702</a>).</li>
+<li>Fixed a regression in caching of a <code class="docutils literal notranslate"><span class="pre">GenericForeignKey</span></code> when the referenced
+model instance uses multi-table inheritance (<a class="reference external" href="https://code.djangoproject.com/ticket/28856">#28856</a>).</li>
+<li>Fixed &quot;Cannot change column 'x': used in a foreign key constraint&quot; crash on
+MySQL with a sequence of <code class="docutils literal notranslate"><span class="pre">AlterField</span></code> and/or <code class="docutils literal notranslate"><span class="pre">RenameField</span></code> operations in
+a migration (<a class="reference external" href="https://code.djangoproject.com/ticket/28305">#28305</a>).</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Django 1.11.8 release notes</a><ul>
+<li><a class="reference internal" href="#bugfixes">Bugfixes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="1.11.9.html"
+                        title="previous chapter">Django 1.11.9 release notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="1.11.7.html"
+                        title="next chapter">Django 1.11.7 release notes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/releases/1.11.8.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="1.11.9.html" title="Django 1.11.9 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.11.7.html" title="Django 1.11.7 release notes">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

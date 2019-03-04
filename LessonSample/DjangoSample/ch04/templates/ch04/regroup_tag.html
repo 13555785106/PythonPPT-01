@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>regroup标签</title>
+</head>
+<body>
+<H1>regroup标签</H1>
+{% regroup cities by country as country_list %}
+
+<ul>
+    {% for country in country_list %}
+    <li>{{ country.grouper }}
+        <ul>
+            {% for city in country.list %}
+            <li>{{ city.name }}: {{ city.population }}</li>
+            {% endfor %}
+        </ul>
+    </li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>

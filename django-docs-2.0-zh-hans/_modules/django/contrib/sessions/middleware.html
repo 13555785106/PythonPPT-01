@@ -1,0 +1,193 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>django.contrib.sessions.middleware &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    <a href="../../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="_modules-django-contrib-sessions-middleware">
+            
+  <h1>Source code for django.contrib.sessions.middleware</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">importlib</span> <span class="k">import</span> <span class="n">import_module</span>
+
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="k">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">django.contrib.sessions.backends.base</span> <span class="k">import</span> <span class="n">UpdateError</span>
+<span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="k">import</span> <span class="n">SuspiciousOperation</span>
+<span class="kn">from</span> <span class="nn">django.utils.cache</span> <span class="k">import</span> <span class="n">patch_vary_headers</span>
+<span class="kn">from</span> <span class="nn">django.utils.deprecation</span> <span class="k">import</span> <span class="n">MiddlewareMixin</span>
+<span class="kn">from</span> <span class="nn">django.utils.http</span> <span class="k">import</span> <span class="n">cookie_date</span>
+
+
+<div class="viewcode-block" id="SessionMiddleware"><a class="viewcode-back" href="../../../../ref/middleware.html#django.contrib.sessions.middleware.SessionMiddleware">[docs]</a><span class="k">class</span> <span class="nc">SessionMiddleware</span><span class="p">(</span><span class="n">MiddlewareMixin</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get_response</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_response</span> <span class="o">=</span> <span class="n">get_response</span>
+        <span class="n">engine</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">SESSION_ENGINE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SessionStore</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">SessionStore</span>
+
+    <span class="k">def</span> <span class="nf">process_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">session_key</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">COOKIES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">SESSION_COOKIE_NAME</span><span class="p">)</span>
+        <span class="n">request</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SessionStore</span><span class="p">(</span><span class="n">session_key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">process_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If request.session was modified, or if the configuration is to save the</span>
+<span class="sd">        session every time, save the changes and set a session cookie or delete</span>
+<span class="sd">        the session cookie if the session has been emptied.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">accessed</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">accessed</span>
+            <span class="n">modified</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">modified</span>
+            <span class="n">empty</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># First check if we need to delete this cookie.</span>
+            <span class="c1"># The session should be deleted only if the session is entirely empty</span>
+            <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">SESSION_COOKIE_NAME</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">COOKIES</span> <span class="ow">and</span> <span class="n">empty</span><span class="p">:</span>
+                <span class="n">response</span><span class="o">.</span><span class="n">delete_cookie</span><span class="p">(</span>
+                    <span class="n">settings</span><span class="o">.</span><span class="n">SESSION_COOKIE_NAME</span><span class="p">,</span>
+                    <span class="n">path</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">SESSION_COOKIE_PATH</span><span class="p">,</span>
+                    <span class="n">domain</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">SESSION_COOKIE_DOMAIN</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">accessed</span><span class="p">:</span>
+                    <span class="n">patch_vary_headers</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;Cookie&#39;</span><span class="p">,))</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">modified</span> <span class="ow">or</span> <span class="n">settings</span><span class="o">.</span><span class="n">SESSION_SAVE_EVERY_REQUEST</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">empty</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_expire_at_browser_close</span><span class="p">():</span>
+                        <span class="n">max_age</span> <span class="o">=</span> <span class="kc">None</span>
+                        <span class="n">expires</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">max_age</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_expiry_age</span><span class="p">()</span>
+                        <span class="n">expires_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="n">max_age</span>
+                        <span class="n">expires</span> <span class="o">=</span> <span class="n">cookie_date</span><span class="p">(</span><span class="n">expires_time</span><span class="p">)</span>
+                    <span class="c1"># Save the session data and refresh the client cookie.</span>
+                    <span class="c1"># Skip session save for 500 responses, refs #3881.</span>
+                    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">500</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                        <span class="k">except</span> <span class="n">UpdateError</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="n">SuspiciousOperation</span><span class="p">(</span>
+                                <span class="s2">&quot;The request&#39;s session was deleted before the &quot;</span>
+                                <span class="s2">&quot;request completed. The user may have logged &quot;</span>
+                                <span class="s2">&quot;out in a concurrent request, for example.&quot;</span>
+                            <span class="p">)</span>
+                        <span class="n">response</span><span class="o">.</span><span class="n">set_cookie</span><span class="p">(</span>
+                            <span class="n">settings</span><span class="o">.</span><span class="n">SESSION_COOKIE_NAME</span><span class="p">,</span>
+                            <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span> <span class="n">max_age</span><span class="o">=</span><span class="n">max_age</span><span class="p">,</span>
+                            <span class="n">expires</span><span class="o">=</span><span class="n">expires</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">SESSION_COOKIE_DOMAIN</span><span class="p">,</span>
+                            <span class="n">path</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">SESSION_COOKIE_PATH</span><span class="p">,</span>
+                            <span class="n">secure</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">SESSION_COOKIE_SECURE</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">httponly</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">SESSION_COOKIE_HTTPONLY</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    <a href="../../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

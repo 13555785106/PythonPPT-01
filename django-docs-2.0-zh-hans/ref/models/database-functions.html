@@ -1,0 +1,1346 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Database Functions &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Request and response objects" href="../request-response.html" />
+    <link rel="prev" title="Conditional Expressions" href="conditional-expressions.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="conditional-expressions.html" title="Conditional Expressions">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="../request-response.html" title="Request and response objects">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="ref-models-database-functions">
+            
+  <div class="section" id="s-module-django.db.models.functions">
+<span id="s-database-functions"></span><span id="module-django.db.models.functions"></span><span id="database-functions"></span><h1>Database Functions<a class="headerlink" href="#module-django.db.models.functions" title="Permalink to this headline">¶</a></h1>
+<p>The classes documented below provide a way for users to use functions provided
+by the underlying database as annotations, aggregations, or filters in Django.
+Functions are also <a class="reference internal" href="expressions.html"><span class="doc">expressions</span></a>, so they can be used and
+combined with other expressions like <a class="reference internal" href="querysets.html#aggregation-functions"><span class="std std-ref">aggregate functions</span></a>.</p>
+<p>We'll be using the following model in examples of each function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Author</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+    <span class="n">age</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">alias</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">goes_by</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We don't usually recommend allowing <code class="docutils literal notranslate"><span class="pre">null=True</span></code> for <code class="docutils literal notranslate"><span class="pre">CharField</span></code> since this
+allows the field to have two &quot;empty values&quot;, but it's important for the
+<code class="docutils literal notranslate"><span class="pre">Coalesce</span></code> example below.</p>
+<div class="section" id="s-comparison-and-conversion-functions">
+<span id="s-comparison-functions"></span><span id="comparison-and-conversion-functions"></span><span id="comparison-functions"></span><h2>Comparison and conversion functions<a class="headerlink" href="#comparison-and-conversion-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-cast">
+<span id="cast"></span><h3><code class="docutils literal notranslate"><span class="pre">Cast</span></code><a class="headerlink" href="#cast" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.Cast">
+<em class="property">class </em><code class="descname">Cast</code>(<em>expression</em>, <em>output_field</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/base.html#Cast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.Cast" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Forces the result type of <code class="docutils literal notranslate"><span class="pre">expression</span></code> to be the one from <code class="docutils literal notranslate"><span class="pre">output_field</span></code>.</p>
+<p>Usage example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">FloatField</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">Cast</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Value</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">integer</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">value</span> <span class="o">=</span> <span class="n">Value</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">as_float</span><span class="o">=</span><span class="n">Cast</span><span class="p">(</span><span class="s1">&#39;integer&#39;</span><span class="p">,</span> <span class="n">FloatField</span><span class="p">()))</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">as_float</span><span class="p">)</span>
+<span class="go">4.0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-coalesce">
+<span id="coalesce"></span><h3><code class="docutils literal notranslate"><span class="pre">Coalesce</span></code><a class="headerlink" href="#coalesce" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.Coalesce">
+<em class="property">class </em><code class="descname">Coalesce</code>(<em>*expressions</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/base.html#Coalesce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.Coalesce" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Accepts a list of at least two field names or expressions and returns the
+first non-null value (note that an empty string is not considered a null
+value). Each argument must be of a similar type, so mixing text and numbers
+will result in a database error.</p>
+<p>Usage examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Get a screen name from least to most public</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Sum</span><span class="p">,</span> <span class="n">Value</span> <span class="k">as</span> <span class="n">V</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">Coalesce</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Margaret Smith&#39;</span><span class="p">,</span> <span class="n">goes_by</span><span class="o">=</span><span class="s1">&#39;Maggie&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">author</span> <span class="o">=</span> <span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">screen_name</span><span class="o">=</span><span class="n">Coalesce</span><span class="p">(</span><span class="s1">&#39;alias&#39;</span><span class="p">,</span> <span class="s1">&#39;goes_by&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">author</span><span class="o">.</span><span class="n">screen_name</span><span class="p">)</span>
+<span class="go">Maggie</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Prevent an aggregate Sum() from returning None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aggregated</span> <span class="o">=</span> <span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">combined_age</span><span class="o">=</span><span class="n">Coalesce</span><span class="p">(</span><span class="n">Sum</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">),</span> <span class="n">V</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span>
+<span class="gp">... </span>   <span class="n">combined_age_default</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">aggregated</span><span class="p">[</span><span class="s1">&#39;combined_age&#39;</span><span class="p">])</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">aggregated</span><span class="p">[</span><span class="s1">&#39;combined_age_default&#39;</span><span class="p">])</span>
+<span class="go">None</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>A Python value passed to <code class="docutils literal notranslate"><span class="pre">Coalesce</span></code> on MySQL may be converted to an
+incorrect type unless explicitly cast to the correct database type:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">DateTimeField</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">Cast</span><span class="p">,</span> <span class="n">Coalesce</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.utils</span> <span class="k">import</span> <span class="n">timezone</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">now</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Coalesce</span><span class="p">(</span><span class="s1">&#39;updated&#39;</span><span class="p">,</span> <span class="n">Cast</span><span class="p">(</span><span class="n">now</span><span class="p">,</span> <span class="n">DateTimeField</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="s-greatest">
+<span id="greatest"></span><h3><code class="docutils literal notranslate"><span class="pre">Greatest</span></code><a class="headerlink" href="#greatest" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.Greatest">
+<em class="property">class </em><code class="descname">Greatest</code>(<em>*expressions</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/base.html#Greatest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.Greatest" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Accepts a list of at least two field names or expressions and returns the
+greatest value. Each argument must be of a similar type, so mixing text and
+numbers will result in a database error.</p>
+<p>Usage example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Blog</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">modified</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Comment</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">modified</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">blog</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Blog</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">Greatest</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">blog</span> <span class="o">=</span> <span class="n">Blog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="s1">&#39;Greatest is the best.&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">comment</span> <span class="o">=</span> <span class="n">Comment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="s1">&#39;No, Least is better.&#39;</span><span class="p">,</span> <span class="n">blog</span><span class="o">=</span><span class="n">blog</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">comments</span> <span class="o">=</span> <span class="n">Comment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">last_updated</span><span class="o">=</span><span class="n">Greatest</span><span class="p">(</span><span class="s1">&#39;modified&#39;</span><span class="p">,</span> <span class="s1">&#39;blog__modified&#39;</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">annotated_comment</span> <span class="o">=</span> <span class="n">comments</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">annotated_comment.last_updated</span></code> will be the most recent of <code class="docutils literal notranslate"><span class="pre">blog.modified</span></code>
+and <code class="docutils literal notranslate"><span class="pre">comment.modified</span></code>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>The behavior of <code class="docutils literal notranslate"><span class="pre">Greatest</span></code> when one or more expression may be <code class="docutils literal notranslate"><span class="pre">null</span></code>
+varies between databases:</p>
+<ul class="simple">
+<li>PostgreSQL: <code class="docutils literal notranslate"><span class="pre">Greatest</span></code> will return the largest non-null expression,
+or <code class="docutils literal notranslate"><span class="pre">null</span></code> if all expressions are <code class="docutils literal notranslate"><span class="pre">null</span></code>.</li>
+<li>SQLite, Oracle, and MySQL: If any expression is <code class="docutils literal notranslate"><span class="pre">null</span></code>, <code class="docutils literal notranslate"><span class="pre">Greatest</span></code>
+will return <code class="docutils literal notranslate"><span class="pre">null</span></code>.</li>
+</ul>
+<p class="last">The PostgreSQL behavior can be emulated using <code class="docutils literal notranslate"><span class="pre">Coalesce</span></code> if you know
+a sensible minimum value to provide as a default.</p>
+</div>
+</div>
+<div class="section" id="s-least">
+<span id="least"></span><h3><code class="docutils literal notranslate"><span class="pre">Least</span></code><a class="headerlink" href="#least" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.Least">
+<em class="property">class </em><code class="descname">Least</code>(<em>*expressions</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/base.html#Least"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.Least" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Accepts a list of at least two field names or expressions and returns the
+least value. Each argument must be of a similar type, so mixing text and numbers
+will result in a database error.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>The behavior of <code class="docutils literal notranslate"><span class="pre">Least</span></code> when one or more expression may be <code class="docutils literal notranslate"><span class="pre">null</span></code>
+varies between databases:</p>
+<ul class="simple">
+<li>PostgreSQL: <code class="docutils literal notranslate"><span class="pre">Least</span></code> will return the smallest non-null expression,
+or <code class="docutils literal notranslate"><span class="pre">null</span></code> if all expressions are <code class="docutils literal notranslate"><span class="pre">null</span></code>.</li>
+<li>SQLite, Oracle, and MySQL: If any expression is <code class="docutils literal notranslate"><span class="pre">null</span></code>, <code class="docutils literal notranslate"><span class="pre">Least</span></code>
+will return <code class="docutils literal notranslate"><span class="pre">null</span></code>.</li>
+</ul>
+<p class="last">The PostgreSQL behavior can be emulated using <code class="docutils literal notranslate"><span class="pre">Coalesce</span></code> if you know
+a sensible maximum value to provide as a default.</p>
+</div>
+</div>
+</div>
+<div class="section" id="s-date-functions">
+<span id="s-id1"></span><span id="date-functions"></span><span id="id1"></span><h2>Date functions<a class="headerlink" href="#date-functions" title="Permalink to this headline">¶</a></h2>
+<p>We'll be using the following model in examples of each function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Experiment</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">start_datetime</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">()</span>
+    <span class="n">start_date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TimeField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">end_datetime</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">end_date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TimeField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="s-extract">
+<span id="extract"></span><h3><code class="docutils literal notranslate"><span class="pre">Extract</span></code><a class="headerlink" href="#extract" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.Extract">
+<em class="property">class </em><code class="descname">Extract</code>(<em>expression</em>, <em>lookup_name=None</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#Extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.Extract" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Extracts a component of a date as a number.</p>
+<p>Takes an <code class="docutils literal notranslate"><span class="pre">expression</span></code> representing a <code class="docutils literal notranslate"><span class="pre">DateField</span></code>, <code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code>,
+<code class="docutils literal notranslate"><span class="pre">TimeField</span></code>, or <code class="docutils literal notranslate"><span class="pre">DurationField</span></code> and a <code class="docutils literal notranslate"><span class="pre">lookup_name</span></code>, and returns the part
+of the date referenced by <code class="docutils literal notranslate"><span class="pre">lookup_name</span></code> as an <code class="docutils literal notranslate"><span class="pre">IntegerField</span></code>.
+Django usually uses the databases' extract function, so you may use any
+<code class="docutils literal notranslate"><span class="pre">lookup_name</span></code> that your database supports. A <code class="docutils literal notranslate"><span class="pre">tzinfo</span></code> subclass, usually
+provided by <code class="docutils literal notranslate"><span class="pre">pytz</span></code>, can be passed to extract a value in a specific timezone.</p>
+<div class="versionchanged">
+<span class="title">Changed in Django 2.0:</span> <p>Support for <code class="docutils literal notranslate"><span class="pre">DurationField</span></code> was added.</p>
+</div>
+<p>Given the datetime <code class="docutils literal notranslate"><span class="pre">2015-06-15</span> <span class="pre">23:30:01.000321+00:00</span></code>, the built-in
+<code class="docutils literal notranslate"><span class="pre">lookup_name</span></code>s return:</p>
+<ul class="simple">
+<li>&quot;year&quot;: 2015</li>
+<li>&quot;quarter&quot;: 2</li>
+<li>&quot;month&quot;: 6</li>
+<li>&quot;day&quot;: 15</li>
+<li>&quot;week&quot;: 25</li>
+<li>&quot;week_day&quot;: 2</li>
+<li>&quot;hour&quot;: 23</li>
+<li>&quot;minute&quot;: 30</li>
+<li>&quot;second&quot;: 1</li>
+</ul>
+<p>If a different timezone like <code class="docutils literal notranslate"><span class="pre">Australia/Melbourne</span></code> is active in Django, then
+the datetime is converted to the timezone before the value is extracted. The
+timezone offset for Melbourne in the example date above is +10:00. The values
+returned when this timezone is active will be the same as above except for:</p>
+<ul class="simple">
+<li>&quot;day&quot;: 16</li>
+<li>&quot;week_day&quot;: 3</li>
+<li>&quot;hour&quot;: 9</li>
+</ul>
+<div class="admonition-week-day-values admonition">
+<p class="first admonition-title"><code class="docutils literal notranslate"><span class="pre">week_day</span></code> values</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">week_day</span></code> <code class="docutils literal notranslate"><span class="pre">lookup_type</span></code> is calculated differently from most
+databases and from Python's standard functions. This function will return
+<code class="docutils literal notranslate"><span class="pre">1</span></code> for Sunday, <code class="docutils literal notranslate"><span class="pre">2</span></code> for Monday, through <code class="docutils literal notranslate"><span class="pre">7</span></code> for Saturday.</p>
+<p>The equivalent calculation in Python is:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">isoweekday</span><span class="p">()</span> <span class="o">%</span> <span class="mi">7</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition-week-values admonition">
+<p class="first admonition-title"><code class="docutils literal notranslate"><span class="pre">week</span></code> values</p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">week</span></code> <code class="docutils literal notranslate"><span class="pre">lookup_type</span></code> is calculated based on <a class="reference external" href="https://en.wikipedia.org/wiki/ISO-8601">ISO-8601</a>, i.e.,
+a week starts on a Monday. The first week of a year is the one that
+contains the year's first Thursday, i.e. the first week has the majority
+(four or more) of its days in the year. The value returned is in the range
+1 to 52 or 53.</p>
+</div>
+<p>Each <code class="docutils literal notranslate"><span class="pre">lookup_name</span></code> above has a corresponding <code class="docutils literal notranslate"><span class="pre">Extract</span></code> subclass (listed
+below) that should typically be used instead of the more verbose equivalent,
+e.g. use <code class="docutils literal notranslate"><span class="pre">ExtractYear(...)</span></code> rather than <code class="docutils literal notranslate"><span class="pre">Extract(...,</span> <span class="pre">lookup_name='year')</span></code>.</p>
+<p>Usage example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">Extract</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">start_datetime</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start</span><span class="o">.</span><span class="n">date</span><span class="p">(),</span>
+<span class="gp">... </span>   <span class="n">end_datetime</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end</span><span class="o">.</span><span class="n">date</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Add the experiment start year as a field in the QuerySet.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span> <span class="o">=</span> <span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">start_year</span><span class="o">=</span><span class="n">Extract</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span><span class="o">.</span><span class="n">start_year</span>
+<span class="go">2015</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># How many experiments completed in the same year in which they started?</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">start_datetime__year</span><span class="o">=</span><span class="n">Extract</span><span class="p">(</span><span class="s1">&#39;end_datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<div class="section" id="s-datefield-extracts">
+<span id="datefield-extracts"></span><h4><code class="docutils literal notranslate"><span class="pre">DateField</span></code> extracts<a class="headerlink" href="#datefield-extracts" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="django.db.models.functions.ExtractYear">
+<em class="property">class </em><code class="descname">ExtractYear</code>(<em>expression</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#ExtractYear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.ExtractYear" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">lookup_name = 'year'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="django.db.models.functions.ExtractMonth">
+<em class="property">class </em><code class="descname">ExtractMonth</code>(<em>expression</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#ExtractMonth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.ExtractMonth" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">lookup_name = 'month'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="django.db.models.functions.ExtractDay">
+<em class="property">class </em><code class="descname">ExtractDay</code>(<em>expression</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#ExtractDay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.ExtractDay" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">lookup_name = 'day'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="django.db.models.functions.ExtractWeekDay">
+<em class="property">class </em><code class="descname">ExtractWeekDay</code>(<em>expression</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#ExtractWeekDay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.ExtractWeekDay" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">lookup_name = 'week_day'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="django.db.models.functions.ExtractWeek">
+<em class="property">class </em><code class="descname">ExtractWeek</code>(<em>expression</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#ExtractWeek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.ExtractWeek" title="Permalink to this definition">¶</a></dt>
+<dd><div class="versionadded">
+<span class="title">New in Django 1.11.</span> </div>
+<dl class="attribute">
+<dt>
+<code class="descname">lookup_name = 'week'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="django.db.models.functions.ExtractQuarter">
+<em class="property">class </em><code class="descname">ExtractQuarter</code>(<em>expression</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#ExtractQuarter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.ExtractQuarter" title="Permalink to this definition">¶</a></dt>
+<dd><div class="versionadded">
+<span class="title">New in Django 2.0.</span> </div>
+<dl class="attribute">
+<dt>
+<code class="descname">lookup_name = 'quarter'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<p>These are logically equivalent to <code class="docutils literal notranslate"><span class="pre">Extract('date_field',</span> <span class="pre">lookup_name)</span></code>. Each
+class is also a <code class="docutils literal notranslate"><span class="pre">Transform</span></code> registered on <code class="docutils literal notranslate"><span class="pre">DateField</span></code> and <code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code>
+as <code class="docutils literal notranslate"><span class="pre">__(lookup_name)</span></code>, e.g. <code class="docutils literal notranslate"><span class="pre">__year</span></code>.</p>
+<p>Since <code class="docutils literal notranslate"><span class="pre">DateField</span></code>s don't have a time component, only <code class="docutils literal notranslate"><span class="pre">Extract</span></code> subclasses
+that deal with date-parts can be used with <code class="docutils literal notranslate"><span class="pre">DateField</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.utils</span> <span class="k">import</span> <span class="n">timezone</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="n">ExtractDay</span><span class="p">,</span> <span class="n">ExtractMonth</span><span class="p">,</span> <span class="n">ExtractQuarter</span><span class="p">,</span> <span class="n">ExtractWeek</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">ExtractWeekDay</span><span class="p">,</span> <span class="n">ExtractYear</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">start_2015</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">end_2015</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">start_datetime</span><span class="o">=</span><span class="n">start_2015</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_2015</span><span class="o">.</span><span class="n">date</span><span class="p">(),</span>
+<span class="gp">... </span>   <span class="n">end_datetime</span><span class="o">=</span><span class="n">end_2015</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_2015</span><span class="o">.</span><span class="n">date</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">year</span><span class="o">=</span><span class="n">ExtractYear</span><span class="p">(</span><span class="s1">&#39;start_date&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">quarter</span><span class="o">=</span><span class="n">ExtractQuarter</span><span class="p">(</span><span class="s1">&#39;start_date&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">month</span><span class="o">=</span><span class="n">ExtractMonth</span><span class="p">(</span><span class="s1">&#39;start_date&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">week</span><span class="o">=</span><span class="n">ExtractWeek</span><span class="p">(</span><span class="s1">&#39;start_date&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">day</span><span class="o">=</span><span class="n">ExtractDay</span><span class="p">(</span><span class="s1">&#39;start_date&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">weekday</span><span class="o">=</span><span class="n">ExtractWeekDay</span><span class="p">(</span><span class="s1">&#39;start_date&#39;</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;quarter&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">,</span> <span class="s1">&#39;week&#39;</span><span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="s1">&#39;weekday&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">end_date__year</span><span class="o">=</span><span class="n">ExtractYear</span><span class="p">(</span><span class="s1">&#39;start_date&#39;</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">{&#39;year&#39;: 2015, &#39;quarter&#39;: 2, &#39;month&#39;: 6, &#39;week&#39;: 25, &#39;day&#39;: 15, &#39;weekday&#39;: 2}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-datetimefield-extracts">
+<span id="datetimefield-extracts"></span><h4><code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code> extracts<a class="headerlink" href="#datetimefield-extracts" title="Permalink to this headline">¶</a></h4>
+<p>In addition to the following, all extracts for <code class="docutils literal notranslate"><span class="pre">DateField</span></code> listed above may
+also be used on <code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code>s .</p>
+<dl class="class">
+<dt id="django.db.models.functions.ExtractHour">
+<em class="property">class </em><code class="descname">ExtractHour</code>(<em>expression</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#ExtractHour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.ExtractHour" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">lookup_name = 'hour'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="django.db.models.functions.ExtractMinute">
+<em class="property">class </em><code class="descname">ExtractMinute</code>(<em>expression</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#ExtractMinute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.ExtractMinute" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">lookup_name = 'minute'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="django.db.models.functions.ExtractSecond">
+<em class="property">class </em><code class="descname">ExtractSecond</code>(<em>expression</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#ExtractSecond"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.ExtractSecond" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">lookup_name = 'second'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<p>These are logically equivalent to <code class="docutils literal notranslate"><span class="pre">Extract('datetime_field',</span> <span class="pre">lookup_name)</span></code>.
+Each class is also a <code class="docutils literal notranslate"><span class="pre">Transform</span></code> registered on <code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code> as
+<code class="docutils literal notranslate"><span class="pre">__(lookup_name)</span></code>, e.g. <code class="docutils literal notranslate"><span class="pre">__minute</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code> examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.utils</span> <span class="k">import</span> <span class="n">timezone</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="n">ExtractDay</span><span class="p">,</span> <span class="n">ExtractHour</span><span class="p">,</span> <span class="n">ExtractMinute</span><span class="p">,</span> <span class="n">ExtractMonth</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">ExtractQuarter</span><span class="p">,</span> <span class="n">ExtractSecond</span><span class="p">,</span> <span class="n">ExtractWeek</span><span class="p">,</span> <span class="n">ExtractWeekDay</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">ExtractYear</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">start_2015</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">end_2015</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">start_datetime</span><span class="o">=</span><span class="n">start_2015</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_2015</span><span class="o">.</span><span class="n">date</span><span class="p">(),</span>
+<span class="gp">... </span>   <span class="n">end_datetime</span><span class="o">=</span><span class="n">end_2015</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_2015</span><span class="o">.</span><span class="n">date</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">year</span><span class="o">=</span><span class="n">ExtractYear</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">quarter</span><span class="o">=</span><span class="n">ExtractQuarter</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">month</span><span class="o">=</span><span class="n">ExtractMonth</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">week</span><span class="o">=</span><span class="n">ExtractWeek</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">day</span><span class="o">=</span><span class="n">ExtractDay</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">weekday</span><span class="o">=</span><span class="n">ExtractWeekDay</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">hour</span><span class="o">=</span><span class="n">ExtractHour</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">minute</span><span class="o">=</span><span class="n">ExtractMinute</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">second</span><span class="o">=</span><span class="n">ExtractSecond</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">,</span> <span class="s1">&#39;week&#39;</span><span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="s1">&#39;weekday&#39;</span><span class="p">,</span> <span class="s1">&#39;hour&#39;</span><span class="p">,</span> <span class="s1">&#39;minute&#39;</span><span class="p">,</span> <span class="s1">&#39;second&#39;</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">end_datetime__year</span><span class="o">=</span><span class="n">ExtractYear</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">))</span>
+<span class="go">{&#39;year&#39;: 2015, &#39;quarter&#39;: 2, &#39;month&#39;: 6, &#39;week&#39;: 25, &#39;day&#39;: 15, &#39;weekday&#39;: 2,</span>
+<span class="go"> &#39;hour&#39;: 23, &#39;minute&#39;: 30, &#39;second&#39;: 1}</span>
+</pre></div>
+</div>
+<p>When <a class="reference internal" href="../settings.html#std:setting-USE_TZ"><code class="xref std std-setting docutils literal notranslate"><span class="pre">USE_TZ</span></code></a> is <code class="docutils literal notranslate"><span class="pre">True</span></code> then datetimes are stored in the database
+in UTC. If a different timezone is active in Django, the datetime is converted
+to that timezone before the value is extracted. The example below converts to
+the Melbourne timezone (UTC +10:00), which changes the day, weekday, and hour
+values that are returned:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pytz</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">melb</span> <span class="o">=</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="s1">&#39;Australia/Melbourne&#39;</span><span class="p">)</span>  <span class="c1"># UTC+10:00</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">timezone</span><span class="o">.</span><span class="n">override</span><span class="p">(</span><span class="n">melb</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>       <span class="n">day</span><span class="o">=</span><span class="n">ExtractDay</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span>       <span class="n">weekday</span><span class="o">=</span><span class="n">ExtractWeekDay</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span>       <span class="n">hour</span><span class="o">=</span><span class="n">ExtractHour</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span>   <span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="s1">&#39;weekday&#39;</span><span class="p">,</span> <span class="s1">&#39;hour&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+<span class="gp">... </span>       <span class="n">end_datetime__year</span><span class="o">=</span><span class="n">ExtractYear</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span>   <span class="p">)</span>
+<span class="go">{&#39;day&#39;: 16, &#39;weekday&#39;: 3, &#39;hour&#39;: 9}</span>
+</pre></div>
+</div>
+<p>Explicitly passing the timezone to the <code class="docutils literal notranslate"><span class="pre">Extract</span></code> function behaves in the same
+way, and takes priority over an active timezone:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pytz</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">melb</span> <span class="o">=</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="s1">&#39;Australia/Melbourne&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">day</span><span class="o">=</span><span class="n">ExtractDay</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">melb</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">weekday</span><span class="o">=</span><span class="n">ExtractWeekDay</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">melb</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">hour</span><span class="o">=</span><span class="n">ExtractHour</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">melb</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="s1">&#39;weekday&#39;</span><span class="p">,</span> <span class="s1">&#39;hour&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">end_datetime__year</span><span class="o">=</span><span class="n">ExtractYear</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">{&#39;day&#39;: 16, &#39;weekday&#39;: 3, &#39;hour&#39;: 9}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="s-now">
+<span id="now"></span><h3><code class="docutils literal notranslate"><span class="pre">Now</span></code><a class="headerlink" href="#now" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.Now">
+<em class="property">class </em><code class="descname">Now</code><a class="reference internal" href="../../_modules/django/db/models/functions/base.html#Now"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.Now" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Returns the database server's current date and time when the query is executed,
+typically using the SQL <code class="docutils literal notranslate"><span class="pre">CURRENT_TIMESTAMP</span></code>.</p>
+<p>Usage example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">Now</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">published__lte</span><span class="o">=</span><span class="n">Now</span><span class="p">())</span>
+<span class="go">&lt;QuerySet [&lt;Article: How to Django&gt;]&gt;</span>
+</pre></div>
+</div>
+<div class="admonition-postgresql-considerations admonition">
+<p class="first admonition-title">PostgreSQL considerations</p>
+<p class="last">On PostgreSQL, the SQL <code class="docutils literal notranslate"><span class="pre">CURRENT_TIMESTAMP</span></code> returns the time that the
+current transaction started. Therefore for cross-database compatibility,
+<code class="docutils literal notranslate"><span class="pre">Now()</span></code> uses <code class="docutils literal notranslate"><span class="pre">STATEMENT_TIMESTAMP</span></code> instead. If you need the transaction
+timestamp, use <a class="reference internal" href="../contrib/postgres/functions.html#django.contrib.postgres.functions.TransactionNow" title="django.contrib.postgres.functions.TransactionNow"><code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.postgres.functions.TransactionNow</span></code></a>.</p>
+</div>
+</div>
+<div class="section" id="s-trunc">
+<span id="trunc"></span><h3><code class="docutils literal notranslate"><span class="pre">Trunc</span></code><a class="headerlink" href="#trunc" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.Trunc">
+<em class="property">class </em><code class="descname">Trunc</code>(<em>expression</em>, <em>kind</em>, <em>output_field=None</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#Trunc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.Trunc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Truncates a date up to a significant component.</p>
+<p>When you only care if something happened in a particular year, hour, or day,
+but not the exact second, then <code class="docutils literal notranslate"><span class="pre">Trunc</span></code> (and its subclasses) can be useful to
+filter or aggregate your data. For example, you can use <code class="docutils literal notranslate"><span class="pre">Trunc</span></code> to calculate
+the number of sales per day.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Trunc</span></code> takes a single <code class="docutils literal notranslate"><span class="pre">expression</span></code>, representing a <code class="docutils literal notranslate"><span class="pre">DateField</span></code>,
+<code class="docutils literal notranslate"><span class="pre">TimeField</span></code>, or <code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code>, a <code class="docutils literal notranslate"><span class="pre">kind</span></code> representing a date or time
+part, and an <code class="docutils literal notranslate"><span class="pre">output_field</span></code> that's either <code class="docutils literal notranslate"><span class="pre">DateTimeField()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">TimeField()</span></code>, or <code class="docutils literal notranslate"><span class="pre">DateField()</span></code>. It returns a datetime, date, or time
+depending on <code class="docutils literal notranslate"><span class="pre">output_field</span></code>, with fields up to <code class="docutils literal notranslate"><span class="pre">kind</span></code> set to their minimum
+value. If <code class="docutils literal notranslate"><span class="pre">output_field</span></code> is omitted, it will default to the <code class="docutils literal notranslate"><span class="pre">output_field</span></code>
+of <code class="docutils literal notranslate"><span class="pre">expression</span></code>. A <code class="docutils literal notranslate"><span class="pre">tzinfo</span></code> subclass, usually provided by <code class="docutils literal notranslate"><span class="pre">pytz</span></code>, can be
+passed to truncate a value in a specific timezone.</p>
+<p>Given the datetime <code class="docutils literal notranslate"><span class="pre">2015-06-15</span> <span class="pre">14:30:50.000321+00:00</span></code>, the built-in <code class="docutils literal notranslate"><span class="pre">kind</span></code>s
+return:</p>
+<ul class="simple">
+<li>&quot;year&quot;: 2015-01-01 00:00:00+00:00</li>
+<li>&quot;quarter&quot;: 2015-04-01 00:00:00+00:00</li>
+<li>&quot;month&quot;: 2015-06-01 00:00:00+00:00</li>
+<li>&quot;day&quot;: 2015-06-15 00:00:00+00:00</li>
+<li>&quot;hour&quot;: 2015-06-15 14:00:00+00:00</li>
+<li>&quot;minute&quot;: 2015-06-15 14:30:00+00:00</li>
+<li>&quot;second&quot;: 2015-06-15 14:30:50+00:00</li>
+</ul>
+<p>If a different timezone like <code class="docutils literal notranslate"><span class="pre">Australia/Melbourne</span></code> is active in Django, then
+the datetime is converted to the new timezone before the value is truncated.
+The timezone offset for Melbourne in the example date above is +10:00. The
+values returned when this timezone is active will be:</p>
+<ul class="simple">
+<li>&quot;year&quot;: 2015-01-01 00:00:00+11:00</li>
+<li>&quot;quarter&quot;: 2015-04-01 00:00:00+10:00</li>
+<li>&quot;month&quot;: 2015-06-01 00:00:00+10:00</li>
+<li>&quot;day&quot;: 2015-06-16 00:00:00+10:00</li>
+<li>&quot;hour&quot;: 2015-06-16 00:00:00+10:00</li>
+<li>&quot;minute&quot;: 2015-06-16 00:30:00+10:00</li>
+<li>&quot;second&quot;: 2015-06-16 00:30:50+10:00</li>
+</ul>
+<p>The year has an offset of +11:00 because the result transitioned into daylight
+saving time.</p>
+<p>Each <code class="docutils literal notranslate"><span class="pre">kind</span></code> above has a corresponding <code class="docutils literal notranslate"><span class="pre">Trunc</span></code> subclass (listed below) that
+should typically be used instead of the more verbose equivalent,
+e.g. use <code class="docutils literal notranslate"><span class="pre">TruncYear(...)</span></code> rather than <code class="docutils literal notranslate"><span class="pre">Trunc(...,</span> <span class="pre">kind='year')</span></code>.</p>
+<p>The subclasses are all defined as transforms, but they aren't registered with
+any fields, because the obvious lookup names are already reserved by the
+<code class="docutils literal notranslate"><span class="pre">Extract</span></code> subclasses.</p>
+<p>Usage example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Count</span><span class="p">,</span> <span class="n">DateTimeField</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">Trunc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">start_datetime</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">321</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">start_datetime</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">123</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">start_datetime</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">999</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">experiments_per_day</span> <span class="o">=</span> <span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">start_day</span><span class="o">=</span><span class="n">Trunc</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="n">output_field</span><span class="o">=</span><span class="n">DateTimeField</span><span class="p">())</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;start_day&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">experiments</span><span class="o">=</span><span class="n">Count</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="n">experiments_per_day</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">exp</span><span class="p">[</span><span class="s1">&#39;start_day&#39;</span><span class="p">],</span> <span class="n">exp</span><span class="p">[</span><span class="s1">&#39;experiments&#39;</span><span class="p">])</span>
+<span class="gp">...</span>
+<span class="go">2015-06-15 00:00:00 2</span>
+<span class="go">2015-12-25 00:00:00 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">experiments</span> <span class="o">=</span> <span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">start_day</span><span class="o">=</span><span class="n">Trunc</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="n">output_field</span><span class="o">=</span><span class="n">DateTimeField</span><span class="p">())</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">start_day</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="n">experiments</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">start_datetime</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">2015-06-15 14:30:50.000321</span>
+<span class="go">2015-06-15 14:40:02.000123</span>
+</pre></div>
+</div>
+<div class="section" id="s-datefield-truncation">
+<span id="datefield-truncation"></span><h4><code class="docutils literal notranslate"><span class="pre">DateField</span></code> truncation<a class="headerlink" href="#datefield-truncation" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="django.db.models.functions.TruncYear">
+<em class="property">class </em><code class="descname">TruncYear</code>(<em>expression</em>, <em>output_field=None</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#TruncYear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.TruncYear" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">kind = 'year'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="django.db.models.functions.TruncMonth">
+<em class="property">class </em><code class="descname">TruncMonth</code>(<em>expression</em>, <em>output_field=None</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#TruncMonth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.TruncMonth" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">kind = 'month'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="django.db.models.functions.TruncQuarter">
+<em class="property">class </em><code class="descname">TruncQuarter</code>(<em>expression</em>, <em>output_field=None</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#TruncQuarter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.TruncQuarter" title="Permalink to this definition">¶</a></dt>
+<dd><div class="versionadded">
+<span class="title">New in Django 2.0.</span> </div>
+<dl class="attribute">
+<dt>
+<code class="descname">kind = 'quarter'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<p>These are logically equivalent to <code class="docutils literal notranslate"><span class="pre">Trunc('date_field',</span> <span class="pre">kind)</span></code>. They truncate
+all parts of the date up to <code class="docutils literal notranslate"><span class="pre">kind</span></code> which allows grouping or filtering dates
+with less precision. <code class="docutils literal notranslate"><span class="pre">expression</span></code> can have an <code class="docutils literal notranslate"><span class="pre">output_field</span></code> of either
+<code class="docutils literal notranslate"><span class="pre">DateField</span></code> or <code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code>.</p>
+<p>Since <code class="docutils literal notranslate"><span class="pre">DateField</span></code>s don't have a time component, only <code class="docutils literal notranslate"><span class="pre">Trunc</span></code> subclasses
+that deal with date-parts can be used with <code class="docutils literal notranslate"><span class="pre">DateField</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Count</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">TruncMonth</span><span class="p">,</span> <span class="n">TruncYear</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.utils</span> <span class="k">import</span> <span class="n">timezone</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">start1</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">321</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">start2</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">start3</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">999</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">start_datetime</span><span class="o">=</span><span class="n">start1</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start1</span><span class="o">.</span><span class="n">date</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">start_datetime</span><span class="o">=</span><span class="n">start2</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start2</span><span class="o">.</span><span class="n">date</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">start_datetime</span><span class="o">=</span><span class="n">start3</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start3</span><span class="o">.</span><span class="n">date</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">experiments_per_year</span> <span class="o">=</span> <span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">year</span><span class="o">=</span><span class="n">TruncYear</span><span class="p">(</span><span class="s1">&#39;start_date&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;year&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">experiments</span><span class="o">=</span><span class="n">Count</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="n">experiments_per_year</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">exp</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">],</span> <span class="n">exp</span><span class="p">[</span><span class="s1">&#39;experiments&#39;</span><span class="p">])</span>
+<span class="gp">...</span>
+<span class="go">2014-01-01 1</span>
+<span class="go">2015-01-01 2</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pytz</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">melb</span> <span class="o">=</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="s1">&#39;Australia/Melbourne&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">experiments_per_month</span> <span class="o">=</span> <span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">month</span><span class="o">=</span><span class="n">TruncMonth</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">melb</span><span class="p">))</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;month&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">experiments</span><span class="o">=</span><span class="n">Count</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="n">experiments_per_month</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">exp</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">],</span> <span class="n">exp</span><span class="p">[</span><span class="s1">&#39;experiments&#39;</span><span class="p">])</span>
+<span class="gp">...</span>
+<span class="go">2015-06-01 00:00:00+10:00 1</span>
+<span class="go">2016-01-01 00:00:00+11:00 1</span>
+<span class="go">2014-06-01 00:00:00+10:00 1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-datetimefield-truncation">
+<span id="datetimefield-truncation"></span><h4><code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code> truncation<a class="headerlink" href="#datetimefield-truncation" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="django.db.models.functions.TruncDate">
+<em class="property">class </em><code class="descname">TruncDate</code>(<em>expression</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#TruncDate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.TruncDate" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">lookup_name = 'date'</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">output_field = DateField()</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<p><code class="docutils literal notranslate"><span class="pre">TruncDate</span></code> casts <code class="docutils literal notranslate"><span class="pre">expression</span></code> to a date rather than using the built-in SQL
+truncate function. It's also registered as a transform on  <code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code> as
+<code class="docutils literal notranslate"><span class="pre">__date</span></code>.</p>
+<dl class="class">
+<dt id="django.db.models.functions.TruncTime">
+<em class="property">class </em><code class="descname">TruncTime</code>(<em>expression</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#TruncTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.TruncTime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="versionadded">
+<span class="title">New in Django 1.11:</span> <dl class="attribute">
+<dt>
+<code class="descname">lookup_name = 'time'</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">output_field = TimeField()</code></dt>
+<dd></dd></dl>
+
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">TruncTime</span></code> casts <code class="docutils literal notranslate"><span class="pre">expression</span></code> to a time rather than using the built-in SQL
+truncate function. It's also registered as a transform on <code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code> as
+<code class="docutils literal notranslate"><span class="pre">__time</span></code>.</p>
+<dl class="class">
+<dt id="django.db.models.functions.TruncDay">
+<em class="property">class </em><code class="descname">TruncDay</code>(<em>expression</em>, <em>output_field=None</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#TruncDay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.TruncDay" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">kind = 'day'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="django.db.models.functions.TruncHour">
+<em class="property">class </em><code class="descname">TruncHour</code>(<em>expression</em>, <em>output_field=None</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#TruncHour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.TruncHour" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">kind = 'hour'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="django.db.models.functions.TruncMinute">
+<em class="property">class </em><code class="descname">TruncMinute</code>(<em>expression</em>, <em>output_field=None</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#TruncMinute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.TruncMinute" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">kind = 'minute'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="django.db.models.functions.TruncSecond">
+<em class="property">class </em><code class="descname">TruncSecond</code>(<em>expression</em>, <em>output_field=None</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#TruncSecond"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.TruncSecond" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">kind = 'second'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<p>These are logically equivalent to <code class="docutils literal notranslate"><span class="pre">Trunc('datetime_field',</span> <span class="pre">kind)</span></code>. They
+truncate all parts of the date up to <code class="docutils literal notranslate"><span class="pre">kind</span></code> and allow grouping or filtering
+datetimes with less precision. <code class="docutils literal notranslate"><span class="pre">expression</span></code> must have an <code class="docutils literal notranslate"><span class="pre">output_field</span></code> of
+<code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code>.</p>
+<p>Usage example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Count</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="n">TruncDate</span><span class="p">,</span> <span class="n">TruncDay</span><span class="p">,</span> <span class="n">TruncHour</span><span class="p">,</span> <span class="n">TruncMinute</span><span class="p">,</span> <span class="n">TruncSecond</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.utils</span> <span class="k">import</span> <span class="n">timezone</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pytz</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">start1</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">321</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">start_datetime</span><span class="o">=</span><span class="n">start1</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start1</span><span class="o">.</span><span class="n">date</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">melb</span> <span class="o">=</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="s1">&#39;Australia/Melbourne&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">date</span><span class="o">=</span><span class="n">TruncDate</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">day</span><span class="o">=</span><span class="n">TruncDay</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">melb</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">hour</span><span class="o">=</span><span class="n">TruncHour</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">melb</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">minute</span><span class="o">=</span><span class="n">TruncMinute</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">second</span><span class="o">=</span><span class="n">TruncSecond</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="s1">&#39;hour&#39;</span><span class="p">,</span> <span class="s1">&#39;minute&#39;</span><span class="p">,</span> <span class="s1">&#39;second&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="go">{&#39;date&#39;: datetime.date(2014, 6, 15),</span>
+<span class="go"> &#39;day&#39;: datetime.datetime(2014, 6, 16, 0, 0, tzinfo=&lt;DstTzInfo &#39;Australia/Melbourne&#39; AEST+10:00:00 STD&gt;),</span>
+<span class="go"> &#39;hour&#39;: datetime.datetime(2014, 6, 16, 0, 0, tzinfo=&lt;DstTzInfo &#39;Australia/Melbourne&#39; AEST+10:00:00 STD&gt;),</span>
+<span class="go"> &#39;minute&#39;: &#39;minute&#39;: datetime.datetime(2014, 6, 15, 14, 30, tzinfo=&lt;UTC&gt;),</span>
+<span class="go"> &#39;second&#39;: datetime.datetime(2014, 6, 15, 14, 30, 50, tzinfo=&lt;UTC&gt;)</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-timefield-truncation">
+<span id="timefield-truncation"></span><h4><code class="docutils literal notranslate"><span class="pre">TimeField</span></code> truncation<a class="headerlink" href="#timefield-truncation" title="Permalink to this headline">¶</a></h4>
+<div class="versionadded">
+<span class="title">New in Django 1.11.</span> </div>
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descname">TruncHour</code>(<em>expression</em>, <em>output_field=None</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#TruncHour"><span class="viewcode-link">[source]</span></a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">kind = 'hour'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descname">TruncMinute</code>(<em>expression</em>, <em>output_field=None</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#TruncMinute"><span class="viewcode-link">[source]</span></a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">kind = 'minute'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descname">TruncSecond</code>(<em>expression</em>, <em>output_field=None</em>, <em>tzinfo=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/datetime.html#TruncSecond"><span class="viewcode-link">[source]</span></a></dt>
+<dd><dl class="attribute">
+<dt>
+<code class="descname">kind = 'second'</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<p>These are logically equivalent to <code class="docutils literal notranslate"><span class="pre">Trunc('time_field',</span> <span class="pre">kind)</span></code>. They truncate
+all parts of the time up to <code class="docutils literal notranslate"><span class="pre">kind</span></code> which allows grouping or filtering times
+with less precision. <code class="docutils literal notranslate"><span class="pre">expression</span></code> can have an <code class="docutils literal notranslate"><span class="pre">output_field</span></code> of either
+<code class="docutils literal notranslate"><span class="pre">TimeField</span></code> or <code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code>.</p>
+<p>Since <code class="docutils literal notranslate"><span class="pre">TimeField</span></code>s don't have a date component, only <code class="docutils literal notranslate"><span class="pre">Trunc</span></code> subclasses
+that deal with time-parts can be used with <code class="docutils literal notranslate"><span class="pre">TimeField</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Count</span><span class="p">,</span> <span class="n">TimeField</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">TruncHour</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.utils</span> <span class="k">import</span> <span class="n">timezone</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">start1</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">321</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">start2</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">start3</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">999</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">start_datetime</span><span class="o">=</span><span class="n">start1</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="n">start1</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">start_datetime</span><span class="o">=</span><span class="n">start2</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="n">start2</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">start_datetime</span><span class="o">=</span><span class="n">start3</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="n">start3</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">experiments_per_hour</span> <span class="o">=</span> <span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">hour</span><span class="o">=</span><span class="n">TruncHour</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">,</span> <span class="n">output_field</span><span class="o">=</span><span class="n">TimeField</span><span class="p">()),</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;hour&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">experiments</span><span class="o">=</span><span class="n">Count</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="n">experiments_per_hour</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">exp</span><span class="p">[</span><span class="s1">&#39;hour&#39;</span><span class="p">],</span> <span class="n">exp</span><span class="p">[</span><span class="s1">&#39;experiments&#39;</span><span class="p">])</span>
+<span class="gp">...</span>
+<span class="go">14:00:00 2</span>
+<span class="go">17:00:00 1</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pytz</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">melb</span> <span class="o">=</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="s1">&#39;Australia/Melbourne&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">experiments_per_hour</span> <span class="o">=</span> <span class="n">Experiment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">hour</span><span class="o">=</span><span class="n">TruncHour</span><span class="p">(</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">melb</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;hour&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">experiments</span><span class="o">=</span><span class="n">Count</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="n">experiments_per_hour</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">exp</span><span class="p">[</span><span class="s1">&#39;hour&#39;</span><span class="p">],</span> <span class="n">exp</span><span class="p">[</span><span class="s1">&#39;experiments&#39;</span><span class="p">])</span>
+<span class="gp">...</span>
+<span class="go">2014-06-16 00:00:00+10:00 2</span>
+<span class="go">2016-01-01 04:00:00+11:00 1</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="s-text-functions">
+<span id="s-id2"></span><span id="text-functions"></span><span id="id2"></span><h2>Text functions<a class="headerlink" href="#text-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-concat">
+<span id="concat"></span><h3><code class="docutils literal notranslate"><span class="pre">Concat</span></code><a class="headerlink" href="#concat" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.Concat">
+<em class="property">class </em><code class="descname">Concat</code>(<em>*expressions</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/base.html#Concat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.Concat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Accepts a list of at least two text fields or expressions and returns the
+concatenated text. Each argument must be of a text or char type. If you want
+to concatenate a <code class="docutils literal notranslate"><span class="pre">TextField()</span></code> with a <code class="docutils literal notranslate"><span class="pre">CharField()</span></code>, then be sure to tell
+Django that the <code class="docutils literal notranslate"><span class="pre">output_field</span></code> should be a <code class="docutils literal notranslate"><span class="pre">TextField()</span></code>. Specifying an
+<code class="docutils literal notranslate"><span class="pre">output_field</span></code> is also required when concatenating a <code class="docutils literal notranslate"><span class="pre">Value</span></code> as in the
+example below.</p>
+<p>This function will never have a null result. On backends where a null argument
+results in the entire expression being null, Django will ensure that each null
+part is converted to an empty string first.</p>
+<p>Usage example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Get the display name as &quot;name (goes_by)&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">CharField</span><span class="p">,</span> <span class="n">Value</span> <span class="k">as</span> <span class="n">V</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">Concat</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Margaret Smith&#39;</span><span class="p">,</span> <span class="n">goes_by</span><span class="o">=</span><span class="s1">&#39;Maggie&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">author</span> <span class="o">=</span> <span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">screen_name</span><span class="o">=</span><span class="n">Concat</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">V</span><span class="p">(</span><span class="s1">&#39; (&#39;</span><span class="p">),</span> <span class="s1">&#39;goes_by&#39;</span><span class="p">,</span> <span class="n">V</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">),</span>
+<span class="gp">... </span>        <span class="n">output_field</span><span class="o">=</span><span class="n">CharField</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">author</span><span class="o">.</span><span class="n">screen_name</span><span class="p">)</span>
+<span class="go">Margaret Smith (Maggie)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-length">
+<span id="length"></span><h3><code class="docutils literal notranslate"><span class="pre">Length</span></code><a class="headerlink" href="#length" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.Length">
+<em class="property">class </em><code class="descname">Length</code>(<em>expression</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/base.html#Length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.Length" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Accepts a single text field or expression and returns the number of characters
+the value has. If the expression is null, then the length will also be null.</p>
+<p>Usage example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Get the length of the name and goes_by fields</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">Length</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Margaret Smith&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">author</span> <span class="o">=</span> <span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">name_length</span><span class="o">=</span><span class="n">Length</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">),</span>
+<span class="gp">... </span>   <span class="n">goes_by_length</span><span class="o">=</span><span class="n">Length</span><span class="p">(</span><span class="s1">&#39;goes_by&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">author</span><span class="o">.</span><span class="n">name_length</span><span class="p">,</span> <span class="n">author</span><span class="o">.</span><span class="n">goes_by_length</span><span class="p">)</span>
+<span class="go">(14, None)</span>
+</pre></div>
+</div>
+<p>It can also be registered as a transform. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">CharField</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">Length</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CharField</span><span class="o">.</span><span class="n">register_lookup</span><span class="p">(</span><span class="n">Length</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Get authors whose name is longer than 7 characters</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">authors</span> <span class="o">=</span> <span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name__length__gt</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-lower">
+<span id="lower"></span><h3><code class="docutils literal notranslate"><span class="pre">Lower</span></code><a class="headerlink" href="#lower" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.Lower">
+<em class="property">class </em><code class="descname">Lower</code>(<em>expression</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/base.html#Lower"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.Lower" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Accepts a single text field or expression and returns the lowercase
+representation.</p>
+<p>It can also be registered as a transform as described in <a class="reference internal" href="#django.db.models.functions.Length" title="django.db.models.functions.Length"><code class="xref py py-class docutils literal notranslate"><span class="pre">Length</span></code></a>.</p>
+<p>Usage example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">Lower</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Margaret Smith&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">author</span> <span class="o">=</span> <span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">name_lower</span><span class="o">=</span><span class="n">Lower</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">author</span><span class="o">.</span><span class="n">name_lower</span><span class="p">)</span>
+<span class="go">margaret smith</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-strindex">
+<span id="strindex"></span><h3><code class="docutils literal notranslate"><span class="pre">StrIndex</span></code><a class="headerlink" href="#strindex" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.StrIndex">
+<em class="property">class </em><code class="descname">StrIndex</code>(<em>string</em>, <em>substring</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/base.html#StrIndex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.StrIndex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="versionadded">
+<span class="title">New in Django 2.0.</span> </div>
+<p>Returns a positive integer corresponding to the 1-indexed position of the first
+occurrence of <code class="docutils literal notranslate"><span class="pre">substring</span></code> inside <code class="docutils literal notranslate"><span class="pre">string</span></code>, or 0 if <code class="docutils literal notranslate"><span class="pre">substring</span></code> is not
+found.</p>
+<p>Usage example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Value</span> <span class="k">as</span> <span class="n">V</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">StrIndex</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Margaret Smith&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Smith, Margaret&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Margaret Jackson&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Margaret Jackson&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">smith_index</span><span class="o">=</span><span class="n">StrIndex</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">V</span><span class="p">(</span><span class="s1">&#39;Smith&#39;</span><span class="p">))</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">smith_index</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">authors</span> <span class="o">=</span> <span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">smith_index</span><span class="o">=</span><span class="n">StrIndex</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">V</span><span class="p">(</span><span class="s1">&#39;Smith&#39;</span><span class="p">))</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">smith_index__gt</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">&lt;QuerySet [&lt;Author: Margaret Smith&gt;, &lt;Author: Smith, Margaret&gt;]&gt;</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">In MySQL, a database table's <a class="reference internal" href="../databases.html#mysql-collation"><span class="std std-ref">collation</span></a> determines
+whether string comparisons (such as the <code class="docutils literal notranslate"><span class="pre">expression</span></code> and <code class="docutils literal notranslate"><span class="pre">substring</span></code> of
+this function) are case-sensitive. Comparisons are case-insensitive by
+default.</p>
+</div>
+</div>
+<div class="section" id="s-substr">
+<span id="substr"></span><h3><code class="docutils literal notranslate"><span class="pre">Substr</span></code><a class="headerlink" href="#substr" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.Substr">
+<em class="property">class </em><code class="descname">Substr</code>(<em>expression</em>, <em>pos</em>, <em>length=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/base.html#Substr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.Substr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Returns a substring of length <code class="docutils literal notranslate"><span class="pre">length</span></code> from the field or expression starting
+at position <code class="docutils literal notranslate"><span class="pre">pos</span></code>. The position is 1-indexed, so the position must be greater
+than 0. If <code class="docutils literal notranslate"><span class="pre">length</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then the rest of the string will be returned.</p>
+<p>Usage example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set the alias to the first 5 characters of the name as lowercase</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">Lower</span><span class="p">,</span> <span class="n">Substr</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Margaret Smith&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="n">Lower</span><span class="p">(</span><span class="n">Substr</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)))</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Margaret Smith&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">)</span>
+<span class="go">marga</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-upper">
+<span id="upper"></span><h3><code class="docutils literal notranslate"><span class="pre">Upper</span></code><a class="headerlink" href="#upper" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.Upper">
+<em class="property">class </em><code class="descname">Upper</code>(<em>expression</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/base.html#Upper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.Upper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Accepts a single text field or expression and returns the uppercase
+representation.</p>
+<p>It can also be registered as a transform as described in <a class="reference internal" href="#django.db.models.functions.Length" title="django.db.models.functions.Length"><code class="xref py py-class docutils literal notranslate"><span class="pre">Length</span></code></a>.</p>
+<p>Usage example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">Upper</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Margaret Smith&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">author</span> <span class="o">=</span> <span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">name_upper</span><span class="o">=</span><span class="n">Upper</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">author</span><span class="o">.</span><span class="n">name_upper</span><span class="p">)</span>
+<span class="go">MARGARET SMITH</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="s-window-functions">
+<span id="s-id3"></span><span id="window-functions"></span><span id="id3"></span><h2>Window functions<a class="headerlink" href="#window-functions" title="Permalink to this headline">¶</a></h2>
+<div class="versionadded">
+<span class="title">New in Django 2.0.</span> </div>
+<p>There are a number of functions to use in a
+<a class="reference internal" href="expressions.html#django.db.models.expressions.Window" title="django.db.models.expressions.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></a> expression for computing the rank
+of elements or the <a class="reference internal" href="#django.db.models.functions.Ntile" title="django.db.models.functions.Ntile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ntile</span></code></a> of some rows.</p>
+<div class="section" id="s-cumedist">
+<span id="cumedist"></span><h3><code class="docutils literal notranslate"><span class="pre">CumeDist</span></code><a class="headerlink" href="#cumedist" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.CumeDist">
+<em class="property">class </em><code class="descname">CumeDist</code>(<em>*expressions</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/window.html#CumeDist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.CumeDist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Calculates the cumulative distribution of a value within a window or partition.
+The cumulative distribution is defined as the number of rows preceding or
+peered with the current row divided by the total number of rows in the frame.</p>
+</div>
+<div class="section" id="s-denserank">
+<span id="denserank"></span><h3><code class="docutils literal notranslate"><span class="pre">DenseRank</span></code><a class="headerlink" href="#denserank" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.DenseRank">
+<em class="property">class </em><code class="descname">DenseRank</code>(<em>*expressions</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/window.html#DenseRank"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.DenseRank" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Equivalent to <a class="reference internal" href="#django.db.models.functions.Rank" title="django.db.models.functions.Rank"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rank</span></code></a> but does not have gaps.</p>
+</div>
+<div class="section" id="s-firstvalue">
+<span id="firstvalue"></span><h3><code class="docutils literal notranslate"><span class="pre">FirstValue</span></code><a class="headerlink" href="#firstvalue" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.FirstValue">
+<em class="property">class </em><code class="descname">FirstValue</code>(<em>expression</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/window.html#FirstValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.FirstValue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Returns the value evaluated at the row that's the first row of the window
+frame, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if no such value exists.</p>
+</div>
+<div class="section" id="s-lag">
+<span id="lag"></span><h3><code class="docutils literal notranslate"><span class="pre">Lag</span></code><a class="headerlink" href="#lag" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.Lag">
+<em class="property">class </em><code class="descname">Lag</code>(<em>expression</em>, <em>offset=1</em>, <em>default=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/window.html#Lag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.Lag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Calculates the value offset by <code class="docutils literal notranslate"><span class="pre">offset</span></code>, and if no row exists there, returns
+<code class="docutils literal notranslate"><span class="pre">default</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">default</span></code> must have the same type as the <code class="docutils literal notranslate"><span class="pre">expression</span></code>, however, this is
+only validated by the database and not in Python.</p>
+</div>
+<div class="section" id="s-lastvalue">
+<span id="lastvalue"></span><h3><code class="docutils literal notranslate"><span class="pre">LastValue</span></code><a class="headerlink" href="#lastvalue" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.LastValue">
+<em class="property">class </em><code class="descname">LastValue</code>(<em>expression</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/window.html#LastValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.LastValue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Comparable to <a class="reference internal" href="#django.db.models.functions.FirstValue" title="django.db.models.functions.FirstValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">FirstValue</span></code></a>, it calculates the last value in a given
+frame clause.</p>
+</div>
+<div class="section" id="s-lead">
+<span id="lead"></span><h3><code class="docutils literal notranslate"><span class="pre">Lead</span></code><a class="headerlink" href="#lead" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.Lead">
+<em class="property">class </em><code class="descname">Lead</code>(<em>expression</em>, <em>offset=1</em>, <em>default=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/window.html#Lead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.Lead" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Calculates the leading value in a given <a class="reference internal" href="expressions.html#window-frames"><span class="std std-ref">frame</span></a>. Both
+<code class="docutils literal notranslate"><span class="pre">offset</span></code> and <code class="docutils literal notranslate"><span class="pre">default</span></code> are evaluated with respect to the current row.</p>
+<p><code class="docutils literal notranslate"><span class="pre">default</span></code> must have the same type as the <code class="docutils literal notranslate"><span class="pre">expression</span></code>, however, this is
+only validated by the database and not in Python.</p>
+</div>
+<div class="section" id="s-nthvalue">
+<span id="nthvalue"></span><h3><code class="docutils literal notranslate"><span class="pre">NthValue</span></code><a class="headerlink" href="#nthvalue" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.NthValue">
+<em class="property">class </em><code class="descname">NthValue</code>(<em>expression</em>, <em>nth=1</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/window.html#NthValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.NthValue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Computes the row relative to the offset <code class="docutils literal notranslate"><span class="pre">nth</span></code> (must be a positive value)
+within the window. Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> if no row exists.</p>
+<p>Some databases may handle a nonexistent nth-value differently. For example,
+Oracle returns an empty string rather than <code class="docutils literal notranslate"><span class="pre">None</span></code> for character-based
+expressions. Django doesn't do any conversions in these cases.</p>
+</div>
+<div class="section" id="s-ntile">
+<span id="ntile"></span><h3><code class="docutils literal notranslate"><span class="pre">Ntile</span></code><a class="headerlink" href="#ntile" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.Ntile">
+<em class="property">class </em><code class="descname">Ntile</code>(<em>num_buckets=1</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/window.html#Ntile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.Ntile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Calculates a partition for each of the rows in the frame clause, distributing
+numbers as evenly as possible between 1 and <code class="docutils literal notranslate"><span class="pre">num_buckets</span></code>. If the rows don't
+divide evenly into a number of buckets, one or more buckets will be represented
+more frequently.</p>
+</div>
+<div class="section" id="s-percentrank">
+<span id="percentrank"></span><h3><code class="docutils literal notranslate"><span class="pre">PercentRank</span></code><a class="headerlink" href="#percentrank" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.PercentRank">
+<em class="property">class </em><code class="descname">PercentRank</code>(<em>*expressions</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/window.html#PercentRank"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.PercentRank" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Computes the percentile rank of the rows in the frame clause. This
+computation is equivalent to evaluating:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">rank</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">total</span> <span class="n">rows</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The following table explains the calculation for the percentile rank of a row:</p>
+<table class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="13%" />
+<col width="11%" />
+<col width="32%" />
+<col width="32%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Row #</th>
+<th class="head">Value</th>
+<th class="head">Rank</th>
+<th class="head">Calculation</th>
+<th class="head">Percent Rank</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>15</td>
+<td>1</td>
+<td>(1-1)/(7-1)</td>
+<td>0.0000</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>20</td>
+<td>2</td>
+<td>(2-1)/(7-1)</td>
+<td>0.1666</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>20</td>
+<td>2</td>
+<td>(2-1)/(7-1)</td>
+<td>0.1666</td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>20</td>
+<td>2</td>
+<td>(2-1)/(7-1)</td>
+<td>0.1666</td>
+</tr>
+<tr class="row-even"><td>5</td>
+<td>30</td>
+<td>5</td>
+<td>(5-1)/(7-1)</td>
+<td>0.6666</td>
+</tr>
+<tr class="row-odd"><td>6</td>
+<td>30</td>
+<td>5</td>
+<td>(5-1)/(7-1)</td>
+<td>0.6666</td>
+</tr>
+<tr class="row-even"><td>7</td>
+<td>40</td>
+<td>7</td>
+<td>(7-1)/(7-1)</td>
+<td>1.0000</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="s-rank">
+<span id="rank"></span><h3><code class="docutils literal notranslate"><span class="pre">Rank</span></code><a class="headerlink" href="#rank" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.Rank">
+<em class="property">class </em><code class="descname">Rank</code>(<em>*expressions</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/window.html#Rank"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.Rank" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Comparable to <code class="docutils literal notranslate"><span class="pre">RowNumber</span></code>, this function ranks rows in the window. The
+computed rank contains gaps. Use <a class="reference internal" href="#django.db.models.functions.DenseRank" title="django.db.models.functions.DenseRank"><code class="xref py py-class docutils literal notranslate"><span class="pre">DenseRank</span></code></a> to compute rank without
+gaps.</p>
+</div>
+<div class="section" id="s-rownumber">
+<span id="rownumber"></span><h3><code class="docutils literal notranslate"><span class="pre">RowNumber</span></code><a class="headerlink" href="#rownumber" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.functions.RowNumber">
+<em class="property">class </em><code class="descname">RowNumber</code>(<em>*expressions</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/functions/window.html#RowNumber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.functions.RowNumber" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Computes the row number according to the ordering of either the frame clause
+or the ordering of the whole query if there is no partitioning of the
+<a class="reference internal" href="expressions.html#window-frames"><span class="std std-ref">window frame</span></a>.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Database Functions</a><ul>
+<li><a class="reference internal" href="#comparison-and-conversion-functions">Comparison and conversion functions</a><ul>
+<li><a class="reference internal" href="#cast"><code class="docutils literal notranslate"><span class="pre">Cast</span></code></a></li>
+<li><a class="reference internal" href="#coalesce"><code class="docutils literal notranslate"><span class="pre">Coalesce</span></code></a></li>
+<li><a class="reference internal" href="#greatest"><code class="docutils literal notranslate"><span class="pre">Greatest</span></code></a></li>
+<li><a class="reference internal" href="#least"><code class="docutils literal notranslate"><span class="pre">Least</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#date-functions">Date functions</a><ul>
+<li><a class="reference internal" href="#extract"><code class="docutils literal notranslate"><span class="pre">Extract</span></code></a><ul>
+<li><a class="reference internal" href="#datefield-extracts"><code class="docutils literal notranslate"><span class="pre">DateField</span></code> extracts</a></li>
+<li><a class="reference internal" href="#datetimefield-extracts"><code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code> extracts</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#now"><code class="docutils literal notranslate"><span class="pre">Now</span></code></a></li>
+<li><a class="reference internal" href="#trunc"><code class="docutils literal notranslate"><span class="pre">Trunc</span></code></a><ul>
+<li><a class="reference internal" href="#datefield-truncation"><code class="docutils literal notranslate"><span class="pre">DateField</span></code> truncation</a></li>
+<li><a class="reference internal" href="#datetimefield-truncation"><code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code> truncation</a></li>
+<li><a class="reference internal" href="#timefield-truncation"><code class="docutils literal notranslate"><span class="pre">TimeField</span></code> truncation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#text-functions">Text functions</a><ul>
+<li><a class="reference internal" href="#concat"><code class="docutils literal notranslate"><span class="pre">Concat</span></code></a></li>
+<li><a class="reference internal" href="#length"><code class="docutils literal notranslate"><span class="pre">Length</span></code></a></li>
+<li><a class="reference internal" href="#lower"><code class="docutils literal notranslate"><span class="pre">Lower</span></code></a></li>
+<li><a class="reference internal" href="#strindex"><code class="docutils literal notranslate"><span class="pre">StrIndex</span></code></a></li>
+<li><a class="reference internal" href="#substr"><code class="docutils literal notranslate"><span class="pre">Substr</span></code></a></li>
+<li><a class="reference internal" href="#upper"><code class="docutils literal notranslate"><span class="pre">Upper</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#window-functions">Window functions</a><ul>
+<li><a class="reference internal" href="#cumedist"><code class="docutils literal notranslate"><span class="pre">CumeDist</span></code></a></li>
+<li><a class="reference internal" href="#denserank"><code class="docutils literal notranslate"><span class="pre">DenseRank</span></code></a></li>
+<li><a class="reference internal" href="#firstvalue"><code class="docutils literal notranslate"><span class="pre">FirstValue</span></code></a></li>
+<li><a class="reference internal" href="#lag"><code class="docutils literal notranslate"><span class="pre">Lag</span></code></a></li>
+<li><a class="reference internal" href="#lastvalue"><code class="docutils literal notranslate"><span class="pre">LastValue</span></code></a></li>
+<li><a class="reference internal" href="#lead"><code class="docutils literal notranslate"><span class="pre">Lead</span></code></a></li>
+<li><a class="reference internal" href="#nthvalue"><code class="docutils literal notranslate"><span class="pre">NthValue</span></code></a></li>
+<li><a class="reference internal" href="#ntile"><code class="docutils literal notranslate"><span class="pre">Ntile</span></code></a></li>
+<li><a class="reference internal" href="#percentrank"><code class="docutils literal notranslate"><span class="pre">PercentRank</span></code></a></li>
+<li><a class="reference internal" href="#rank"><code class="docutils literal notranslate"><span class="pre">Rank</span></code></a></li>
+<li><a class="reference internal" href="#rownumber"><code class="docutils literal notranslate"><span class="pre">RowNumber</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="conditional-expressions.html"
+                        title="previous chapter">Conditional Expressions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../request-response.html"
+                        title="next chapter">Request and response objects</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/ref/models/database-functions.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="conditional-expressions.html" title="Conditional Expressions">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="../request-response.html" title="Request and response objects">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

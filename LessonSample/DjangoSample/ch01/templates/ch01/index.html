@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'ch01/style.css' %}"/>
+</head>
+<body>
+<table align="center" border="1">
+    <tr>
+        <td>
+            <h1>ch01-新闻调查</h1>
+            {% if latest_question_list %}
+            <ul>
+                {% for question in latest_question_list %}
+                <li><a href="{% url 'ch01:detail' question.id %}">{{ question.question_text }}</a></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>没有投票可用</p>
+            {% endif %}
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

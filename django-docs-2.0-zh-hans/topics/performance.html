@@ -1,0 +1,544 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>性能和优化 &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Serializing Django objects" href="serialization.html" />
+    <link rel="prev" title="Security in Django" href="security.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="security.html" title="Security in Django">previous</a>
+     |
+    <a href="index.html" title="Using Django" accesskey="U">up</a>
+   |
+    <a href="serialization.html" title="Serializing Django objects">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="topics-performance">
+            
+  <div class="section" id="s-performance-and-optimization">
+<span id="performance-and-optimization"></span><h1>性能和优化<a class="headerlink" href="#performance-and-optimization" title="Permalink to this headline">¶</a></h1>
+<p>本文档概述了一些技术和工具，这些技术和工具可以帮助您更有效地运行Django代码——更快，并且使用更少的系统资源。</p>
+<div class="section" id="s-introduction">
+<span id="introduction"></span><h2>介绍<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>通常，首先要考虑的是编写*工作的*代码，它的逻辑功能与产生预期输出所需的逻辑功能相同。然而，有时，这并不足以使代码像人们所希望的那样*高效地*工作。</p>
+<p>在这种情况下，需要的是一些东西——在实践中，通常是一组东西——以提高代码的性能，而不影响或只影响其行为。</p>
+</div>
+<div class="section" id="s-general-approaches">
+<span id="general-approaches"></span><h2>一般方法<a class="headerlink" href="#general-approaches" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-what-are-you-optimizing-for">
+<span id="what-are-you-optimizing-for"></span><h3>你在*为*什么而优化？<a class="headerlink" href="#what-are-you-optimizing-for" title="Permalink to this headline">¶</a></h3>
+<p>清楚地理解你所说的“绩效”是什么很重要，因为它不仅仅是一个指标。</p>
+<p>提高速度可能是程序最明显的目标，但有时可能会寻求其他性能改进，例如降低内存消耗或减少对数据库或网络的要求。</p>
+<p>一个领域的改进通常会提高另一个领域的性能，但并不总是如此；有时甚至会牺牲另一个领域的性能。例如，一个程序速度的提高可能会导致它使用更多的内存。更糟糕的是，如果速度提高太过内存不足，以致于系统开始耗尽内存，那么你所做的弊大于利。</p>
+<p>还有其他的权衡。你自己的时间是一个宝贵的资源，比CPU时间更宝贵。一些改进可能太难实现，或者可能影响代码的可移植性或可维护性。并非所有的性能改进都值得付出努力。</p>
+<p>所以，你需要知道你的目标是什么样的性能改进，你也需要知道你有一个很好的理由去瞄准那个方向——而且你需要：</p>
+</div>
+<div class="section" id="s-performance-benchmarking">
+<span id="performance-benchmarking"></span><h3>性能标竿<a class="headerlink" href="#performance-benchmarking" title="Permalink to this headline">¶</a></h3>
+<p>仅仅猜测或假设代码中存在效率低下的原因是没有好处的。</p>
+<div class="section" id="s-django-tools">
+<span id="django-tools"></span><h4>Django工具<a class="headerlink" href="#django-tools" title="Permalink to this headline">¶</a></h4>
+<p><a href="#id1"><span class="problematic" id="id2">`</span></a>django-debug-toolbar &lt;<a class="reference external" href="https://github.com/jazzband/django-debug-toolbar/">https://github.com/jazzband/django-debug-toolbar/</a>&gt;`_是一个非常方便的工具，它可以深入了解您的代码正在做什么以及花费了多少时间。特别是它可以显示您的页面生成的所有SQL查询，以及每个查询所用的时间。</p>
+<p>第三方面板也可用于工具栏，可以（例如）报告缓存性能和模板呈现时间。</p>
+</div>
+<div class="section" id="s-third-party-services">
+<span id="third-party-services"></span><h4>第三方服务<a class="headerlink" href="#third-party-services" title="Permalink to this headline">¶</a></h4>
+<p>There are a number of free services that will analyze and report on the
+performance of your site's pages from the perspective of a remote HTTP client,
+in effect simulating the experience of an actual user.</p>
+<p>These can't report on the internals of your code, but can provide a useful
+insight into your site's overall performance, including aspects that can't be
+adequately measured from within Django environment. Examples include:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://yslow.org/">Yahoo's Yslow</a></li>
+<li><a class="reference external" href="https://developers.google.com/speed/pagespeed/">Google PageSpeed</a></li>
+</ul>
+<p>There are also several paid-for services that perform a similar analysis,
+including some that are Django-aware and can integrate with your codebase to
+profile its performance far more comprehensively.</p>
+</div>
+</div>
+<div class="section" id="s-get-things-right-from-the-start">
+<span id="get-things-right-from-the-start"></span><h3>Get things right from the start<a class="headerlink" href="#get-things-right-from-the-start" title="Permalink to this headline">¶</a></h3>
+<p>Some work in optimization involves tackling performance shortcomings, but some
+of the work can simply be built in to what you'd do anyway, as part of the good
+practices you should adopt even before you start thinking about improving
+performance.</p>
+<p>In this respect Python is an excellent language to work with, because solutions
+that look elegant and feel right usually are the best performing ones. As with
+most skills, learning what &quot;looks right&quot; takes practice, but one of the most
+useful guidelines is:</p>
+<div class="section" id="s-work-at-the-appropriate-level">
+<span id="work-at-the-appropriate-level"></span><h4>Work at the appropriate level<a class="headerlink" href="#work-at-the-appropriate-level" title="Permalink to this headline">¶</a></h4>
+<p>Django offers many different ways of approaching things, but just because it's
+possible to do something in a certain way doesn't mean that it's the most
+appropriate way to do it. For example, you might find that you could calculate
+the same thing - the number of items in a collection, perhaps - in a
+<code class="docutils literal notranslate"><span class="pre">QuerySet</span></code>, in Python, or in a template.</p>
+<p>However, it will almost always be faster to do this work at lower rather than
+higher levels. At higher levels the system has to deal with objects through
+multiple levels of abstraction and layers of machinery.</p>
+<p>That is, the database can typically do things faster than Python can, which can
+do them faster than the template language can:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># QuerySet operation on the database</span>
+<span class="c1"># fast, because that&#39;s what databases are good at</span>
+<span class="n">my_bicycles</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+<span class="c1"># counting Python objects</span>
+<span class="c1"># slower, because it requires a database query anyway, and processing</span>
+<span class="c1"># of the Python objects</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">my_bicycles</span><span class="p">)</span>
+
+<span class="c1"># Django template filter</span>
+<span class="c1"># slower still, because it will have to count them in Python anyway,</span>
+<span class="c1"># and because of template language overheads</span>
+<span class="p">{{</span> <span class="n">my_bicycles</span><span class="o">|</span><span class="n">length</span> <span class="p">}}</span>
+</pre></div>
+</div>
+<p>Generally speaking, the most appropriate level for the job is the lowest-level
+one that it is comfortable to code for.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The example above is merely illustrative.</p>
+<p>Firstly, in a real-life case you need to consider what is happening before
+and after your count to work out what's an optimal way of doing it <em>in that
+particular context</em>. The database optimization documents describes <a class="reference internal" href="db/optimization.html#overuse-of-count-and-exists"><span class="std std-ref">a
+case where counting in the template would be better</span></a>.</p>
+<p class="last">Secondly, there are other options to consider: in a real-life case, <code class="docutils literal notranslate"><span class="pre">{{</span>
+<span class="pre">my_bicycles.count</span> <span class="pre">}}</span></code>, which invokes the <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code> <code class="docutils literal notranslate"><span class="pre">count()</span></code> method
+directly from the template, might be the most appropriate choice.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="s-caching">
+<span id="caching"></span><h2>Caching<a class="headerlink" href="#caching" title="Permalink to this headline">¶</a></h2>
+<p>Often it is expensive (that is, resource-hungry and slow) to compute a value,
+so there can be huge benefit in saving the value to a quickly accessible cache,
+ready for the next time it's required.</p>
+<p>It's a sufficiently significant and powerful technique that Django includes a
+comprehensive caching framework, as well as other smaller pieces of caching
+functionality.</p>
+<div class="section" id="s-the-caching-framework">
+<span id="the-caching-framework"></span><h3><a class="reference internal" href="cache.html"><span class="doc">The caching framework</span></a><a class="headerlink" href="#the-caching-framework" title="Permalink to this headline">¶</a></h3>
+<p>Django's <a class="reference internal" href="cache.html"><span class="doc">caching framework</span></a> offers very significant
+opportunities for performance gains, by saving dynamic content so that it
+doesn't need to be calculated for each request.</p>
+<p>For convenience, Django offers different levels of cache granularity: you can
+cache the output of specific views, or only the pieces that are difficult to
+produce, or even an entire site.</p>
+<p>Implementing caching should not be regarded as an alternative to improving code
+that's performing poorly because it has been written badly. It's one of the
+final steps towards producing well-performing code, not a shortcut.</p>
+</div>
+<div class="section" id="s-cached-property">
+<span id="cached-property"></span><h3><a class="reference internal" href="../ref/utils.html#django.utils.functional.cached_property" title="django.utils.functional.cached_property"><code class="xref py py-class docutils literal notranslate"><span class="pre">cached_property</span></code></a><a class="headerlink" href="#cached-property" title="Permalink to this headline">¶</a></h3>
+<p>It's common to have to call a class instance's method more than once. If
+that function is expensive, then doing so can be wasteful.</p>
+<p>Using the <a class="reference internal" href="../ref/utils.html#django.utils.functional.cached_property" title="django.utils.functional.cached_property"><code class="xref py py-class docutils literal notranslate"><span class="pre">cached_property</span></code></a> decorator saves the
+value returned by a property; the next time the function is called on that
+instance, it will return the saved value rather than re-computing it. Note that
+this only works on methods that take <code class="docutils literal notranslate"><span class="pre">self</span></code> as their only argument and that
+it changes the method to a property.</p>
+<p>Certain Django components also have their own caching functionality; these are
+discussed below in the sections related to those components.</p>
+</div>
+</div>
+<div class="section" id="s-understanding-laziness">
+<span id="understanding-laziness"></span><h2>Understanding laziness<a class="headerlink" href="#understanding-laziness" title="Permalink to this headline">¶</a></h2>
+<p><em>Laziness</em> is a strategy complementary to caching. Caching avoids
+recomputation by saving results; laziness delays computation until it's
+actually required.</p>
+<p>Laziness allows us to refer to things before they are instantiated, or even
+before it's possible to instantiate them. This has numerous uses.</p>
+<p>For example, <a class="reference internal" href="i18n/translation.html#lazy-translations"><span class="std std-ref">lazy translation</span></a> can be used before the
+target language is even known, because it doesn't take place until the
+translated string is actually required, such as in a rendered template.</p>
+<p>Laziness is also a way to save effort by trying to avoid work in the first
+place. That is, one aspect of laziness is not doing anything until it has to be
+done, because it may not turn out to be necessary after all. Laziness can
+therefore have performance implications, and the more expensive the work
+concerned, the more there is to gain through laziness.</p>
+<p>Python provides a number of tools for lazy evaluation, particularly through the
+<a class="reference external" href="https://docs.python.org/3/glossary.html#term-generator" title="(in Python v3.7)"><span class="xref std std-term">generator</span></a> and <a class="reference external" href="https://docs.python.org/3/glossary.html#term-generator-expression" title="(in Python v3.7)"><span class="xref std std-term">generator expression</span></a> constructs. It's worth
+reading up on laziness in Python to discover opportunities for making use of
+lazy patterns in your code.</p>
+<div class="section" id="s-laziness-in-django">
+<span id="laziness-in-django"></span><h3>Laziness in Django<a class="headerlink" href="#laziness-in-django" title="Permalink to this headline">¶</a></h3>
+<p>Django is itself quite lazy. A good example of this can be found in the
+evaluation of <code class="docutils literal notranslate"><span class="pre">QuerySets</span></code>. <a class="reference internal" href="db/queries.html#querysets-are-lazy"><span class="std std-ref">QuerySets are lazy</span></a>.
+Thus a <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code> can be created, passed around and combined with other
+<code class="docutils literal notranslate"><span class="pre">QuerySets</span></code>, without actually incurring any trips to the database to fetch
+the items it describes. What gets passed around is the <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code> object, not
+the collection of items that - eventually - will be required from the database.</p>
+<p>On the other hand, <a class="reference internal" href="../ref/models/querysets.html#when-querysets-are-evaluated"><span class="std std-ref">certain operations will force the evaluation of a
+QuerySet</span></a>. Avoiding the premature evaluation of
+a <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code> can save making an expensive and unnecessary trip to the
+database.</p>
+<p>Django also offers a <a class="reference internal" href="../ref/utils.html#django.utils.functional.keep_lazy" title="django.utils.functional.keep_lazy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">keep_lazy()</span></code></a> decorator.
+This allows a function that has been called with a lazy argument to behave
+lazily itself, only being evaluated when it needs to be. Thus the lazy argument
+- which could be an expensive one - will not be called upon for evaluation
+until it's strictly required.</p>
+</div>
+</div>
+<div class="section" id="s-databases">
+<span id="databases"></span><h2>Databases<a class="headerlink" href="#databases" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-database-optimization">
+<span id="database-optimization"></span><h3>Database optimization<a class="headerlink" href="#database-optimization" title="Permalink to this headline">¶</a></h3>
+<p>Django's database layer provides various ways to help developers get the best
+performance from their databases. The <a class="reference internal" href="db/optimization.html"><span class="doc">database optimization documentation</span></a> gathers together links to the relevant
+documentation and adds various tips that outline the steps to take when
+attempting to optimize your database usage.</p>
+</div>
+<div class="section" id="s-other-database-related-tips">
+<span id="other-database-related-tips"></span><h3>Other database-related tips<a class="headerlink" href="#other-database-related-tips" title="Permalink to this headline">¶</a></h3>
+<p>Enabling <a class="reference internal" href="../ref/databases.html#persistent-database-connections"><span class="std std-ref">Persistent connections</span></a> can speed up connections to the
+database accounts for a significant part of the request processing time.</p>
+<p>This helps a lot on virtualized hosts with limited network performance, for example.</p>
+</div>
+</div>
+<div class="section" id="s-http-performance">
+<span id="http-performance"></span><h2>HTTP performance<a class="headerlink" href="#http-performance" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-middleware">
+<span id="middleware"></span><h3>中间件<a class="headerlink" href="#middleware" title="Permalink to this headline">¶</a></h3>
+<p>Django comes with a few helpful pieces of <a class="reference internal" href="../ref/middleware.html"><span class="doc">middleware</span></a>
+that can help optimize your site's performance. They include:</p>
+<div class="section" id="s-conditionalgetmiddleware">
+<span id="conditionalgetmiddleware"></span><h4><a class="reference internal" href="../ref/middleware.html#django.middleware.http.ConditionalGetMiddleware" title="django.middleware.http.ConditionalGetMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConditionalGetMiddleware</span></code></a><a class="headerlink" href="#conditionalgetmiddleware" title="Permalink to this headline">¶</a></h4>
+<p>Adds support for modern browsers to conditionally GET responses based on the
+<code class="docutils literal notranslate"><span class="pre">ETag</span></code> and <code class="docutils literal notranslate"><span class="pre">Last-Modified</span></code> headers. It also calculates and sets an ETag if
+needed.</p>
+</div>
+<div class="section" id="s-gzipmiddleware">
+<span id="gzipmiddleware"></span><h4><a class="reference internal" href="../ref/middleware.html#django.middleware.gzip.GZipMiddleware" title="django.middleware.gzip.GZipMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">GZipMiddleware</span></code></a><a class="headerlink" href="#gzipmiddleware" title="Permalink to this headline">¶</a></h4>
+<p>Compresses responses for all modern browsers, saving bandwidth and transfer
+time. Note that GZipMiddleware is currently considered a security risk, and is
+vulnerable to attacks that nullify the protection provided by TLS/SSL. See the
+warning in <a class="reference internal" href="../ref/middleware.html#django.middleware.gzip.GZipMiddleware" title="django.middleware.gzip.GZipMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">GZipMiddleware</span></code></a> for more information.</p>
+</div>
+</div>
+<div class="section" id="s-sessions">
+<span id="sessions"></span><h3>会话<a class="headerlink" href="#sessions" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="s-using-cached-sessions">
+<span id="using-cached-sessions"></span><h4>Using cached sessions<a class="headerlink" href="#using-cached-sessions" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference internal" href="http/sessions.html#cached-sessions-backend"><span class="std std-ref">Using cached sessions</span></a> may be a way to increase
+performance by eliminating the need to load session data from a slower storage
+source like the database and instead storing frequently used session data in
+memory.</p>
+</div>
+</div>
+<div class="section" id="s-static-files">
+<span id="static-files"></span><h3>Static files<a class="headerlink" href="#static-files" title="Permalink to this headline">¶</a></h3>
+<p>Static files, which by definition are not dynamic, make an excellent target for
+optimization gains.</p>
+<div class="section" id="s-cachedstaticfilesstorage">
+<span id="cachedstaticfilesstorage"></span><h4><a class="reference internal" href="../ref/contrib/staticfiles.html#django.contrib.staticfiles.storage.CachedStaticFilesStorage" title="django.contrib.staticfiles.storage.CachedStaticFilesStorage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedStaticFilesStorage</span></code></a><a class="headerlink" href="#cachedstaticfilesstorage" title="Permalink to this headline">¶</a></h4>
+<p>By taking advantage of web browsers' caching abilities, you can
+eliminate network hits entirely for a given file after the initial download.</p>
+<p><a class="reference internal" href="../ref/contrib/staticfiles.html#django.contrib.staticfiles.storage.CachedStaticFilesStorage" title="django.contrib.staticfiles.storage.CachedStaticFilesStorage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedStaticFilesStorage</span></code></a> appends a
+content-dependent tag to the filenames of <a class="reference internal" href="../ref/contrib/staticfiles.html"><span class="doc">static files</span></a> to make it safe for browsers to cache them
+long-term without missing future changes - when a file changes, so will the
+tag, so browsers will reload the asset automatically.</p>
+</div>
+<div class="section" id="s-minification">
+<span id="minification"></span><h4>&quot;Minification&quot;<a class="headerlink" href="#minification" title="Permalink to this headline">¶</a></h4>
+<p>Several third-party Django tools and packages provide the ability to &quot;minify&quot;
+HTML, CSS, and JavaScript. They remove unnecessary whitespace, newlines, and
+comments, and shorten variable names, and thus reduce the size of the documents
+that your site publishes.</p>
+</div>
+</div>
+</div>
+<div class="section" id="s-template-performance">
+<span id="template-performance"></span><h2>Template performance<a class="headerlink" href="#template-performance" title="Permalink to this headline">¶</a></h2>
+<p>Note that:</p>
+<ul class="simple">
+<li>using <code class="docutils literal notranslate"><span class="pre">{%</span> <span class="pre">block</span> <span class="pre">%}</span></code> is faster than using <code class="docutils literal notranslate"><span class="pre">{%</span> <span class="pre">include</span> <span class="pre">%}</span></code></li>
+<li>heavily-fragmented templates, assembled from many small pieces, can affect
+performance</li>
+</ul>
+<div class="section" id="s-the-cached-template-loader">
+<span id="the-cached-template-loader"></span><h3>The cached template loader<a class="headerlink" href="#the-cached-template-loader" title="Permalink to this headline">¶</a></h3>
+<p>Enabling the <a class="reference internal" href="../ref/templates/api.html#django.template.loaders.cached.Loader" title="django.template.loaders.cached.Loader"><code class="xref py py-class docutils literal notranslate"><span class="pre">cached</span> <span class="pre">template</span> <span class="pre">loader</span></code></a> often improves performance
+drastically, as it avoids compiling each template every time it needs to be
+rendered.</p>
+</div>
+</div>
+<div class="section" id="s-using-different-versions-of-available-software">
+<span id="using-different-versions-of-available-software"></span><h2>Using different versions of available software<a class="headerlink" href="#using-different-versions-of-available-software" title="Permalink to this headline">¶</a></h2>
+<p>It can sometimes be worth checking whether different and better-performing
+versions of the software that you're using are available.</p>
+<p>These techniques are targeted at more advanced users who want to push the
+boundaries of performance of an already well-optimized Django site.</p>
+<p>However, they are not magic solutions to performance problems, and they're
+unlikely to bring better than marginal gains to sites that don't already do the
+more basic things the right way.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It's worth repeating: <strong>reaching for alternatives to software you're
+already using is never the first answer to performance problems</strong>. When
+you reach this level of optimization, you need a formal benchmarking
+solution.</p>
+</div>
+<div class="section" id="s-newer-is-often-but-not-always-better">
+<span id="newer-is-often-but-not-always-better"></span><h3>Newer is often - but not always - better<a class="headerlink" href="#newer-is-often-but-not-always-better" title="Permalink to this headline">¶</a></h3>
+<p>It's fairly rare for a new release of well-maintained software to be less
+efficient, but the maintainers can't anticipate every possible use-case - so
+while being aware that newer versions are likely to perform better, don't
+simply assume that they always will.</p>
+<p>This is true of Django itself. Successive releases have offered a number of
+improvements across the system, but you should still check the real-world
+performance of your application, because in some cases you may find that
+changes mean it performs worse rather than better.</p>
+<p>Newer versions of Python, and also of Python packages, will often perform
+better too - but measure, rather than assume.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Unless you've encountered an unusual performance problem in a particular
+version, you'll generally find better features, reliability, and security
+in a new release and that these benefits are far more significant than any
+performance you might win or lose.</p>
+</div>
+</div>
+<div class="section" id="s-alternatives-to-django-s-template-language">
+<span id="alternatives-to-django-s-template-language"></span><h3>Alternatives to Django's template language<a class="headerlink" href="#alternatives-to-django-s-template-language" title="Permalink to this headline">¶</a></h3>
+<p>For nearly all cases, Django's built-in template language is perfectly
+adequate. However, if the bottlenecks in your Django project seem to lie in the
+template system and you have exhausted other opportunities to remedy this, a
+third-party alternative may be the answer.</p>
+<p><a class="reference external" href="http://jinja.pocoo.org/docs/">Jinja2</a> can offer performance improvements,
+particularly when it comes to speed.</p>
+<p>Alternative template systems vary in the extent to which they share Django's
+templating language.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><em>If</em> you experience performance issues in templates, the first thing to do
+is to understand exactly why. Using an alternative template system may
+prove faster, but the same gains may also be available without going to
+that trouble - for example, expensive processing and logic in your
+templates could be done more efficiently in your views.</p>
+</div>
+</div>
+<div class="section" id="s-alternative-software-implementations">
+<span id="alternative-software-implementations"></span><h3>Alternative software implementations<a class="headerlink" href="#alternative-software-implementations" title="Permalink to this headline">¶</a></h3>
+<p>It may be worth checking whether Python software you're using has been
+provided in a different implementation that can execute the same code faster.</p>
+<p>However: most performance problems in well-written Django sites aren't at the
+Python execution level, but rather in inefficient database querying, caching,
+and templates. If you're relying on poorly-written Python code, your
+performance problems are unlikely to be solved by having it execute faster.</p>
+<p>Using an alternative implementation may introduce compatibility, deployment,
+portability, or maintenance issues. It goes without saying that before adopting
+a non-standard implementation you should ensure it provides sufficient
+performance gains for your application to outweigh the potential risks.</p>
+<p>With these caveats in mind, you should be aware of:</p>
+<div class="section" id="s-id1">
+<span id="id1"></span><h4><a class="reference external" href="https://pypy.org/">PyPy</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference external" href="https://pypy.org/">PyPy</a> is an implementation of Python in Python itself
+(the 'standard' Python implementation is in C). PyPy can offer substantial
+performance gains, typically for heavyweight applications.</p>
+<p>A key aim of the PyPy project is <a class="reference external" href="https://pypy.org/compat.html">compatibility</a> with existing Python APIs and libraries.
+Django is compatible, but you will need to check the compatibility of other
+libraries you rely on.</p>
+</div>
+<div class="section" id="s-c-implementations-of-python-libraries">
+<span id="c-implementations-of-python-libraries"></span><h4>C implementations of Python libraries<a class="headerlink" href="#c-implementations-of-python-libraries" title="Permalink to this headline">¶</a></h4>
+<p>Some Python libraries are also implemented in C, and can be much faster. They
+aim to offer the same APIs. Note that compatibility issues and behavior
+differences are not unknown (and not always immediately evident).</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">性能和优化</a><ul>
+<li><a class="reference internal" href="#introduction">介绍</a></li>
+<li><a class="reference internal" href="#general-approaches">一般方法</a><ul>
+<li><a class="reference internal" href="#what-are-you-optimizing-for">你在*为*什么而优化？</a></li>
+<li><a class="reference internal" href="#performance-benchmarking">性能标竿</a><ul>
+<li><a class="reference internal" href="#django-tools">Django工具</a></li>
+<li><a class="reference internal" href="#third-party-services">第三方服务</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#get-things-right-from-the-start">Get things right from the start</a><ul>
+<li><a class="reference internal" href="#work-at-the-appropriate-level">Work at the appropriate level</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#caching">Caching</a><ul>
+<li><a class="reference internal" href="#the-caching-framework"><code class="docutils literal notranslate"><span class="pre">The</span> <span class="pre">caching</span> <span class="pre">framework</span></code></a></li>
+<li><a class="reference internal" href="#cached-property"><code class="docutils literal notranslate"><span class="pre">cached_property</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#understanding-laziness">Understanding laziness</a><ul>
+<li><a class="reference internal" href="#laziness-in-django">Laziness in Django</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#databases">Databases</a><ul>
+<li><a class="reference internal" href="#database-optimization">Database optimization</a></li>
+<li><a class="reference internal" href="#other-database-related-tips">Other database-related tips</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#http-performance">HTTP performance</a><ul>
+<li><a class="reference internal" href="#middleware">中间件</a><ul>
+<li><a class="reference internal" href="#conditionalgetmiddleware"><code class="docutils literal notranslate"><span class="pre">ConditionalGetMiddleware</span></code></a></li>
+<li><a class="reference internal" href="#gzipmiddleware"><code class="docutils literal notranslate"><span class="pre">GZipMiddleware</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sessions">会话</a><ul>
+<li><a class="reference internal" href="#using-cached-sessions">Using cached sessions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#static-files">Static files</a><ul>
+<li><a class="reference internal" href="#cachedstaticfilesstorage"><code class="docutils literal notranslate"><span class="pre">CachedStaticFilesStorage</span></code></a></li>
+<li><a class="reference internal" href="#minification">&quot;Minification&quot;</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#template-performance">Template performance</a><ul>
+<li><a class="reference internal" href="#the-cached-template-loader">The cached template loader</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-different-versions-of-available-software">Using different versions of available software</a><ul>
+<li><a class="reference internal" href="#newer-is-often-but-not-always-better">Newer is often - but not always - better</a></li>
+<li><a class="reference internal" href="#alternatives-to-django-s-template-language">Alternatives to Django's template language</a></li>
+<li><a class="reference internal" href="#alternative-software-implementations">Alternative software implementations</a><ul>
+<li><a class="reference internal" href="#id1">PyPy</a></li>
+<li><a class="reference internal" href="#c-implementations-of-python-libraries">C implementations of Python libraries</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="security.html"
+                        title="previous chapter">Security in Django</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="serialization.html"
+                        title="next chapter">Serializing Django objects</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/topics/performance.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="security.html" title="Security in Django">previous</a>
+     |
+    <a href="index.html" title="Using Django" accesskey="U">up</a>
+   |
+    <a href="serialization.html" title="Serializing Django objects">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

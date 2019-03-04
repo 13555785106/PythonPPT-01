@@ -1,0 +1,769 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="102a068d-814e-4047-832e-9d4ecc59b7ac" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../DjangoSample/ch06/exam_01.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/04_进程之间地址空间独立.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/05_进程间同步_01.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/08_线程的等待_1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Django Web开发-V01.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Django Web开发-V01.pptx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/DjangoSample/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/DjangoSample/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/DjangoSample/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/DjangoSample/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch01/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch01/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/detail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/results.html" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/results.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch03/01_create.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch03/exam_01.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch03/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch03/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch03/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch03/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch04/templatetags/custom_tags.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch04/templatetags/custom_tags.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch05/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch05/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch05/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch05/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch06/test01.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch06/test02.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch06/exam_02.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch06/test03.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch06/test04.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch06/exam_03.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter01/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter01/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter03/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter03/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter04/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter04/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter07/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter07/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter07/07_读Excel文件.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter07/07_读Excel文件.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter07/08_写Excel文件.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter07/08_写Excel文件.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter07/10_SQLite数据库操作.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter07/10_SQLite数据库操作.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter07/test.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter08/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter08/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter08/mymodule.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter08/mymodule.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/20_a_类的动态创建.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/20_01_类的动态创建.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/20_b_函数的动态创建.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/20_02_函数的动态创建.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/20_c_类的动态创建.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/20_03_类的动态创建.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/20_d_使用元类动态创建类.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/20_04_使用元类动态创建类.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter10/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter10/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter11/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter11/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter11/07_分组命名.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter11/07_分组命名.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter11/09_勉强模式与贪婪模式.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter11/09_勉强模式与贪婪模式.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/01_进程的创建.py" beforeDir="false" afterPath="$PROJECT_DIR$/01_进程的创建_a.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_进程之间地址空间独立.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/04_进程池.py" beforeDir="false" afterPath="$PROJECT_DIR$/03_进程池.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/05_简单线程的创建.py" beforeDir="false" afterPath="$PROJECT_DIR$/07_线程的创建_03.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/05_简单线程的同步.py" beforeDir="false" afterPath="$PROJECT_DIR$/20_简单线程的同步.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/05_进程的同步.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/06_线程的创建与等待.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/07_线程的数据不同步.py" beforeDir="false" afterPath="$PROJECT_DIR$/30_线程的数据不同步.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/08_线程的数据同步_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/21_线程的数据同步_1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/08_线程的数据同步_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/32_线程的数据同步_2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/09_信号量.py" beforeDir="false" afterPath="$PROJECT_DIR$/33_信号量.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/10_线程池.py" beforeDir="false" afterPath="$PROJECT_DIR$/14_线程池.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/11_队列.py" beforeDir="false" afterPath="$PROJECT_DIR$/10_队列_2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../djangosample/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../djangosample/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../temp/HelloWorld/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../temp/HelloWorld/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../temp/HelloWorld/app01/1.html" beforeDir="false" afterPath="$PROJECT_DIR$/../temp/HelloWorld/app01/1.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Python程序设计-V01.pptx" beforeDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/09_线程的同步_1_锁.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="263">
+              <caret line="16" selection-start-line="16" selection-end-line="16" selection-end-column="23" />
+              <folding>
+                <element signature="e#43#59#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/33_信号量.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="76">
+              <caret line="5" column="6" selection-start-line="5" selection-end-line="5" selection-end-column="35" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/14_线程池.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="399">
+              <caret line="21" column="13" lean-forward="true" selection-end-line="24" />
+              <folding>
+                <element signature="e#42#58#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/threadpool.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-3119" />
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/09_线程的同步_2_信号量.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="57">
+              <caret line="3" column="3" selection-start-line="3" selection-end-line="20" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/10_队列_2.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="114">
+              <caret line="6" column="7" lean-forward="true" selection-end-line="37" />
+              <folding>
+                <element signature="e#42#54#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/10_队列_1.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="57">
+              <caret line="3" column="15" selection-start-line="3" selection-start-column="15" selection-end-line="3" selection-end-column="15" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="411">
+              <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/09_线程的同步_4_事件.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="31">
+              <caret line="3" column="4" lean-forward="true" selection-start-line="3" selection-end-line="23" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/09_线程的同步_3_条件.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="373">
+              <caret line="27" column="13" lean-forward="true" selection-start-line="3" selection-end-line="34" />
+              <folding>
+                <element signature="e#43#59#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/01_process_a.py" />
+        <option value="$PROJECT_DIR$/02_process.py" />
+        <option value="$PROJECT_DIR$/03_process.py" />
+        <option value="$PROJECT_DIR$/04_进程池.py" />
+        <option value="$PROJECT_DIR$/05_线程的创建.py" />
+        <option value="$PROJECT_DIR$/05_线程的同步.py" />
+        <option value="$PROJECT_DIR$/06_线程的同步.py" />
+        <option value="$PROJECT_DIR$/07_线程的数据同步_1.py" />
+        <option value="$PROJECT_DIR$/06_线程的数据不同步.py" />
+        <option value="$PROJECT_DIR$/08_queue.py" />
+        <option value="$PROJECT_DIR$/05_线程的创建与等待.py" />
+        <option value="$PROJECT_DIR$/08_队列.py" />
+        <option value="$PROJECT_DIR$/09_信号量.py" />
+        <option value="$PROJECT_DIR$/10_线程池.py" />
+        <option value="$PROJECT_DIR$/05_简单线程的创建.py" />
+        <option value="$PROJECT_DIR$/05_简单线程的同步.py" />
+        <option value="$PROJECT_DIR$/练习" />
+        <option value="$PROJECT_DIR$/01_进程的创建.py" />
+        <option value="$PROJECT_DIR$/01_进程的创建_b.py" />
+        <option value="$PROJECT_DIR$/01_进程的创建_c.py" />
+        <option value="$PROJECT_DIR$/01_进程的创建_a.py" />
+        <option value="$PROJECT_DIR$/05_进程的同步.py" />
+        <option value="$PROJECT_DIR$/05_进程间同步.py" />
+        <option value="$PROJECT_DIR$/05_进程间同步_01.py" />
+        <option value="$PROJECT_DIR$/05_进程间同步_02.py" />
+        <option value="$PROJECT_DIR$/03_进程之间地址空间独立.py" />
+        <option value="$PROJECT_DIR$/03_进程池.py" />
+        <option value="$PROJECT_DIR$/05_进程间同步_03.py" />
+        <option value="$PROJECT_DIR$/04_进程之间地址空间独立.py" />
+        <option value="$PROJECT_DIR$/06_进程间通讯_01.py" />
+        <option value="$PROJECT_DIR$/06_进程间通讯_02.py" />
+        <option value="$PROJECT_DIR$/07_简单线程的创建.py" />
+        <option value="$PROJECT_DIR$/07_线程的创建_01.py" />
+        <option value="$PROJECT_DIR$/10_线程的等待.py" />
+        <option value="$PROJECT_DIR$/08_线程的等待_2.py" />
+        <option value="$PROJECT_DIR$/08_线程的等待_3.py" />
+        <option value="$PROJECT_DIR$/08_线程的等待_1.py" />
+        <option value="$PROJECT_DIR$/09_线程的同步_1_lock.py" />
+        <option value="$PROJECT_DIR$/09_线程的同步_1_锁.py" />
+        <option value="$PROJECT_DIR$/09_线程的同步_2_信号量.py" />
+        <option value="$PROJECT_DIR$/09_线程的同步_4_事件.py" />
+        <option value="$PROJECT_DIR$/09_线程的同步_3_条件.py" />
+        <option value="$PROJECT_DIR$/15_队列.py" />
+        <option value="$PROJECT_DIR$/test.py" />
+        <option value="$PROJECT_DIR$/10_队列_1.py" />
+        <option value="$PROJECT_DIR$/10_队列_2.py" />
+        <option value="$PROJECT_DIR$/14_线程池.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="y" value="23" />
+    <option name="width" value="1280" />
+    <option name="height" value="730" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="chapter12" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chapter12" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="chapter12" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+            <path>
+              <item name="chapter12" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 2.7 &gt;" type="70bed36:NamedLibraryElementNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="C:\Users\xiaojf\PycharmProjects\chapter12" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.14_线程池">
+    <configuration name="05_简单线程的同步" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter12" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/05_简单线程的同步.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="09_线程的同步_1_lock" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter12" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/09_线程的同步_1_锁.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="09_线程的同步_3_条件" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter12" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/09_线程的同步_3_条件.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="10_队列" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter12" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/10_队列_2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="10_队列_1" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter12" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/10_队列_1.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="14_线程池" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter12" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/14_线程池.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.09_线程的同步_1_lock" />
+      <item itemvalue="Python.09_线程的同步_3_条件" />
+      <item itemvalue="Python.10_队列" />
+      <item itemvalue="Python.10_队列_1" />
+      <item itemvalue="Python.14_线程池" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.14_线程池" />
+        <item itemvalue="Python.10_队列_1" />
+        <item itemvalue="Python.10_队列" />
+        <item itemvalue="Python.09_线程的同步_1_lock" />
+        <item itemvalue="Python.09_线程的同步_3_条件" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="102a068d-814e-4047-832e-9d4ecc59b7ac" name="Default Changelist" comment="" />
+      <created>1541694961699</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1541694961699</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="23" width="1280" height="730" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19936457" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info id="Project Explorer" order="3" />
+      <window_info id="DB Browser" order="4" />
+      <window_info id="Job Explorer" order="5" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3275862" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.37774295" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info active="true" anchor="bottom" id="Inspection Results" order="11" visible="true" weight="0.32894737" />
+      <window_info anchor="bottom" id="Console" order="12" />
+      <window_info anchor="bottom" id="DB Execution Console" order="13" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://C:/Python27/Lib/multiprocessing/process.py" />
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/-428561950/thread.py" />
+    <entry file="file://C:/Python27/Lib/threading.py" />
+    <entry file="file://C:/Python27/Lib/Queue.py" />
+    <entry file="file://C:/Python27/Lib/site-packages/threadpool.py" />
+    <entry file="file://$PROJECT_DIR$/练习">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="8" column="16" selection-start-line="8" selection-start-column="16" selection-end-line="8" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/01_进程的创建_b.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="11" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/01_进程的创建_a.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="24" selection-end-column="17" />
+          <folding>
+            <element signature="e#42#57#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/01_进程的创建_c.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="14" selection-end-column="55" />
+          <folding>
+            <element signature="e#42#51#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/02_等待子进程结束.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="16" column="18" lean-forward="true" selection-end-line="16" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/03_进程池.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="266">
+          <caret line="14" lean-forward="true" selection-end-line="31" />
+          <folding>
+            <element signature="e#42#51#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/05_进程间同步_02.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="4" column="11" lean-forward="true" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/04_进程之间地址空间独立.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="13" selection-start-line="13" selection-end-line="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/05_进程间同步_01.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="6" selection-start-line="6" selection-end-line="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/05_进程间同步_03.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="19" column="49" lean-forward="true" selection-end-line="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2/multiprocessing/__init__.pyi">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-224">
+          <caret line="14" column="6" selection-start-line="14" selection-start-column="6" selection-end-line="14" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/06_进程间通讯_01.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="5" selection-start-line="5" selection-end-line="16" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/06_进程间通讯_02.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="53">
+          <caret line="5" column="5" lean-forward="true" selection-start-line="5" selection-end-line="18" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharmCE2018.3/python_stubs/-1698384448/thread.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/threading.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="156">
+          <caret line="646" column="35" lean-forward="true" selection-start-line="646" selection-start-column="35" selection-end-line="646" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/07_线程的创建_01.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="266">
+          <caret line="14" column="13" selection-end-line="26" />
+          <folding>
+            <element signature="e#42#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/07_线程的创建_03.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="344">
+          <caret line="23" selection-start-line="23" selection-end-line="23" />
+          <folding>
+            <element signature="e#42#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharmCE2018.3/python_stubs/-1698384448/time.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="146">
+          <caret line="121" column="4" selection-start-line="121" selection-start-column="4" selection-end-line="121" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/30_线程的数据不同步.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="11" column="39" selection-start-line="11" selection-start-column="39" selection-end-line="11" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/20_简单线程的同步.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="245">
+          <caret line="26" column="23" selection-start-line="26" selection-start-column="23" selection-end-line="26" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/08_线程的等待_2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="55">
+          <caret line="12" column="10" selection-start-line="11" selection-end-line="14" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/08_线程的等待_3.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="48">
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/08_线程的等待_1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+          <folding>
+            <element signature="e#43#59#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2and3/threading.pyi">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="81" column="8" selection-start-line="81" selection-start-column="8" selection-end-line="81" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/21_线程的数据同步_1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19">
+          <caret line="7" column="19" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/32_线程的数据同步_2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="370">
+          <caret line="21" column="14" selection-start-line="21" selection-start-column="12" selection-end-line="21" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/09_线程的同步_2_信号量.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="3" column="3" selection-start-line="3" selection-end-line="20" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/09_线程的同步_3_条件.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="373">
+          <caret line="27" column="13" lean-forward="true" selection-start-line="3" selection-end-line="34" />
+          <folding>
+            <element signature="e#43#59#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/09_线程的同步_4_事件.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="31">
+          <caret line="3" column="4" lean-forward="true" selection-start-line="3" selection-end-line="23" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/33_信号量.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="5" column="6" selection-start-line="5" selection-end-line="5" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="411">
+          <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/10_队列_1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="3" column="15" selection-start-line="3" selection-start-column="15" selection-end-line="3" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/10_队列_2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="6" column="7" lean-forward="true" selection-end-line="37" />
+          <folding>
+            <element signature="e#42#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/threadpool.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3119" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/09_线程的同步_1_锁.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="263">
+          <caret line="16" selection-start-line="16" selection-end-line="16" selection-end-column="23" />
+          <folding>
+            <element signature="e#43#59#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/14_线程池.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="399">
+          <caret line="21" column="13" lean-forward="true" selection-end-line="24" />
+          <folding>
+            <element signature="e#42#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

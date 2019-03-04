@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tag if</title>
+</head>
+<body>
+<hr/>
+{% if score >= 60 %}
+及格
+{% else %}
+不及格
+{% endif%}
+<hr/>
+{% if score >= 60 and score <= 80 %}
+优秀
+{% else %}
+一般
+{% endif%}
+<hr/>
+{% if score > 100 and score < 0 %}
+无效分数
+{% elif score >= 90 %}
+A
+{% elif score >= 80 %}
+B
+{% elif score >= 70 %}
+C
+{% elif score >= 60 %}
+D
+{% else %}
+E
+{% endif%}
+<hr/>
+{% if password|length >= 8 %}
+{{password}}
+{% else %}
+密码长度不够
+{% endif %}
+<hr/>
+{% for fruit in fruits %}
+{{fruit}}
+{% ifchanged fruit%}
+改变<br/>
+{% else %}
+未变<br/>
+{% endifchanged %}
+{% endfor %}
+<hr/>
+{% for fruit in fruits %}
+{% ifequal fruit '芒果'%}
+{{fruit}}<br/>
+{% endifequal %}
+{% endfor %}
+<hr/>
+{% for fruit in fruits %}
+{% ifnotequal fruit '芒果'%}
+{{fruit}}<br/>
+{% endifnotequal %}
+{% endfor %}
+<hr/>
+</body>
+</html>

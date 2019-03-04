@@ -1,0 +1,446 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>TemplateResponse and SimpleTemplateResponse &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Unicode data" href="unicode.html" />
+    <link rel="prev" title="The Django template language: for Python programmers" href="templates/api.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="templates/api.html" title="The Django template language: for Python programmers">previous</a>
+     |
+    <a href="index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="unicode.html" title="Unicode data">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="ref-template-response">
+            
+  <div class="section" id="s-module-django.template.response">
+<span id="s-templateresponse-and-simpletemplateresponse"></span><span id="module-django.template.response"></span><span id="templateresponse-and-simpletemplateresponse"></span><h1><code class="docutils literal notranslate"><span class="pre">TemplateResponse</span></code> and <code class="docutils literal notranslate"><span class="pre">SimpleTemplateResponse</span></code><a class="headerlink" href="#module-django.template.response" title="Permalink to this headline">¶</a></h1>
+<p>Standard <a class="reference internal" href="request-response.html#django.http.HttpResponse" title="django.http.HttpResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">HttpResponse</span></code></a> objects are static structures.
+They are provided with a block of pre-rendered content at time of
+construction, and while that content can be modified, it isn't in a form that
+makes it easy to perform modifications.</p>
+<p>However, it can sometimes be beneficial to allow decorators or
+middleware to modify a response <em>after</em> it has been constructed by the
+view. For example, you may want to change the template that is used,
+or put additional data into the context.</p>
+<p>TemplateResponse provides a way to do just that. Unlike basic
+<a class="reference internal" href="request-response.html#django.http.HttpResponse" title="django.http.HttpResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">HttpResponse</span></code></a> objects, TemplateResponse objects retain
+the details of the template and context that was provided by the view to
+compute the response. The final output of the response is not computed until
+it is needed, later in the response process.</p>
+<div class="section" id="s-simpletemplateresponse-objects">
+<span id="simpletemplateresponse-objects"></span><h2><code class="docutils literal notranslate"><span class="pre">SimpleTemplateResponse</span></code> objects<a class="headerlink" href="#simpletemplateresponse-objects" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.template.response.SimpleTemplateResponse">
+<em class="property">class </em><code class="descname">SimpleTemplateResponse</code><a class="reference internal" href="../_modules/django/template/response.html#SimpleTemplateResponse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.template.response.SimpleTemplateResponse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="section" id="s-attributes">
+<span id="attributes"></span><h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h3>
+<dl class="attribute">
+<dt id="django.template.response.SimpleTemplateResponse.template_name">
+<code class="descclassname">SimpleTemplateResponse.</code><code class="descname">template_name</code><a class="headerlink" href="#django.template.response.SimpleTemplateResponse.template_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the template to be rendered. Accepts a backend-dependent
+template object (such as those returned by
+<a class="reference internal" href="../topics/templates.html#django.template.loader.get_template" title="django.template.loader.get_template"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_template()</span></code></a>), the name of a template,
+or a list of template names.</p>
+<p>Example: <code class="docutils literal notranslate"><span class="pre">['foo.html',</span> <span class="pre">'path/to/bar.html']</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.template.response.SimpleTemplateResponse.context_data">
+<code class="descclassname">SimpleTemplateResponse.</code><code class="descname">context_data</code><a class="headerlink" href="#django.template.response.SimpleTemplateResponse.context_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>The context data to be used when rendering the template. It must be a
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
+<p>Example: <code class="docutils literal notranslate"><span class="pre">{'foo':</span> <span class="pre">123}</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.template.response.SimpleTemplateResponse.rendered_content">
+<code class="descclassname">SimpleTemplateResponse.</code><code class="descname">rendered_content</code><a class="headerlink" href="#django.template.response.SimpleTemplateResponse.rendered_content" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current rendered value of the response content, using the current
+template and context data.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.template.response.SimpleTemplateResponse.is_rendered">
+<code class="descclassname">SimpleTemplateResponse.</code><code class="descname">is_rendered</code><a class="headerlink" href="#django.template.response.SimpleTemplateResponse.is_rendered" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean indicating whether the response content has been rendered.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="s-methods">
+<span id="methods"></span><h3>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="django.template.response.SimpleTemplateResponse.__init__">
+<code class="descclassname">SimpleTemplateResponse.</code><code class="descname">__init__</code>(<em>template</em>, <em>context=None</em>, <em>content_type=None</em>, <em>status=None</em>, <em>charset=None</em>, <em>using=None</em>)<a class="reference internal" href="../_modules/django/template/response.html#SimpleTemplateResponse.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.template.response.SimpleTemplateResponse.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiates a <a class="reference internal" href="#django.template.response.SimpleTemplateResponse" title="django.template.response.SimpleTemplateResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleTemplateResponse</span></code></a>
+object with the given template, context, content type, HTTP status, and
+charset.</p>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">template</span></code></dt>
+<dd>A backend-dependent template object (such as those returned by
+<a class="reference internal" href="../topics/templates.html#django.template.loader.get_template" title="django.template.loader.get_template"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_template()</span></code></a>), the name of a template,
+or a list of template names.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">context</span></code></dt>
+<dd>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of values to add to the template context. By default,
+this is an empty dictionary.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">content_type</span></code></dt>
+<dd>The value included in the HTTP <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> header, including the
+MIME type specification and the character set encoding. If
+<code class="docutils literal notranslate"><span class="pre">content_type</span></code> is specified, then its value is used. Otherwise,
+<a class="reference internal" href="settings.html#std:setting-DEFAULT_CONTENT_TYPE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DEFAULT_CONTENT_TYPE</span></code></a> is used.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">status</span></code></dt>
+<dd>The HTTP status code for the response.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">charset</span></code></dt>
+<dd>The charset in which the response will be encoded. If not given it will
+be extracted from <code class="docutils literal notranslate"><span class="pre">content_type</span></code>, and if that is unsuccessful, the
+<a class="reference internal" href="settings.html#std:setting-DEFAULT_CHARSET"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DEFAULT_CHARSET</span></code></a> setting will be used.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">using</span></code></dt>
+<dd>The <a class="reference internal" href="settings.html#std:setting-TEMPLATES-NAME"><code class="xref std std-setting docutils literal notranslate"><span class="pre">NAME</span></code></a> of a template engine to use for
+loading the template.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.template.response.SimpleTemplateResponse.resolve_context">
+<code class="descclassname">SimpleTemplateResponse.</code><code class="descname">resolve_context</code>(<em>context</em>)<a class="reference internal" href="../_modules/django/template/response.html#SimpleTemplateResponse.resolve_context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.template.response.SimpleTemplateResponse.resolve_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocesses context data that will be used for rendering a template.
+Accepts a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of context data. By default, returns the same
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
+<p>Override this method in order to customize the context.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.template.response.SimpleTemplateResponse.resolve_template">
+<code class="descclassname">SimpleTemplateResponse.</code><code class="descname">resolve_template</code>(<em>template</em>)<a class="reference internal" href="../_modules/django/template/response.html#SimpleTemplateResponse.resolve_template"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.template.response.SimpleTemplateResponse.resolve_template" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resolves the template instance to use for rendering. Accepts a
+backend-dependent template object (such as those returned by
+<a class="reference internal" href="../topics/templates.html#django.template.loader.get_template" title="django.template.loader.get_template"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_template()</span></code></a>), the name of a template,
+or a list of template names.</p>
+<p>Returns the backend-dependent template object instance to be rendered.</p>
+<p>Override this method in order to customize template loading.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.template.response.SimpleTemplateResponse.add_post_render_callback">
+<code class="descclassname">SimpleTemplateResponse.</code><code class="descname">add_post_render_callback</code>()<a class="reference internal" href="../_modules/django/template/response.html#SimpleTemplateResponse.add_post_render_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.template.response.SimpleTemplateResponse.add_post_render_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a callback that will be invoked after rendering has taken
+place. This hook can be used to defer certain processing
+operations (such as caching) until after rendering has occurred.</p>
+<p>If the <a class="reference internal" href="#django.template.response.SimpleTemplateResponse" title="django.template.response.SimpleTemplateResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleTemplateResponse</span></code></a>
+has already been rendered, the callback will be invoked
+immediately.</p>
+<p>When called, callbacks will be passed a single argument -- the
+rendered <a class="reference internal" href="#django.template.response.SimpleTemplateResponse" title="django.template.response.SimpleTemplateResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleTemplateResponse</span></code></a>
+instance.</p>
+<p>If the callback returns a value that is not <code class="docutils literal notranslate"><span class="pre">None</span></code>, this will be
+used as the response instead of the original response object (and
+will be passed to the next post rendering callback etc.)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.template.response.SimpleTemplateResponse.render">
+<code class="descclassname">SimpleTemplateResponse.</code><code class="descname">render</code>()<a class="reference internal" href="../_modules/django/template/response.html#SimpleTemplateResponse.render"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.template.response.SimpleTemplateResponse.render" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets <code class="docutils literal notranslate"><span class="pre">response.content</span></code> to the result obtained by
+<a class="reference internal" href="#django.template.response.SimpleTemplateResponse.rendered_content" title="django.template.response.SimpleTemplateResponse.rendered_content"><code class="xref py py-attr docutils literal notranslate"><span class="pre">SimpleTemplateResponse.rendered_content</span></code></a>, runs all post-rendering
+callbacks, and returns the resulting response object.</p>
+<p><code class="docutils literal notranslate"><span class="pre">render()</span></code> will only have an effect the first time it is called. On
+subsequent calls, it will return the result obtained from the first call.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="s-templateresponse-objects">
+<span id="templateresponse-objects"></span><h2><code class="docutils literal notranslate"><span class="pre">TemplateResponse</span></code> objects<a class="headerlink" href="#templateresponse-objects" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.template.response.TemplateResponse">
+<em class="property">class </em><code class="descname">TemplateResponse</code><a class="reference internal" href="../_modules/django/template/response.html#TemplateResponse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.template.response.TemplateResponse" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">TemplateResponse</span></code> is a subclass of
+<a class="reference internal" href="#django.template.response.SimpleTemplateResponse" title="django.template.response.SimpleTemplateResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleTemplateResponse</span></code></a> that knows about
+the current <a class="reference internal" href="request-response.html#django.http.HttpRequest" title="django.http.HttpRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">HttpRequest</span></code></a>.</p>
+</dd></dl>
+
+<div class="section" id="s-id1">
+<span id="id1"></span><h3>Methods<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="django.template.response.TemplateResponse.__init__">
+<code class="descclassname">TemplateResponse.</code><code class="descname">__init__</code>(<em>request</em>, <em>template</em>, <em>context=None</em>, <em>content_type=None</em>, <em>status=None</em>, <em>charset=None</em>, <em>using=None</em>)<a class="reference internal" href="../_modules/django/template/response.html#TemplateResponse.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.template.response.TemplateResponse.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiates a <a class="reference internal" href="#django.template.response.TemplateResponse" title="django.template.response.TemplateResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemplateResponse</span></code></a> object
+with the given request, template, context, content type, HTTP status, and
+charset.</p>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">request</span></code></dt>
+<dd>An <a class="reference internal" href="request-response.html#django.http.HttpRequest" title="django.http.HttpRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">HttpRequest</span></code></a> instance.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">template</span></code></dt>
+<dd>A backend-dependent template object (such as those returned by
+<a class="reference internal" href="../topics/templates.html#django.template.loader.get_template" title="django.template.loader.get_template"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_template()</span></code></a>), the name of a template,
+or a list of template names.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">context</span></code></dt>
+<dd>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of values to add to the template context. By default,
+this is an empty dictionary.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">content_type</span></code></dt>
+<dd>The value included in the HTTP <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> header, including the
+MIME type specification and the character set encoding. If
+<code class="docutils literal notranslate"><span class="pre">content_type</span></code> is specified, then its value is used. Otherwise,
+<a class="reference internal" href="settings.html#std:setting-DEFAULT_CONTENT_TYPE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DEFAULT_CONTENT_TYPE</span></code></a> is used.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">status</span></code></dt>
+<dd>The HTTP status code for the response.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">charset</span></code></dt>
+<dd>The charset in which the response will be encoded. If not given it will
+be extracted from <code class="docutils literal notranslate"><span class="pre">content_type</span></code>, and if that is unsuccessful, the
+<a class="reference internal" href="settings.html#std:setting-DEFAULT_CHARSET"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DEFAULT_CHARSET</span></code></a> setting will be used.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">using</span></code></dt>
+<dd>The <a class="reference internal" href="settings.html#std:setting-TEMPLATES-NAME"><code class="xref std std-setting docutils literal notranslate"><span class="pre">NAME</span></code></a> of a template engine to use for
+loading the template.</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="s-the-rendering-process">
+<span id="the-rendering-process"></span><h2>The rendering process<a class="headerlink" href="#the-rendering-process" title="Permalink to this headline">¶</a></h2>
+<p>Before a <a class="reference internal" href="#django.template.response.TemplateResponse" title="django.template.response.TemplateResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemplateResponse</span></code></a> instance can be
+returned to the client, it must be rendered. The rendering process takes the
+intermediate representation of template and context, and turns it into the
+final byte stream that can be served to the client.</p>
+<p>There are three circumstances under which a <code class="docutils literal notranslate"><span class="pre">TemplateResponse</span></code> will be
+rendered:</p>
+<ul class="simple">
+<li>When the <code class="docutils literal notranslate"><span class="pre">TemplateResponse</span></code> instance is explicitly rendered, using
+the <a class="reference internal" href="#django.template.response.SimpleTemplateResponse.render" title="django.template.response.SimpleTemplateResponse.render"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SimpleTemplateResponse.render()</span></code></a> method.</li>
+<li>When the content of the response is explicitly set by assigning
+<code class="docutils literal notranslate"><span class="pre">response.content</span></code>.</li>
+<li>After passing through template response middleware, but before
+passing through response middleware.</li>
+</ul>
+<p>A <code class="docutils literal notranslate"><span class="pre">TemplateResponse</span></code> can only be rendered once. The first call to
+<a class="reference internal" href="#django.template.response.SimpleTemplateResponse.render" title="django.template.response.SimpleTemplateResponse.render"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SimpleTemplateResponse.render()</span></code></a> sets the content of the response;
+subsequent rendering calls do not change the response content.</p>
+<p>However, when <code class="docutils literal notranslate"><span class="pre">response.content</span></code> is explicitly assigned, the
+change is always applied. If you want to force the content to be
+re-rendered, you can re-evaluate the rendered content, and assign
+the content of the response manually:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set up a rendered TemplateResponse</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">django.template.response</span> <span class="k">import</span> <span class="n">TemplateResponse</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">=</span> <span class="n">TemplateResponse</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;original.html&#39;</span><span class="p">,</span> <span class="p">{})</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+<span class="n">Original</span> <span class="n">content</span>
+
+<span class="c1"># Re-rendering doesn&#39;t change content</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;new.html&#39;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+<span class="n">Original</span> <span class="n">content</span>
+
+<span class="c1"># Assigning content does change, no render() call required</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">rendered_content</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+<span class="n">New</span> <span class="n">content</span>
+</pre></div>
+</div>
+<div class="section" id="s-post-render-callbacks">
+<span id="post-render-callbacks"></span><h3>Post-render callbacks<a class="headerlink" href="#post-render-callbacks" title="Permalink to this headline">¶</a></h3>
+<p>Some operations -- such as caching -- cannot be performed on an
+unrendered template. They must be performed on a fully complete and
+rendered response.</p>
+<p>If you're using middleware, the solution is easy. Middleware provides
+multiple opportunities to process a response on exit from a view. If
+you put behavior in the response middleware, it's guaranteed to execute
+after template rendering has taken place.</p>
+<p>However, if you're using a decorator, the same opportunities do not
+exist. Any behavior defined in a decorator is handled immediately.</p>
+<p>To compensate for this (and any other analogous use cases),
+<a class="reference internal" href="#django.template.response.TemplateResponse" title="django.template.response.TemplateResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemplateResponse</span></code></a> allows you to register callbacks that will
+be invoked when rendering has completed. Using this callback, you can
+defer critical processing until a point where you can guarantee that
+rendered content will be available.</p>
+<p>To define a post-render callback, just define a function that takes
+a single argument -- response -- and register that function with
+the template response:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.template.response</span> <span class="k">import</span> <span class="n">TemplateResponse</span>
+
+<span class="k">def</span> <span class="nf">my_render_callback</span><span class="p">(</span><span class="n">response</span><span class="p">):</span>
+    <span class="c1"># Do content-sensitive processing</span>
+    <span class="n">do_post_processing</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">my_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="c1"># Create a response</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">TemplateResponse</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;mytemplate.html&#39;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="c1"># Register the callback</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">add_post_render_callback</span><span class="p">(</span><span class="n">my_render_callback</span><span class="p">)</span>
+    <span class="c1"># Return the response</span>
+    <span class="k">return</span> <span class="n">response</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">my_render_callback()</span></code> will be invoked after the <code class="docutils literal notranslate"><span class="pre">mytemplate.html</span></code>
+has been rendered, and will be provided the fully rendered
+<a class="reference internal" href="#django.template.response.TemplateResponse" title="django.template.response.TemplateResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemplateResponse</span></code></a> instance as an argument.</p>
+<p>If the template has already been rendered, the callback will be
+invoked immediately.</p>
+</div>
+</div>
+<div class="section" id="s-using-templateresponse-and-simpletemplateresponse">
+<span id="using-templateresponse-and-simpletemplateresponse"></span><h2>Using <code class="docutils literal notranslate"><span class="pre">TemplateResponse</span></code> and <code class="docutils literal notranslate"><span class="pre">SimpleTemplateResponse</span></code><a class="headerlink" href="#using-templateresponse-and-simpletemplateresponse" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="#django.template.response.TemplateResponse" title="django.template.response.TemplateResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemplateResponse</span></code></a> object can be used anywhere that a normal
+<a class="reference internal" href="request-response.html#django.http.HttpResponse" title="django.http.HttpResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">django.http.HttpResponse</span></code></a> can be used. It can also be used as an
+alternative to calling <a class="reference internal" href="../topics/http/shortcuts.html#django.shortcuts.render" title="django.shortcuts.render"><code class="xref py py-func docutils literal notranslate"><span class="pre">render()</span></code></a>.</p>
+<p>For example, the following simple view returns a <a class="reference internal" href="#django.template.response.TemplateResponse" title="django.template.response.TemplateResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemplateResponse</span></code></a>
+with a simple template and a context containing a queryset:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.template.response</span> <span class="k">import</span> <span class="n">TemplateResponse</span>
+
+<span class="k">def</span> <span class="nf">blog_index</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">TemplateResponse</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;entry_list.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;entries&#39;</span><span class="p">:</span> <span class="n">Entry</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()})</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">TemplateResponse</span></code> and <code class="docutils literal notranslate"><span class="pre">SimpleTemplateResponse</span></code></a><ul>
+<li><a class="reference internal" href="#simpletemplateresponse-objects"><code class="docutils literal notranslate"><span class="pre">SimpleTemplateResponse</span></code> objects</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#methods">Methods</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#templateresponse-objects"><code class="docutils literal notranslate"><span class="pre">TemplateResponse</span></code> objects</a><ul>
+<li><a class="reference internal" href="#id1">Methods</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-rendering-process">The rendering process</a><ul>
+<li><a class="reference internal" href="#post-render-callbacks">Post-render callbacks</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-templateresponse-and-simpletemplateresponse">Using <code class="docutils literal notranslate"><span class="pre">TemplateResponse</span></code> and <code class="docutils literal notranslate"><span class="pre">SimpleTemplateResponse</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="templates/api.html"
+                        title="previous chapter">The Django template language: for Python programmers</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="unicode.html"
+                        title="next chapter">Unicode data</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/ref/template-response.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="templates/api.html" title="The Django template language: for Python programmers">previous</a>
+     |
+    <a href="index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="unicode.html" title="Unicode data">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

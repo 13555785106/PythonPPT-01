@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>请求参数</title>
+</head>
+<body>
+<center><a href="{% url 'ch02:index' %}">返回</a></center>
+<form method="post" action="{% url 'ch02:req_parameters_01' %}">
+    {% csrf_token %}
+    <table align="center">
+        <caption>传统方式获取请求参数</caption>
+        <tr>
+            <td>姓名:</td>
+            <td><input type="text" name="name" value="{{name}}"></td>
+        </tr>
+        <tr>
+            <td>年龄:</td>
+            <td><input type="text" name="age" value="{{age}}"></td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center"><input type="submit" value="提交"></td>
+
+        </tr>
+    </table>
+</form>
+</body>
+</html>

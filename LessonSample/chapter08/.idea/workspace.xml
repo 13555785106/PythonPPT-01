@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="5369292c-8c2a-4c49-a9b5-413678f3d680" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../DjangoSample/ch06/exam_01.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Django Web开发-V01.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Django Web开发-V01.pptx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/DjangoSample/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/DjangoSample/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/DjangoSample/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/DjangoSample/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch01/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch01/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/detail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/results.html" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/results.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch03/01_create.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch03/exam_01.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch03/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch03/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch03/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch03/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch04/templatetags/custom_tags.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch04/templatetags/custom_tags.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch05/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch05/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch05/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch05/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch06/test01.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch06/test02.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch06/exam_02.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch06/test03.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch06/test04.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch06/exam_03.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter01/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter01/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter03/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter03/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter04/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter04/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter07/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter07/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter07/07_读Excel文件.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter07/07_读Excel文件.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter07/08_写Excel文件.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter07/08_写Excel文件.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter07/10_SQLite数据库操作.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter07/10_SQLite数据库操作.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter07/test.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mymodule.py" beforeDir="false" afterPath="$PROJECT_DIR$/mymodule.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/20_a_类的动态创建.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/20_01_类的动态创建.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/20_b_函数的动态创建.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/20_02_函数的动态创建.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/20_c_类的动态创建.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/20_03_类的动态创建.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/20_d_使用元类动态创建类.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/20_04_使用元类动态创建类.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../djangosample/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../djangosample/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../temp/HelloWorld/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../temp/HelloWorld/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../temp/HelloWorld/app01/1.html" beforeDir="false" afterPath="$PROJECT_DIR$/../temp/HelloWorld/app01/1.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Python程序设计-V01.pptx" beforeDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mypackage/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="38">
+              <caret line="2" selection-start-line="2" selection-end-line="5" selection-end-column="23" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/mypackage/mymodule01.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="19">
+              <caret line="1" selection-start-line="1" selection-end-line="4" selection-end-column="25" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mypackage/mymodule02.py">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/01_模块测试.py" />
+        <option value="$PROJECT_DIR$/02_包测试.py" />
+        <option value="$PROJECT_DIR$/02_包测试_01.py" />
+        <option value="$PROJECT_DIR$/mymodule.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="y" value="23" />
+    <option name="width" value="1280" />
+    <option name="height" value="730" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="chapter08" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chapter08" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="chapter08" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chapter08" type="462c0819:PsiDirectoryNode" />
+              <item name="mypackage" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="chapter08" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+            <path>
+              <item name="chapter08" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 2.7 &gt;" type="70bed36:NamedLibraryElementNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\xiaojf\PycharmProjects\chapter08" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.02_包测试_01">
+    <configuration name="01_模块测试" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter08" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/01_模块测试.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="02_包测试_01" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter08" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/02_包测试_01.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="mymodule" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter08" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/mymodule.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.mymodule" />
+      <item itemvalue="Python.01_模块测试" />
+      <item itemvalue="Python.02_包测试_01" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.02_包测试_01" />
+        <item itemvalue="Python.01_模块测试" />
+        <item itemvalue="Python.mymodule" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5369292c-8c2a-4c49-a9b5-413678f3d680" name="Default Changelist" comment="" />
+      <created>1541856089949</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1541856089949</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="23" width="1280" height="730" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="DB Browser" />
+      <window_info id="Project Explorer" />
+      <window_info id="Job Explorer" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2359015" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Console" />
+      <window_info anchor="bottom" id="DB Execution Console" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32894737" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/01_模块测试.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="1" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/02_包测试_01.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="8" selection-start-line="8" selection-end-line="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mymodule.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="6" column="14" selection-start-line="6" selection-start-column="14" selection-end-line="6" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mypackage/mymodule02.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mypackage/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="2" selection-start-line="2" selection-end-line="5" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mypackage/mymodule01.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19">
+          <caret line="1" selection-start-line="1" selection-end-line="4" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

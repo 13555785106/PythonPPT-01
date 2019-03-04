@@ -1,0 +1,609 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Unit tests &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Submitting patches" href="submitting-patches.html" />
+    <link rel="prev" title="Coding style" href="coding-style.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="coding-style.html" title="Coding style">previous</a>
+     |
+    <a href="../../index.html" title="Django internals" accesskey="U">up</a>
+   |
+    <a href="submitting-patches.html" title="Submitting patches">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="internals-contributing-writing-code-unit-tests">
+            
+  <div class="section" id="s-unit-tests">
+<span id="unit-tests"></span><h1>Unit tests<a class="headerlink" href="#unit-tests" title="Permalink to this headline">¶</a></h1>
+<p>Django comes with a test suite of its own, in the <code class="docutils literal notranslate"><span class="pre">tests</span></code> directory of the
+code base. It's our policy to make sure all tests pass at all times.</p>
+<p>We appreciate any and all contributions to the test suite!</p>
+<p>The Django tests all use the testing infrastructure that ships with Django for
+testing applications. See <a class="reference internal" href="../../../topics/testing/overview.html"><span class="doc">Writing and running tests</span></a> for an explanation of
+how to write new tests.</p>
+<div class="section" id="s-running-the-unit-tests">
+<span id="s-running-unit-tests"></span><span id="running-the-unit-tests"></span><span id="running-unit-tests"></span><h2>Running the unit tests<a class="headerlink" href="#running-the-unit-tests" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-quickstart">
+<span id="quickstart"></span><h3>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h3>
+<p>First, <a class="reference external" href="https://github.com/django/django/fork">fork Django on GitHub</a>.</p>
+<p>Second, create and activate a virtual environment. If you're not familiar with
+how to do that, read our <a class="reference internal" href="../../../intro/contributing.html"><span class="doc">contributing tutorial</span></a>.</p>
+<p>Next, clone your fork, install some requirements, and run the tests:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> git clone git@github.com:YourGitHubName/django.git django-repo
+<span class="gp">$</span> <span class="nb">cd</span> django-repo/tests
+<span class="gp">$</span> pip install -e ..
+<span class="gp">$</span> pip install -r requirements/py3.txt
+<span class="gp">$</span> ./runtests.py
+</pre></div>
+</div>
+<p>Installing the requirements will likely require some operating system packages
+that your computer doesn't have installed. You can usually figure out which
+package to install by doing a Web search for the last line or so of the error
+message. Try adding your operating system to the search query if needed.</p>
+<p>If you have trouble installing the requirements, you can skip that step. See
+<a class="reference internal" href="#running-unit-tests-dependencies"><span class="std std-ref">Running all the tests</span></a> for details on installing the optional
+test dependencies. If you don't have an optional dependency installed, the
+tests that require it will be skipped.</p>
+<p>Running the tests requires a Django settings module that defines the databases
+to use. To make it easy to get started, Django provides and uses a sample
+settings module that uses the SQLite database. See
+<a class="reference internal" href="#running-unit-tests-settings"><span class="std std-ref">Using another settings module</span></a> to learn how to use a different settings
+module to run the tests with a different database.</p>
+<div class="admonition-windows-users admonition">
+<p class="first admonition-title">Windows users</p>
+<p class="last">We recommend something like <a class="reference external" href="https://msysgit.github.io/">Git Bash</a> to run
+the tests using the above approach.</p>
+</div>
+<p>Having problems? See <a class="reference internal" href="#troubleshooting-unit-tests"><span class="std std-ref">错误调试</span></a> for some common issues.</p>
+</div>
+<div class="section" id="s-running-tests-using-tox">
+<span id="running-tests-using-tox"></span><h3>Running tests using <code class="docutils literal notranslate"><span class="pre">tox</span></code><a class="headerlink" href="#running-tests-using-tox" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://tox.readthedocs.io/">Tox</a> is a tool for running tests in different
+virtual environments. Django includes a basic <code class="docutils literal notranslate"><span class="pre">tox.ini</span></code> that automates some
+checks that our build server performs on pull requests. To run the unit tests
+and other checks (such as <a class="reference internal" href="coding-style.html#coding-style-imports"><span class="std std-ref">import sorting</span></a>, the
+<a class="reference internal" href="../writing-documentation.html#documentation-spelling-check"><span class="std std-ref">documentation spelling checker</span></a>, and
+<a class="reference internal" href="coding-style.html#coding-style-python"><span class="std std-ref">code formatting</span></a>), install and run the <code class="docutils literal notranslate"><span class="pre">tox</span></code>
+command from any place in the Django source tree:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install tox
+<span class="gp">$</span> tox
+</pre></div>
+</div>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">tox</span></code> runs the test suite with the bundled test settings file for
+SQLite, <code class="docutils literal notranslate"><span class="pre">flake8</span></code>, <code class="docutils literal notranslate"><span class="pre">isort</span></code>, and the documentation spelling checker. In
+addition to the system dependencies noted elsewhere in this documentation,
+the command <code class="docutils literal notranslate"><span class="pre">python3</span></code> must be on your path and linked to the appropriate
+version of Python. A list of default environments can be seen as follows:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tox -l
+<span class="go">py3</span>
+<span class="go">flake8</span>
+<span class="go">docs</span>
+<span class="go">isort</span>
+</pre></div>
+</div>
+<div class="section" id="s-testing-other-python-versions-and-database-backends">
+<span id="testing-other-python-versions-and-database-backends"></span><h4>Testing other Python versions and database backends<a class="headerlink" href="#testing-other-python-versions-and-database-backends" title="Permalink to this headline">¶</a></h4>
+<p>In addition to the default environments, <code class="docutils literal notranslate"><span class="pre">tox</span></code> supports running unit tests
+for other versions of Python and other database backends. Since Django's test
+suite doesn't bundle a settings file for database backends other than SQLite,
+however, you must <a class="reference internal" href="#running-unit-tests-settings"><span class="std std-ref">create and provide your own test settings</span></a>. For example, to run the tests on Python 3.5
+using PostgreSQL:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tox -e py35-postgres -- --settings<span class="o">=</span>my_postgres_settings
+</pre></div>
+</div>
+<p>This command sets up a Python 3.5 virtual environment, installs Django's
+test suite dependencies (including those for PostgreSQL), and calls
+<code class="docutils literal notranslate"><span class="pre">runtests.py</span></code> with the supplied arguments (in this case,
+<code class="docutils literal notranslate"><span class="pre">--settings=my_postgres_settings</span></code>).</p>
+<p>The remainder of this documentation shows commands for running tests without
+<code class="docutils literal notranslate"><span class="pre">tox</span></code>, however, any option passed to <code class="docutils literal notranslate"><span class="pre">runtests.py</span></code> can also be passed to
+<code class="docutils literal notranslate"><span class="pre">tox</span></code> by prefixing the argument list with <code class="docutils literal notranslate"><span class="pre">--</span></code>, as above.</p>
+<p>Tox also respects the <code class="docutils literal notranslate"><span class="pre">DJANGO_SETTINGS_MODULE</span></code> environment variable, if set.
+For example, the following is equivalent to the command above:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nv">DJANGO_SETTINGS_MODULE</span><span class="o">=</span>my_postgres_settings tox -e py35-postgres
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-running-the-javascript-tests">
+<span id="running-the-javascript-tests"></span><h4>Running the JavaScript tests<a class="headerlink" href="#running-the-javascript-tests" title="Permalink to this headline">¶</a></h4>
+<p>Django includes a set of <a class="reference internal" href="javascript.html#javascript-tests"><span class="std std-ref">JavaScript unit tests</span></a> for
+functions in certain contrib apps. The JavaScript tests aren't run by default
+using <code class="docutils literal notranslate"><span class="pre">tox</span></code> because they require <cite>Node.js</cite> to be installed and aren't
+necessary for the majority of patches. To run the JavaScript tests using
+<code class="docutils literal notranslate"><span class="pre">tox</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tox -e javascript
+</pre></div>
+</div>
+<p>This command runs <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">install</span></code> to ensure test requirements are up to
+date and then runs <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">test</span></code>.</p>
+</div>
+</div>
+<div class="section" id="s-using-another-settings-module">
+<span id="s-running-unit-tests-settings"></span><span id="using-another-settings-module"></span><span id="running-unit-tests-settings"></span><h3>Using another <code class="docutils literal notranslate"><span class="pre">settings</span></code> module<a class="headerlink" href="#using-another-settings-module" title="Permalink to this headline">¶</a></h3>
+<p>The included settings module (<code class="docutils literal notranslate"><span class="pre">tests/test_sqlite.py</span></code>) allows you to run the
+test suite using SQLite. If you want to run the tests using a different
+database, you'll need to define your own settings file. Some tests, such as
+those for <code class="docutils literal notranslate"><span class="pre">contrib.postgres</span></code>, are specific to a particular database backend
+and will be skipped if run with a different backend.</p>
+<p>To run the tests with different settings, ensure that the module is on your
+<code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> and pass the module with <code class="docutils literal notranslate"><span class="pre">--settings</span></code>.</p>
+<p>The <a class="reference internal" href="../../../ref/settings.html#std:setting-DATABASES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DATABASES</span></code></a> setting in any test settings module needs to define
+two databases:</p>
+<ul class="simple">
+<li>A <code class="docutils literal notranslate"><span class="pre">default</span></code> database. This database should use the backend that
+you want to use for primary testing.</li>
+<li>A database with the alias <code class="docutils literal notranslate"><span class="pre">other</span></code>. The <code class="docutils literal notranslate"><span class="pre">other</span></code> database is used to test
+that queries can be directed to different databases. This database should use
+the same backend as the <code class="docutils literal notranslate"><span class="pre">default</span></code>, and it must have a different name.</li>
+</ul>
+<p>If you're using a backend that isn't SQLite, you will need to provide other
+details for each database:</p>
+<ul class="simple">
+<li>The <a class="reference internal" href="../../../ref/settings.html#std:setting-USER"><code class="xref std std-setting docutils literal notranslate"><span class="pre">USER</span></code></a> option needs to specify an existing user account
+for the database. That user needs permission to execute <code class="docutils literal notranslate"><span class="pre">CREATE</span> <span class="pre">DATABASE</span></code>
+so that the test database can be created.</li>
+<li>The <a class="reference internal" href="../../../ref/settings.html#std:setting-PASSWORD"><code class="xref std std-setting docutils literal notranslate"><span class="pre">PASSWORD</span></code></a> option needs to provide the password for
+the <a class="reference internal" href="../../../ref/settings.html#std:setting-USER"><code class="xref std std-setting docutils literal notranslate"><span class="pre">USER</span></code></a> that has been specified.</li>
+</ul>
+<p>Test databases get their names by prepending <code class="docutils literal notranslate"><span class="pre">test_</span></code> to the value of the
+<a class="reference internal" href="../../../ref/settings.html#std:setting-NAME"><code class="xref std std-setting docutils literal notranslate"><span class="pre">NAME</span></code></a> settings for the databases defined in <a class="reference internal" href="../../../ref/settings.html#std:setting-DATABASES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DATABASES</span></code></a>.
+These test databases are deleted when the tests are finished.</p>
+<p>You will also need to ensure that your database uses UTF-8 as the default
+character set. If your database server doesn't use UTF-8 as a default charset,
+you will need to include a value for <a class="reference internal" href="../../../ref/settings.html#std:setting-TEST_CHARSET"><code class="xref std std-setting docutils literal notranslate"><span class="pre">CHARSET</span></code></a> in the
+test settings dictionary for the applicable database.</p>
+</div>
+<div class="section" id="s-running-only-some-of-the-tests">
+<span id="s-runtests-specifying-labels"></span><span id="running-only-some-of-the-tests"></span><span id="runtests-specifying-labels"></span><h3>Running only some of the tests<a class="headerlink" href="#running-only-some-of-the-tests" title="Permalink to this headline">¶</a></h3>
+<p>Django's entire test suite takes a while to run, and running every single test
+could be redundant if, say, you just added a test to Django that you want to
+run quickly without running everything else. You can run a subset of the unit
+tests by appending the names of the test modules to <code class="docutils literal notranslate"><span class="pre">runtests.py</span></code> on the
+command line.</p>
+<p>For example, if you'd like to run tests only for generic relations and
+internationalization, type:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./runtests.py --settings<span class="o">=</span>path.to.settings generic_relations i18n
+</pre></div>
+</div>
+<p>How do you find out the names of individual tests? Look in <code class="docutils literal notranslate"><span class="pre">tests/</span></code> — each
+directory name there is the name of a test.</p>
+<p>If you just want to run a particular class of tests, you can specify a list of
+paths to individual test classes. For example, to run the <code class="docutils literal notranslate"><span class="pre">TranslationTests</span></code>
+of the <code class="docutils literal notranslate"><span class="pre">i18n</span></code> module, type:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./runtests.py --settings<span class="o">=</span>path.to.settings i18n.tests.TranslationTests
+</pre></div>
+</div>
+<p>Going beyond that, you can specify an individual test method like this:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./runtests.py --settings<span class="o">=</span>path.to.settings i18n.tests.TranslationTests.test_lazy_objects
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-running-the-selenium-tests">
+<span id="running-the-selenium-tests"></span><h3>Running the Selenium tests<a class="headerlink" href="#running-the-selenium-tests" title="Permalink to this headline">¶</a></h3>
+<p>Some tests require Selenium and a Web browser. To run these tests, you must
+install the <a class="reference external" href="https://pypi.org/project/selenium/">selenium</a> package and run the tests with the
+<code class="docutils literal notranslate"><span class="pre">--selenium=&lt;BROWSERS&gt;</span></code> option. For example, if you have Firefox and Google
+Chrome installed:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./runtests.py --selenium<span class="o">=</span>firefox,chrome
+</pre></div>
+</div>
+<p>See the <a class="reference external" href="https://github.com/SeleniumHQ/selenium/tree/master/py/selenium/webdriver">selenium.webdriver</a> package for the list of available browsers.</p>
+<p>Specifying <code class="docutils literal notranslate"><span class="pre">--selenium</span></code> automatically sets <code class="docutils literal notranslate"><span class="pre">--tags=selenium</span></code> to run only
+the tests that require selenium.</p>
+</div>
+<div class="section" id="s-running-all-the-tests">
+<span id="s-running-unit-tests-dependencies"></span><span id="running-all-the-tests"></span><span id="running-unit-tests-dependencies"></span><h3>Running all the tests<a class="headerlink" href="#running-all-the-tests" title="Permalink to this headline">¶</a></h3>
+<p>If you want to run the full suite of tests, you'll need to install a number of
+dependencies:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://pypi.org/project/argon2_cffi/">argon2-cffi</a> 16.1.0+</li>
+<li><a class="reference external" href="https://pypi.org/project/bcrypt/">bcrypt</a></li>
+<li><a class="reference external" href="https://pypi.org/project/docutils/">docutils</a></li>
+<li><a class="reference external" href="https://pypi.org/project/geoip2/">geoip2</a></li>
+<li><a class="reference external" href="https://pypi.org/project/jinja2/">jinja2</a> 2.7+</li>
+<li><a class="reference external" href="https://pypi.org/project/numpy/">numpy</a></li>
+<li><a class="reference external" href="https://pypi.org/project/Pillow/">Pillow</a></li>
+<li><a class="reference external" href="https://pyyaml.org/wiki/PyYAML">PyYAML</a></li>
+<li><a class="reference external" href="https://pypi.org/project/pytz/">pytz</a> (required)</li>
+<li><a class="reference external" href="https://pypi.org/project/setuptools/">setuptools</a></li>
+<li><a class="reference external" href="https://memcached.org/">memcached</a>, plus a <a class="reference internal" href="../../../topics/cache.html#memcached"><span class="std std-ref">supported Python binding</span></a></li>
+<li><a class="reference external" href="https://www.gnu.org/software/gettext/manual/gettext.html">gettext</a> (<a class="reference internal" href="../../../topics/i18n/translation.html#gettext-on-windows"><span class="std std-ref">gettext on Windows</span></a>)</li>
+<li><a class="reference external" href="https://pypi.org/project/selenium/">selenium</a></li>
+<li><a class="reference external" href="https://pypi.org/project/sqlparse/">sqlparse</a></li>
+</ul>
+<p>You can find these dependencies in <a class="reference external" href="https://pip.pypa.io/en/latest/user_guide/#requirements-files">pip requirements files</a> inside the
+<code class="docutils literal notranslate"><span class="pre">tests/requirements</span></code> directory of the Django source tree and install them
+like so:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install -r tests/requirements/py3.txt
+</pre></div>
+</div>
+<p>如果你在安装过程中发生了错误，可能是你的系统缺少一个或多个Python依赖包。请参考安装失败的包的文档或者在网上搜索错误的提示信息。</p>
+<p>You can also install the database adapter(s) of your choice using
+<code class="docutils literal notranslate"><span class="pre">oracle.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">mysql.txt</span></code>, or <code class="docutils literal notranslate"><span class="pre">postgres.txt</span></code>.</p>
+<p>If you want to test the memcached cache backend, you'll also need to define
+a <a class="reference internal" href="../../../ref/settings.html#std:setting-CACHES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">CACHES</span></code></a> setting that points at your memcached instance.</p>
+<p>To run the GeoDjango tests, you will need to <a class="reference internal" href="../../../ref/contrib/gis/install/index.html"><span class="doc">setup a spatial database
+and install the Geospatial libraries</span></a>.</p>
+<p>Each of these dependencies is optional. If you're missing any of them, the
+associated tests will be skipped.</p>
+</div>
+<div class="section" id="s-code-coverage">
+<span id="code-coverage"></span><h3>Code coverage<a class="headerlink" href="#code-coverage" title="Permalink to this headline">¶</a></h3>
+<p>Contributors are encouraged to run coverage on the test suite to identify areas
+that need additional tests. The coverage tool installation and use is described
+in <a class="reference internal" href="../../../topics/testing/advanced.html#topics-testing-code-coverage"><span class="std std-ref">testing code coverage</span></a>.</p>
+<p>Coverage should be run in a single process to obtain accurate statistics. To
+run coverage on the Django test suite using the standard test settings:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> coverage run ./runtests.py --settings<span class="o">=</span>test_sqlite --parallel<span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+<p>After running coverage, generate the html report by running:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> coverage html
+</pre></div>
+</div>
+<p>When running coverage for the Django tests, the included <code class="docutils literal notranslate"><span class="pre">.coveragerc</span></code>
+settings file  defines <code class="docutils literal notranslate"><span class="pre">coverage_html</span></code> as the output directory for the report
+and also excludes several directories not relevant to the results
+(test code or external code included in Django).</p>
+</div>
+</div>
+<div class="section" id="s-contrib-apps">
+<span id="s-id1"></span><span id="contrib-apps"></span><span id="id1"></span><h2>Contrib apps<a class="headerlink" href="#contrib-apps" title="Permalink to this headline">¶</a></h2>
+<p>Tests for contrib apps can be found in the <code class="docutils literal notranslate"><span class="pre">tests/</span></code> directory, typically
+under <code class="docutils literal notranslate"><span class="pre">&lt;app_name&gt;_tests</span></code>. For example, tests for <code class="docutils literal notranslate"><span class="pre">contrib.auth</span></code> are located
+in <code class="docutils literal notranslate"><span class="pre">tests/auth_tests</span></code>.</p>
+</div>
+<div class="section" id="s-troubleshooting">
+<span id="s-troubleshooting-unit-tests"></span><span id="troubleshooting"></span><span id="troubleshooting-unit-tests"></span><h2>错误调试<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-many-test-failures-with-unicodeencodeerror">
+<span id="many-test-failures-with-unicodeencodeerror"></span><h3>Many test failures with <code class="docutils literal notranslate"><span class="pre">UnicodeEncodeError</span></code><a class="headerlink" href="#many-test-failures-with-unicodeencodeerror" title="Permalink to this headline">¶</a></h3>
+<p>If the <code class="docutils literal notranslate"><span class="pre">locales</span></code> package is not installed, some tests will fail with a
+<code class="docutils literal notranslate"><span class="pre">UnicodeEncodeError</span></code>.</p>
+<p>You can resolve this on Debian-based systems, for example, by running:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> apt-get install locales
+<span class="gp">$</span> dpkg-reconfigure locales
+</pre></div>
+</div>
+<p>You can resolve this for macOS systems by configuring your shell's locale:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nb">export</span> <span class="nv">LANG</span><span class="o">=</span><span class="s2">&quot;en_US.UTF-8&quot;</span>
+<span class="gp">$</span> <span class="nb">export</span> <span class="nv">LC_ALL</span><span class="o">=</span><span class="s2">&quot;en_US.UTF-8&quot;</span>
+</pre></div>
+</div>
+<p>Run the <code class="docutils literal notranslate"><span class="pre">locale</span></code> command to confirm the change. Optionally, add those export
+commands to your shell's startup file (e.g. <code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code> for Bash) to avoid
+having to retype them.</p>
+</div>
+<div class="section" id="s-tests-that-only-fail-in-combination">
+<span id="tests-that-only-fail-in-combination"></span><h3>Tests that only fail in combination<a class="headerlink" href="#tests-that-only-fail-in-combination" title="Permalink to this headline">¶</a></h3>
+<p>In case a test passes when run in isolation but fails within the whole suite,
+we have some tools to help analyze the problem.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">--bisect</span></code> option of <code class="docutils literal notranslate"><span class="pre">runtests.py</span></code> will run the failing test while
+halving the test set it is run together with on each iteration, often making
+it possible to identify a small number of tests that may be related to the
+failure.</p>
+<p>For example, suppose that the failing test that works on its own is
+<code class="docutils literal notranslate"><span class="pre">ModelTest.test_eq</span></code>, then using:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./runtests.py --bisect basic.tests.ModelTest.test_eq
+</pre></div>
+</div>
+<p>will try to determine a test that interferes with the given one. First, the
+test is run with the first half of the test suite. If a failure occurs, the
+first half of the test suite is split in two groups and each group is then run
+with the specified test. If there is no failure with the first half of the test
+suite, the second half of the test suite is run with the specified test and
+split appropriately as described earlier. The process repeats until the set of
+failing tests is minimized.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">--pair</span></code> option runs the given test alongside every other test from the
+suite, letting you check if another test has side-effects that cause the
+failure. So:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./runtests.py --pair basic.tests.ModelTest.test_eq
+</pre></div>
+</div>
+<p>will pair <code class="docutils literal notranslate"><span class="pre">test_eq</span></code> with every test label.</p>
+<p>With both <code class="docutils literal notranslate"><span class="pre">--bisect</span></code> and <code class="docutils literal notranslate"><span class="pre">--pair</span></code>, if you already suspect which cases
+might be responsible for the failure, you may limit tests to be cross-analyzed
+by <a class="reference internal" href="#runtests-specifying-labels"><span class="std std-ref">specifying further test labels</span></a> after
+the first one:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./runtests.py --pair basic.tests.ModelTest.test_eq queries transactions
+</pre></div>
+</div>
+<p>You can also try running any set of tests in reverse using the <code class="docutils literal notranslate"><span class="pre">--reverse</span></code>
+option in order to verify that executing tests in a different order does not
+cause any trouble:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./runtests.py basic --reverse
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-seeing-the-sql-queries-run-during-a-test">
+<span id="seeing-the-sql-queries-run-during-a-test"></span><h3>Seeing the SQL queries run during a test<a class="headerlink" href="#seeing-the-sql-queries-run-during-a-test" title="Permalink to this headline">¶</a></h3>
+<p>If you wish to examine the SQL being run in failing tests, you can turn on
+<a class="reference internal" href="../../../topics/logging.html#django-db-logger"><span class="std std-ref">SQL logging</span></a> using the <code class="docutils literal notranslate"><span class="pre">--debug-sql</span></code> option. If you
+combine this with <code class="docutils literal notranslate"><span class="pre">--verbosity=2</span></code>, all SQL queries will be output:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./runtests.py basic --debug-sql
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-seeing-the-full-traceback-of-a-test-failure">
+<span id="seeing-the-full-traceback-of-a-test-failure"></span><h3>Seeing the full traceback of a test failure<a class="headerlink" href="#seeing-the-full-traceback-of-a-test-failure" title="Permalink to this headline">¶</a></h3>
+<p>By default tests are run in parallel with one process per core. When the tests
+are run in parallel, however, you'll only see a truncated traceback for any
+test failures. You can adjust this behavior with the <code class="docutils literal notranslate"><span class="pre">--parallel</span></code> option:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./runtests.py basic --parallel<span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+<p>You can also use the <code class="docutils literal notranslate"><span class="pre">DJANGO_TEST_PROCESSES</span></code> environment variable for this
+purpose.</p>
+</div>
+<div class="section" id="s-tips-for-writing-tests">
+<span id="tips-for-writing-tests"></span><h3>Tips for writing tests<a class="headerlink" href="#tips-for-writing-tests" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="s-isolating-model-registration">
+<span id="isolating-model-registration"></span><h4>Isolating model registration<a class="headerlink" href="#isolating-model-registration" title="Permalink to this headline">¶</a></h4>
+<p>To avoid polluting the global <a class="reference internal" href="../../../ref/applications.html#django.apps.apps" title="django.apps.apps"><code class="xref py py-attr docutils literal notranslate"><span class="pre">apps</span></code></a> registry and prevent
+unnecessary table creation, models defined in a test method should be bound to
+a temporary <code class="docutils literal notranslate"><span class="pre">Apps</span></code> instance:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.apps.registry</span> <span class="kn">import</span> <span class="n">Apps</span>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">SimpleTestCase</span>
+
+<span class="k">class</span> <span class="nc">TestModelDefinition</span><span class="p">(</span><span class="n">SimpleTestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_model_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">test_apps</span> <span class="o">=</span> <span class="n">Apps</span><span class="p">([</span><span class="s1">&#39;app_label&#39;</span><span class="p">])</span>
+
+        <span class="k">class</span> <span class="nc">TestModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+            <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+                <span class="n">apps</span> <span class="o">=</span> <span class="n">test_apps</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<dl class="function">
+<dt id="django.test.utils.isolate_apps">
+<code class="descclassname">django.test.utils.</code><code class="descname">isolate_apps</code>(<em>*app_labels</em>, <em>attr_name=None</em>, <em>kwarg_name=None</em>)<a class="headerlink" href="#django.test.utils.isolate_apps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Since this pattern involves a lot of boilerplate, Django provides the
+<a class="reference internal" href="#django.test.utils.isolate_apps" title="django.test.utils.isolate_apps"><code class="xref py py-func docutils literal notranslate"><span class="pre">isolate_apps()</span></code></a> decorator. It's used like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">SimpleTestCase</span>
+<span class="kn">from</span> <span class="nn">django.test.utils</span> <span class="kn">import</span> <span class="n">isolate_apps</span>
+
+<span class="k">class</span> <span class="nc">TestModelDefinition</span><span class="p">(</span><span class="n">SimpleTestCase</span><span class="p">):</span>
+    <span class="nd">@isolate_apps</span><span class="p">(</span><span class="s1">&#39;app_label&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_model_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">class</span> <span class="nc">TestModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<div class="admonition-setting-app-label admonition">
+<p class="first admonition-title">Setting <code class="docutils literal notranslate"><span class="pre">app_label</span></code></p>
+<p>Models defined in a test method with no explicit
+<a class="reference internal" href="../../../ref/models/options.html#django.db.models.Options.app_label" title="django.db.models.Options.app_label"><code class="xref py py-attr docutils literal notranslate"><span class="pre">app_label</span></code></a> are automatically assigned the
+label of the app in which their test class is located.</p>
+<p>In order to make sure the models defined within the context of
+<a class="reference internal" href="#django.test.utils.isolate_apps" title="django.test.utils.isolate_apps"><code class="xref py py-func docutils literal notranslate"><span class="pre">isolate_apps()</span></code></a> instances are correctly
+installed, you should pass the set of targeted <code class="docutils literal notranslate"><span class="pre">app_label</span></code> as arguments:</p>
+<div class="last highlight-python snippet"><div class="snippet-filename">tests/app_label/tests.py</div>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">SimpleTestCase</span>
+<span class="kn">from</span> <span class="nn">django.test.utils</span> <span class="kn">import</span> <span class="n">isolate_apps</span>
+
+<span class="k">class</span> <span class="nc">TestModelDefinition</span><span class="p">(</span><span class="n">SimpleTestCase</span><span class="p">):</span>
+    <span class="nd">@isolate_apps</span><span class="p">(</span><span class="s1">&#39;app_label&#39;</span><span class="p">,</span> <span class="s1">&#39;other_app_label&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_model_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># This model automatically receives app_label=&#39;app_label&#39;</span>
+        <span class="k">class</span> <span class="nc">TestModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+        <span class="k">class</span> <span class="nc">OtherAppModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+            <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+                <span class="n">app_label</span> <span class="o">=</span> <span class="s1">&#39;other_app_label&#39;</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<p>The decorator can also be applied to classes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">SimpleTestCase</span>
+<span class="kn">from</span> <span class="nn">django.test.utils</span> <span class="kn">import</span> <span class="n">isolate_apps</span>
+
+<span class="nd">@isolate_apps</span><span class="p">(</span><span class="s1">&#39;app_label&#39;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">TestModelDefinition</span><span class="p">(</span><span class="n">SimpleTestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_model_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">class</span> <span class="nc">TestModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<p>The temporary <code class="docutils literal notranslate"><span class="pre">Apps</span></code> instance used to isolate model registration can be
+retrieved as an attribute when used as a class decorator by using the
+<code class="docutils literal notranslate"><span class="pre">attr_name</span></code> parameter:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">SimpleTestCase</span>
+<span class="kn">from</span> <span class="nn">django.test.utils</span> <span class="kn">import</span> <span class="n">isolate_apps</span>
+
+<span class="nd">@isolate_apps</span><span class="p">(</span><span class="s1">&#39;app_label&#39;</span><span class="p">,</span> <span class="n">attr_name</span><span class="o">=</span><span class="s1">&#39;apps&#39;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">TestModelDefinition</span><span class="p">(</span><span class="n">SimpleTestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_model_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">class</span> <span class="nc">TestModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;app_label&#39;</span><span class="p">,</span> <span class="s1">&#39;TestModel&#39;</span><span class="p">),</span> <span class="n">TestModel</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or as an argument on the test method when used as a method decorator by using
+the <code class="docutils literal notranslate"><span class="pre">kwarg_name</span></code> parameter:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">SimpleTestCase</span>
+<span class="kn">from</span> <span class="nn">django.test.utils</span> <span class="kn">import</span> <span class="n">isolate_apps</span>
+
+<span class="k">class</span> <span class="nc">TestModelDefinition</span><span class="p">(</span><span class="n">SimpleTestCase</span><span class="p">):</span>
+    <span class="nd">@isolate_apps</span><span class="p">(</span><span class="s1">&#39;app_label&#39;</span><span class="p">,</span> <span class="n">kwarg_name</span><span class="o">=</span><span class="s1">&#39;apps&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_model_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">apps</span><span class="p">):</span>
+        <span class="k">class</span> <span class="nc">TestModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIs</span><span class="p">(</span><span class="n">apps</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;app_label&#39;</span><span class="p">,</span> <span class="s1">&#39;TestModel&#39;</span><span class="p">),</span> <span class="n">TestModel</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Unit tests</a><ul>
+<li><a class="reference internal" href="#running-the-unit-tests">Running the unit tests</a><ul>
+<li><a class="reference internal" href="#quickstart">Quickstart</a></li>
+<li><a class="reference internal" href="#running-tests-using-tox">Running tests using <code class="docutils literal notranslate"><span class="pre">tox</span></code></a><ul>
+<li><a class="reference internal" href="#testing-other-python-versions-and-database-backends">Testing other Python versions and database backends</a></li>
+<li><a class="reference internal" href="#running-the-javascript-tests">Running the JavaScript tests</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-another-settings-module">Using another <code class="docutils literal notranslate"><span class="pre">settings</span></code> module</a></li>
+<li><a class="reference internal" href="#running-only-some-of-the-tests">Running only some of the tests</a></li>
+<li><a class="reference internal" href="#running-the-selenium-tests">Running the Selenium tests</a></li>
+<li><a class="reference internal" href="#running-all-the-tests">Running all the tests</a></li>
+<li><a class="reference internal" href="#code-coverage">Code coverage</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#contrib-apps">Contrib apps</a></li>
+<li><a class="reference internal" href="#troubleshooting">错误调试</a><ul>
+<li><a class="reference internal" href="#many-test-failures-with-unicodeencodeerror">Many test failures with <code class="docutils literal notranslate"><span class="pre">UnicodeEncodeError</span></code></a></li>
+<li><a class="reference internal" href="#tests-that-only-fail-in-combination">Tests that only fail in combination</a></li>
+<li><a class="reference internal" href="#seeing-the-sql-queries-run-during-a-test">Seeing the SQL queries run during a test</a></li>
+<li><a class="reference internal" href="#seeing-the-full-traceback-of-a-test-failure">Seeing the full traceback of a test failure</a></li>
+<li><a class="reference internal" href="#tips-for-writing-tests">Tips for writing tests</a><ul>
+<li><a class="reference internal" href="#isolating-model-registration">Isolating model registration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="coding-style.html"
+                        title="previous chapter">Coding style</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="submitting-patches.html"
+                        title="next chapter">Submitting patches</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/internals/contributing/writing-code/unit-tests.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="coding-style.html" title="Coding style">previous</a>
+     |
+    <a href="../../index.html" title="Django internals" accesskey="U">up</a>
+   |
+    <a href="submitting-patches.html" title="Submitting patches">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

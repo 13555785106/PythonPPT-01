@@ -1,0 +1,374 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>编写你的第一个 Django 应用，第 7 部分 &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="进阶指南：如何编写可重用程序" href="reusable-apps.html" />
+    <link rel="prev" title="编写你的第一个 Django 应用，第 6 部分" href="tutorial06.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="tutorial06.html" title="编写你的第一个 Django 应用，第 6 部分">previous</a>
+     |
+    <a href="index.html" title="开始" accesskey="U">up</a>
+   |
+    <a href="reusable-apps.html" title="进阶指南：如何编写可重用程序">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="intro-tutorial07">
+            
+  <div class="section" id="s-writing-your-first-django-app-part-7">
+<span id="writing-your-first-django-app-part-7"></span><h1>编写你的第一个 Django 应用，第 7 部分<a class="headerlink" href="#writing-your-first-django-app-part-7" title="Permalink to this headline">¶</a></h1>
+<p>这篇教程承接 <a class="reference internal" href="tutorial06.html"><span class="doc">教程第 6 部分</span></a> 结束的地方。我们继续修改在线投票应用，这次我们专注于自定义我们在 <a class="reference internal" href="tutorial02.html"><span class="doc">教程第 2 部分</span></a> 初见过的 Django 自动生成后台的过程。</p>
+<div class="section" id="s-customize-the-admin-form">
+<span id="customize-the-admin-form"></span><h2>自定义后台表单<a class="headerlink" href="#customize-the-admin-form" title="Permalink to this headline">¶</a></h2>
+<p>通过 <code class="docutils literal notranslate"><span class="pre">admin.site.register(Question)</span></code> 注册 <code class="docutils literal notranslate"><span class="pre">Question</span></code> 模型，Django 能够构建一个默认的表单用于展示。通常来说，你期望能自定义表单的外观和工作方式。你可以在注册模型时将这些设置告诉 Django。</p>
+<p>让我们通过重排列表单上的字段来看看它是怎么工作的。用以下内容替换 <code class="docutils literal notranslate"><span class="pre">admin.site.register(Question)</span></code>：</p>
+<div class="highlight-default snippet"><div class="snippet-filename">polls/admin.py</div>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="k">import</span> <span class="n">admin</span>
+
+<span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">Question</span>
+
+
+<span class="k">class</span> <span class="nc">QuestionAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pub_date&#39;</span><span class="p">,</span> <span class="s1">&#39;question_text&#39;</span><span class="p">]</span>
+
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Question</span><span class="p">,</span> <span class="n">QuestionAdmin</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>你需要遵循以下流程——创建一个模型后台类，接着将其作为第二个参数传给 <code class="docutils literal notranslate"><span class="pre">admin.site.register()</span></code> ——在你需要修改模型的后台管理选项时这么做。</p>
+<p>以上修改使得 &quot;Publication date&quot; 字段显示在 &quot;Question&quot; 字段之前：</p>
+<img alt="Fields have been reordered" src="../_images/admin07.png" />
+<p>这在只有两个字段时显得没啥卵用，但对于拥有数十个字段的表单来说，为表单选择一个直观的排序方法就显得你的针很细了。</p>
+<p>说到拥有数十个字段的表单，你可能更期望将表单分为几个字段集：</p>
+<div class="highlight-default snippet"><div class="snippet-filename">polls/admin.py</div>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="k">import</span> <span class="n">admin</span>
+
+<span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">Question</span>
+
+
+<span class="k">class</span> <span class="nc">QuestionAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">fieldsets</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="kc">None</span><span class="p">,</span>               <span class="p">{</span><span class="s1">&#39;fields&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;question_text&#39;</span><span class="p">]}),</span>
+        <span class="p">(</span><span class="s1">&#39;Date information&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;fields&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;pub_date&#39;</span><span class="p">]}),</span>
+    <span class="p">]</span>
+
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Question</span><span class="p">,</span> <span class="n">QuestionAdmin</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.ModelAdmin.fieldsets" title="django.contrib.admin.ModelAdmin.fieldsets"><code class="xref py py-attr docutils literal notranslate"><span class="pre">fieldsets</span></code></a> 元组中的第一个元素是字段集的标题。以下是我们的表单现在的样子：</p>
+<img alt="Form has fieldsets now" src="../_images/admin08t.png" />
+</div>
+<div class="section" id="s-adding-related-objects">
+<span id="adding-related-objects"></span><h2>添加关联的对象<a class="headerlink" href="#adding-related-objects" title="Permalink to this headline">¶</a></h2>
+<p>好了，现在我们有了投票的后台页。不过，一个 <code class="docutils literal notranslate"><span class="pre">Question</span></code> 有多个 <code class="docutils literal notranslate"><span class="pre">Choice</span></code>，但后台页却没有显示多个选项。</p>
+<p>好了。</p>
+<p>有两个方法可以解决这个问题。第一个就是仿照我们向后台注册 <code class="docutils literal notranslate"><span class="pre">Question</span></code> 一样注册 <code class="docutils literal notranslate"><span class="pre">Choice</span></code> 。这很简单：</p>
+<div class="highlight-default snippet"><div class="snippet-filename">polls/admin.py</div>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="k">import</span> <span class="n">admin</span>
+
+<span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">Choice</span><span class="p">,</span> <span class="n">Question</span>
+<span class="c1"># ...</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Choice</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>现在 &quot;Choices&quot; 在 Django 后台页中是一个可用的选项了。“添加选项”的表单看起来像这样：</p>
+<img alt="Choice admin page" src="../_images/admin09.png" />
+<p>在这个表单中，&quot;Question&quot; 字段是一个包含数据库中所有投票的选择框。Django 知道要将 <a class="reference internal" href="../ref/models/fields.html#django.db.models.ForeignKey" title="django.db.models.ForeignKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForeignKey</span></code></a> 在后台中以选择框 <code class="docutils literal notranslate"><span class="pre">&lt;select&gt;</span></code> 的形式展示。此时，我们只有一个投票。</p>
+<p>同时也注意下 &quot;Question&quot; 旁边的“添加”按钮。每个使用 <code class="docutils literal notranslate"><span class="pre">ForeignKey</span></code> 关联到另一个对象的对象会自动获得这个功能。当你点击“添加”按钮时，你会见到一个包含“添加投票”的表单。如果你在这个弹出框中添加了一个投票，并点击了“保存”，Django 会将其保存至数据库，并动态地在你正在查看的“添加选项”表单中选中它。</p>
+<p>不过，这是一种很低效地添加“选项”的方法。更好的办法是在你创建“投票”对象时直接添加好几个选项。让我们实现它。</p>
+<p>移除调用 <code class="docutils literal notranslate"><span class="pre">register()</span></code> 注册 <code class="docutils literal notranslate"><span class="pre">Choice</span></code> 模型的代码。随后，像这样修改 <code class="docutils literal notranslate"><span class="pre">Question</span></code> 的注册代码：</p>
+<div class="highlight-default snippet"><div class="snippet-filename">polls/admin.py</div>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="k">import</span> <span class="n">admin</span>
+
+<span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">Choice</span><span class="p">,</span> <span class="n">Question</span>
+
+
+<span class="k">class</span> <span class="nc">ChoiceInline</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">StackedInline</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Choice</span>
+    <span class="n">extra</span> <span class="o">=</span> <span class="mi">3</span>
+
+
+<span class="k">class</span> <span class="nc">QuestionAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">fieldsets</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="kc">None</span><span class="p">,</span>               <span class="p">{</span><span class="s1">&#39;fields&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;question_text&#39;</span><span class="p">]}),</span>
+        <span class="p">(</span><span class="s1">&#39;Date information&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;fields&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;pub_date&#39;</span><span class="p">],</span> <span class="s1">&#39;classes&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;collapse&#39;</span><span class="p">]}),</span>
+    <span class="p">]</span>
+    <span class="n">inlines</span> <span class="o">=</span> <span class="p">[</span><span class="n">ChoiceInline</span><span class="p">]</span>
+
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Question</span><span class="p">,</span> <span class="n">QuestionAdmin</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>这会告诉 Django：“<code class="docutils literal notranslate"><span class="pre">Choice</span></code> 对象要在 <code class="docutils literal notranslate"><span class="pre">Question</span></code> 后台页面编辑。默认提供 3 个足够的选项字段。”</p>
+<p>加载“添加投票”页面来看看它长啥样：</p>
+<img alt="Add question page now has choices on it" src="../_images/admin10t.png" />
+<p>它看起来像这样：有三个关联的选项插槽——由 <code class="docutils literal notranslate"><span class="pre">extra</span></code> 定义，且每次你返回任意已创建的对象的“修改”页面时，你会见到三个新的插槽。</p>
+<p>在三个插槽的末端，你会看到一个“添加新选项”的按钮。如果你单击它，一个新的插槽会被添加。如果你想移除已有的插槽，可以点击插槽右上角的X。注意，你不能移除原始的 3 个插槽。以下图片展示了一个已添加的插槽：</p>
+<img alt="Additional slot added dynamically" src="../_images/admin14t.png" />
+<p>不过，仍然有点小问题。它占据了大量的屏幕区域来显示所有关联的 <code class="docutils literal notranslate"><span class="pre">Choice</span></code> 对象的字段。对于这个问题，Django 提供了一种表格式的单行显示关联对象的方法。你只需按如下形式修改 <code class="docutils literal notranslate"><span class="pre">ChoiceInline</span></code> 申明：</p>
+<div class="highlight-default snippet"><div class="snippet-filename">polls/admin.py</div>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ChoiceInline</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">TabularInline</span><span class="p">):</span>
+    <span class="c1">#...</span>
+</pre></div>
+</div>
+<p>通过 <code class="docutils literal notranslate"><span class="pre">TabularInline``（替代</span> <span class="pre">``StackedInline</span></code> ），关联对象以一种表格式的方式展示，显得更加紧凑：</p>
+<img alt="Add question page now has more compact choices" src="../_images/admin11t.png" />
+<p>注意这里有一个额外的“删除？”列，这允许移除通过“添加新选项”按钮添加的，或是已被保存的行。</p>
+</div>
+<div class="section" id="s-customize-the-admin-change-list">
+<span id="customize-the-admin-change-list"></span><h2>自定义后台更改列表<a class="headerlink" href="#customize-the-admin-change-list" title="Permalink to this headline">¶</a></h2>
+<p>现在投票的后台页看起来很不错，让我们对“更改列表”页面进行一些调整——改成一个能展示系统中所有投票的页面。</p>
+<p>以下是它此时的外观：</p>
+<img alt="Polls change list page" src="../_images/admin04t.png" />
+<p>默认情况下，Django 显示每个对象的 <code class="docutils literal notranslate"><span class="pre">str()</span></code> 返回的值。但有时如果我们能够显示单个字段，它会更有帮助。为此，使用 <a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.ModelAdmin.list_display" title="django.contrib.admin.ModelAdmin.list_display"><code class="xref py py-attr docutils literal notranslate"><span class="pre">list_display</span></code></a> 后台选项，它是一个包含要显示的字段名的元组，在更改列表页中以列的形式展示这个对象：</p>
+<div class="highlight-default snippet"><div class="snippet-filename">polls/admin.py</div>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">QuestionAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;question_text&#39;</span><span class="p">,</span> <span class="s1">&#39;pub_date&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>为了更好用，让我们也包含 <a class="reference internal" href="tutorial02.html"><span class="doc">教程第 2 部分</span></a> 中的 <code class="docutils literal notranslate"><span class="pre">was_published_recently()</span></code> 方法：</p>
+<div class="highlight-default snippet"><div class="snippet-filename">polls/admin.py</div>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">QuestionAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;question_text&#39;</span><span class="p">,</span> <span class="s1">&#39;pub_date&#39;</span><span class="p">,</span> <span class="s1">&#39;was_published_recently&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>现在修改投票的列表页看起来像这样：</p>
+<img alt="Polls change list page, updated" src="../_images/admin12t.png" />
+<p>你可以点击列标题来对这些行进行排序——除了 <code class="docutils literal notranslate"><span class="pre">was_published_recently</span></code> 这个列，因为没有实现排序方法。顺便看下这个列的标题 <code class="docutils literal notranslate"><span class="pre">was_published_recently</span></code>，默认就是方法名（用空格替换下划线），该列的每行都以字符串形式展示出处。</p>
+<p>你可以通过给这个方法（在 <code class="file docutils literal notranslate"><span class="pre">polls/models.py</span></code> 中）一些属性来达到优化的目的，像这样：</p>
+<div class="highlight-default snippet"><div class="snippet-filename">polls/models.py</div>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Question</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">was_published_recently</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">now</span> <span class="o">-</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pub_date</span> <span class="o">&lt;=</span> <span class="n">now</span>
+    <span class="n">was_published_recently</span><span class="o">.</span><span class="n">admin_order_field</span> <span class="o">=</span> <span class="s1">&#39;pub_date&#39;</span>
+    <span class="n">was_published_recently</span><span class="o">.</span><span class="n">boolean</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">was_published_recently</span><span class="o">.</span><span class="n">short_description</span> <span class="o">=</span> <span class="s1">&#39;Published recently?&#39;</span>
+</pre></div>
+</div>
+<p>更多关于这些方法属性的信息，参见 <a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.ModelAdmin.list_display" title="django.contrib.admin.ModelAdmin.list_display"><code class="xref py py-attr docutils literal notranslate"><span class="pre">list_display</span></code></a>。</p>
+<p>再次编辑文件 <code class="file docutils literal notranslate"><span class="pre">polls/admin.py</span></code>，优化 <code class="docutils literal notranslate"><span class="pre">Question</span></code> 变更页：过滤器，使用 <a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.ModelAdmin.list_filter" title="django.contrib.admin.ModelAdmin.list_filter"><code class="xref py py-attr docutils literal notranslate"><span class="pre">list_filter</span></code></a>。将以下代码添加至 <code class="docutils literal notranslate"><span class="pre">QuestionAdmin</span></code>：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">list_filter</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pub_date&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>这样做添加了一个“过滤器”侧边栏，允许人们以 <code class="docutils literal notranslate"><span class="pre">pub_date</span></code> 字段来过滤列表：</p>
+<img alt="Polls change list page, updated" src="../_images/admin13t.png" />
+<p>展示的过滤器类型取决你你要过滤的字段的类型。因为 <code class="docutils literal notranslate"><span class="pre">pub_date</span></code> 是类 <a class="reference internal" href="../ref/models/fields.html#django.db.models.DateTimeField" title="django.db.models.DateTimeField"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateTimeField</span></code></a>，Django 知道要提供哪个过滤器：“任意时间”，“今天”，“过去7天”，“这个月”和“今年”。</p>
+<p>这已经弄的很好了。让我们再扩充些功能:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">search_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;question_text&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>在列表的顶部增加一个搜索框。当输入待搜项时，Django 将搜索 <code class="docutils literal notranslate"><span class="pre">question_text</span></code> 字段。你可以使用任意多的字段——由于后台使用 <code class="docutils literal notranslate"><span class="pre">LIKE</span></code> 来查询数据，将待搜索的字段数限制为一个不会出问题大小，会便于数据库进行查询操作。</p>
+<p>现在是给你的修改列表页增加分页功能的好时机。默认每页显示 100 项。<a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.ModelAdmin.list_per_page" title="django.contrib.admin.ModelAdmin.list_per_page"><code class="xref py py-attr docutils literal notranslate"><span class="pre">变更页分页</span></code></a>, <a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.ModelAdmin.search_fields" title="django.contrib.admin.ModelAdmin.search_fields"><code class="xref py py-attr docutils literal notranslate"><span class="pre">搜索框</span></code></a>, <a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.ModelAdmin.list_filter" title="django.contrib.admin.ModelAdmin.list_filter"><code class="xref py py-attr docutils literal notranslate"><span class="pre">过滤器</span></code></a>, <a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.ModelAdmin.date_hierarchy" title="django.contrib.admin.ModelAdmin.date_hierarchy"><code class="xref py py-attr docutils literal notranslate"><span class="pre">日期层次结构</span></code></a>, 和 <a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.ModelAdmin.list_display" title="django.contrib.admin.ModelAdmin.list_display"><code class="xref py py-attr docutils literal notranslate"><span class="pre">列标题排序</span></code></a> 均以你期望的方式合作运行。</p>
+</div>
+<div class="section" id="s-customize-the-admin-look-and-feel">
+<span id="customize-the-admin-look-and-feel"></span><h2>自定义后台界面和风格<a class="headerlink" href="#customize-the-admin-look-and-feel" title="Permalink to this headline">¶</a></h2>
+<p>在每个后台页顶部显示“Django 管理员”显得很滑稽。这只是一串占位文本。</p>
+<p>不过，这可以通过 Django 的模板系统很方便的修改。Django 的后台由自己驱动，且它的交互接口采用 Django 自己的模板系统。</p>
+<div class="section" id="s-customizing-your-project-s-templates">
+<span id="s-ref-customizing-your-projects-templates"></span><span id="customizing-your-project-s-templates"></span><span id="ref-customizing-your-projects-templates"></span><h3>自定义你的 <em>工程的</em> 模板<a class="headerlink" href="#customizing-your-project-s-templates" title="Permalink to this headline">¶</a></h3>
+<p>在你的工程目录（指包含 <code class="docutils literal notranslate"><span class="pre">manage.py</span></code> 的那个文件夹）内创建一个名为 <code class="docutils literal notranslate"><span class="pre">templates</span></code> 的目录。模板可放在你系统中任何 Django 能找到的位置。（谁启动了 Django，Django 就以他的用户身份运行。）不过，把你的模板放在工程内会带来很大便利，推荐你这样做。</p>
+<p>打开你的设置文件（<code class="file docutils literal notranslate"><span class="pre">mysite/settings.py</span></code>，牢记），在 <a class="reference internal" href="../ref/settings.html#std:setting-TEMPLATES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">TEMPLATES</span></code></a> 设置中添加 <a class="reference internal" href="../ref/settings.html#std:setting-TEMPLATES-DIRS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DIRS</span></code></a> 选项：</p>
+<div class="highlight-default snippet"><div class="snippet-filename">mysite/settings.py</div>
+<div class="highlight"><pre><span></span><span class="n">TEMPLATES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;BACKEND&#39;</span><span class="p">:</span> <span class="s1">&#39;django.template.backends.django.DjangoTemplates&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;DIRS&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">BASE_DIR</span><span class="p">,</span> <span class="s1">&#39;templates&#39;</span><span class="p">)],</span>
+        <span class="s1">&#39;APP_DIRS&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;OPTIONS&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;context_processors&#39;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s1">&#39;django.template.context_processors.debug&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;django.template.context_processors.request&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;django.contrib.auth.context_processors.auth&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;django.contrib.messages.context_processors.messages&#39;</span><span class="p">,</span>
+            <span class="p">],</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../ref/settings.html#std:setting-TEMPLATES-DIRS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DIRS</span></code></a> 是一个包含多个系统目录的文件列表，用于在载入 Django 模板时使用，是一个待搜索路径。</p>
+<div class="admonition-organizing-templates admonition">
+<p class="first admonition-title">组织模板</p>
+<p class="last">就像静态文件一样，我们 <em>可以</em> 把所有的模板文件放在一个大模板目录内，这样它也能工作的很好。但是，属于特定应用的模板文件最好放在应用所属的模板目录（例如 <code class="docutils literal notranslate"><span class="pre">polls/templates</span></code>），而不是工程的模板目录（<code class="docutils literal notranslate"><span class="pre">templates</span></code>）。我们会在 <a class="reference internal" href="reusable-apps.html"><span class="doc">创建可复用的应用教程</span></a> 中讨论 <em>为什么</em> 我们要这样做。</p>
+</div>
+<p>现在，在 <code class="docutils literal notranslate"><span class="pre">templates</span></code> 目录内创建名为 <code class="docutils literal notranslate"><span class="pre">admin</span></code> 的目录，随后，将存放 Django 默认模板的目录（<code class="docutils literal notranslate"><span class="pre">django/contrib/admin/templates</span></code>）内的模板文件 <code class="docutils literal notranslate"><span class="pre">admin/base_site.html</span></code> 复制到这个目录内。</p>
+<div class="admonition-where-are-the-django-source-files admonition">
+<p class="first admonition-title">Django 的源文件在哪里？</p>
+<p>如果你不知道 Django 源码在你系统的哪个位置，运行以下命令：</p>
+<div class="last highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python -c <span class="s2">&quot;import django; print(django.__path__)&quot;</span>
+</pre></div>
+</div>
+</div>
+<p>接着，用你站点的名字替换文件内的 <a href="#id1"><span class="problematic" id="id2">``</span></a>{{ site_header|default:_('Django administration') }}``（包含大括号）。完成后，你应该看到如下代码：</p>
+<div class="highlight-html+django notranslate"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">block</span> <span class="nv">branding</span> <span class="cp">%}</span>
+<span class="p">&lt;</span><span class="nt">h1</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;site-name&quot;</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;</span><span class="cp">{%</span> <span class="k">url</span> <span class="s1">&#39;admin:index&#39;</span> <span class="cp">%}</span><span class="s">&quot;</span><span class="p">&gt;</span>Polls Administration<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+</pre></div>
+</div>
+<p>我们会用这个方法来教你复写模板。在一个实际工程中，你可能更期望使用 <a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.AdminSite.site_header" title="django.contrib.admin.AdminSite.site_header"><code class="xref py py-attr docutils literal notranslate"><span class="pre">django.contrib.admin.AdminSite.site_header</span></code></a> 来进行简单的定制。</p>
+<p>这个模板文件包含很多类似 <code class="docutils literal notranslate"><span class="pre">{%</span> <span class="pre">block</span> <span class="pre">branding</span> <span class="pre">%}</span></code> 和 <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">title</span> <span class="pre">}}</span></code> 的文本。 <code class="docutils literal notranslate"><span class="pre">{%</span></code> 和 <code class="docutils literal notranslate"><span class="pre">{{</span></code> 标签是 Django 模板语言的一部分。当 Django 渲染 <code class="docutils literal notranslate"><span class="pre">admin/base_site.html</span></code> 时，这个模板语言会被求值，生成最终的网页，就像我们在 <a class="reference internal" href="tutorial03.html"><span class="doc">教程第 3 部分</span></a> 所学的一样。</p>
+<p>注意，所有的 Django 默认后台模板均可被复写。若要复写模板，像你修改 <code class="docutils literal notranslate"><span class="pre">base_site.html</span></code> 一样修改其它文件——先将其从默认目录中拷贝到你的自定义目录，再做修改。</p>
+</div>
+<div class="section" id="s-customizing-your-application-s-templates">
+<span id="customizing-your-application-s-templates"></span><h3>自定义你 <em>应用的</em> 模板<a class="headerlink" href="#customizing-your-application-s-templates" title="Permalink to this headline">¶</a></h3>
+<p>机智的同学可能会问： <a class="reference internal" href="../ref/settings.html#std:setting-TEMPLATES-DIRS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DIRS</span></code></a> 默认是空的，Django 是怎么找到默认的后台模板的？因为 <a class="reference internal" href="../ref/settings.html#std:setting-TEMPLATES-APP_DIRS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">APP_DIRS</span></code></a> 被置为 <code class="docutils literal notranslate"><span class="pre">True</span></code>，Django 会自动在每个应用包内递归查找 <code class="docutils literal notranslate"><span class="pre">templates/</span></code> 子目录（不要忘了 <code class="docutils literal notranslate"><span class="pre">django.contrib.admin</span></code> 也是一个应用）。</p>
+<p>我们的投票应用不是非常复杂，所以无需自定义后台模板。不过，如果它变的更加复杂，需要修改 Django 的标准后台模板功能时，修改 <em>应用</em> 的模板会比 <em>工程</em> 的更加明智。这样，在其它工程包含这个投票应用时，可以确保它总是能找到需要的自定义模板文件。</p>
+<p>更多关于 Django 如何查找模板的文档，参见 <a class="reference internal" href="../topics/templates.html#template-loading"><span class="std std-ref">加载模板文档</span></a>。</p>
+</div>
+</div>
+<div class="section" id="s-customize-the-admin-index-page">
+<span id="customize-the-admin-index-page"></span><h2>自定义后台主页<a class="headerlink" href="#customize-the-admin-index-page" title="Permalink to this headline">¶</a></h2>
+<p>在类似的说明中，你可能想要自定义 Django 后台索引页的外观。</p>
+<p>默认情况下，它展示了所有配置在 <a class="reference internal" href="../ref/settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a> 中，已通过后台应用注册，按拼音排序的应用。你可能想对这个页面的布局做重大的修改。毕竟，索引页是后台的重要页面，它应该便于使用。</p>
+<p>需要自定义的模板是 <code class="docutils literal notranslate"><span class="pre">admin/index.html</span></code>。（像上一节修改 <code class="docutils literal notranslate"><span class="pre">admin/base_site.html</span></code> 那样修改此文件——从默认目录中拷贝此文件至自定义模板目录）。打开此文件，你将看到它使用了一个叫做 <code class="docutils literal notranslate"><span class="pre">app_list</span></code> 的模板变量。这个变量包含了每个安装的 Django 应用。你可以用任何你期望的硬编码链接（链接至特定对象的管理页）替代使用这个变量。</p>
+</div>
+<div class="section" id="s-what-s-next">
+<span id="what-s-next"></span><h2>接下来要做什么？<a class="headerlink" href="#what-s-next" title="Permalink to this headline">¶</a></h2>
+<p>初学者教程到这就结束了。随后，你可能想阅读 <a class="reference internal" href="whatsnext.html"><span class="doc">下一步看什么</span></a>，看看下一步能做什么。</p>
+<p>如果你很熟悉 Python 打包，且对学习如何把投票应用改成“可复用应用”感兴趣，查看 <a class="reference internal" href="reusable-apps.html"><span class="doc">进阶教程：如何创建可复用应用</span></a>。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">编写你的第一个 Django 应用，第 7 部分</a><ul>
+<li><a class="reference internal" href="#customize-the-admin-form">自定义后台表单</a></li>
+<li><a class="reference internal" href="#adding-related-objects">添加关联的对象</a></li>
+<li><a class="reference internal" href="#customize-the-admin-change-list">自定义后台更改列表</a></li>
+<li><a class="reference internal" href="#customize-the-admin-look-and-feel">自定义后台界面和风格</a><ul>
+<li><a class="reference internal" href="#customizing-your-project-s-templates">自定义你的 <em>工程的</em> 模板</a></li>
+<li><a class="reference internal" href="#customizing-your-application-s-templates">自定义你 <em>应用的</em> 模板</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#customize-the-admin-index-page">自定义后台主页</a></li>
+<li><a class="reference internal" href="#what-s-next">接下来要做什么？</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial06.html"
+                        title="previous chapter">编写你的第一个 Django 应用，第 6 部分</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="reusable-apps.html"
+                        title="next chapter">进阶指南：如何编写可重用程序</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/intro/tutorial07.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="tutorial06.html" title="编写你的第一个 Django 应用，第 6 部分">previous</a>
+     |
+    <a href="index.html" title="开始" accesskey="U">up</a>
+   |
+    <a href="reusable-apps.html" title="进阶指南：如何编写可重用程序">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

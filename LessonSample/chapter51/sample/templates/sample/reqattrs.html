@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Request对象常用属性</title>
+</head>
+<style>
+table{border-collapse:collapse;}
+table,th, td{border: 1px solid black;}
+table th{vertical-align:top;text-align:left;color:#FF9933;font-size:10px}
+table td{vertical-align:top;text-align:left;font-size:10px}
+</style>
+<body>
+<h2 style="text-align:center">
+    django.http.HttpRequest对象中的常用属性
+</h2>
+<table>
+    <tr>
+        <th style="text-align:center">属性</th>
+        <th style="text-align:center" colspan="2">值</th>
+    </tr>
+    <tr>
+        <th>request.path</th>
+        <td>{{request.path}}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <th>request.method</th>
+        <td>{{request.method}}</td>
+        <td></td>
+    </tr>
+    {%for k,v in request.GET.items%}
+    <tr>
+        {% if forloop.first %}
+        <th rowspan="{{request.GET.items|length}}">request.GET</th>
+        {% endif %}
+        <td>
+            {{k}}
+        </td>
+        <td>
+            {{v}}
+        </td>
+    </tr>
+    {%endfor%}
+    {%for k,v in request.POST.items%}
+    <tr>
+        {% if forloop.first %}
+        <th rowspan="{{request.POST.items|length}}">request.POST</th>
+        {% endif %}
+        <td>
+            {{k}}
+        </td>
+        <td>
+            {{v}}
+        </td>
+    </tr>
+    {%endfor%}
+    {%for k,v in request.COOKIES.items%}
+    <tr>
+        {% if forloop.first %}
+        <th rowspan="{{request.COOKIES.items|length}}">request.COOKIES</th>
+        {% endif %}
+        <td>
+            {{k}}
+        </td>
+        <td>
+            {{v}}
+        </td>
+    </tr>
+    {%endfor%}
+    {%for k,v in request.FILES.items%}
+    <tr>
+        {% if forloop.first %}
+        <th rowspan="{{request.FILES.items|length}}">request.FILES</th>
+        {% endif %}
+        <td>
+            {{k}}
+        </td>
+        <td>
+            {{v}}
+        </td>
+    </tr>
+    {%endfor%}
+    {%for k,v in request.META.items%}
+    <tr>
+        {% if forloop.first %}
+        <th rowspan="{{request.META.items|length}}">request.META</th>
+        {% endif %}
+        <td>
+            {{k}}
+        </td>
+        <td>
+            {{v}}
+        </td>
+    </tr>
+    {%endfor%}
+    {%for k,v in request.sessionitems%}
+    <tr>
+        {% if forloop.first %}
+        <th rowspan="{{request.session.items|length}}">request.session</th>
+        {% endif %}
+        <td>
+            {{k}}
+        </td>
+        <td>
+            {{v}}
+        </td>
+    </tr>
+    {%endfor%}
+</table>
+
+
+</body>
+</html>

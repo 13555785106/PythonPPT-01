@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ifchanged标签</title>
+</head>
+<body>
+<H1>ifchanged标签</H1>
+{% for num in nums %}
+{% ifchanged num %} (*_*)<br/>{% endifchanged %}
+{{ num }}
+{% endfor %}
+</body>
+</html>

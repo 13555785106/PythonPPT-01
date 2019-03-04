@@ -1,0 +1,248 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>建设 Django &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Advice for new contributors" href="new-contributors.html" />
+    <link rel="prev" title="Django internals" href="../index.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="../index.html" title="Django internals">previous</a>
+     |
+    <a href="../index.html" title="Django internals" accesskey="U">up</a>
+   |
+    <a href="new-contributors.html" title="Advice for new contributors">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="internals-contributing-index">
+            
+  <div class="section" id="s-contributing-to-django">
+<span id="contributing-to-django"></span><h1>建设 Django<a class="headerlink" href="#contributing-to-django" title="Permalink to this headline">¶</a></h1>
+<p>Django is a community that lives on its volunteers. As it keeps growing, we
+always need more people to help others. As soon as you learn Django, you can
+contribute in many ways:</p>
+<ul class="simple">
+<li>Join the <a class="reference internal" href="../mailing-lists.html#django-users-mailing-list"><span class="std std-ref">django-users</span></a> mailing list and answer questions. This
+mailing list has a huge audience, and we really want to maintain a
+friendly and helpful atmosphere. If you're new to the Django community,
+you should read the <a class="reference external" href="https://code.djangoproject.com/wiki/UsingTheMailingList">posting guidelines</a>.</li>
+<li>Join the <a class="reference external" href="irc://irc.freenode.net/django">#django IRC channel</a> on Freenode and answer questions. By
+explaining Django to other users, you're going to learn a lot about the
+framework yourself.</li>
+<li>Blog about Django. We syndicate all the Django blogs we know about on
+the <a class="reference external" href="https://www.djangoproject.com/community/">community page</a>; if you'd like to see your blog on that page you
+can <a class="reference external" href="https://www.djangoproject.com/community/add/blogs/">register it here</a>.</li>
+<li>Contribute to open-source Django projects, write some documentation, or
+release your own code as an open-source pluggable application. The
+ecosystem of pluggable applications is a big strength of Django, help us
+build it!</li>
+</ul>
+<p>If you think working <em>with</em> Django is fun, wait until you start working <em>on</em>
+it. We're passionate about helping Django users make the jump to contributing
+members of the community, so there are several ways you can help Django's
+development:</p>
+<ul class="simple">
+<li><a class="reference internal" href="bugs-and-features.html"><span class="doc">Report bugs</span></a> in our <a class="reference external" href="https://code.djangoproject.com/">ticket tracker</a>.</li>
+<li>Join the <a class="reference internal" href="../mailing-lists.html#django-developers-mailing-list"><span class="std std-ref">django-developers</span></a> mailing list and share your ideas for how
+to improve Django. We're always open to suggestions. You can also interact
+on the <a class="reference external" href="irc://irc.freenode.net/django-dev">#django-dev IRC channel</a>.</li>
+<li><a class="reference internal" href="writing-code/submitting-patches.html"><span class="doc">Submit patches</span></a> for new and/or
+fixed behavior. If you're looking for an easy way to start contributing
+to Django read the <a class="reference internal" href="../../intro/contributing.html"><span class="doc">编写你的第一个 Django 补丁</span></a> tutorial and have a look at the
+<a class="reference external" href="https://code.djangoproject.com/query?status=!closed&amp;easy=1">easy pickings</a> tickets. The <a class="reference internal" href="writing-code/submitting-patches.html#patch-review-checklist"><span class="std std-ref">Patch review checklist</span></a> will also be
+helpful.</li>
+<li><a class="reference internal" href="writing-documentation.html"><span class="doc">Improve the documentation</span></a> or
+<a class="reference internal" href="writing-code/unit-tests.html"><span class="doc">write unit tests</span></a>.</li>
+<li><a class="reference internal" href="triaging-tickets.html"><span class="doc">Triage tickets and review patches</span></a> created by
+other users.</li>
+</ul>
+<p>Really, <strong>ANYONE</strong> can do something to help make Django better and greater!</p>
+<p>Browse the following sections to find out how:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="new-contributors.html">Advice for new contributors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="new-contributors.html#first-steps">快速入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="new-contributors.html#guidelines">Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="new-contributors.html#faq">FAQ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bugs-and-features.html">报告问题和请求新功能</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bugs-and-features.html#reporting-bugs">报告问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bugs-and-features.html#reporting-user-interface-bugs-and-features">报告用户界面的 bug 和功能</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bugs-and-features.html#requesting-features">请求的功能</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bugs-and-features.html#how-we-make-decisions">我们如何作出决定</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="triaging-tickets.html">Triaging tickets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="triaging-tickets.html#triage-workflow">Triage workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triaging-tickets.html#triage-stages">Triage stages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triaging-tickets.html#other-triage-attributes">Other triage attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triaging-tickets.html#closing-tickets">Closing Tickets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triaging-tickets.html#how-can-i-help-with-triaging">How can I help with triaging?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triaging-tickets.html#bisecting-a-regression">Bisecting a regression</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="writing-code/index.html">Writing code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="writing-code/coding-style.html">Coding style</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-code/unit-tests.html">Unit tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-code/submitting-patches.html">Submitting patches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-code/working-with-git.html">Working with Git and GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-code/javascript.html">JavaScript</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="writing-documentation.html">编写文档</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="writing-documentation.html#getting-the-raw-documentation">获得原始文档</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-documentation.html#getting-started-with-sphinx">开始使用 Sphinx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-documentation.html#how-the-documentation-is-organized">文档是如何组成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-documentation.html#writing-style">书写格式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-documentation.html#commonly-used-terms">Commonly used terms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-documentation.html#django-specific-terminology">Django-specific terminology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-documentation.html#guidelines-for-restructuredtext-files">Guidelines for reStructuredText files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-documentation.html#django-specific-markup">Django-specific markup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-documentation.html#documenting-new-features">Documenting new features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-documentation.html#minimizing-images">Minimizing images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-documentation.html#an-example">一个例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-documentation.html#spelling-check">拼写检查</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-documentation.html#translating-documentation">翻译文档</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing-documentation.html#django-admin-man-page"><code class="docutils literal notranslate"><span class="pre">django-admin</span></code> man page</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="localizing.html">使 Django 本地化</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="localizing.html#translations">翻译</a></li>
+<li class="toctree-l2"><a class="reference internal" href="localizing.html#formats">格式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="localizing.html#documentation">文档</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="committing-code.html">提交代码</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="committing-code.html#handling-pull-requests">Handling pull requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="committing-code.html#committing-guidelines">提交指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="committing-code.html#reverting-commits">恢复提交</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Django internals</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="new-contributors.html"
+                        title="next chapter">Advice for new contributors</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/internals/contributing/index.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="../index.html" title="Django internals">previous</a>
+     |
+    <a href="../index.html" title="Django internals" accesskey="U">up</a>
+   |
+    <a href="new-contributors.html" title="Advice for new contributors">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

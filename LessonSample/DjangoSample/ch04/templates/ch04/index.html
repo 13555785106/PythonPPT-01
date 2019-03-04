@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>第4章 模板、标签、过滤器</title>
+    <style>
+table
+{
+  border-collapse:collapse;
+  width:200px;margin:0px auto;
+}
+
+table,th, td
+{
+  border: 1px solid black;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+<table>
+    <caption>第4章 模板、标签、过滤器</caption>
+    <tr>
+        <td>1</td>
+        <td><a href="{% url 'ch04:template'%}">模板</a></td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td><a href="{% url 'ch04:autoescape_tag'%}">autoescape</a></td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td><a href="{% url 'ch04:comment_tag'%}">comment</a></td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td><a href="{% url 'ch04:for_tag'%}">for</a></td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td><a href="{% url 'ch04:for_empty_tag'%}">for empty</a></td>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td><a href="{% url 'ch04:if_tag'%}">if</a></td>
+    </tr>
+    <tr>
+        <td>7</td>
+        <td><a href="{% url 'ch04:ifchanged_tag'%}">ifchanged</a></td>
+    </tr>
+    <tr>
+        <td>8</td>
+        <td><a href="{% url 'ch04:filter_tag'%}">filter</a></td>
+    </tr>
+    <tr>
+        <td>9</td>
+        <td><a href="{% url 'ch04:firstof_tag'%}">firstof</a></td>
+    </tr>
+    <tr>
+        <td>10</td>
+        <td><a href="{% url 'ch04:now_tag'%}">now</a></td>
+    </tr>
+    <tr>
+        <td>11</td>
+        <td><a href="{% url 'ch04:lorem_tag'%}">lorem</a></td>
+    </tr>
+    <tr>
+        <td>12</td>
+        <td><a href="{% url 'ch04:regroup_tag'%}">regroup</a></td>
+    </tr>
+    <tr>
+        <td>13</td>
+        <td><a href="{% url 'ch04:spaceless_tag'%}">spaceless</a></td>
+    </tr>
+    <tr>
+        <td>14</td>
+        <td><a href="{% url 'ch04:with_tag'%}">with</a></td>
+    </tr>
+    <tr>
+        <td>15</td>
+        <td><a href="{% url 'ch04:withratio_tag'%}">withratio</a></td>
+    </tr>
+    <tr>
+        <td>16</td>
+        <td><a href="{% url 'ch04:verbatim_tag'%}">verbatim</a></td>
+    </tr>
+    <tr>
+        <td>17</td>
+        <td><a href="{% url 'ch04:url_tag'%}">url</a></td>
+    </tr>
+    <tr>
+        <td>18</td>
+        <td><a href="{% url 'ch04:circle_tag'%}">circle</a></td>
+    </tr>
+    <tr>
+        <td>19</td>
+        <td><a href="{% url 'ch04:custom_tag'%}">定制标签</a></td>
+    </tr>
+    <tr>
+        <td>20</td>
+        <td><a href="{% url 'ch04:filters'%}">过滤器</a></td>
+    </tr>
+</table>
+</body>
+</html>

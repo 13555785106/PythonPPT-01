@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tag circle</title>
+</head>
+<body>
+
+<hr>
+{% for fruit in fruits %}
+{% cycle 'I' 'II' %} {{fruit}}<br/>
+{% endfor %}
+<hr>
+{% for fruit in fruits %}
+{% cycle s1 s2 %} {{fruit}}<br/>
+{% endfor %}
+<hr>
+{% cycle 'row1' 'row2' as rowcolors %}
+{{ rowcolors }}<br/>
+{% cycle rowcolors %}
+{{ rowcolors }}<br/>
+{% cycle rowcolors %}
+{{ rowcolors }}<br/>
+{% cycle  rowcolors %}
+{{ rowcolors }}
+<hr>
+{% for fruit in fruits %}
+    {% cycle 'row1' 'row2' as rowcolors silent %}
+    {{ rowcolors }} <br/>
+{% endfor %}
+<hr>
+{%debug%}
+</body>
+</html>

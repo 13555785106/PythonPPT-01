@@ -1,0 +1,9 @@
+csc /t:library IronPythonTest.cs
+
+>>> import clr
+>>> clr.AddReferenceToFile('C:/Users/xiaojf/PycharmProjects/chapter18/CSharp/IronPythonTest.dll')
+>>> import FePyTest
+>>> f = FePyTest.IronPythonTest()
+>>> f.greeting()
+Hello World!
+>>>

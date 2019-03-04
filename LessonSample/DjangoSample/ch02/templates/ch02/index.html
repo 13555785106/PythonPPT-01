@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>ch02-首页</title>
+    <style>
+        body{font-size:16px;}
+        table caption{font-size:32px;font-weight:bolder;}
+        table{width:40%;border-collapse:collapse;}
+        table,th, td{border: 1px solid black;}
+
+
+
+    </style>
+</head>
+<body>
+{% load static %}
+<table align="center">
+    <caption>HttpRequest与HttpResponse</caption>
+    <tr>
+        <td>1.</td>
+        <td><a href="{% url 'ch02:hello_world_01' %}">Django,hello world !</a></td>
+    </tr>
+    <tr>
+        <td>2.</td>
+        <td><a href="{% url 'ch02:hello_world_02' %}">使用模板输出 Hello world !</a></td>
+    </tr>
+    <tr>
+        <td>3.</td>
+        <td><a href="{% url 'ch02:req_attrs' %}">HttpRequest中常用属性</a></td>
+    </tr>
+    <tr>
+        <td>4.</td>
+        <td><a href="{% url 'ch02:req_parameters_01' %}?name=肖俊峰&age=45">传统方式获取请求参数</a></td>
+    </tr>
+    <tr>
+        <td>5.</td>
+        <td><a href="{% url 'ch02:req_parameters_02' name='肖俊峰' age=45 %}">命名映射获取请求参数</a></td>
+    </tr>
+    <tr>
+        <td>6.</td>
+        <td><a href="{% url 'ch02:simple_resp' %}">简单的回应</a></td>
+    </tr>
+    <tr>
+        <td>7.</td>
+        <td><a href="{% url 'ch02:resp_404' %}">回应404</a></td>
+    </tr>
+    <tr>
+        <td>8.</td>
+        <td><a href="{% url 'ch02:resp_redirect' %}">重定向</a></td>
+    </tr>
+    <tr>
+        <td>9.</td>
+        <td><a href="{% url 'ch02:resp_download' %}">下载</a></td>
+    </tr>
+    <tr>
+        <td>10.</td>
+        <td><a href="{% url 'ch02:file_upload' %}">文件上传</a></td>
+    </tr>
+    <tr>
+        <td>11.</td>
+        <td><a href="{% static 'ch02/static_sample.html' %}">纯静态页</a></td>
+    </tr>
+</table>
+
+</body>
+</html>

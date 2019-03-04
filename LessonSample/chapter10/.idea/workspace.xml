@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="253b9e87-2fdf-4ba4-8846-3298f70b7048" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../DjangoSample/ch06/exam_01.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Django Web开发-V01.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Django Web开发-V01.pptx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/DjangoSample/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/DjangoSample/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/DjangoSample/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/DjangoSample/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch01/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch01/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/detail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/results.html" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/results.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch03/01_create.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch03/exam_01.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch03/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch03/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch03/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch03/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch04/templatetags/custom_tags.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch04/templatetags/custom_tags.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch05/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch05/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch05/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch05/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch06/test01.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch06/test02.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch06/exam_02.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch06/test03.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch06/test04.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch06/exam_03.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter01/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter01/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter03/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter03/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter04/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter04/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter07/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter07/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter07/07_读Excel文件.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter07/07_读Excel文件.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter07/08_写Excel文件.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter07/08_写Excel文件.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter07/10_SQLite数据库操作.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter07/10_SQLite数据库操作.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter07/test.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter08/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter08/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter08/mymodule.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter08/mymodule.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/20_a_类的动态创建.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/20_01_类的动态创建.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/20_b_函数的动态创建.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/20_02_函数的动态创建.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/20_c_类的动态创建.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/20_03_类的动态创建.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/20_d_使用元类动态创建类.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/20_04_使用元类动态创建类.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../djangosample/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../djangosample/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../temp/HelloWorld/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../temp/HelloWorld/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../temp/HelloWorld/app01/1.html" beforeDir="false" afterPath="$PROJECT_DIR$/../temp/HelloWorld/app01/1.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Python程序设计-V01.pptx" beforeDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/a.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="76">
+              <caret line="4" column="33" lean-forward="true" selection-start-line="4" selection-start-column="33" selection-end-line="4" selection-end-column="33" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/05_自定义异常.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret selection-end-line="1" selection-end-column="23" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>runoob</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>apple</replace>
+    </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/testfile" />
+        <option value="$PROJECT_DIR$/02_sample.py" />
+        <option value="$PROJECT_DIR$/01_sample.py" />
+        <option value="$PROJECT_DIR$/04_raise_exception.py" />
+        <option value="$PROJECT_DIR$/01_try_except_else_finally.py" />
+        <option value="$PROJECT_DIR$/02_except_notype.py" />
+        <option value="$PROJECT_DIR$/03_except_multi_types.py" />
+        <option value="$PROJECT_DIR$/05_custom_exception.py" />
+        <option value="$PROJECT_DIR$/1.html" />
+        <option value="$PROJECT_DIR$/a.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="543" />
+    <option name="y" value="35" />
+    <option name="width" value="1280" />
+    <option name="height" value="730" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="chapter10" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chapter10" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="chapter10" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+            <path>
+              <item name="chapter10" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 2.7 &gt;" type="70bed36:NamedLibraryElementNode" />
+            </path>
+            <path>
+              <item name="chapter10" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 2.7 &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="python2.7" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\xiaojf\PycharmProjects\chapter10" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.a">
+    <configuration name="01_try_except_else_finally" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter10" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="C:\Users\xiaojf\PycharmProjects\chapter10\01_异常处理语法结构.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="02_捕捉所有异常" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter10" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/02_捕捉所有异常.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="03_except_multi_types" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter10" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="C:\Users\xiaojf\PycharmProjects\chapter10\03_捕捉多种类型异常.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="05_custom_exception" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter10" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="C:\Users\xiaojf\PycharmProjects\chapter10\05_自定义异常.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="a" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter10" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/a.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.03_except_multi_types" />
+      <item itemvalue="Python.05_custom_exception" />
+      <item itemvalue="Python.01_try_except_else_finally" />
+      <item itemvalue="Python.02_捕捉所有异常" />
+      <item itemvalue="Python.a" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.a" />
+        <item itemvalue="Python.02_捕捉所有异常" />
+        <item itemvalue="Python.05_custom_exception" />
+        <item itemvalue="Python.03_except_multi_types" />
+        <item itemvalue="Python.01_try_except_else_finally" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="253b9e87-2fdf-4ba4-8846-3298f70b7048" name="Default Changelist" comment="" />
+      <created>1541654524347</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1541654524347</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="5" y="26" width="1280" height="730" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="DB Browser" />
+      <window_info id="Project Explorer" />
+      <window_info id="Job Explorer" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2494043" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Console" />
+      <window_info anchor="bottom" id="DB Execution Console" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32833022" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.39028212" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/testfile1">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="11" selection-start-column="11" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/-569110560/exceptions.py" />
+    <entry file="file://$PROJECT_DIR$/04_触发异常.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/03_捕捉多种类型异常.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="3" column="4" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/02_捕捉所有异常.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="12" selection-start-line="12" selection-end-line="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/01_异常处理语法结构.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="5" column="9" selection-start-line="3" selection-end-line="13" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/re.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="104" column="13" selection-start-line="104" selection-start-column="13" selection-end-line="104" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/sre_compile.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="379">
+          <caret line="591" column="19" selection-start-line="591" selection-start-column="19" selection-end-line="591" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharmCE2018.3/python_stubs/-1698384448/_sre.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" column="4" selection-start-line="18" selection-start-column="4" selection-end-line="18" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/rexec.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-918" />
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/repr.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/1.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/05_自定义异常.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="1" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/a.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="4" column="33" lean-forward="true" selection-start-line="4" selection-start-column="33" selection-end-line="4" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

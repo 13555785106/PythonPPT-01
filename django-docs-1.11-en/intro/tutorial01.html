@@ -1,0 +1,496 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Writing your first Django app, part 1 &#8212; Django 1.11.17.dev20181117230554 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Writing your first Django app, part 2" href="tutorial02.html" />
+    <link rel="prev" title="Quick install guide" href="install.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 1.11.17.dev20181117230554 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="install.html" title="Quick install guide">previous</a>
+     |
+    <a href="index.html" title="Getting started" accesskey="U">up</a>
+   |
+    <a href="tutorial02.html" title="Writing your first Django app, part 2">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="intro-tutorial01">
+            
+  <div class="section" id="s-writing-your-first-django-app-part-1">
+<span id="writing-your-first-django-app-part-1"></span><h1>Writing your first Django app, part 1<a class="headerlink" href="#writing-your-first-django-app-part-1" title="Permalink to this headline">¶</a></h1>
+<p>Let’s learn by example.</p>
+<p>Throughout this tutorial, we’ll walk you through the creation of a basic
+poll application.</p>
+<p>It’ll consist of two parts:</p>
+<ul class="simple">
+<li>A public site that lets people view polls and vote in them.</li>
+<li>An admin site that lets you add, change, and delete polls.</li>
+</ul>
+<p>We’ll assume you have <a class="reference internal" href="install.html"><span class="doc">Django installed</span></a> already. You can
+tell Django is installed and which version by running the following command
+in a shell prompt (indicated by the $ prefix):</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python -m django --version
+</pre></div>
+</div>
+<p>If Django is installed, you should see the version of your installation. If it
+isn’t, you’ll get an error telling “No module named django”.</p>
+<p>This tutorial is written for Django 1.11 and Python 3.4 or later. If the
+Django version doesn’t match, you can refer to the tutorial for your version
+of Django by using the version switcher at the bottom right corner of this
+page, or update Django to the newest version. If you are still using Python
+2.7, you will need to adjust the code samples slightly, as described in
+comments.</p>
+<p>See <a class="reference internal" href="../topics/install.html"><span class="doc">How to install Django</span></a> for advice on how to remove
+older versions of Django and install a newer one.</p>
+<div class="admonition-where-to-get-help admonition">
+<p class="first admonition-title">Where to get help:</p>
+<p class="last">If you’re having trouble going through this tutorial, please post a message
+to <a class="reference internal" href="../internals/mailing-lists.html#django-users-mailing-list"><span class="std std-ref">django-users</span></a> or drop by <a class="reference external" href="irc://irc.freenode.net/django">#django on irc.freenode.net</a> to chat with other Django users who might
+be able to help.</p>
+</div>
+<div class="section" id="s-creating-a-project">
+<span id="creating-a-project"></span><h2>Creating a project<a class="headerlink" href="#creating-a-project" title="Permalink to this headline">¶</a></h2>
+<p>If this is your first time using Django, you’ll have to take care of some
+initial setup. Namely, you’ll need to auto-generate some code that establishes a
+Django <a class="reference internal" href="../glossary.html#term-project"><span class="xref std std-term">project</span></a> – a collection of settings for an instance of Django,
+including database configuration, Django-specific options and
+application-specific settings.</p>
+<p>From the command line, <code class="docutils literal notranslate"><span class="pre">cd</span></code> into a directory where you’d like to store your
+code, then run the following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> django-admin startproject mysite
+</pre></div>
+</div>
+<p>This will create a <code class="docutils literal notranslate"><span class="pre">mysite</span></code> directory in your current directory. If it didn’t
+work, see <a class="reference internal" href="../faq/troubleshooting.html#troubleshooting-django-admin"><span class="std std-ref">Problems running django-admin</span></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You’ll need to avoid naming projects after built-in Python or Django
+components. In particular, this means you should avoid using names like
+<code class="docutils literal notranslate"><span class="pre">django</span></code> (which will conflict with Django itself) or <code class="docutils literal notranslate"><span class="pre">test</span></code> (which
+conflicts with a built-in Python package).</p>
+</div>
+<div class="admonition-where-should-this-code-live admonition">
+<p class="first admonition-title">Where should this code live?</p>
+<p>If your background is in plain old PHP (with no use of modern frameworks),
+you’re probably used to putting code under the Web server’s document root
+(in a place such as <code class="docutils literal notranslate"><span class="pre">/var/www</span></code>). With Django, you don’t do that. It’s
+not a good idea to put any of this Python code within your Web server’s
+document root, because it risks the possibility that people may be able
+to view your code over the Web. That’s not good for security.</p>
+<p class="last">Put your code in some directory <strong>outside</strong> of the document root, such as
+<code class="file docutils literal notranslate"><span class="pre">/home/mycode</span></code>.</p>
+</div>
+<p>Let’s look at what <a class="reference internal" href="../ref/django-admin.html#django-admin-startproject"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">startproject</span></code></a> created:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mysite</span><span class="o">/</span>
+    <span class="n">manage</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">mysite</span><span class="o">/</span>
+        <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+        <span class="n">settings</span><span class="o">.</span><span class="n">py</span>
+        <span class="n">urls</span><span class="o">.</span><span class="n">py</span>
+        <span class="n">wsgi</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>These files are:</p>
+<ul class="simple">
+<li>The outer <code class="file docutils literal notranslate"><span class="pre">mysite/</span></code> root directory is just a container for your
+project. Its name doesn’t matter to Django; you can rename it to anything
+you like.</li>
+<li><code class="file docutils literal notranslate"><span class="pre">manage.py</span></code>: A command-line utility that lets you interact with this
+Django project in various ways. You can read all the details about
+<code class="file docutils literal notranslate"><span class="pre">manage.py</span></code> in <a class="reference internal" href="../ref/django-admin.html"><span class="doc">django-admin and manage.py</span></a>.</li>
+<li>The inner <code class="file docutils literal notranslate"><span class="pre">mysite/</span></code> directory is the actual Python package for your
+project. Its name is the Python package name you’ll need to use to import
+anything inside it (e.g. <code class="docutils literal notranslate"><span class="pre">mysite.urls</span></code>).</li>
+<li><code class="file docutils literal notranslate"><span class="pre">mysite/__init__.py</span></code>: An empty file that tells Python that this
+directory should be considered a Python package. If you’re a Python beginner,
+read <a class="reference external" href="https://docs.python.org/3/tutorial/modules.html#tut-packages" title="(in Python v3.7)"><span class="xref std std-ref">more about packages</span></a> in the official Python docs.</li>
+<li><code class="file docutils literal notranslate"><span class="pre">mysite/settings.py</span></code>: Settings/configuration for this Django
+project.  <a class="reference internal" href="../topics/settings.html"><span class="doc">Django settings</span></a> will tell you all about how settings
+work.</li>
+<li><code class="file docutils literal notranslate"><span class="pre">mysite/urls.py</span></code>: The URL declarations for this Django project; a
+“table of contents” of your Django-powered site. You can read more about
+URLs in <a class="reference internal" href="../topics/http/urls.html"><span class="doc">URL dispatcher</span></a>.</li>
+<li><code class="file docutils literal notranslate"><span class="pre">mysite/wsgi.py</span></code>: An entry-point for WSGI-compatible web servers to
+serve your project. See <a class="reference internal" href="../howto/deployment/wsgi/index.html"><span class="doc">How to deploy with WSGI</span></a> for more details.</li>
+</ul>
+</div>
+<div class="section" id="s-the-development-server">
+<span id="the-development-server"></span><h2>The development server<a class="headerlink" href="#the-development-server" title="Permalink to this headline">¶</a></h2>
+<p>Let’s verify your Django project works. Change into the outer <code class="file docutils literal notranslate"><span class="pre">mysite</span></code> directory, if
+you haven’t already, and run the following commands:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python manage.py runserver
+</pre></div>
+</div>
+<p>You’ll see the following output on the command line:</p>
+<pre class="literal-block">
+Performing system checks...
+
+System check identified no issues (0 silenced).
+
+You have unapplied migrations; your app may not work properly until they are applied.
+Run 'python manage.py migrate' to apply them.
+
+November 17, 2018 - 15:50:53
+Django version 1.11, using settings 'mysite.settings'
+Starting development server at <a class="reference external" href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a>
+Quit the server with CONTROL-C.
+</pre>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Ignore the warning about unapplied database migrations for now; we’ll deal
+with the database shortly.</p>
+</div>
+<p>You’ve started the Django development server, a lightweight Web server written
+purely in Python. We’ve included this with Django so you can develop things
+rapidly, without having to deal with configuring a production server – such as
+Apache – until you’re ready for production.</p>
+<p>Now’s a good time to note: <strong>don’t</strong> use this server in anything resembling a
+production environment. It’s intended only for use while developing. (We’re in
+the business of making Web frameworks, not Web servers.)</p>
+<p>Now that the server’s running, visit <a class="reference external" href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a> with your Web
+browser. You’ll see a “Welcome to Django” page, in pleasant, light-blue pastel.
+It worked!</p>
+<div class="admonition-changing-the-port admonition">
+<p class="first admonition-title">Changing the port</p>
+<p>By default, the <a class="reference internal" href="../ref/django-admin.html#django-admin-runserver"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">runserver</span></code></a> command starts the development server
+on the internal IP at port 8000.</p>
+<p>If you want to change the server’s port, pass
+it as a command-line argument. For instance, this command starts the server
+on port 8080:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python manage.py runserver <span class="m">8080</span>
+</pre></div>
+</div>
+<p>If you want to change the server’s IP, pass it along with the port. For
+example, to listen on all available public IPs (which is useful if you are
+running Vagrant or want to show off your work on other computers on the
+network), use:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python manage.py runserver <span class="m">0</span>:8000
+</pre></div>
+</div>
+<p class="last"><strong>0</strong> is a shortcut for <strong>0.0.0.0</strong>. Full docs for the development server
+can be found in the <a class="reference internal" href="../ref/django-admin.html#django-admin-runserver"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">runserver</span></code></a> reference.</p>
+</div>
+<div class="admonition-automatic-reloading-of-djadmin-runserver admonition">
+<p class="first admonition-title">Automatic reloading of <a class="reference internal" href="../ref/django-admin.html#django-admin-runserver"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">runserver</span></code></a></p>
+<p class="last">The development server automatically reloads Python code for each request
+as needed. You don’t need to restart the server for code changes to take
+effect. However, some actions like adding files don’t trigger a restart,
+so you’ll have to restart the server in these cases.</p>
+</div>
+</div>
+<div class="section" id="s-creating-the-polls-app">
+<span id="creating-the-polls-app"></span><h2>Creating the Polls app<a class="headerlink" href="#creating-the-polls-app" title="Permalink to this headline">¶</a></h2>
+<p>Now that your environment – a “project” – is set up, you’re set to start
+doing work.</p>
+<p>Each application you write in Django consists of a Python package that follows
+a certain convention. Django comes with a utility that automatically generates
+the basic directory structure of an app, so you can focus on writing code
+rather than creating directories.</p>
+<div class="admonition-projects-vs-apps admonition">
+<p class="first admonition-title">Projects vs. apps</p>
+<p class="last">What’s the difference between a project and an app? An app is a Web
+application that does something – e.g., a Weblog system, a database of
+public records or a simple poll app. A project is a collection of
+configuration and apps for a particular website. A project can contain
+multiple apps. An app can be in multiple projects.</p>
+</div>
+<p>Your apps can live anywhere on your <a class="reference external" href="https://docs.python.org/3/tutorial/modules.html#tut-searchpath" title="(in Python v3.7)"><span class="xref std std-ref">Python path</span></a>. In
+this tutorial, we’ll create our poll app right next to your <code class="file docutils literal notranslate"><span class="pre">manage.py</span></code>
+file so that it can be imported as its own top-level module, rather than a
+submodule of <code class="docutils literal notranslate"><span class="pre">mysite</span></code>.</p>
+<p>To create your app, make sure you’re in the same directory as <code class="file docutils literal notranslate"><span class="pre">manage.py</span></code>
+and type this command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python manage.py startapp polls
+</pre></div>
+</div>
+<p>That’ll create a directory <code class="file docutils literal notranslate"><span class="pre">polls</span></code>, which is laid out like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">polls</span><span class="o">/</span>
+    <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">admin</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">apps</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">migrations</span><span class="o">/</span>
+        <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">tests</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">views</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>This directory structure will house the poll application.</p>
+</div>
+<div class="section" id="s-write-your-first-view">
+<span id="write-your-first-view"></span><h2>Write your first view<a class="headerlink" href="#write-your-first-view" title="Permalink to this headline">¶</a></h2>
+<p>Let’s write the first view. Open the file <code class="docutils literal notranslate"><span class="pre">polls/views.py</span></code>
+and put the following Python code in it:</p>
+<div class="highlight-default snippet"><div class="snippet-filename">polls/views.py</div>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.http</span> <span class="k">import</span> <span class="n">HttpResponse</span>
+
+
+<span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello, world. You&#39;re at the polls index.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is the simplest view possible in Django. To call the view, we need to map
+it to a URL - and for this we need a URLconf.</p>
+<p>To create a URLconf in the polls directory, create a file called <code class="docutils literal notranslate"><span class="pre">urls.py</span></code>.
+Your app directory should now look like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">polls</span><span class="o">/</span>
+    <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">admin</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">apps</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">migrations</span><span class="o">/</span>
+        <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">tests</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">urls</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">views</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>In the <code class="docutils literal notranslate"><span class="pre">polls/urls.py</span></code> file include the following code:</p>
+<div class="highlight-default snippet"><div class="snippet-filename">polls/urls.py</div>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="k">import</span> <span class="n">url</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">views</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^$&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>The next step is to point the root URLconf at the <code class="docutils literal notranslate"><span class="pre">polls.urls</span></code> module. In
+<code class="docutils literal notranslate"><span class="pre">mysite/urls.py</span></code>, add an import for <code class="docutils literal notranslate"><span class="pre">django.conf.urls.include</span></code> and insert
+an <a class="reference internal" href="../ref/urls.html#django.conf.urls.include" title="django.conf.urls.include"><code class="xref py py-func docutils literal notranslate"><span class="pre">include()</span></code></a> in the <code class="docutils literal notranslate"><span class="pre">urlpatterns</span></code> list, so you have:</p>
+<div class="highlight-default snippet"><div class="snippet-filename">mysite/urls.py</div>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="k">import</span> <span class="n">include</span><span class="p">,</span> <span class="n">url</span>
+<span class="kn">from</span> <span class="nn">django.contrib</span> <span class="k">import</span> <span class="n">admin</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^polls/&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s1">&#39;polls.urls&#39;</span><span class="p">)),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../ref/urls.html#django.conf.urls.include" title="django.conf.urls.include"><code class="xref py py-func docutils literal notranslate"><span class="pre">include()</span></code></a> function allows referencing other
+URLconfs. Note that the regular expressions for the
+<a class="reference internal" href="../ref/urls.html#django.conf.urls.include" title="django.conf.urls.include"><code class="xref py py-func docutils literal notranslate"><span class="pre">include()</span></code></a> function doesn’t have a <code class="docutils literal notranslate"><span class="pre">$</span></code> (end-of-string
+match character) but rather a trailing slash. Whenever Django encounters
+<a class="reference internal" href="../ref/urls.html#django.conf.urls.include" title="django.conf.urls.include"><code class="xref py py-func docutils literal notranslate"><span class="pre">include()</span></code></a>, it chops off whatever part of the URL
+matched up to that point and sends the remaining string to the included URLconf
+for further processing.</p>
+<p>The idea behind <a class="reference internal" href="../ref/urls.html#django.conf.urls.include" title="django.conf.urls.include"><code class="xref py py-func docutils literal notranslate"><span class="pre">include()</span></code></a> is to make it easy to
+plug-and-play URLs. Since polls are in their own URLconf
+(<code class="docutils literal notranslate"><span class="pre">polls/urls.py</span></code>), they can be placed under “/polls/”, or under
+“/fun_polls/”, or under “/content/polls/”, or any other path root, and the
+app will still work.</p>
+<div class="admonition-when-to-use-func-django-conf-urls-include admonition">
+<p class="first admonition-title">When to use <a class="reference internal" href="../ref/urls.html#django.conf.urls.include" title="django.conf.urls.include"><code class="xref py py-func docutils literal notranslate"><span class="pre">include()</span></code></a></p>
+<p class="last">You should always use <code class="docutils literal notranslate"><span class="pre">include()</span></code> when you include other URL patterns.
+<code class="docutils literal notranslate"><span class="pre">admin.site.urls</span></code> is the only exception to this.</p>
+</div>
+<div class="admonition-doesn-t-match-what-you-see admonition">
+<p class="first admonition-title">Doesn’t match what you see?</p>
+<p class="last">If you’re seeing <code class="docutils literal notranslate"><span class="pre">include(admin.site.urls)</span></code> instead of just
+<code class="docutils literal notranslate"><span class="pre">admin.site.urls</span></code>, you’re probably using a version of Django that
+doesn’t match this tutorial version.  You’ll want to either switch to the
+older tutorial or the newer Django version.</p>
+</div>
+<p>You have now wired an <code class="docutils literal notranslate"><span class="pre">index</span></code> view into the URLconf. Lets verify it’s
+working, run the following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python manage.py runserver
+</pre></div>
+</div>
+<p>Go to <a class="reference external" href="http://localhost:8000/polls/">http://localhost:8000/polls/</a> in your browser, and you should see the
+text “<em>Hello, world. You’re at the polls index.</em>”, which you defined in the
+<code class="docutils literal notranslate"><span class="pre">index</span></code> view.</p>
+<p>The <a class="reference internal" href="../ref/urls.html#django.conf.urls.url" title="django.conf.urls.url"><code class="xref py py-func docutils literal notranslate"><span class="pre">url()</span></code></a> function is passed four arguments, two
+required: <code class="docutils literal notranslate"><span class="pre">regex</span></code> and <code class="docutils literal notranslate"><span class="pre">view</span></code>, and two optional: <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>, and <code class="docutils literal notranslate"><span class="pre">name</span></code>.
+At this point, it’s worth reviewing what these arguments are for.</p>
+<div class="section" id="s-url-argument-regex">
+<span id="url-argument-regex"></span><h3><a class="reference internal" href="../ref/urls.html#django.conf.urls.url" title="django.conf.urls.url"><code class="xref py py-func docutils literal notranslate"><span class="pre">url()</span></code></a> argument: regex<a class="headerlink" href="#url-argument-regex" title="Permalink to this headline">¶</a></h3>
+<p>The term “regex” is a commonly used short form meaning “regular expression”,
+which is a syntax for matching patterns in strings, or in this case, url
+patterns. Django starts at the first regular expression and makes its way down
+the list,  comparing the requested URL against each regular expression until it
+finds one that matches.</p>
+<p>Note that these regular expressions do not search GET and POST parameters, or
+the domain name. For example, in a request to
+<code class="docutils literal notranslate"><span class="pre">https://www.example.com/myapp/</span></code>, the URLconf will look for <code class="docutils literal notranslate"><span class="pre">myapp/</span></code>. In a
+request to <code class="docutils literal notranslate"><span class="pre">https://www.example.com/myapp/?page=3</span></code>, the URLconf will also
+look for <code class="docutils literal notranslate"><span class="pre">myapp/</span></code>.</p>
+<p>If you need help with regular expressions, see <a class="reference external" href="https://en.wikipedia.org/wiki/Regular_expression">Wikipedia’s entry</a> and the
+documentation of the <a class="reference external" href="https://docs.python.org/3/library/re.html#module-re" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">re</span></code></a> module. Also, the O’Reilly book “Mastering
+Regular Expressions” by Jeffrey Friedl is fantastic. In practice, however,
+you don’t need to be an expert on regular expressions, as you really only need
+to know how to capture simple patterns. In fact, complex regexes can have poor
+lookup performance, so you probably shouldn’t rely on the full power of regexes.</p>
+<p>Finally, a performance note: these regular expressions are compiled the first
+time the URLconf module is loaded. They’re super fast (as long as the lookups
+aren’t too complex as noted above).</p>
+</div>
+<div class="section" id="s-url-argument-view">
+<span id="url-argument-view"></span><h3><a class="reference internal" href="../ref/urls.html#django.conf.urls.url" title="django.conf.urls.url"><code class="xref py py-func docutils literal notranslate"><span class="pre">url()</span></code></a> argument: view<a class="headerlink" href="#url-argument-view" title="Permalink to this headline">¶</a></h3>
+<p>When Django finds a regular expression match, Django calls the specified view
+function, with an <a class="reference internal" href="../ref/request-response.html#django.http.HttpRequest" title="django.http.HttpRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">HttpRequest</span></code></a> object as the first
+argument and any “captured” values from the regular expression as other
+arguments. If the regex uses simple captures, values are passed as positional
+arguments; if it uses named captures, values are passed as keyword arguments.
+We’ll give an example of this in a bit.</p>
+</div>
+<div class="section" id="s-url-argument-kwargs">
+<span id="url-argument-kwargs"></span><h3><a class="reference internal" href="../ref/urls.html#django.conf.urls.url" title="django.conf.urls.url"><code class="xref py py-func docutils literal notranslate"><span class="pre">url()</span></code></a> argument: kwargs<a class="headerlink" href="#url-argument-kwargs" title="Permalink to this headline">¶</a></h3>
+<p>Arbitrary keyword arguments can be passed in a dictionary to the target view. We
+aren’t going to use this feature of Django in the tutorial.</p>
+</div>
+<div class="section" id="s-url-argument-name">
+<span id="url-argument-name"></span><h3><a class="reference internal" href="../ref/urls.html#django.conf.urls.url" title="django.conf.urls.url"><code class="xref py py-func docutils literal notranslate"><span class="pre">url()</span></code></a> argument: name<a class="headerlink" href="#url-argument-name" title="Permalink to this headline">¶</a></h3>
+<p>Naming your URL lets you refer to it unambiguously from elsewhere in Django,
+especially from within templates. This powerful feature allows you to make
+global changes to the URL patterns of your project while only touching a single
+file.</p>
+<p>When you’re comfortable with the basic request and response flow, read
+<a class="reference internal" href="tutorial02.html"><span class="doc">part 2 of this tutorial</span></a> to start working with the
+database.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Writing your first Django app, part 1</a><ul>
+<li><a class="reference internal" href="#creating-a-project">Creating a project</a></li>
+<li><a class="reference internal" href="#the-development-server">The development server</a></li>
+<li><a class="reference internal" href="#creating-the-polls-app">Creating the Polls app</a></li>
+<li><a class="reference internal" href="#write-your-first-view">Write your first view</a><ul>
+<li><a class="reference internal" href="#url-argument-regex"><code class="docutils literal notranslate"><span class="pre">url()</span></code> argument: regex</a></li>
+<li><a class="reference internal" href="#url-argument-view"><code class="docutils literal notranslate"><span class="pre">url()</span></code> argument: view</a></li>
+<li><a class="reference internal" href="#url-argument-kwargs"><code class="docutils literal notranslate"><span class="pre">url()</span></code> argument: kwargs</a></li>
+<li><a class="reference internal" href="#url-argument-name"><code class="docutils literal notranslate"><span class="pre">url()</span></code> argument: name</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="previous chapter">Quick install guide</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tutorial02.html"
+                        title="next chapter">Writing your first Django app, part 2</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/intro/tutorial01.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">Nov 17, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="install.html" title="Quick install guide">previous</a>
+     |
+    <a href="index.html" title="Getting started" accesskey="U">up</a>
+   |
+    <a href="tutorial02.html" title="Writing your first Django app, part 2">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

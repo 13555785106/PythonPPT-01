@@ -1,0 +1,171 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>元文件和杂记 &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API 的稳定性" href="api-stability.html" />
+    <link rel="prev" title="Built-in Views" href="../ref/views.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="../ref/views.html" title="Built-in Views">previous</a>
+     |
+    <a title="Django 2.0.9.dev20180801150728 documentation" href="../index.html" accesskey="U">up</a>
+   |
+    <a href="api-stability.html" title="API 的稳定性">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="misc-index">
+            
+  <div class="section" id="s-meta-documentation-and-miscellany">
+<span id="meta-documentation-and-miscellany"></span><h1>元文件和杂记<a class="headerlink" href="#meta-documentation-and-miscellany" title="Permalink to this headline">¶</a></h1>
+<p>Documentation that we can't find a more organized place for. Like that drawer in
+your kitchen with the scissors, batteries, duct tape, and other junk.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api-stability.html">API 的稳定性</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api-stability.html#what-stable-means">什么是“稳定性”？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-stability.html#stable-apis">稳定的API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-stability.html#exceptions">例外</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design-philosophies.html">设计理念</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design-philosophies.html#overall">总体</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design-philosophies.html#models">模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design-philosophies.html#database-api">数据库API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design-philosophies.html#url-design">URL 设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design-philosophies.html#template-system">模板系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design-philosophies.html#views">视图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design-philosophies.html#cache-framework">缓存框架</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="distributions.html">Django 的第三方发布包</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="distributions.html#for-distributors">对于发布者</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../ref/views.html"
+                        title="previous chapter">Built-in Views</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api-stability.html"
+                        title="next chapter">API 的稳定性</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/misc/index.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="../ref/views.html" title="Built-in Views">previous</a>
+     |
+    <a title="Django 2.0.9.dev20180801150728 documentation" href="../index.html" accesskey="U">up</a>
+   |
+    <a href="api-stability.html" title="API 的稳定性">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

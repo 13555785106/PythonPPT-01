@@ -1,0 +1,2195 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+<!-- 注意css文件与js文件的引用顺序，被依赖的放在前面！ -->
+<link rel="stylesheet" href="/WebSample/theme/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css"
+	href="/WebSample/theme/jquery-ui/jquery-ui.theme.css">
+<link rel="stylesheet" type="text/css"
+	href="/WebSample/theme/jquery-ui/jquery-ui.structure.css">
+<link rel="stylesheet" type="text/css"
+	href="/WebSample/theme/jquery-ui/jquery.datetimepicker.css">
+<script src="/WebSample/theme/js/jquery.js"></script>
+<script src="/WebSample/theme/js/bootstrap.min.js"></script>
+<script src="/WebSample/theme/jquery-ui/jquery-ui.js"></script>
+<script src="/WebSample/theme/jquery-ui/jquery.datetimepicker.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>用户列表</title>
+</head>
+<body>
+
+
+
+
+
+<nav class="navbar navbar-default" role="navigation">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<span class="navbar-brand">
+			&lt;- 分权分域演示 -&gt;
+			</span>
+		</div>
+		<div>
+			<ul class="nav navbar-nav">
+				
+					<li><a href="/WebSample/sample/ex03/ListUser">用户管理</a></li>
+				
+				
+					<li><a href="/WebSample/sample/ex04/ListFile">文件管理</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</nav>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+				<table class="table table-bordered table-hover table-striped">
+					<caption class="text-center">用户列表</caption>
+					<tr>
+						<th>账号</th>
+						<th>密码</th>
+						<th>性别</th>
+						<th>生日</th>
+						<th>工资</th>
+						<th>爱好</th>
+						<th>权限</th>
+						
+						<th class="text-center"><a href="AddUser"
+							class="btn btn-primary btn-xs" role="button">添加</a></th>
+						
+					</tr>
+					
+						<tr>
+							<td>sa</td>
+							<td>123456</td>
+							<td>男</td>
+							<td></td>
+							<td>9999.00</td>
+							<td>足球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=1"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/1" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u01</td>
+							<td>12345</td>
+							<td>男</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=2"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/2" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u02</td>
+							<td>12345</td>
+							<td>男</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=3"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/3" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u03</td>
+							<td>12345</td>
+							<td>男</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=4"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/4" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u04</td>
+							<td>12345</td>
+							<td>男</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=5"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/5" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u05</td>
+							<td>12345</td>
+							<td>男</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=6"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/6" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u06</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=7"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/7" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u07</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=8"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/8" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u08</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=9"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/9" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u09</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=10"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/10" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u10</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=11"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/11" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u11</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=12"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/12" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u12</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=13"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/13" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u13</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=14"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/14" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u14</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=15"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/15" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u15</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=17"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/17" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u16</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=18"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/18" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u17</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=19"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/19" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u18</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=20"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/20" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u19</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=21"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/21" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u20</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=22"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/22" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u21</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=23"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/23" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u22</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=24"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/24" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u23</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=25"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/25" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u24</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=26"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/26" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u25</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=27"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/27" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u26</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=28"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/28" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u27</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=29"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/29" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u28</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=30"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/30" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u29</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=31"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/31" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u30</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=32"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/32" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u31</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=33"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/33" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u32</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=34"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/34" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u33</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=35"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/35" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u34</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=36"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/36" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u35</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=37"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/37" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u36</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=38"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/38" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u37</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=39"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/39" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u38</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=40"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/40" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+						<tr>
+							<td>u39</td>
+							<td>12345</td>
+							<td>女</td>
+							<td></td>
+							<td>8888.00</td>
+							<td>排球</td>
+							<td>
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								
+							</td>
+							
+							<td class="text-center">
+							
+							<a href="ChgUser?id=41"
+								class="btn btn-primary btn-xs" role="button">修改</a> 
+								
+								
+								<a
+								href="DelUser/41" class="btn btn-primary btn-xs"
+								role="button">删除</a>
+								
+								</td>
+								
+						</tr>
+					
+				</table>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

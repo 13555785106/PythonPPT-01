@@ -1,0 +1,234 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Model index reference &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Model _meta API" href="meta.html" />
+    <link rel="prev" title="Model field reference" href="fields.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="fields.html" title="Model field reference">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="meta.html" title="Model &lt;code class=&#34;docutils literal notranslate&#34;&gt;&lt;span class=&#34;pre&#34;&gt;_meta&lt;/span&gt;&lt;/code&gt; API">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="ref-models-indexes">
+            
+  <div class="section" id="s-module-django.db.models.indexes">
+<span id="s-model-index-reference"></span><span id="module-django.db.models.indexes"></span><span id="model-index-reference"></span><h1>Model index reference<a class="headerlink" href="#module-django.db.models.indexes" title="Permalink to this headline">¶</a></h1>
+<div class="versionadded">
+<span class="title">New in Django 1.11.</span> </div>
+<p>Index classes ease creating database indexes. They can be added using the
+<a class="reference internal" href="options.html#django.db.models.Options.indexes" title="django.db.models.Options.indexes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Meta.indexes</span></code></a> option. This document
+explains the API references of <a class="reference internal" href="#django.db.models.Index" title="django.db.models.Index"><code class="xref py py-class docutils literal notranslate"><span class="pre">Index</span></code></a> which includes the <a class="reference internal" href="#index-options">index
+options</a>.</p>
+<div class="admonition-referencing-built-in-indexes admonition">
+<p class="first admonition-title">Referencing built-in indexes</p>
+<p class="last">Indexes are defined in <code class="docutils literal notranslate"><span class="pre">django.db.models.indexes</span></code>, but for convenience
+they're imported into <a class="reference internal" href="../../topics/db/models.html#module-django.db.models" title="django.db.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.db.models</span></code></a>. The standard convention is
+to use <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">django.db</span> <span class="pre">import</span> <span class="pre">models</span></code> and refer to the indexes as
+<code class="docutils literal notranslate"><span class="pre">models.&lt;IndexClass&gt;</span></code>.</p>
+</div>
+<div class="section" id="s-index-options">
+<span id="index-options"></span><h2><code class="docutils literal notranslate"><span class="pre">Index</span></code> options<a class="headerlink" href="#index-options" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.db.models.Index">
+<em class="property">class </em><code class="descname">Index</code>(<em>fields=[]</em>, <em>name=None</em>, <em>db_tablespace=None</em>)<a class="reference internal" href="../../_modules/django/db/models/indexes.html#Index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.Index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an index (B-Tree) in the database.</p>
+</dd></dl>
+
+<div class="section" id="s-fields">
+<span id="fields"></span><h3><code class="docutils literal notranslate"><span class="pre">fields</span></code><a class="headerlink" href="#fields" title="Permalink to this headline">¶</a></h3>
+<dl class="attribute">
+<dt id="django.db.models.Index.fields">
+<code class="descclassname">Index.</code><code class="descname">fields</code><a class="headerlink" href="#django.db.models.Index.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>A list of the name of the fields on which the index is desired.</p>
+<p>By default, indexes are created with an ascending order for each column. To
+define an index with a descending order for a column, add a hyphen before the
+field's name.</p>
+<p>For example <code class="docutils literal notranslate"><span class="pre">Index(fields=['headline',</span> <span class="pre">'-pub_date'])</span></code> would create SQL with
+<code class="docutils literal notranslate"><span class="pre">(headline,</span> <span class="pre">pub_date</span> <span class="pre">DESC)</span></code>. Index ordering isn't supported on MySQL. In that
+case, a descending index is created as a normal index.</p>
+<div class="admonition-support-for-column-ordering-on-sqlite admonition">
+<p class="first admonition-title">Support for column ordering on SQLite</p>
+<p class="last">Column ordering is supported on SQLite 3.3.0+ and only for some database
+file formats. Refer to the <a class="reference external" href="https://www.sqlite.org/lang_createindex.html">SQLite docs</a> for specifics.</p>
+</div>
+</div>
+<div class="section" id="s-name">
+<span id="name"></span><h3><code class="docutils literal notranslate"><span class="pre">name</span></code><a class="headerlink" href="#name" title="Permalink to this headline">¶</a></h3>
+<dl class="attribute">
+<dt id="django.db.models.Index.name">
+<code class="descclassname">Index.</code><code class="descname">name</code><a class="headerlink" href="#django.db.models.Index.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The name of the index. If <code class="docutils literal notranslate"><span class="pre">name</span></code> isn't provided Django will auto-generate a
+name. For compatibility with different databases, index names cannot be longer
+than 30 characters and shouldn't start with a number (0-9) or underscore (_).</p>
+</div>
+<div class="section" id="s-db-tablespace">
+<span id="db-tablespace"></span><h3><code class="docutils literal notranslate"><span class="pre">db_tablespace</span></code><a class="headerlink" href="#db-tablespace" title="Permalink to this headline">¶</a></h3>
+<dl class="attribute">
+<dt id="django.db.models.Index.db_tablespace">
+<code class="descclassname">Index.</code><code class="descname">db_tablespace</code><a class="headerlink" href="#django.db.models.Index.db_tablespace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="versionadded">
+<span class="title">New in Django 2.0.</span> </div>
+<p>The name of the <a class="reference internal" href="../../topics/db/tablespaces.html"><span class="doc">database tablespace</span></a> to use for
+this index. For single field indexes, if <code class="docutils literal notranslate"><span class="pre">db_tablespace</span></code> isn't provided, the
+index is created in the <code class="docutils literal notranslate"><span class="pre">db_tablespace</span></code> of the field.</p>
+<p>If <a class="reference internal" href="fields.html#django.db.models.Field.db_tablespace" title="django.db.models.Field.db_tablespace"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Field.db_tablespace</span></code></a> isn't specified (or if the index uses multiple
+fields), the index is created in tablespace specified in the
+<a class="reference internal" href="options.html#django.db.models.Options.db_tablespace" title="django.db.models.Options.db_tablespace"><code class="xref py py-attr docutils literal notranslate"><span class="pre">db_tablespace</span></code></a> option inside the model's
+<code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">Meta</span></code>. If neither of those tablespaces are set, the index is created
+in the same tablespace as the table.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">For a list of PostgreSQL-specific indexes, see
+<a class="reference internal" href="../contrib/postgres/indexes.html#module-django.contrib.postgres.indexes" title="django.contrib.postgres.indexes"><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.postgres.indexes</span></code></a>.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Model index reference</a><ul>
+<li><a class="reference internal" href="#index-options"><code class="docutils literal notranslate"><span class="pre">Index</span></code> options</a><ul>
+<li><a class="reference internal" href="#fields"><code class="docutils literal notranslate"><span class="pre">fields</span></code></a></li>
+<li><a class="reference internal" href="#name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
+<li><a class="reference internal" href="#db-tablespace"><code class="docutils literal notranslate"><span class="pre">db_tablespace</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="fields.html"
+                        title="previous chapter">Model field reference</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="meta.html"
+                        title="next chapter">Model <code class="docutils literal notranslate"><span class="pre">_meta</span></code> API</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/ref/models/indexes.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="fields.html" title="Model field reference">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="meta.html" title="Model &lt;code class=&#34;docutils literal notranslate&#34;&gt;&lt;span class=&#34;pre&#34;&gt;_meta&lt;/span&gt;&lt;/code&gt; API">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

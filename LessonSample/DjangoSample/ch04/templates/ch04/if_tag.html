@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>if标签</title>
+</head>
+<body>
+<H1>if标签</H1>
+分数:{{ score }}<br/>
+等级:{% if score > 100 and score < 0 %}
+分数无效
+{% elif score >= 90 %}
+A
+{% elif score >= 80 %}
+B
+{% elif score >= 70 %}
+C
+{% elif score >= 60 %}
+D
+{% else %}
+E
+{% endif %}
+<hr>
+可使用的操作符
+<ul>
+    <li>or</li>
+    <li>and</li>
+    <li>not</li>
+    <li>in</li>
+    <li>==, !=, <, >, <=, >=, is</li>
+</ul>
+</body>
+</html>

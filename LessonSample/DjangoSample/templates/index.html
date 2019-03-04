@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>Django示例首页</title>
+</head>
+
+{% load static %}
+<center><img src="{% static 'django-logo.png'%}" style="border-radius:16px"/></center>
+<table align="center" border="1">
+    <caption style="font-size:24px">Django示例首页</caption>
+    <tr>
+        <td align="center">第一章</td>
+        <td><a href="{% url 'ch01:index' %}">快速入门</a></td>
+    </tr>
+    <tr>
+        <td align="center">第二章</td>
+        <td><a href="{% url 'ch02:index' %}">请求与回应</a></td>
+    </tr>
+    <tr>
+        <td align="center">第三章</td>
+        <td><a href="{% url 'ch03:index' %}">模型</a></td>
+    </tr>
+    <tr>
+        <td align="center">第四章</td>
+        <td><a href="{% url 'ch04:index' %}">模板、标签、过滤器</a></td>
+    </tr>
+    <tr>
+        <td align="center">第五章</td>
+        <td><a href="{% url 'ch05:index' %}">表单</a></td>
+    </tr>
+    <tr>
+        <td align="center">第六章</td>
+        <td><a href="{% url 'ch06:login' %}">后台管理</a></td>
+    </tr>
+</table>
+
+</body>
+</html>

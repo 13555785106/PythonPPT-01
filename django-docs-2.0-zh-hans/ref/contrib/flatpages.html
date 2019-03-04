@@ -1,0 +1,486 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>The flatpages app &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="GeoDjango" href="gis/index.html" />
+    <link rel="prev" title="The contenttypes framework" href="contenttypes.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="contenttypes.html" title="The contenttypes framework">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="gis/index.html" title="GeoDjango">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="ref-contrib-flatpages">
+            
+  <div class="section" id="s-module-django.contrib.flatpages">
+<span id="s-the-flatpages-app"></span><span id="module-django.contrib.flatpages"></span><span id="the-flatpages-app"></span><h1>The flatpages app<a class="headerlink" href="#module-django.contrib.flatpages" title="Permalink to this headline">¶</a></h1>
+<p>Django comes with an optional &quot;flatpages&quot; application. It lets you store simple
+&quot;flat&quot; HTML content in a database and handles the management for you via
+Django's admin interface and a Python API.</p>
+<p>A flatpage is a simple object with a URL, title and content. Use it for
+one-off, special-case pages, such as &quot;About&quot; or &quot;Privacy Policy&quot; pages, that
+you want to store in a database but for which you don't want to develop a
+custom Django application.</p>
+<p>A flatpage can use a custom template or a default, systemwide flatpage
+template. It can be associated with one, or multiple, sites.</p>
+<p>The content field may optionally be left blank if you prefer to put your
+content in a custom template.</p>
+<p>Here are some examples of flatpages on Django-powered sites:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://www.lawrence.com/about/contact/">http://www.lawrence.com/about/contact/</a></li>
+<li><a class="reference external" href="http://www2.ljworld.com/site/rules/">http://www2.ljworld.com/site/rules/</a></li>
+</ul>
+<div class="section" id="s-installation">
+<span id="installation"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>To install the flatpages app, follow these steps:</p>
+<ol class="arabic">
+<li><p class="first">Install the <a class="reference internal" href="sites.html#module-django.contrib.sites" title="django.contrib.sites: Lets you operate multiple websites from the same database and Django project"><code class="xref py py-mod docutils literal notranslate"><span class="pre">sites</span> <span class="pre">framework</span></code></a> by adding
+<code class="docutils literal notranslate"><span class="pre">'django.contrib.sites'</span></code> to your <a class="reference internal" href="../settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a> setting,
+if it's not already in there.</p>
+<p>Also make sure you've correctly set <a class="reference internal" href="../settings.html#std:setting-SITE_ID"><code class="xref std std-setting docutils literal notranslate"><span class="pre">SITE_ID</span></code></a> to the ID of the
+site the settings file represents. This will usually be <code class="docutils literal notranslate"><span class="pre">1</span></code> (i.e.
+<code class="docutils literal notranslate"><span class="pre">SITE_ID</span> <span class="pre">=</span> <span class="pre">1</span></code>, but if you're using the sites framework to manage
+multiple sites, it could be the ID of a different site.</p>
+</li>
+<li><p class="first">Add <code class="docutils literal notranslate"><span class="pre">'django.contrib.flatpages'</span></code> to your <a class="reference internal" href="../settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a>
+setting.</p>
+</li>
+</ol>
+<p>Then either:</p>
+<ol class="arabic" start="3">
+<li><p class="first">Add an entry in your URLconf. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;pages/&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s1">&#39;django.contrib.flatpages.urls&#39;</span><span class="p">)),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>or:</p>
+<ol class="arabic simple" start="3">
+<li>Add <code class="docutils literal notranslate"><span class="pre">'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware'</span></code>
+to your <a class="reference internal" href="../settings.html#std:setting-MIDDLEWARE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">MIDDLEWARE</span></code></a> setting.</li>
+<li>Run the command <a class="reference internal" href="../django-admin.html#django-admin-migrate"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">manage.py</span> <span class="pre">migrate</span></code></a>.</li>
+</ol>
+</div>
+<div class="section" id="s-how-it-works">
+<span id="how-it-works"></span><h2>How it works<a class="headerlink" href="#how-it-works" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">manage.py</span> <span class="pre">migrate</span></code> creates two tables in your database: <code class="docutils literal notranslate"><span class="pre">django_flatpage</span></code>
+and <code class="docutils literal notranslate"><span class="pre">django_flatpage_sites</span></code>. <code class="docutils literal notranslate"><span class="pre">django_flatpage</span></code> is a simple lookup table
+that simply maps a URL to a title and bunch of text content.
+<code class="docutils literal notranslate"><span class="pre">django_flatpage_sites</span></code> associates a flatpage with a site.</p>
+<div class="section" id="s-using-the-urlconf">
+<span id="using-the-urlconf"></span><h3>Using the URLconf<a class="headerlink" href="#using-the-urlconf" title="Permalink to this headline">¶</a></h3>
+<p>There are several ways to include the flat pages in your URLconf. You can
+dedicate a particular path to flat pages:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;pages/&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s1">&#39;django.contrib.flatpages.urls&#39;</span><span class="p">)),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>You can also set it up as a &quot;catchall&quot; pattern. In this case, it is important
+to place the pattern at the end of the other urlpatterns:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib.flatpages</span> <span class="k">import</span> <span class="n">views</span>
+
+<span class="c1"># Your other patterns here</span>
+<span class="n">urlpatterns</span> <span class="o">+=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;&lt;path:url&gt;&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">flatpage</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If you set <a class="reference internal" href="../settings.html#std:setting-APPEND_SLASH"><code class="xref std std-setting docutils literal notranslate"><span class="pre">APPEND_SLASH</span></code></a> to <code class="docutils literal notranslate"><span class="pre">False</span></code>, you must remove the slash
+in the catchall pattern or flatpages without a trailing slash will not be
+matched.</p>
+</div>
+<p>Another common setup is to use flat pages for a limited set of known pages and
+to hard code the urls, so you can reference them with the <a class="reference internal" href="../templates/builtins.html#std:templatetag-url"><code class="xref std std-ttag docutils literal notranslate"><span class="pre">url</span></code></a> template
+tag:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib.flatpages</span> <span class="k">import</span> <span class="n">views</span>
+
+<span class="n">urlpatterns</span> <span class="o">+=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;about-us/&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">flatpage</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;/about-us/&#39;</span><span class="p">},</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;about&#39;</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;license/&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">flatpage</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;/license/&#39;</span><span class="p">},</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;license&#39;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-using-the-middleware">
+<span id="using-the-middleware"></span><h3>Using the middleware<a class="headerlink" href="#using-the-middleware" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="#django.contrib.flatpages.middleware.FlatpageFallbackMiddleware" title="django.contrib.flatpages.middleware.FlatpageFallbackMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlatpageFallbackMiddleware</span></code></a>
+can do all of the work.</p>
+<dl class="class">
+<dt id="django.contrib.flatpages.middleware.FlatpageFallbackMiddleware">
+<em class="property">class </em><code class="descname">FlatpageFallbackMiddleware</code><a class="headerlink" href="#django.contrib.flatpages.middleware.FlatpageFallbackMiddleware" title="Permalink to this definition">¶</a></dt>
+<dd><p>Each time any Django application raises a 404 error, this middleware
+checks the flatpages database for the requested URL as a last resort.
+Specifically, it checks for a flatpage with the given URL with a site ID
+that corresponds to the <a class="reference internal" href="../settings.html#std:setting-SITE_ID"><code class="xref std std-setting docutils literal notranslate"><span class="pre">SITE_ID</span></code></a> setting.</p>
+<p>If it finds a match, it follows this algorithm:</p>
+<ul class="simple">
+<li>If the flatpage has a custom template, it loads that template.
+Otherwise, it loads the template <code class="file docutils literal notranslate"><span class="pre">flatpages/default.html</span></code>.</li>
+<li>It passes that template a single context variable, <code class="docutils literal notranslate"><span class="pre">flatpage</span></code>,
+which is the flatpage object. It uses
+<a class="reference internal" href="../templates/api.html#django.template.RequestContext" title="django.template.RequestContext"><code class="xref py py-class docutils literal notranslate"><span class="pre">RequestContext</span></code></a> in rendering the
+template.</li>
+</ul>
+<p>The middleware will only add a trailing slash and redirect (by looking
+at the <a class="reference internal" href="../settings.html#std:setting-APPEND_SLASH"><code class="xref std std-setting docutils literal notranslate"><span class="pre">APPEND_SLASH</span></code></a> setting) if the resulting URL refers to
+a valid flatpage. Redirects are permanent (301 status code).</p>
+<p>If it doesn't find a match, the request continues to be processed as usual.</p>
+<p>The middleware only gets activated for 404s -- not for 500s or responses
+of any other status code.</p>
+</dd></dl>
+
+<div class="admonition-flatpages-will-not-apply-view-middleware admonition">
+<p class="first admonition-title">Flatpages will not apply view middleware</p>
+<p class="last">Because the <code class="docutils literal notranslate"><span class="pre">FlatpageFallbackMiddleware</span></code> is applied only after
+URL resolution has failed and produced a 404, the response it
+returns will not apply any <a class="reference internal" href="../../topics/http/middleware.html#view-middleware"><span class="std std-ref">view middleware</span></a>
+methods. Only requests which are successfully routed to a view via
+normal URL resolution apply view middleware.</p>
+</div>
+<p>Note that the order of <a class="reference internal" href="../settings.html#std:setting-MIDDLEWARE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">MIDDLEWARE</span></code></a> matters. Generally, you can put
+<a class="reference internal" href="#django.contrib.flatpages.middleware.FlatpageFallbackMiddleware" title="django.contrib.flatpages.middleware.FlatpageFallbackMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlatpageFallbackMiddleware</span></code></a> at the
+end of the list. This means it will run first when processing the response, and
+ensures that any other response-processing middleware see the real flatpage
+response rather than the 404.</p>
+<p>For more on middleware, read the <a class="reference internal" href="../../topics/http/middleware.html"><span class="doc">middleware docs</span></a>.</p>
+<div class="admonition-ensure-that-your-404-template-works admonition">
+<p class="first admonition-title">Ensure that your 404 template works</p>
+<p class="last">Note that the
+<a class="reference internal" href="#django.contrib.flatpages.middleware.FlatpageFallbackMiddleware" title="django.contrib.flatpages.middleware.FlatpageFallbackMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlatpageFallbackMiddleware</span></code></a>
+only steps in once another view has successfully produced a 404 response.
+If another view or middleware class attempts to produce a 404 but ends up
+raising an exception instead, the response will become an HTTP 500
+(&quot;Internal Server Error&quot;) and the
+<a class="reference internal" href="#django.contrib.flatpages.middleware.FlatpageFallbackMiddleware" title="django.contrib.flatpages.middleware.FlatpageFallbackMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlatpageFallbackMiddleware</span></code></a>
+will not attempt to serve a flat page.</p>
+</div>
+</div>
+</div>
+<div class="section" id="s-how-to-add-change-and-delete-flatpages">
+<span id="how-to-add-change-and-delete-flatpages"></span><h2>How to add, change and delete flatpages<a class="headerlink" href="#how-to-add-change-and-delete-flatpages" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-via-the-admin-interface">
+<span id="s-flatpages-admin"></span><span id="via-the-admin-interface"></span><span id="flatpages-admin"></span><h3>Via the admin interface<a class="headerlink" href="#via-the-admin-interface" title="Permalink to this headline">¶</a></h3>
+<p>If you've activated the automatic Django admin interface, you should see a
+&quot;Flatpages&quot; section on the admin index page. Edit flatpages as you edit any
+other object in the system.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">FlatPage</span></code> model has an <code class="docutils literal notranslate"><span class="pre">enable_comments</span></code> field that isn't used by
+<code class="docutils literal notranslate"><span class="pre">contrib.flatpages</span></code>, but that could be useful for your project or third-party
+apps. It doesn't appear in the admin interface, but you can add it by
+registering a custom <code class="docutils literal notranslate"><span class="pre">ModelAdmin</span></code> for <code class="docutils literal notranslate"><span class="pre">FlatPage</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="k">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.contrib.flatpages.admin</span> <span class="k">import</span> <span class="n">FlatPageAdmin</span>
+<span class="kn">from</span> <span class="nn">django.contrib.flatpages.models</span> <span class="k">import</span> <span class="n">FlatPage</span>
+<span class="kn">from</span> <span class="nn">django.utils.translation</span> <span class="k">import</span> <span class="n">gettext_lazy</span> <span class="k">as</span> <span class="n">_</span>
+
+<span class="c1"># Define a new FlatPageAdmin</span>
+<span class="k">class</span> <span class="nc">FlatPageAdmin</span><span class="p">(</span><span class="n">FlatPageAdmin</span><span class="p">):</span>
+    <span class="n">fieldsets</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;fields&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="s1">&#39;sites&#39;</span><span class="p">)}),</span>
+        <span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s1">&#39;Advanced options&#39;</span><span class="p">),</span> <span class="p">{</span>
+            <span class="s1">&#39;classes&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;collapse&#39;</span><span class="p">,</span> <span class="p">),</span>
+            <span class="s1">&#39;fields&#39;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s1">&#39;enable_comments&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;registration_required&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;template_name&#39;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">}),</span>
+    <span class="p">)</span>
+
+<span class="c1"># Re-register FlatPageAdmin</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">unregister</span><span class="p">(</span><span class="n">FlatPage</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">FlatPage</span><span class="p">,</span> <span class="n">FlatPageAdmin</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-via-the-python-api">
+<span id="via-the-python-api"></span><h3>Via the Python API<a class="headerlink" href="#via-the-python-api" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.contrib.flatpages.models.FlatPage">
+<em class="property">class </em><code class="descname">FlatPage</code><a class="headerlink" href="#django.contrib.flatpages.models.FlatPage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flatpages are represented by a standard
+<a class="reference internal" href="../../topics/db/models.html"><span class="doc">Django model</span></a>,
+which lives in <a class="reference external" href="https://github.com/django/django/blob/master/django/contrib/flatpages/models.py">django/contrib/flatpages/models.py</a>. You can access
+flatpage objects via the <a class="reference internal" href="../../topics/db/queries.html"><span class="doc">Django database API</span></a>.</p>
+</dd></dl>
+
+<div class="admonition-check-for-duplicate-flatpage-urls admonition">
+<p class="first admonition-title">Check for duplicate flatpage URLs.</p>
+<p class="last">If you add or modify flatpages via your own code, you will likely want to
+check for duplicate flatpage URLs within the same site. The flatpage form
+used in the admin performs this validation check, and can be imported from
+<code class="docutils literal notranslate"><span class="pre">django.contrib.flatpages.forms.FlatpageForm</span></code> and used in your own
+views.</p>
+</div>
+</div>
+</div>
+<div class="section" id="s-flatpage-templates">
+<span id="flatpage-templates"></span><h2>Flatpage templates<a class="headerlink" href="#flatpage-templates" title="Permalink to this headline">¶</a></h2>
+<p>By default, flatpages are rendered via the template
+<code class="file docutils literal notranslate"><span class="pre">flatpages/default.html</span></code>, but you can override that for a
+particular flatpage: in the admin, a collapsed fieldset titled
+&quot;Advanced options&quot; (clicking will expand it) contains a field for
+specifying a template name. If you're creating a flat page via the
+Python API you can simply set the template name as the field
+<code class="docutils literal notranslate"><span class="pre">template_name</span></code> on the <code class="docutils literal notranslate"><span class="pre">FlatPage</span></code> object.</p>
+<p>Creating the <code class="file docutils literal notranslate"><span class="pre">flatpages/default.html</span></code> template is your responsibility;
+in your template directory, just create a <code class="file docutils literal notranslate"><span class="pre">flatpages</span></code> directory
+containing a file <code class="file docutils literal notranslate"><span class="pre">default.html</span></code>.</p>
+<p>Flatpage templates are passed a single context variable, <code class="docutils literal notranslate"><span class="pre">flatpage</span></code>,
+which is the flatpage object.</p>
+<p>Here's a sample <code class="file docutils literal notranslate"><span class="pre">flatpages/default.html</span></code> template:</p>
+<div class="highlight-html+django notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span><span class="cp">{{</span> <span class="nv">flatpage.title</span> <span class="cp">}}</span><span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="cp">{{</span> <span class="nv">flatpage.content</span> <span class="cp">}}</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>Since you're already entering raw HTML into the admin page for a flatpage,
+both <code class="docutils literal notranslate"><span class="pre">flatpage.title</span></code> and <code class="docutils literal notranslate"><span class="pre">flatpage.content</span></code> are marked as <strong>not</strong>
+requiring <a class="reference internal" href="../templates/language.html#automatic-html-escaping"><span class="std std-ref">automatic HTML escaping</span></a> in the
+template.</p>
+</div>
+<div class="section" id="s-getting-a-list-of-flatpage-objects-in-your-templates">
+<span id="getting-a-list-of-flatpage-objects-in-your-templates"></span><h2>Getting a list of <a class="reference internal" href="#django.contrib.flatpages.models.FlatPage" title="django.contrib.flatpages.models.FlatPage"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlatPage</span></code></a> objects in your templates<a class="headerlink" href="#getting-a-list-of-flatpage-objects-in-your-templates" title="Permalink to this headline">¶</a></h2>
+<p>The flatpages app provides a template tag that allows you to iterate
+over all of the available flatpages on the <a class="reference internal" href="sites.html#hooking-into-current-site-from-views"><span class="std std-ref">current site</span></a>.</p>
+<p>Like all custom template tags, you'll need to <a class="reference internal" href="../templates/language.html#loading-custom-template-libraries"><span class="std std-ref">load its custom
+tag library</span></a> before you can use
+it. After loading the library, you can retrieve all current flatpages
+via the <a class="reference internal" href="#std:templatetag-get_flatpages"><code class="xref std std-ttag docutils literal notranslate"><span class="pre">get_flatpages</span></code></a> tag:</p>
+<div class="highlight-html+django notranslate"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">load</span> <span class="nv">flatpages</span> <span class="cp">%}</span>
+<span class="cp">{%</span> <span class="k">get_flatpages</span> <span class="k">as</span> <span class="nv">flatpages</span> <span class="cp">%}</span>
+<span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+    <span class="cp">{%</span> <span class="k">for</span> <span class="nv">page</span> <span class="k">in</span> <span class="nv">flatpages</span> <span class="cp">%}</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">page.url</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="p">&gt;</span><span class="cp">{{</span> <span class="nv">page.title</span> <span class="cp">}}</span><span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span>
+<span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="s-displaying-registration-required-flatpages">
+<span id="s-std:templatetag-get_flatpages"></span><span id="displaying-registration-required-flatpages"></span><span id="std:templatetag-get_flatpages"></span><h3>Displaying <code class="docutils literal notranslate"><span class="pre">registration_required</span></code> flatpages<a class="headerlink" href="#displaying-registration-required-flatpages" title="Permalink to this headline">¶</a></h3>
+<p>By default, the <a class="reference internal" href="#std:templatetag-get_flatpages"><code class="xref std std-ttag docutils literal notranslate"><span class="pre">get_flatpages</span></code></a> template tag will only show
+flatpages that are marked <code class="docutils literal notranslate"><span class="pre">registration_required</span> <span class="pre">=</span> <span class="pre">False</span></code>. If you
+want to display registration-protected flatpages, you need to specify
+an authenticated user using a <code class="docutils literal notranslate"><span class="pre">for</span></code> clause.</p>
+<p>For example:</p>
+<div class="highlight-html+django notranslate"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">get_flatpages</span> <span class="nv">for</span> <span class="nv">someuser</span> <span class="k">as</span> <span class="nv">about_pages</span> <span class="cp">%}</span>
+</pre></div>
+</div>
+<p>If you provide an anonymous user, <a class="reference internal" href="#std:templatetag-get_flatpages"><code class="xref std std-ttag docutils literal notranslate"><span class="pre">get_flatpages</span></code></a> will behave
+the same as if you hadn't provided a user -- i.e., it will only show you
+public flatpages.</p>
+</div>
+<div class="section" id="s-limiting-flatpages-by-base-url">
+<span id="limiting-flatpages-by-base-url"></span><h3>Limiting flatpages by base URL<a class="headerlink" href="#limiting-flatpages-by-base-url" title="Permalink to this headline">¶</a></h3>
+<p>An optional argument, <code class="docutils literal notranslate"><span class="pre">starts_with</span></code>, can be applied to limit the
+returned pages to those beginning with a particular base URL. This
+argument may be passed as a string, or as a variable to be resolved
+from the context.</p>
+<p>For example:</p>
+<div class="highlight-html+django notranslate"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">get_flatpages</span> <span class="s1">&#39;/about/&#39;</span> <span class="k">as</span> <span class="nv">about_pages</span> <span class="cp">%}</span>
+<span class="cp">{%</span> <span class="k">get_flatpages</span> <span class="nv">about_prefix</span> <span class="k">as</span> <span class="nv">about_pages</span> <span class="cp">%}</span>
+<span class="cp">{%</span> <span class="k">get_flatpages</span> <span class="s1">&#39;/about/&#39;</span> <span class="nv">for</span> <span class="nv">someuser</span> <span class="k">as</span> <span class="nv">about_pages</span> <span class="cp">%}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="s-integrating-with-django-contrib-sitemaps">
+<span id="integrating-with-django-contrib-sitemaps"></span><h2>Integrating with <a class="reference internal" href="sitemaps.html#module-django.contrib.sitemaps" title="django.contrib.sitemaps: A framework for generating Google sitemap XML files."><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.sitemaps</span></code></a><a class="headerlink" href="#integrating-with-django-contrib-sitemaps" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.contrib.flatpages.sitemaps.FlatPageSitemap">
+<em class="property">class </em><code class="descname">FlatPageSitemap</code><a class="reference internal" href="../../_modules/django/contrib/flatpages/sitemaps.html#FlatPageSitemap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.contrib.flatpages.sitemaps.FlatPageSitemap" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#django.contrib.flatpages.sitemaps.FlatPageSitemap" title="django.contrib.flatpages.sitemaps.FlatPageSitemap"><code class="xref py py-class docutils literal notranslate"><span class="pre">sitemaps.FlatPageSitemap</span></code></a> class looks at all
+publicly visible <a class="reference internal" href="#module-django.contrib.flatpages" title="django.contrib.flatpages: A framework for managing simple ?flat? HTML content in a database."><code class="xref py py-mod docutils literal notranslate"><span class="pre">flatpages</span></code></a> defined for the current
+<a class="reference internal" href="../settings.html#std:setting-SITE_ID"><code class="xref std std-setting docutils literal notranslate"><span class="pre">SITE_ID</span></code></a> (see the <a class="reference internal" href="sites.html#module-django.contrib.sites" title="django.contrib.sites: Lets you operate multiple websites from the same database and Django project"><code class="xref py py-mod docutils literal notranslate"><span class="pre">sites</span> <span class="pre">documentation</span></code></a>) and creates an entry in the sitemap. These entries
+include only the <a class="reference internal" href="sitemaps.html#django.contrib.sitemaps.Sitemap.location" title="django.contrib.sitemaps.Sitemap.location"><code class="xref py py-attr docutils literal notranslate"><span class="pre">location</span></code></a>
+attribute -- not <a class="reference internal" href="sitemaps.html#django.contrib.sitemaps.Sitemap.lastmod" title="django.contrib.sitemaps.Sitemap.lastmod"><code class="xref py py-attr docutils literal notranslate"><span class="pre">lastmod</span></code></a>,
+<a class="reference internal" href="sitemaps.html#django.contrib.sitemaps.Sitemap.changefreq" title="django.contrib.sitemaps.Sitemap.changefreq"><code class="xref py py-attr docutils literal notranslate"><span class="pre">changefreq</span></code></a> or
+<a class="reference internal" href="sitemaps.html#django.contrib.sitemaps.Sitemap.priority" title="django.contrib.sitemaps.Sitemap.priority"><code class="xref py py-attr docutils literal notranslate"><span class="pre">priority</span></code></a>.</p>
+</dd></dl>
+
+<div class="section" id="s-example">
+<span id="example"></span><h3>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
+<p>Here's an example of a URLconf using <a class="reference internal" href="#django.contrib.flatpages.sitemaps.FlatPageSitemap" title="django.contrib.flatpages.sitemaps.FlatPageSitemap"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlatPageSitemap</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib.flatpages.sitemaps</span> <span class="k">import</span> <span class="n">FlatPageSitemap</span>
+<span class="kn">from</span> <span class="nn">django.contrib.sitemaps.views</span> <span class="k">import</span> <span class="n">sitemap</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="k">import</span> <span class="n">path</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># ...</span>
+
+    <span class="c1"># the sitemap</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;sitemap.xml&#39;</span><span class="p">,</span> <span class="n">sitemap</span><span class="p">,</span>
+        <span class="p">{</span><span class="s1">&#39;sitemaps&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;flatpages&#39;</span><span class="p">:</span> <span class="n">FlatPageSitemap</span><span class="p">}},</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;django.contrib.sitemaps.views.sitemap&#39;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The flatpages app</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#how-it-works">How it works</a><ul>
+<li><a class="reference internal" href="#using-the-urlconf">Using the URLconf</a></li>
+<li><a class="reference internal" href="#using-the-middleware">Using the middleware</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#how-to-add-change-and-delete-flatpages">How to add, change and delete flatpages</a><ul>
+<li><a class="reference internal" href="#via-the-admin-interface">Via the admin interface</a></li>
+<li><a class="reference internal" href="#via-the-python-api">Via the Python API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#flatpage-templates">Flatpage templates</a></li>
+<li><a class="reference internal" href="#getting-a-list-of-flatpage-objects-in-your-templates">Getting a list of <code class="docutils literal notranslate"><span class="pre">FlatPage</span></code> objects in your templates</a><ul>
+<li><a class="reference internal" href="#displaying-registration-required-flatpages">Displaying <code class="docutils literal notranslate"><span class="pre">registration_required</span></code> flatpages</a></li>
+<li><a class="reference internal" href="#limiting-flatpages-by-base-url">Limiting flatpages by base URL</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#integrating-with-django-contrib-sitemaps">Integrating with <code class="docutils literal notranslate"><span class="pre">django.contrib.sitemaps</span></code></a><ul>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="contenttypes.html"
+                        title="previous chapter">The contenttypes framework</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="gis/index.html"
+                        title="next chapter">GeoDjango</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/ref/contrib/flatpages.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="contenttypes.html" title="The contenttypes framework">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="gis/index.html" title="GeoDjango">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

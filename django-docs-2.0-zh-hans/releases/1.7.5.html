@@ -1,0 +1,172 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Django 1.7.5 release notes &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Django 1.7.4 release notes" href="1.7.4.html" />
+    <link rel="prev" title="Django 1.7.6 release notes" href="1.7.6.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="1.7.6.html" title="Django 1.7.6 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.7.4.html" title="Django 1.7.4 release notes">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="releases-1.7.5">
+            
+  <div class="section" id="s-django-1-7-5-release-notes">
+<span id="django-1-7-5-release-notes"></span><h1>Django 1.7.5 release notes<a class="headerlink" href="#django-1-7-5-release-notes" title="Permalink to this headline">¶</a></h1>
+<p><em>February 25, 2015</em></p>
+<p>Django 1.7.5 fixes several bugs in 1.7.4.</p>
+<div class="section" id="s-bugfixes">
+<span id="bugfixes"></span><h2>Bugfixes<a class="headerlink" href="#bugfixes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Reverted a fix that prevented a migration crash when unapplying
+<code class="docutils literal notranslate"><span class="pre">contrib.contenttypes</span></code>’s or <code class="docutils literal notranslate"><span class="pre">contrib.auth</span></code>’s first migration
+(<a class="reference external" href="https://code.djangoproject.com/ticket/24075">#24075</a>) due to severe impact on the test performance
+(<a class="reference external" href="https://code.djangoproject.com/ticket/24251">#24251</a>) and problems in multi-database setups (<a class="reference external" href="https://code.djangoproject.com/ticket/24298">#24298</a>).</li>
+<li>Fixed a regression that prevented custom fields inheriting from
+<code class="docutils literal notranslate"><span class="pre">ManyToManyField</span></code> from being recognized in migrations (<a class="reference external" href="https://code.djangoproject.com/ticket/24236">#24236</a>).</li>
+<li>Fixed crash in <code class="docutils literal notranslate"><span class="pre">contrib.sites</span></code> migrations when a default database isn't
+used (<a class="reference external" href="https://code.djangoproject.com/ticket/24332">#24332</a>).</li>
+<li>Added the ability to set the isolation level on PostgreSQL with psycopg2 ≥
+2.4.2 (<a class="reference external" href="https://code.djangoproject.com/ticket/24318">#24318</a>). It was advertised as a new feature in Django 1.6
+but it didn't work in practice.</li>
+<li>Formats for the Azerbaijani locale (<code class="docutils literal notranslate"><span class="pre">az</span></code>) have been added.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Django 1.7.5 release notes</a><ul>
+<li><a class="reference internal" href="#bugfixes">Bugfixes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="1.7.6.html"
+                        title="previous chapter">Django 1.7.6 release notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="1.7.4.html"
+                        title="next chapter">Django 1.7.4 release notes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/releases/1.7.5.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="1.7.6.html" title="Django 1.7.6 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.7.4.html" title="Django 1.7.4 release notes">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

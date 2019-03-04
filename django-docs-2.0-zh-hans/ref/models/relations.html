@@ -1,0 +1,323 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Related objects reference &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Model class reference" href="class.html" />
+    <link rel="prev" title="Model _meta API" href="meta.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="meta.html" title="Model &lt;code class=&#34;docutils literal notranslate&#34;&gt;&lt;span class=&#34;pre&#34;&gt;_meta&lt;/span&gt;&lt;/code&gt; API">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="class.html" title="Model class reference">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="ref-models-relations">
+            
+  <div class="section" id="s-related-objects-reference">
+<span id="related-objects-reference"></span><h1>Related objects reference<a class="headerlink" href="#related-objects-reference" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="django.db.models.fields.related.RelatedManager">
+<em class="property">class </em><code class="descname">RelatedManager</code><a class="headerlink" href="#django.db.models.fields.related.RelatedManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>A &quot;related manager&quot; is a manager used in a one-to-many or many-to-many
+related context. This happens in two cases:</p>
+<ul>
+<li><p class="first">The &quot;other side&quot; of a <a class="reference internal" href="fields.html#django.db.models.ForeignKey" title="django.db.models.ForeignKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForeignKey</span></code></a> relation.
+That is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="k">import</span> <span class="n">models</span>
+
+<span class="k">class</span> <span class="nc">Reporter</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">Article</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">reporter</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Reporter</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the above example, the methods below will be available on
+the manager <code class="docutils literal notranslate"><span class="pre">reporter.article_set</span></code>.</p>
+</li>
+<li><p class="first">Both sides of a <a class="reference internal" href="fields.html#django.db.models.ManyToManyField" title="django.db.models.ManyToManyField"><code class="xref py py-class docutils literal notranslate"><span class="pre">ManyToManyField</span></code></a> relation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Topping</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">Pizza</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">toppings</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Topping</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this example, the methods below will be available both on
+<code class="docutils literal notranslate"><span class="pre">topping.pizza_set</span></code> and on <code class="docutils literal notranslate"><span class="pre">pizza.toppings</span></code>.</p>
+</li>
+</ul>
+<dl class="method">
+<dt id="django.db.models.fields.related.RelatedManager.add">
+<code class="descname">add</code>(<em>*objs</em>, <em>bulk=True</em>)<a class="headerlink" href="#django.db.models.fields.related.RelatedManager.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds the specified model objects to the related object set.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">Blog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">Entry</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">234</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">entry_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="c1"># Associates Entry e with Blog b.</span>
+</pre></div>
+</div>
+<p>In the example above, in the case of a
+<a class="reference internal" href="fields.html#django.db.models.ForeignKey" title="django.db.models.ForeignKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForeignKey</span></code></a> relationship,
+<a class="reference internal" href="querysets.html#django.db.models.query.QuerySet.update" title="django.db.models.query.QuerySet.update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">QuerySet.update()</span></code></a>
+is used to perform the update. This requires the objects to already be
+saved.</p>
+<p>You can use the <code class="docutils literal notranslate"><span class="pre">bulk=False</span></code> argument to instead have the related
+manager perform the update by calling <code class="docutils literal notranslate"><span class="pre">e.save()</span></code>.</p>
+<p>Using <code class="docutils literal notranslate"><span class="pre">add()</span></code> with a many-to-many relationship, however, will not
+call any <code class="docutils literal notranslate"><span class="pre">save()</span></code> methods (the <code class="docutils literal notranslate"><span class="pre">bulk</span></code> argument doesn't exist), but
+rather create the relationships using <a class="reference internal" href="querysets.html#django.db.models.query.QuerySet.bulk_create" title="django.db.models.query.QuerySet.bulk_create"><code class="xref py py-meth docutils literal notranslate"><span class="pre">QuerySet.bulk_create()</span></code></a>. If you need to execute
+some custom logic when a relationship is created, listen to the
+<a class="reference internal" href="../signals.html#django.db.models.signals.m2m_changed" title="django.db.models.signals.m2m_changed"><code class="xref py py-data docutils literal notranslate"><span class="pre">m2m_changed</span></code></a> signal, which will
+trigger <code class="docutils literal notranslate"><span class="pre">pre_add</span></code> and <code class="docutils literal notranslate"><span class="pre">post_add</span></code> actions.</p>
+<p>Using <code class="docutils literal notranslate"><span class="pre">add()</span></code> on a relation that already exists won't duplicate the
+relation, but it will still trigger signals.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.db.models.fields.related.RelatedManager.create">
+<code class="descname">create</code>(<em>**kwargs</em>)<a class="headerlink" href="#django.db.models.fields.related.RelatedManager.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new object, saves it and puts it in the related object set.
+Returns the newly created object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">Blog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">entry_set</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">headline</span><span class="o">=</span><span class="s1">&#39;Hello&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">body_text</span><span class="o">=</span><span class="s1">&#39;Hi&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">pub_date</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">2005</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+
+<span class="go"># No need to call e.save() at this point -- it&#39;s already been saved.</span>
+</pre></div>
+</div>
+<p>This is equivalent to (but much simpler than):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">Blog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">Entry</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">blog</span><span class="o">=</span><span class="n">b</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">headline</span><span class="o">=</span><span class="s1">&#39;Hello&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">body_text</span><span class="o">=</span><span class="s1">&#39;Hi&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">pub_date</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">2005</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">force_insert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that there's no need to specify the keyword argument of the model
+that defines the relationship. In the above example, we don't pass the
+parameter <code class="docutils literal notranslate"><span class="pre">blog</span></code> to <code class="docutils literal notranslate"><span class="pre">create()</span></code>. Django figures out that the new
+<code class="docutils literal notranslate"><span class="pre">Entry</span></code> object's <code class="docutils literal notranslate"><span class="pre">blog</span></code> field should be set to <code class="docutils literal notranslate"><span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.db.models.fields.related.RelatedManager.remove">
+<code class="descname">remove</code>(<em>*objs</em>)<a class="headerlink" href="#django.db.models.fields.related.RelatedManager.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the specified model objects from the related object set:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">Blog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">Entry</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">234</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">entry_set</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="c1"># Disassociates Entry e from Blog b.</span>
+</pre></div>
+</div>
+<p>Similar to <a class="reference internal" href="#django.db.models.fields.related.RelatedManager.add" title="django.db.models.fields.related.RelatedManager.add"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add()</span></code></a>, <code class="docutils literal notranslate"><span class="pre">e.save()</span></code> is called in the example above
+to perform the update. Using <code class="docutils literal notranslate"><span class="pre">remove()</span></code> with a many-to-many
+relationship, however, will delete the relationships using
+<a class="reference internal" href="querysets.html#django.db.models.query.QuerySet.delete" title="django.db.models.query.QuerySet.delete"><code class="xref py py-meth docutils literal notranslate"><span class="pre">QuerySet.delete()</span></code></a> which
+means no model <code class="docutils literal notranslate"><span class="pre">save()</span></code> methods are called; listen to the
+<a class="reference internal" href="../signals.html#django.db.models.signals.m2m_changed" title="django.db.models.signals.m2m_changed"><code class="xref py py-data docutils literal notranslate"><span class="pre">m2m_changed</span></code></a> signal if you wish to
+execute custom code when a relationship is deleted.</p>
+<p>For <a class="reference internal" href="fields.html#django.db.models.ForeignKey" title="django.db.models.ForeignKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForeignKey</span></code></a> objects, this method only
+exists if <code class="docutils literal notranslate"><span class="pre">null=True</span></code>. If the related field can't be set to <code class="docutils literal notranslate"><span class="pre">None</span></code>
+(<code class="docutils literal notranslate"><span class="pre">NULL</span></code>), then an object can't be removed from a relation without
+being added to another. In the above example, removing <code class="docutils literal notranslate"><span class="pre">e</span></code> from
+<code class="docutils literal notranslate"><span class="pre">b.entry_set()</span></code> is equivalent to doing <code class="docutils literal notranslate"><span class="pre">e.blog</span> <span class="pre">=</span> <span class="pre">None</span></code>, and because
+the <code class="docutils literal notranslate"><span class="pre">blog</span></code> <a class="reference internal" href="fields.html#django.db.models.ForeignKey" title="django.db.models.ForeignKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForeignKey</span></code></a> doesn't have
+<code class="docutils literal notranslate"><span class="pre">null=True</span></code>, this is invalid.</p>
+<p>For <a class="reference internal" href="fields.html#django.db.models.ForeignKey" title="django.db.models.ForeignKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForeignKey</span></code></a> objects, this method accepts
+a <code class="docutils literal notranslate"><span class="pre">bulk</span></code> argument to control how to perform the operation.
+If <code class="docutils literal notranslate"><span class="pre">True</span></code> (the default), <code class="docutils literal notranslate"><span class="pre">QuerySet.update()</span></code> is used.
+If <code class="docutils literal notranslate"><span class="pre">bulk=False</span></code>, the <code class="docutils literal notranslate"><span class="pre">save()</span></code> method of each individual model
+instance is called instead. This triggers the
+<a class="reference internal" href="../signals.html#django.db.models.signals.pre_save" title="django.db.models.signals.pre_save"><code class="xref py py-data docutils literal notranslate"><span class="pre">pre_save</span></code></a> and
+<a class="reference internal" href="../signals.html#django.db.models.signals.post_save" title="django.db.models.signals.post_save"><code class="xref py py-data docutils literal notranslate"><span class="pre">post_save</span></code></a> signals and comes at the
+expense of performance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.db.models.fields.related.RelatedManager.clear">
+<code class="descname">clear</code>()<a class="headerlink" href="#django.db.models.fields.related.RelatedManager.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes all objects from the related object set:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">Blog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">entry_set</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Note this doesn't delete the related objects -- it just disassociates
+them.</p>
+<p>Just like <code class="docutils literal notranslate"><span class="pre">remove()</span></code>, <code class="docutils literal notranslate"><span class="pre">clear()</span></code> is only available on
+<a class="reference internal" href="fields.html#django.db.models.ForeignKey" title="django.db.models.ForeignKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForeignKey</span></code></a>s where <code class="docutils literal notranslate"><span class="pre">null=True</span></code> and it also
+accepts the <code class="docutils literal notranslate"><span class="pre">bulk</span></code> keyword argument.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.db.models.fields.related.RelatedManager.set">
+<code class="descname">set</code>(<em>objs</em>, <em>bulk=True</em>, <em>clear=False</em>)<a class="headerlink" href="#django.db.models.fields.related.RelatedManager.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace the set of related objects:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">obj1</span><span class="p">,</span> <span class="n">obj2</span><span class="p">,</span> <span class="n">obj3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">related_set</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">new_list</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This method accepts a <code class="docutils literal notranslate"><span class="pre">clear</span></code> argument to control how to perform the
+operation. If <code class="docutils literal notranslate"><span class="pre">False</span></code> (the default), the elements missing from the
+new set are removed using <code class="docutils literal notranslate"><span class="pre">remove()</span></code> and only the new ones are added.
+If <code class="docutils literal notranslate"><span class="pre">clear=True</span></code>, the <code class="docutils literal notranslate"><span class="pre">clear()</span></code> method is called instead and the
+whole set is added at once.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">bulk</span></code> argument is passed on to <a class="reference internal" href="#django.db.models.fields.related.RelatedManager.add" title="django.db.models.fields.related.RelatedManager.add"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add()</span></code></a>.</p>
+<p>Note that since <code class="docutils literal notranslate"><span class="pre">set()</span></code> is a compound operation, it is subject to
+race conditions. For instance, new objects may be added to the database
+in between the call to <code class="docutils literal notranslate"><span class="pre">clear()</span></code> and the call to <code class="docutils literal notranslate"><span class="pre">add()</span></code>.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">add()</span></code>, <code class="docutils literal notranslate"><span class="pre">create()</span></code>, <code class="docutils literal notranslate"><span class="pre">remove()</span></code>, <code class="docutils literal notranslate"><span class="pre">clear()</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">set()</span></code> all apply database changes immediately for all types of
+related fields. In other words, there is no need to call <code class="docutils literal notranslate"><span class="pre">save()</span></code>
+on either end of the relationship.</p>
+<p>Also, if you are using <a class="reference internal" href="../../topics/db/models.html#intermediary-manytomany"><span class="std std-ref">an intermediate model</span></a> for a many-to-many relationship, then the
+<code class="docutils literal notranslate"><span class="pre">add()</span></code>, <code class="docutils literal notranslate"><span class="pre">create()</span></code>, <code class="docutils literal notranslate"><span class="pre">remove()</span></code>, and <code class="docutils literal notranslate"><span class="pre">set()</span></code> methods are
+disabled.</p>
+<p>If you use <a class="reference internal" href="querysets.html#django.db.models.query.QuerySet.prefetch_related" title="django.db.models.query.QuerySet.prefetch_related"><code class="xref py py-meth docutils literal notranslate"><span class="pre">prefetch_related()</span></code></a>,
+the <code class="docutils literal notranslate"><span class="pre">add()</span></code>, <code class="docutils literal notranslate"><span class="pre">remove()</span></code>, <code class="docutils literal notranslate"><span class="pre">clear()</span></code>, and <code class="docutils literal notranslate"><span class="pre">set()</span></code> methods clear
+the prefetched cache.</p>
+<div class="last versionchanged">
+<span class="title">Changed in Django 1.11:</span> <p>The clearing of the prefetched cache described above was added.</p>
+</div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="meta.html"
+                        title="previous chapter">Model <code class="docutils literal notranslate"><span class="pre">_meta</span></code> API</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="class.html"
+                        title="next chapter">Model class reference</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/ref/models/relations.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="meta.html" title="Model &lt;code class=&#34;docutils literal notranslate&#34;&gt;&lt;span class=&#34;pre&#34;&gt;_meta&lt;/span&gt;&lt;/code&gt; API">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="class.html" title="Model class reference">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

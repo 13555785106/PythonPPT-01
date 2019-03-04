@@ -1,0 +1,267 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Overview: module code &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    <a title="Django 2.0.9.dev20180801150728 documentation" href="../index.html" accesskey="U">up</a></div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="_modules-index">
+            
+  <h1>All modules for which code is available</h1>
+<ul><li><a href="django.html">django</a></li>
+<ul><li><a href="django/apps/config.html">django.apps.config</a></li>
+<li><a href="django/apps/registry.html">django.apps.registry</a></li>
+<li><a href="django/conf/urls.html">django.conf.urls</a></li>
+<ul><li><a href="django/conf/urls/i18n.html">django.conf.urls.i18n</a></li>
+</ul><li><a href="django/contrib/admin.html">django.contrib.admin</a></li>
+<ul><li><a href="django/contrib/admin/decorators.html">django.contrib.admin.decorators</a></li>
+<li><a href="django/contrib/admin/options.html">django.contrib.admin.options</a></li>
+<li><a href="django/contrib/admin/sites.html">django.contrib.admin.sites</a></li>
+<li><a href="django/contrib/admin/views/decorators.html">django.contrib.admin.views.decorators</a></li>
+</ul><li><a href="django/contrib/auth.html">django.contrib.auth</a></li>
+<ul><li><a href="django/contrib/auth/context_processors.html">django.contrib.auth.context_processors</a></li>
+<li><a href="django/contrib/auth/decorators.html">django.contrib.auth.decorators</a></li>
+<li><a href="django/contrib/auth/hashers.html">django.contrib.auth.hashers</a></li>
+<li><a href="django/contrib/auth/password_validation.html">django.contrib.auth.password_validation</a></li>
+</ul><li><a href="django/contrib/flatpages/sitemaps.html">django.contrib.flatpages.sitemaps</a></li>
+<li><a href="django/contrib/gis/feeds.html">django.contrib.gis.feeds</a></li>
+<li><a href="django/contrib/gis/measure.html">django.contrib.gis.measure</a></li>
+<li><a href="django/contrib/messages/api.html">django.contrib.messages.api</a></li>
+<li><a href="django/contrib/messages/middleware.html">django.contrib.messages.middleware</a></li>
+<li><a href="django/contrib/postgres/aggregates/general.html">django.contrib.postgres.aggregates.general</a></li>
+<li><a href="django/contrib/postgres/aggregates/statistics.html">django.contrib.postgres.aggregates.statistics</a></li>
+<li><a href="django/contrib/postgres/fields/array.html">django.contrib.postgres.fields.array</a></li>
+<li><a href="django/contrib/postgres/fields/citext.html">django.contrib.postgres.fields.citext</a></li>
+<li><a href="django/contrib/postgres/fields/hstore.html">django.contrib.postgres.fields.hstore</a></li>
+<li><a href="django/contrib/postgres/fields/jsonb.html">django.contrib.postgres.fields.jsonb</a></li>
+<li><a href="django/contrib/postgres/fields/ranges.html">django.contrib.postgres.fields.ranges</a></li>
+<li><a href="django/contrib/postgres/forms/array.html">django.contrib.postgres.forms.array</a></li>
+<li><a href="django/contrib/postgres/forms/hstore.html">django.contrib.postgres.forms.hstore</a></li>
+<li><a href="django/contrib/postgres/forms/jsonb.html">django.contrib.postgres.forms.jsonb</a></li>
+<li><a href="django/contrib/postgres/forms/ranges.html">django.contrib.postgres.forms.ranges</a></li>
+<li><a href="django/contrib/postgres/functions.html">django.contrib.postgres.functions</a></li>
+<li><a href="django/contrib/postgres/indexes.html">django.contrib.postgres.indexes</a></li>
+<li><a href="django/contrib/postgres/operations.html">django.contrib.postgres.operations</a></li>
+<li><a href="django/contrib/postgres/search.html">django.contrib.postgres.search</a></li>
+<li><a href="django/contrib/postgres/validators.html">django.contrib.postgres.validators</a></li>
+<li><a href="django/contrib/sessions/backends/base.html">django.contrib.sessions.backends.base</a></li>
+<li><a href="django/contrib/sessions/middleware.html">django.contrib.sessions.middleware</a></li>
+<li><a href="django/contrib/sitemaps.html">django.contrib.sitemaps</a></li>
+<li><a href="django/contrib/sites/middleware.html">django.contrib.sites.middleware</a></li>
+<li><a href="django/contrib/sites/shortcuts.html">django.contrib.sites.shortcuts</a></li>
+<li><a href="django/contrib/syndication/views.html">django.contrib.syndication.views</a></li>
+<li><a href="django/core/checks/messages.html">django.core.checks.messages</a></li>
+<li><a href="django/core/checks/registry.html">django.core.checks.registry</a></li>
+<li><a href="django/core/exceptions.html">django.core.exceptions</a></li>
+<li><a href="django/core/files/base.html">django.core.files.base</a></li>
+<li><a href="django/core/files/images.html">django.core.files.images</a></li>
+<li><a href="django/core/files/storage.html">django.core.files.storage</a></li>
+<li><a href="django/core/files/uploadedfile.html">django.core.files.uploadedfile</a></li>
+<li><a href="django/core/files/uploadhandler.html">django.core.files.uploadhandler</a></li>
+<li><a href="django/core/mail.html">django.core.mail</a></li>
+<ul><li><a href="django/core/mail/message.html">django.core.mail.message</a></li>
+</ul><li><a href="django/core/management/base.html">django.core.management.base</a></li>
+<li><a href="django/core/paginator.html">django.core.paginator</a></li>
+<li><a href="django/core/signing.html">django.core.signing</a></li>
+<li><a href="django/core/validators.html">django.core.validators</a></li>
+<li><a href="django/db/backends/base/schema.html">django.db.backends.base.schema</a></li>
+<li><a href="django/db/migrations/operations/fields.html">django.db.migrations.operations.fields</a></li>
+<li><a href="django/db/migrations/operations/models.html">django.db.migrations.operations.models</a></li>
+<li><a href="django/db/migrations/operations/special.html">django.db.migrations.operations.special</a></li>
+<li><a href="django/db/models/aggregates.html">django.db.models.aggregates</a></li>
+<li><a href="django/db/models/base.html">django.db.models.base</a></li>
+<li><a href="django/db/models/deletion.html">django.db.models.deletion</a></li>
+<li><a href="django/db/models/expressions.html">django.db.models.expressions</a></li>
+<li><a href="django/db/models/fields.html">django.db.models.fields</a></li>
+<ul><li><a href="django/db/models/fields/files.html">django.db.models.fields.files</a></li>
+<li><a href="django/db/models/fields/related.html">django.db.models.fields.related</a></li>
+</ul><li><a href="django/db/models/functions/base.html">django.db.models.functions.base</a></li>
+<li><a href="django/db/models/functions/datetime.html">django.db.models.functions.datetime</a></li>
+<li><a href="django/db/models/functions/window.html">django.db.models.functions.window</a></li>
+<li><a href="django/db/models/indexes.html">django.db.models.indexes</a></li>
+<li><a href="django/db/models/lookups.html">django.db.models.lookups</a></li>
+<li><a href="django/db/models/manager.html">django.db.models.manager</a></li>
+<li><a href="django/db/models/options.html">django.db.models.options</a></li>
+<li><a href="django/db/models/query.html">django.db.models.query</a></li>
+<li><a href="django/db/models/query_utils.html">django.db.models.query_utils</a></li>
+<li><a href="django/db/transaction.html">django.db.transaction</a></li>
+<li><a href="django/db/utils.html">django.db.utils</a></li>
+<li><a href="django/dispatch/dispatcher.html">django.dispatch.dispatcher</a></li>
+<li><a href="django/forms/boundfield.html">django.forms.boundfield</a></li>
+<li><a href="django/forms/fields.html">django.forms.fields</a></li>
+<li><a href="django/forms/forms.html">django.forms.forms</a></li>
+<li><a href="django/forms/formsets.html">django.forms.formsets</a></li>
+<li><a href="django/forms/models.html">django.forms.models</a></li>
+<li><a href="django/forms/renderers.html">django.forms.renderers</a></li>
+<li><a href="django/forms/widgets.html">django.forms.widgets</a></li>
+<li><a href="django/http/request.html">django.http.request</a></li>
+<li><a href="django/http/response.html">django.http.response</a></li>
+<li><a href="django/middleware/cache.html">django.middleware.cache</a></li>
+<li><a href="django/middleware/clickjacking.html">django.middleware.clickjacking</a></li>
+<li><a href="django/middleware/common.html">django.middleware.common</a></li>
+<li><a href="django/middleware/csrf.html">django.middleware.csrf</a></li>
+<li><a href="django/middleware/gzip.html">django.middleware.gzip</a></li>
+<li><a href="django/middleware/http.html">django.middleware.http</a></li>
+<li><a href="django/middleware/locale.html">django.middleware.locale</a></li>
+<li><a href="django/middleware/security.html">django.middleware.security</a></li>
+<li><a href="django/shortcuts.html">django.shortcuts</a></li>
+<li><a href="django/template/backends/django.html">django.template.backends.django</a></li>
+<li><a href="django/template/backends/jinja2.html">django.template.backends.jinja2</a></li>
+<li><a href="django/template/base.html">django.template.base</a></li>
+<li><a href="django/template/context.html">django.template.context</a></li>
+<li><a href="django/template/context_processors.html">django.template.context_processors</a></li>
+<li><a href="django/template/engine.html">django.template.engine</a></li>
+<li><a href="django/template/exceptions.html">django.template.exceptions</a></li>
+<li><a href="django/template/loader.html">django.template.loader</a></li>
+<li><a href="django/template/loaders/base.html">django.template.loaders.base</a></li>
+<li><a href="django/template/response.html">django.template.response</a></li>
+<li><a href="django/template/utils.html">django.template.utils</a></li>
+<li><a href="django/test/client.html">django.test.client</a></li>
+<li><a href="django/test/runner.html">django.test.runner</a></li>
+<li><a href="django/test/testcases.html">django.test.testcases</a></li>
+<li><a href="django/test/utils.html">django.test.utils</a></li>
+<li><a href="django/urls/base.html">django.urls.base</a></li>
+<li><a href="django/urls/conf.html">django.urls.conf</a></li>
+<li><a href="django/urls/converters.html">django.urls.converters</a></li>
+<li><a href="django/urls/exceptions.html">django.urls.exceptions</a></li>
+<li><a href="django/urls/resolvers.html">django.urls.resolvers</a></li>
+<li><a href="django/utils/cache.html">django.utils.cache</a></li>
+<li><a href="django/utils/datastructures.html">django.utils.datastructures</a></li>
+<li><a href="django/utils/dateparse.html">django.utils.dateparse</a></li>
+<li><a href="django/utils/decorators.html">django.utils.decorators</a></li>
+<li><a href="django/utils/encoding.html">django.utils.encoding</a></li>
+<li><a href="django/utils/feedgenerator.html">django.utils.feedgenerator</a></li>
+<li><a href="django/utils/functional.html">django.utils.functional</a></li>
+<li><a href="django/utils/html.html">django.utils.html</a></li>
+<li><a href="django/utils/http.html">django.utils.http</a></li>
+<li><a href="django/utils/log.html">django.utils.log</a></li>
+<li><a href="django/utils/module_loading.html">django.utils.module_loading</a></li>
+<li><a href="django/utils/safestring.html">django.utils.safestring</a></li>
+<li><a href="django/utils/six.html">django.utils.six</a></li>
+<li><a href="django/utils/text.html">django.utils.text</a></li>
+<li><a href="django/utils/timezone.html">django.utils.timezone</a></li>
+<li><a href="django/utils/translation.html">django.utils.translation</a></li>
+<li><a href="django/views/debug.html">django.views.debug</a></li>
+<li><a href="django/views/decorators/cache.html">django.views.decorators.cache</a></li>
+<li><a href="django/views/decorators/csrf.html">django.views.decorators.csrf</a></li>
+<li><a href="django/views/decorators/debug.html">django.views.decorators.debug</a></li>
+<li><a href="django/views/decorators/http.html">django.views.decorators.http</a></li>
+<li><a href="django/views/decorators/vary.html">django.views.decorators.vary</a></li>
+<li><a href="django/views/defaults.html">django.views.defaults</a></li>
+<li><a href="django/views/generic/dates.html">django.views.generic.dates</a></li>
+<li><a href="django/views/i18n.html">django.views.i18n</a></li>
+<li><a href="django/views/static.html">django.views.static</a></li>
+</ul><li><a href="pytz.html">pytz</a></li>
+<li><a href="unittest/loader.html">unittest.loader</a></li>
+<li><a href="unittest/runner.html">unittest.runner</a></li>
+<li><a href="unittest/suite.html">unittest.suite</a></li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    <a title="Django 2.0.9.dev20180801150728 documentation" href="../index.html" accesskey="U">up</a></div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

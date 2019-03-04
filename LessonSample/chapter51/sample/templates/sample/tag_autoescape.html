@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tag autoescape</title>
+</head>
+<body>
+{% autoescape on %}
+{{message}}
+{% endautoescape %}
+<br/>
+{% autoescape off %}
+{{message}}
+{% endautoescape %}
+</body>
+</html>

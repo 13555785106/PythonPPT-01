@@ -1,0 +1,669 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>注册网易免费邮箱 - 中国第一大电子邮件服务商</title>
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="http://mimg.127.net/hd/lib/html5/js/main.js"></script>
+<link rel="shortcut icon" href="http://mail.163.com/favicon.ico" />
+<link href="http://mimg.127.net/xm/reg_all/140120/css/style.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+.content .reg-infoBox{width:480px}
+.mobConfirm{}
+.mobConfirm li{padding:8px 0 8px 80px; position:relative;zoom:1}
+.mobConfirm li .tit{ position:absolute;left:0;top:12px;font-size:14px}
+.mobConfirm li .btn,
+.mobConfirm li .btn-disable{font-size:12px;}
+.mobConfirm-mdf .ipt{width:222px}
+.mobConfirm-mdf .btn,
+.mobConfirm-mdf .btn-disable{width:192px; text-align:center}
+
+/* add css*/
+.inputContainer{
+	position:relative;
+	margin-left: -35px;
+}
+.itlFlag em,.itlSelect em{position:absolute;top:50%;left:5px;margin-top:-5px;display:inline-block;*display:inline;*zoom:1;width:16px;height:11px;overflow:hidden;background:url(http://reg.163.com/images2/flags.gif) no-repeat 9999px 9999px;}
+.itl{position:absolute;top:0px;left:35px;zoom:1;cursor: pointer;}
+.itl:after{display:block;clear:both;visibility:hidden;height:0;overflow:hidden;content:".";}
+.itlFlag{position:relative;width:100%;height:100%;float:left;cursor:default;background:url(http://reg.163.com/images2/triangle.gif) no-repeat 25px center;}
+.itlSelect{position:absolute;top:0;left:0;overflow-y:scroll;margin-left: 35px;border:1px solid #000;background:#fff; z-index:9999;}
+.itlSelect a{position:relative;display:block;height:24px;line-height:24px;padding-left:26px;overflow:hidden;}
+.itlSelect a:hover{background:#CCC;}
+.itlSelect a em{margin-right:0.5em;}
+
+/* A */
+.flag-AD em{background-position:0 -594px;}
+.flag-AE em{background-position:0 -2223px;}
+.flag-AF em{background-position:0 -2311px;}
+.flag-AG em{background-position:0 -869px;}
+.flag-AI em{background-position:0 -1980px;}
+.flag-AL em{background-position:0 -1034px;}
+.flag-AM em{background-position:0 -176px;}
+.flag-AN em{background-position:0 -220px;}
+.flag-AO em{background-position:0 -1947px;}
+.flag-AR em{background-position:0 -2377px;}
+/*.flag-asa { background-position:0 -1562px;}*//* 美属萨摩亚 */
+.flag-AT em{background-position:0 -1331px;}
+.flag-AU em{background-position:0 -1716px;}
+.flag-AW em{background-position:0 -792px;}
+.flag-AZ em{background-position:0 -1243px;}
+/* B */
+.flag-BA em{background-position:0 -1584px;}
+.flag-BB em{background-position:0 -1573px;}
+.flag-BD em{background-position:0 -1771px;}
+.flag-BE em{background-position:0 0px;}
+.flag-BF em{background-position:0 -726px;}
+.flag-BG em{background-position:0 -2586px;}
+.flag-BH em{background-position:0 -1496px;}
+.flag-BI em{background-position:0 -1892px;}
+.flag-BJ em{background-position:0 -1298px;}
+.flag-BM em{background-position:0 -1914px;}
+.flag-BN em{background-position:0 -1683px;}
+.flag-BO em{background-position:0 -1650px;}
+.flag-BR em{background-position:0 -770px;}
+.flag-BS em{background-position:0 -363px;}
+.flag-BT em{background-position:0 -1848px;}
+.flag-BW em{background-position:0 -2707px;}
+.flag-BY em{background-position:0 -1100px;}
+.flag-BZ em{background-position:0 -484px;}
+/* C */
+.flag-CA em{background-position:0 -1375px;}
+.flag-CD em{background-position:0 -1518px;}
+.flag-CF em{background-position:0 -1837px;}
+.flag-CG em{background-position:0 -1793px;}
+.flag-CH em{background-position:0 -1320px;}
+.flag-CI em{background-position:0 -1661px;}
+.flag-CK em{background-position:0 -891px;}
+.flag-CL em{background-position:0 -1342px;}
+.flag-CM em{background-position:0 -2057px;}
+.flag-CN em{background-position:0 -825px;}
+.flag-CO em{background-position:0 -330px;}
+/*.flag-cot { background-position:0 -1661px;}*//* 科特迪瓦 */
+.flag-CR em{background-position:0 -2090px;}
+.flag-CU em{background-position:0 -748px;}
+.flag-CV em{background-position:0 -2652px;}
+.flag-CY em{background-position:0 -561px;}
+.flag-CZ em{background-position:0 -2256px;}
+/* D */
+.flag-DE em{background-position:0 -2509px;}
+.flag-DJ em{background-position:0 -2101px;}
+.flag-DK em{background-position:0 -1386px;}
+.flag-DM em{background-position:0 -2432px;}
+.flag-DO em{background-position:0 -1529px;}
+.flag-DZ em{background-position:0 -528px;}
+/* E */
+.flag-EC em{background-position:0 -1188px;}
+.flag-EE em{background-position:0 -2410px;}
+.flag-EG em{background-position:0 -2201px;}
+.flag-ER em{background-position:0 -715px;}
+.flag-ES em{background-position:0 -1155px;}
+.flag-ET em{background-position:0 -2443px;}
+/* F */
+.flag-FI em{background-position:0 -1903px;}
+.flag-FJ em{background-position:0 -1859px;}
+.flag-FO em{background-position:0 -1111px;}
+.flag-FR em{background-position:0 -1012px;}
+/* G */
+.flag-GA em{background-position:0 -880px;}
+.flag-GB em{background-position:0 -55px;}
+.flag-GD em{background-position:0 -2399px;}
+.flag-GE em{background-position:0 -858px;}
+.flag-GF em{background-position:0 -2234px;}
+.flag-GH em{background-position:0 -2112px;}
+.flag-GI em{background-position:0 -275px;}
+.flag-GL em{background-position:0 -1760px;}
+.flag-GM em{background-position:0 -627px;}
+.flag-GN em{background-position:0 -2575px;}
+.flag-GP em{background-position:0 -407px;}
+.flag-GQ em{background-position:0 -1507px;}
+.flag-GR em{background-position:0 -165px;}
+.flag-GT em{background-position:0 -935px;}
+.flag-GU em{background-position:0 -2366px;}
+.flag-GW em{background-position:0 -1925px;}
+.flag-GY em{background-position:0 -803px;}
+/* H */
+.flag-HK em{background-position:0 -2696px;}
+.flag-HN em{background-position:0 -2156px;}
+.flag-HR em{background-position:0 -902px;}
+.flag-HT em{background-position:0 -319px;}
+.flag-HU em{background-position:0 -682px;}
+/* I */
+.flag-ID em{background-position:0 -1958px;}
+.flag-IE em{background-position:0 -1969px;}
+.flag-IL em{background-position:0 -341px;}
+.flag-IN em{background-position:0 -1694px;}
+.flag-IQ em{background-position:0 -649px;}
+.flag-IR em{background-position:0 -2013px;}
+.flag-IS em{background-position:0 -1991px;}
+.flag-IT em{background-position:0 -143px;}
+/* J */
+.flag-JE em{background-position:0 -55px;}
+.flag-JM em{background-position:0 -1727px;}
+.flag-JO em{background-position:0 -1463px;}
+.flag-JP em{background-position:0 -429px;}
+/* K */
+.flag-KE em{background-position:0 -2630px;}
+.flag-KG em{background-position:0 -1617px;}
+.flag-KH em{background-position:0 -242px;}
+.flag-KM em{background-position:0 -1430px;}
+.flag-KN em{background-position:0 -99px;}
+.flag-KP em{background-position:0 -1804px;}
+.flag-KR em{background-position:0 -2245px;}
+.flag-KW em{background-position:0 -2487px;}
+.flag-KY em{background-position:0 -308px;}
+.flag-KZ em{background-position:0 -1210px;}
+/* L */
+.flag-LA em{background-position:0 -451px;}
+.flag-LB em{background-position:0 -1254px;}
+.flag-LC em{background-position:0 -1397px;}
+.flag-LI em{background-position:0 -979px;}
+.flag-LK em{background-position:0 -2641px;}
+.flag-LR em{background-position:0 -2068px;}
+.flag-LS em{background-position:0 -2190px;}
+.flag-LT em{background-position:0 -1122px;}
+.flag-LU em{background-position:0 -1474px;}
+.flag-LV em{background-position:0 -1936px;}
+.flag-LY em{background-position:0 -132px;}
+/* M */
+.flag-MA em{background-position:0 -2333px;}
+/*.flag-mar { background-position:0 -1144px;}*//* 马绍尔群岛 */
+.flag-MC em{background-position:0 -913px;}
+.flag-MD em{background-position:0 -2685px;}
+.flag-ME em{background-position:0 -2167px;}
+.flag-MG em{background-position:0 -1287px;}
+/*.flag-mic { background-position:0 -1738px;}*//* 密克罗尼西亚联邦 */
+.flag-MK em{background-position:0 -1353px;}
+.flag-ML em{background-position:0 -2520px;}
+.flag-MN em{background-position:0 -2553px;}
+.flag-MO em{background-position:0 -2597px;}
+.flag-MQ em{background-position:0 -198px;}
+.flag-MR em{background-position:0 -253px;}
+.flag-MS em{background-position:0 -583px;}
+.flag-MT em{background-position:0 -1551px;}
+.flag-MU em{background-position:0 -2179px;}
+.flag-MV em{background-position:0 -616px;}
+.flag-MW em{background-position:0 -2145px;}
+.flag-MX em{background-position:0 -2024px;}
+.flag-MY em{background-position:0 -1870px;}
+/*.flag-mya { background-position:0 -11px;}*//* 缅甸 */
+.flag-MZ em{background-position:0 -638px;}
+/* N */
+.flag-NA em{background-position:0 -1881px;}
+/*.flag-nau { background-position:0 -1749px;}*//* 瑙鲁 */
+.flag-NC em{background-position:0 -1276px;}
+.flag-NE em{background-position:0 -550px;}
+.flag-NG em{background-position:0 -2476px;}
+.flag-NI em{background-position:0 -154px;}
+.flag-NL em{background-position:0 -1441px;}
+.flag-NO em{background-position:0 -836px;}
+/*.flag-nor { background-position:0 -209px;}*//* 诺福克岛 */
+/*.flag-norm { background-position:0 -704px;}*//* 北马里亚纳群岛 */
+.flag-NP em{background-position:0 -110px;}
+.flag-NZ em{background-position:0 -1540px;}
+/* O */
+.flag-OM em{background-position:0 -2454px;}
+/* P */
+.flag-PA em{background-position:0 -847px;}
+/*.flag-pala { background-position:0 -231px;}*//* 帕劳 */
+.flag-PE em{background-position:0 -946px;}
+.flag-PF em{background-position:0 -1705px;}
+.flag-PG em{background-position:0 -1485px;}
+.flag-PH em{background-position:0 -1815px;}
+/*.flag-phi { background-position:0 -1815px;}*/
+.flag-PK em{background-position:0 -2035px;}
+.flag-PL em{background-position:0 -1177px;}
+.flag-PM em{background-position:0 -1078px;}
+/*.flag-pol { background-position:0 -1177px;}*/
+.flag-PR em{background-position:0 -473px;}
+.flag-PS em{background-position:0 -1199px;}
+.flag-PT em{background-position:0 -517px;}
+.flag-PY em{background-position:0 -2344px;}
+/* Q */
+.flag-QA em{background-position:0 -462px;}
+/* R */
+.flag-RE em{background-position:0 -264px;}
+.flag-RO em{background-position:0 -671px;}
+.flag-RS em{background-position:0 -2465px;}
+.flag-RU em{background-position:0 -660px;}
+/*.flag-rus { background-position:0 -660px;}*/
+.flag-RW em{background-position:0 -2674px;}
+/* S */
+.flag-SA em{background-position:0 -33px;}
+.flag-SC em{background-position:0 -1045px;}
+.flag-SD em{background-position:0 -352px;}
+.flag-SE em{background-position:0 -385px;}
+.flag-SG em{background-position:0 -22px;}
+.flag-SI em{background-position:0 -1221px;}
+.flag-SK em{background-position:0 -2212px;}
+.flag-SL em{background-position:0 -737px;}
+.flag-SM em{background-position:0 -2123px;}
+.flag-SN em{background-position:0 -2134px;}
+.flag-SO em{background-position:0 -1364px;}
+.flag-SR em{background-position:0 -2663px;}
+.flag-SS em{background-position:0 -2718px;}
+.flag-ST em{background-position:0 -2388px;}
+.flag-SV em{background-position:0 -1639px;}
+.flag-SY em{background-position:0 -1826px;}
+.flag-SZ em{background-position:0 -2278px;}
+/* T */
+.flag-TC em{background-position:0 -1309px;}
+.flag-TD em{background-position:0 -814px;}
+.flag-TG em{background-position:0 -605px;}
+.flag-TH em{background-position:0 -957px;}
+.flag-TJ em{background-position:0 -187px;}
+.flag-TL em{background-position:0 -418px}
+.flag-TM em{background-position:0 -2542px;}
+.flag-TN em{background-position:0 -539px;}
+.flag-TO em{background-position:0 -1089px;}
+.flag-TR em{background-position:0 -1606px;}
+.flag-TT em{background-position:0 -440px;}
+/*.flag-tuv { background-position:0 -286px;}*//* 图瓦卢 */
+.flag-TW em{background-position:0 -506px;}
+.flag-TZ em{background-position:0 -2289px;}
+/* U */
+.flag-UA em{background-position:0 -2002px;}
+.flag-UG em{background-position:0 -1166px;}
+.flag-US em{background-position:0 -44px;}
+.flag-UY em{background-position:0 -2608px;}
+.flag-UZ em{background-position:0 -1001px;}
+/* V */
+.flag-VC em{background-position:0 -2619px;}
+.flag-VE em{background-position:0 -1056px;}
+.flag-VG em{background-position:0 -1408px;}
+/*.flag-viu { background-position:0 -1782px;}*//* 美属维京群岛 */
+.flag-VN em{background-position:0 -968px;}
+.flag-VU em{background-position:0 -1265px;}
+/* W */
+.flag-WS em{background-position:0 -2300px;}
+/* Y */
+.flag-YE em{background-position:0 -1672px;}
+/* Z */
+.flag-ZA em{background-position:0 -2355px;}
+.flag-ZM em{background-position:0 -1595px;}
+.flag-ZW em{background-position:0 -2046px;}
+</style>
+<script>/*var GW="建议用手机号码注册";*/ var GW=''; </script>
+</head>
+<body onbeforeunload="if (typeof _Global != 'undefined'){_Global.flow.quit();}">
+
+
+<header class="header">
+	<div class="bg">
+		<a tabindex="-1" href="http://mail.163.com/" target="_blank" title="网易163免费邮">网易163免费邮</a>
+		<a tabindex="-1" href="http://www.126.com/" target="_blank" title="网易126免费邮">网易126免费邮</a>
+		<a tabindex="-1" href="http://www.yeah.net/" target="_blank" title="网易Yeah.net免费邮">网易Yeah.net免费邮</a>
+	</div>
+	<div class="links">
+		<a tabindex="-1" href="http://mail.163.com/html/mail_intro/" target="_blank">了解更多</a>|<a tabindex="-1" href="http://help.mail.163.com/feedback.do?m=add&categoryName=%e6%b3%a8%e5%86%8c" target="_blank">反馈意见</a>
+	</div>
+</header>
+<section class="content" id="mainSection">
+	
+
+<header class="content-tit"><h1>欢迎注册网易邮箱！邮件地址可以登录使用其他网易旗下产品。</h1></header>
+<script src="/unireg/js/common/jquery.js"></script>
+<script>function SGW(n){if(''==n.value){n.style.color="#999";n.style["font-weight"]="normal";n.value=GW;}}
+function HGW(n){if(GW==n.value){n.style.color="";n.style["font-weight"]="bold";n.value="";}}
+$.ajax({url:'https://appconf.mail.163.com/mailmaster/eu/check.do?product=webmail', jsonp:'callback', dataType: "jsonp",
+    success:function(resp){resp.code == 200 && resp.data.isEu && $('a[href="http://reg.163.com/agreement_game.shtml"]').attr('href', 'https://mail.163.com/html/181102-mailPrivacy/')}})
+</script>
+<style>
+.regForm-item-tit{width:90px}
+.regForm-item-ct{padding-left:110px}
+.vCodeArea-big .switchvCode{left:325px}
+</style>
+<div id="mMaskD" class="mainBody-wp">
+	<div class="m-mask" style="display:none;"></div>
+	<div class="mainBody">
+		<div id="overdueTips" class="tips-big" style="display:none;">
+			<b class="ico ico-warn-big"></b>
+			由于您长时间离开，页面已经失效，<a href="javascript:void(0);" onclick="window.location.reload();return false;">请重新注册</a>。
+		</div>
+		<noscript>
+			<div class="tips-big">
+				<b class="ico ico-warn-big"></b>
+				您的浏览器禁止使用JS，无法正常注册，请<a href="http://help.163.com/09/1216/16/5QLUL0H500753VB8.html" target="_blank">根据提示解除限制</a>后再注册。
+			</div>
+		</noscript>
+		<div class="regTabs">
+			<ul id="tabsUl" class="tabs1-on">
+				<li><a tabindex="-1" href="javascript:void(0);" onclick="_Global.main.turnOn();return false;" class="a1" style="text-decoration:none;">注册字母邮箱</a></li>
+				<li><a tabindex="-1" href="javascript:void(0);" onclick="_Global.mobile.turnOn(null,'tab');return false;" class="a2" style="text-decoration:none;">注册手机号码邮箱</a></li>
+				<li><a tabindex="-1" href="javascript:void(0);" onclick="_Global.vip.turnOn();return false;" class="a3" style="text-decoration:none;">注册VIP邮箱</a></li>
+			</ul>
+		</div>
+		<div id="regMain" class="regForm">
+			<dl id="nameDl" class="regForm-item mainBody-hasFocus-focusArea">
+				<dt class="regForm-item-tit"><span class="txt-impt">*</span>邮件地址</dt>
+				<dd class="regForm-item-ct">
+					<input onfocus="HGW(this);" onblur="SGW(this);" id="nameIpt" name="name" type="text" class="ipt" style="ime-mode:disabled;color:#999;font-weight:normal" autocomplete="off" value=""/>
+					<strong class="txt-14">@</strong>
+					<select name="mainDomain" id="mainDomainSelect" tabindex="-1">
+						<option selected="selected" value="163.com">163.com</option>
+						<option value="126.com">126.com</option>
+						<option value="yeah.net">yeah.net</option>
+					</select>
+					<div id="nameTips" class="tips">
+						<span class="txt-tips">6~18个字符，可使用字母、数字、下划线，需以字母开头</span>
+					</div>
+					<div id="conflictDiv" class="owned" style="display:none">
+						<div class="arr"></div>
+						<div class="attent">
+							<b class="ico ico-warn-big"></b>
+							<strong id="conflictTitle" class="txt-impt txt-14">该邮件地址已被注册</strong>
+						</div>
+						<div id="conflictOthersDiv" class="others">
+							<div id="conflictMobile" class="ctExt">
+								推荐您注册<a href="javascript:void(0);" onclick="_Global.mobile.turnOn(null,'recommend1');return false;" hidefocus="true"><strong class="txt-succ">手机号码@163.com</strong></a>
+								<a href="javascript:void(0);" onclick="_Global.mobile.turnOn(null,'recommend2');return false;" class="btnSml" hidefocus="true">免费注册</a>
+							</div>
+							<div>您还可以选择：</div>
+							<ul id="conflictOthers"></ul>
+						</div>
+					</div>
+				</dd>
+			</dl>
+			<dl id="mainPwdDl" class="regForm-item">
+				<dt class="regForm-item-tit"><span class="txt-impt">*</span>密码</dt>
+				<dd class="regForm-item-ct">
+					<input id="mainPwdIpt" name="mainPassword" type="password" class="ipt norWidthIpt" style="ime-mode:disabled"/>
+					<div id="mainPwdTips" class="tips" style="position:relative">
+						<div id="mainPwdStatus" class="pswState pswState-poor" style="display:none;">
+							<span class="s1">弱</span>
+							<span class="s2">中等</span>
+							<span class="s3">强</span>
+						</div>
+						<span class="txt-tips">6~16个字符，区分大小写</span>
+					</div>
+				</dd>
+			</dl>
+			<dl id="mainCfmPwdDl" class="regForm-item">
+				<dt class="regForm-item-tit"><span class="txt-impt">*</span>确认密码</dt>
+				<dd class="regForm-item-ct">
+					<input id="mainCfmPwdIpt" name="mainConfirmPassword" type="password" class="ipt norWidthIpt" style="ime-mode:disabled"/>
+					<div id="mainCfmPwdTips" class="tips">
+						<span class="txt-tips">请再次填写密码</span>
+					</div>
+				</dd>
+			</dl>
+			
+			<dl id="mainMobileDl" class="regForm-item">
+				<dt class="regForm-item-tit"><span class="txt-impt">*</span>手机号码</dt>
+				<dd class="regForm-item-ct">
+					<div class="inputContainer itlPhone" style="padding-left: 35px;">
+						<input type="text" id="mainMobileIpt" name="mobile" class="input ipt norWidthIpt" value="" style="padding-left: 35px;width:292px;">
+						
+					</div>
+					<div id="mainMobileTips" class="tips">
+						<span class="txt-tips">忘记密码时，可以通过该手机号码快速找回密码</span>
+					</div>
+				</dd>
+			</dl>
+			<dl id="vcodeDl" class="regForm-item vCodeArea">
+				<dt class="regForm-item-tit"><span class="txt-impt">*</span>验证码</dt>
+				<dd class="regForm-item-ct">
+					<input id="vcodeIpt" name="vcode" type="text" class="ipt" autocomplete="off"/>
+					<img id="vcodeImg" class="vCode" style="cursor:pointer;" src="" alt="验证码"><a id="vcodeA" href="javascript:void(0);" class="switchvCode" tabindex="-1">看不清楚？换张图片</a>
+					<div id="vcodeTips" class="tips">
+						<span class="txt-tips" id="vRemind"></span>
+					</div>
+					
+					<div class="btns">
+						<a id="sendMainAcodeBtn" href="javascript:void(0);" class="btn" hidefocus="true" onclick="_Global.main.mainAcode();">
+							<strong id="sendMainAcodeStg">免费获取验证码</strong></a>
+						<span id="acodeMainSentSpan" class="txt-succ" style="display:none;">&nbsp;&nbsp;短信验证码已发送</span>
+					</div>
+				</dd>
+			</dl>
+			
+			<dl id="acodeMainDl" class="regForm-item">
+				<dt class="regForm-item-tit"><span class="txt-impt">*</span>短信验证码</dt>
+				<dd class="regForm-item-ct">
+					<input id="mainAcodeIpt" name="acode" type="text" class="ipt norWidthIpt" autocomplete="off">
+					<div id="mainAcodeTips" class="tips">
+						<span class="txt-tips">请查收手机短信，并填写短信中的验证码</span>
+					</div>
+				</dd>
+			</dl>
+			<dl id="mainAcceptDl" class="regForm-item">
+				<dd class="regForm-item-ct txt-tips">
+					<label></label><input id="mainAcceptIpt" type="checkbox" checked="checked" tabindex="-1"/> 同意<a href="http://reg.163.com/agreement.shtml" target="_blank" tabindex="-1">"服务条款"</a>和<a href="http://reg.163.com/agreement_game.shtml" target="_blank" tabindex="-1">"隐私权相关政策"</a>
+					<div id="mainAcceptTips"></div>
+				</dd>
+			</dl>
+			<dl class="regForm-item">
+				<dd class="regForm-item-ct">
+					<a id="mainRegA" href="javascript:void(0);" onclick="_Global.main.start();" class="btnReg">立即注册</a>
+					<a id="mainRegA_d" href="javascript:void(0);" class="btnRegDisable" style="display:none">立即注册</a>
+				</dd>
+			</dl>
+		</div>
+		<div id="regMobile" class="regForm" style="display:none;ime-mode:disabled">
+			<dl id="mobileDl" class="regForm-item">
+				<dt class="regForm-item-tit"><span class="txt-impt">*</span>手机号码</dt>
+				<dd class="regForm-item-ct">
+					<div class="mob-supt">
+						<input id="mobileIpt" name="mobile" type="text" class="ipt" style="ime-mode:disabled" autocomplete="off"/>
+						<strong class="txt-14">@163.com</strong>
+						<b class="ico ico-mob"></b>
+					</div>
+					<div id="mobileTips" class="tips">
+						<span class="txt-tips">请填写手机号码</span>
+						
+					</div>
+				</dd>
+			</dl>
+			<dl id="mVcodeDl" class="regForm-item vCodeArea">
+				<dt class="regForm-item-tit"><span class="txt-impt">*</span>图片验证码</dt>
+				<dd class="regForm-item-ct">
+					<input id="mVcodeIpt" name="vcode" type="text" class="ipt" autocomplete="off"/>
+					<img id="mVcodeImg" class="vCode" style="cursor:pointer;" src="" alt="验证码"><a id="mVcodeA" href="javascript:void(0);" class="switchvCode" tabindex="-1">看不清楚？换张图片</a>
+					<div id="mVcodeTips" class="tips">
+						<span class="txt-tips" id="mVRemind"></span>
+					</div>
+					<div class="btns">
+						<a id="sendAcodeBtn" href="javascript:void(0);" class="btn" hidefocus="true"><strong id="sendAcodeStg">免费获取验证码</strong></a>
+						<span id="acodeSentSpan" class="txt-succ" style="display:none;">&nbsp;&nbsp;短信验证码已发送</span>
+					</div>
+				</dd>
+			</dl>
+			<dl id="acodeDl" class="regForm-item">
+				<dt class="regForm-item-tit"><span class="txt-impt">*</span>短信验证码</dt>
+				<dd class="regForm-item-ct">
+					<input id="acodeIpt" name="acode" type="text" class="ipt norWidthIpt" autocomplete="off"/>
+					<div id="acodeTips" class="tips">
+						<span class="txt-tips">请查收手机短信，并填写短信中的验证码</span>
+					</div>
+				</dd>
+			</dl>
+			<dl id="mobilePwdDl" class="regForm-item">
+				<dt class="regForm-item-tit"><span class="txt-impt">*</span>密码</dt>
+				<dd class="regForm-item-ct">
+					<input id="mobilePwdIpt" name="mobilePassword" type="password" class="ipt norWidthIpt" style="ime-mode:disabled"/>
+					<div id="mobilePwdTips" class="tips" style="position:relative">
+						<div id="mobilePwdStatus" class="pswState pswState-poor" style="display:none;">
+							<span class="s1">弱</span>
+							<span class="s2">中等</span>
+							<span class="s3">强</span>
+						</div>
+						<span class="txt-tips">6~16个字符，区分大小写</span>
+					</div>
+				</dd>
+			</dl>
+			<dl id="mobileCfmPwdDl" class="regForm-item">
+				<dt class="regForm-item-tit"><span class="txt-impt">*</span>确认密码</dt>
+				<dd class="regForm-item-ct">
+					<input id="mobileCfmPwdIpt" name="mobileConfirmPassword" type="password" class="ipt norWidthIpt" style="ime-mode:disabled"/>
+					<div id="mobileCfmPwdTips" class="tips">
+						<span class="txt-tips">请再次填写密码</span>
+					</div>
+				</dd>
+			</dl>
+			<dl id="mobileAcceptDl" class="regForm-item">
+				<dd class="regForm-item-ct txt-tips">
+					<label></label><input id="mobileAcceptIpt" type="checkbox" checked="checked" tabindex="-1"/> 同意<a href="javascript:void(0);" onclick="noticePopup.show();return false;" tabindex="-1">"用户须知"</a>和<a href="http://reg.163.com/agreement_game.shtml" target="_blank" tabindex="-1">"隐私权相关政策"</a>
+					<div id="mobileAcceptTips"></div>
+				</dd>
+			</dl>
+			<dl class="regForm-item">
+				<dd class="regForm-item-ct">
+					<a id="mobileRegA" href="javascript:void(0);" onclick="_Global.mobile.start();return false;" class="btnReg">立即注册</a>
+					<a id="mobileRegA_d" href="javascript:void(0);" class="btnRegDisable" style="display:none">立即注册</a>
+				</dd>
+			</dl>
+		</div>
+		<div id="regVipFrame" class="regVipFrame" style="display:none;ime-mode:disabled;padding-left:0;width:640px;height:620px;margin-left:-58px;"><iframe id="regVipFrameId" src="" frameborder="0" border="0" width="100%" height="100%" style="width:100%;height:100%;"></iframe></div>
+	</div>
+	<aside class="mainBody-side">
+		<div class="regExt" id ="adds">
+			
+			<img src="http://mimg.127.net/xm/reg_all/img/reg_master.gif" alt="邮箱大师">
+			<!-- <div class="intro">
+				<p>手机编辑短信 <strong>A</strong>，</p>
+				<p>发送到 <strong>10698 1630 163</strong></p>
+			</div>
+			<div class="tips">
+				温馨提示：仅限中国大陆手机用户使用<br>运营商收取0.1元/条的费用
+			</div> -->
+			
+		</div>
+		<div class="regVip" id ="vipAdds163" style="display:none;ime-mode:disabled">
+			<img src="http://mimg.127.net/xm/reg_all/img/reg_vip_163.gif" alt="快速注册">
+		</div>
+		<div class="regVip" id ="vipAdds126" style="display:none;ime-mode:disabled">
+			<img src="http://mimg.127.net/xm/reg_all/img/reg_vip_163.gif" alt="快速注册">
+		</div>
+		<div style="padding-top:20px;text-align:center" id="ursPop"><a href="https://haoma.163.com/?from=mailzchd" target="_blank"><img src="https://mimg.127.net/ggimg/all/img19/170928_urs.jpg" alt="网易靓号，双节钜惠"></a></div>
+		<script>
+			(function(){
+				var ursPop = document.getElementById('ursPop');
+				if (new Date() > new Date(2017, 9, 9)) {
+					ursPop.parentNode.removeChild(ursPop);
+				}
+			}());
+		</script>
+	</aside>
+	<div class="clear"></div>
+</div>
+</section>
+<section class="content" id="secondarySection" style="display:none"></section>
+<footer class="footer" style="height:80px">
+	<a tabindex="-1" href="http://corp.163.com/index_gb.html" target="_blank">关于网易</a>&nbsp;&nbsp;<a tabindex="-1" href="http://mail.163.com/html/mail_intro" target="_blank">关于网易免费邮</a>&nbsp;&nbsp;<a tabindex="-1" href="http://mail.blog.163.com/" target="_blank">邮箱官方博客</a>&nbsp;&nbsp;<a tabindex="-1" href="http://help.163.com/" target="_blank">客户服务</a>&nbsp;&nbsp;<a tabindex="-1" href="http://corp.163.com/gb/legal/legal.html" target="_blank">隐私政策</a>&nbsp;&nbsp;|&nbsp;&nbsp;网易公司版权所有&nbsp;&copy;&nbsp;1997-<script src="http://mimg.127.net/copyright/year.js"></script><br/>
+	数据来源：艾媒咨询《2015-2018中国个人邮箱行业研究报告》
+</footer>
+<div id="maskDiv" class="g-mask" style="display:none;z-index: 199"></div>
+<div id="rebindDiv" class="g-msgbox-wp" style="display:none;position:absolute;z-index:200">
+	<div class="g-msgbox">
+		<a href="javascript:void(0);" onclick="rebindPopup.hide();return false;" class="Aclose" title="关闭"></a>
+		<div class="ct">
+			<b class="ico ico-warn-big"></b>
+			<strong class="txt-14">是否确定重新激活？</strong>
+			<p>重新激活后，<span id="rebindSpan"></span>&nbsp;&nbsp;帐号原有的数据将会被<span class="txt-impt">清空</span>。</p>
+		</div>
+		<div class="ft">
+			<a id="rebindA" href="javascript:void(0);" class="btn-main txt-12">确 定</a>
+			<a href="javascript:void(0);" onclick="rebindPopup.hide();return false;" class="btn txt-12">取 消</a>
+		</div>
+	</div>
+</div>
+<div id="noticeDiv" class="g-msgbox-wp" style="display:none;position:absolute;z-index:200">
+	<div class="g-msgbox">
+		<a href="javascript:void(0);" onclick="noticePopup.hide();return false;" class="Aclose" title="关闭"></a>
+		<div class="P-msgbox-notice">
+			<p><strong>用户须知：</strong></p>
+			<ul>
+				<li>1. 网易手机号码邮箱与手机号码对应，如果您使用的手机号终止，请及时关闭网易手机号码邮箱；如果您更换手机号，请及时关闭原网易手机号码邮箱并激活您的新网易手机号码邮箱帐号。</li>
+				<li>2. 针对以上情形，请您及时告知您的亲朋好友有关网易手机号码邮箱终止或变更的情况。因您没有及时关闭或通知产生的任何损失的，网易公司不承担任何责任。</li>
+			</ul>
+		</div>
+		<div class="ft">
+			<a href="javascript:void(0);" onclick="noticePopup.hide();return false;" class="btn txt-12">关 闭</a>
+		</div>
+	</div>
+</div>
+
+
+
+<script src="/unireg/js/common/jquery.js"></script>
+<script src="/unireg/js/all-min_20140126.js?t=1"></script>
+
+<script>
+var _Global = {
+	locked : false,
+	flow : com.netease.mail.unireg.register.main.Start,
+	main : com.netease.mail.unireg.register.main.Start,
+	mobile : com.netease.mail.unireg.register.mobile.Start,
+	vip : com.netease.mail.unireg.register.vip.Start
+};
+function showMainSection() {
+	_Global.flow.recover();
+	$("#mainSection").show();
+	$("#secondarySection").hide();
+}
+function showSecondarySection(cont) {
+	$("#mainSection").hide();
+	$("#secondarySection").html(cont);
+	$("#secondarySection").show();
+}
+var vs = [{
+	imgwidth : 80,
+	imgheight : 30,
+	iptwidth : 235,
+	src : "/unireg/call.do?cmd=register.verifyCode",
+	tips : "请填写图片中的字符",
+	callback : function() {
+		$("#vcodeDl").removeClass("vCodeArea-big");
+	}
+},{
+	imgwidth : 120,
+	imgheight : 50,
+	iptwidth : 196,
+	// src : "/unireg/call.do?cmd=register.verifyCode&v=common/verifycode/vc_en",
+	src : "/unireg/call.do?cmd=register.verifyCode&v=common/verifycode/vc_en&vt=main_acode",
+	tips : "请填写图片中的字符，不区分大小写",
+	callback : function() {
+		$("#vcodeDl").removeClass("vCodeArea-big").addClass("vCodeArea-big");
+	}
+}];
+var vmap = {"163.com":vs[1],"126.com":vs[1],"yeah.net":vs[1]};
+var rp = {
+	from : "163navi",
+	forcedFlow : "",
+	currDomain : "163.com",
+	targetURL : "",
+	envalue : "517489",
+	vmap : vmap,
+	boundDomains : [ "163.com", "126.com", "yeah.net", "vip.163.com",
+				"vip.188.com", "vip.126.com" ],
+	sid : "21C25276A6CC607D509A2304B225D078",
+	gw : GW
+};
+com.netease.mail.unireg.register.main.Start.init(rp);
+rp.avs = {
+	imgwidth : 120,
+	imgheight : 50,
+	iptwidth : 196,
+	src : "/unireg/call.do?cmd=register.verifyCode&v=common/verifycode/vc_en&vt=mobile_acode",
+	tips : "请填写图片中的字符，不区分大小写",
+	callback : function() {
+		$("#mVcodeDl").removeClass("vCodeArea-big").addClass("vCodeArea-big");
+	}
+};
+com.netease.mail.unireg.register.mobile.Start.init(rp);
+var JSLoader = com.netease.mail.common.JSLoader;
+var rebindPopup = new com.netease.mail.common.Popup("rebindDiv","maskDiv",null,0,-101);
+var noticePopup = new com.netease.mail.common.Popup("noticeDiv","maskDiv",null,0,-136);
+</script>
+<form id="submitForm" name="submitForm" style="display:none" method=POST action="" ></form>
+<iframe id="submitFrame" name="submitFrame" style="display:none;" src="https://ssl.mail.163.com/regall/unireg/prepare.jsp?sid=21C25276A6CC607D509A2304B225D078&sd=INTERNAL19"></iframe>
+</body>
+</html>

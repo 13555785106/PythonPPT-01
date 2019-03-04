@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>修改用户</title>
+    <style type="text/css">
+    *{margin:0;padding:0px;font-size:1em;}
+    table{border-collapse:collapse;margin:0px auto;}
+    table, td, th{border:1px solid black;}
+
+    </style>
+</head>
+<body>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <table>
+        <caption>修改用户</caption>
+        {% for field in form %}
+        <tr>
+            <td>{{ field.label_tag }}</td>
+            <td>
+                {% if field.subwidgets|length > 1 %}
+                {% for sw in field.subwidgets %}
+                {{ sw }}
+                {% endfor %}
+                {% else %}
+                {{ field }}
+                {% endif %}
+            </td>
+            <td>{% for error in field.errors %} {{ error }} {% endfor %}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="3" align="center">
+                <input type="submit" value="确定"/>
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

@@ -1,0 +1,647 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>GeoDjango Installation &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Installing Geospatial libraries" href="geolibs.html" />
+    <link rel="prev" title="GeoDjango Tutorial" href="../tutorial.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../../templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="../tutorial.html" title="GeoDjango Tutorial">previous</a>
+     |
+    <a href="../../../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="geolibs.html" title="Installing Geospatial libraries">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="ref-contrib-gis-install-index">
+            
+  <div class="section" id="s-geodjango-installation">
+<span id="geodjango-installation"></span><h1>GeoDjango Installation<a class="headerlink" href="#geodjango-installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="s-overview">
+<span id="overview"></span><h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>In general, GeoDjango installation requires:</p>
+<ol class="arabic simple">
+<li><a class="reference internal" href="#django"><span class="std std-ref">Python and Django</span></a></li>
+<li><a class="reference internal" href="#spatial-database"><span class="std std-ref">Spatial database</span></a></li>
+<li><a class="reference internal" href="geolibs.html"><span class="doc">Installing Geospatial libraries</span></a></li>
+</ol>
+<p>Details for each of the requirements and installation instructions
+are provided in the sections below. In addition, platform-specific
+instructions are available for:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#macos"><span class="std std-ref">macOS</span></a></li>
+<li><a class="reference internal" href="#windows"><span class="std std-ref">Windows</span></a></li>
+</ul>
+<div class="admonition-use-the-source admonition">
+<p class="first admonition-title">Use the Source</p>
+<p class="last">Because GeoDjango takes advantage of the latest in the open source geospatial
+software technology, recent versions of the libraries are necessary.
+If binary packages aren't available for your platform, installation from
+source may be required. When compiling the libraries from source, please
+follow the directions closely, especially if you're a beginner.</p>
+</div>
+</div>
+<div class="section" id="s-requirements">
+<span id="requirements"></span><h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-python-and-django">
+<span id="s-django"></span><span id="python-and-django"></span><span id="django"></span><h3>Python and Django<a class="headerlink" href="#python-and-django" title="Permalink to this headline">¶</a></h3>
+<p>Because GeoDjango is included with Django, please refer to Django's
+<a class="reference internal" href="../../../../topics/install.html#installing-official-release"><span class="std std-ref">installation instructions</span></a> for details on
+how to install.</p>
+</div>
+<div class="section" id="s-spatial-database">
+<span id="s-id1"></span><span id="spatial-database"></span><span id="id1"></span><h3>Spatial database<a class="headerlink" href="#spatial-database" title="Permalink to this headline">¶</a></h3>
+<p>PostgreSQL (with PostGIS), MySQL (mostly with MyISAM engine), Oracle, and SQLite
+(with SpatiaLite) are the spatial databases currently supported.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">PostGIS is recommended, because it is the most mature and feature-rich
+open source spatial database.</p>
+</div>
+<p>The geospatial libraries required for a GeoDjango installation depends
+on the spatial database used.  The following lists the library requirements,
+supported versions, and any notes for each of the supported database backends:</p>
+<table class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="21%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Database</th>
+<th class="head">Library Requirements</th>
+<th class="head">Supported Versions</th>
+<th class="head">Notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostgreSQL</td>
+<td>GEOS, GDAL, PROJ.4, PostGIS</td>
+<td>9.3+</td>
+<td>Requires PostGIS.</td>
+</tr>
+<tr class="row-odd"><td>MySQL</td>
+<td>GEOS, GDAL</td>
+<td>5.5+</td>
+<td>Not OGC-compliant; <a class="reference internal" href="../db-api.html#mysql-spatial-limitations"><span class="std std-ref">limited functionality</span></a>.</td>
+</tr>
+<tr class="row-even"><td>Oracle</td>
+<td>GEOS, GDAL</td>
+<td>12.1+</td>
+<td>XE not supported.</td>
+</tr>
+<tr class="row-odd"><td>SQLite</td>
+<td>GEOS, GDAL, PROJ.4, SpatiaLite</td>
+<td>3.6.+</td>
+<td>Requires SpatiaLite 4.0+</td>
+</tr>
+</tbody>
+</table>
+<p>See also <a class="reference external" href="https://trac.osgeo.org/postgis/wiki/UsersWikiPostgreSQLPostGIS">this comparison matrix</a> on the OSGeo Wiki for
+PostgreSQL/PostGIS/GEOS/GDAL possible combinations.</p>
+</div>
+</div>
+<div class="section" id="s-installation">
+<span id="installation"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-geospatial-libraries">
+<span id="geospatial-libraries"></span><h3>Geospatial libraries<a class="headerlink" href="#geospatial-libraries" title="Permalink to this headline">¶</a></h3>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="geolibs.html">Installing Geospatial libraries</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-database-installation">
+<span id="database-installation"></span><h3>Database installation<a class="headerlink" href="#database-installation" title="Permalink to this headline">¶</a></h3>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="postgis.html">Installing PostGIS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spatialite.html">Installing SpatiaLite</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-databases-configuration">
+<span id="databases-configuration"></span><h3><a class="reference internal" href="../../../settings.html#std:setting-DATABASES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DATABASES</span></code></a> configuration<a class="headerlink" href="#databases-configuration" title="Permalink to this headline">¶</a></h3>
+<p>Set the <a class="reference internal" href="../../../settings.html#std:setting-DATABASE-ENGINE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">ENGINE</span></code></a> setting to one of the <a class="reference internal" href="../db-api.html#spatial-backends"><span class="std std-ref">spatial
+backends</span></a>.</p>
+</div>
+<div class="section" id="s-add-django-contrib-gis-to-installed-apps">
+<span id="add-django-contrib-gis-to-installed-apps"></span><h3>Add <code class="docutils literal notranslate"><span class="pre">django.contrib.gis</span></code> to <a class="reference internal" href="../../../settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a><a class="headerlink" href="#add-django-contrib-gis-to-installed-apps" title="Permalink to this headline">¶</a></h3>
+<p>Like other Django contrib applications, you will <em>only</em> need to add
+<a class="reference internal" href="../index.html#module-django.contrib.gis" title="django.contrib.gis: Geographic Information System (GIS) extensions for Django"><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.gis</span></code></a> to <a class="reference internal" href="../../../settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a> in your settings.
+This is so that the <code class="docutils literal notranslate"><span class="pre">gis</span></code> templates can be located -- if not done, then
+features such as the geographic admin or KML sitemaps will not function properly.</p>
+</div>
+</div>
+<div class="section" id="s-troubleshooting">
+<span id="troubleshooting"></span><h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
+<p>If you can't find the solution to your problem here then participate in the
+community!  You can:</p>
+<ul class="simple">
+<li>Join the <code class="docutils literal notranslate"><span class="pre">#geodjango</span></code> IRC channel on Freenode. Please be patient and polite
+-- while you may not get an immediate response, someone will attempt to answer
+your question as soon as they see it.</li>
+<li>Ask your question on the <a class="reference external" href="https://groups.google.com/d/forum/geodjango">GeoDjango</a> mailing list.</li>
+<li>File a ticket on the <a class="reference external" href="https://code.djangoproject.com/newticket">Django trac</a> if you think there's a bug.  Make
+sure to provide a complete description of the problem, versions used,
+and specify the component as &quot;GIS&quot;.</li>
+</ul>
+<div class="section" id="s-library-environment-settings">
+<span id="s-libsettings"></span><span id="library-environment-settings"></span><span id="libsettings"></span><h3>Library environment settings<a class="headerlink" href="#library-environment-settings" title="Permalink to this headline">¶</a></h3>
+<p>By far, the most common problem when installing GeoDjango is that the
+external shared libraries (e.g., for GEOS and GDAL) cannot be located. <a class="footnote-reference" href="#id27" id="id5">[1]</a>
+Typically, the cause of this problem is that the operating system isn't aware
+of the directory where the libraries built from source were installed.</p>
+<p>In general, the library path may be set on a per-user basis by setting
+an environment variable, or by configuring the library path for the entire
+system.</p>
+<div class="section" id="s-ld-library-path-environment-variable">
+<span id="ld-library-path-environment-variable"></span><h4><code class="docutils literal notranslate"><span class="pre">LD_LIBRARY_PATH</span></code> environment variable<a class="headerlink" href="#ld-library-path-environment-variable" title="Permalink to this headline">¶</a></h4>
+<p>A user may set this environment variable to customize the library paths
+they want to use.  The typical library directory for software
+built from source is <code class="docutils literal notranslate"><span class="pre">/usr/local/lib</span></code>.  Thus, <code class="docutils literal notranslate"><span class="pre">/usr/local/lib</span></code> needs
+to be included in the <code class="docutils literal notranslate"><span class="pre">LD_LIBRARY_PATH</span></code> variable.  For example, the user
+could place the following in their bash profile:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">export LD_LIBRARY_PATH=/usr/local/lib</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-setting-system-library-path">
+<span id="setting-system-library-path"></span><h4>Setting system library path<a class="headerlink" href="#setting-system-library-path" title="Permalink to this headline">¶</a></h4>
+<p>On GNU/Linux systems, there is typically a file in <code class="docutils literal notranslate"><span class="pre">/etc/ld.so.conf</span></code>, which may include
+additional paths from files in another directory, such as <code class="docutils literal notranslate"><span class="pre">/etc/ld.so.conf.d</span></code>.
+As the root user, add the custom library path (like <code class="docutils literal notranslate"><span class="pre">/usr/local/lib</span></code>) on a
+new line in <code class="docutils literal notranslate"><span class="pre">ld.so.conf</span></code>.  This is <em>one</em> example of how to do so:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> sudo <span class="nb">echo</span> /usr/local/lib &gt;&gt; /etc/ld.so.conf
+<span class="gp">$</span> sudo ldconfig
+</pre></div>
+</div>
+<p>For OpenSolaris users, the system library path may be modified using the
+<code class="docutils literal notranslate"><span class="pre">crle</span></code> utility.  Run <code class="docutils literal notranslate"><span class="pre">crle</span></code> with no options to see the current configuration
+and use <code class="docutils literal notranslate"><span class="pre">crle</span> <span class="pre">-l</span></code> to set with the new library path.  Be <em>very</em> careful when
+modifying the system library path:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">#</span> crle -l <span class="nv">$OLD_PATH</span>:/usr/local/lib
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-install-binutils">
+<span id="s-binutils"></span><span id="install-binutils"></span><span id="binutils"></span><h4>Install <code class="docutils literal notranslate"><span class="pre">binutils</span></code><a class="headerlink" href="#install-binutils" title="Permalink to this headline">¶</a></h4>
+<p>GeoDjango uses the <code class="docutils literal notranslate"><span class="pre">find_library</span></code> function (from the <code class="docutils literal notranslate"><span class="pre">ctypes.util</span></code> Python
+module) to discover libraries.  The <code class="docutils literal notranslate"><span class="pre">find_library</span></code> routine uses a program
+called <code class="docutils literal notranslate"><span class="pre">objdump</span></code> (part of the <code class="docutils literal notranslate"><span class="pre">binutils</span></code> package) to verify a shared
+library on GNU/Linux systems.  Thus, if <code class="docutils literal notranslate"><span class="pre">binutils</span></code> is not installed on your
+Linux system then Python's ctypes may not be able to find your library even if
+your library path is set correctly and geospatial libraries were built perfectly.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">binutils</span></code> package may be installed on Debian and Ubuntu systems using the
+following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> sudo apt-get install binutils
+</pre></div>
+</div>
+<p>Similarly, on Red Hat and CentOS systems:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> sudo yum install binutils
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="s-platform-specific-instructions">
+<span id="platform-specific-instructions"></span><h2>Platform-specific instructions<a class="headerlink" href="#platform-specific-instructions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-macos">
+<span id="s-id6"></span><span id="macos"></span><span id="id6"></span><h3>macOS<a class="headerlink" href="#macos" title="Permalink to this headline">¶</a></h3>
+<p>Because of the variety of packaging systems available for macOS, users have
+several different options for installing GeoDjango. These options are:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#postgresapp"><span class="std std-ref">Postgres.app</span></a> (easiest and recommended)</li>
+<li><a class="reference internal" href="#homebrew"><span class="std std-ref">Homebrew</span></a></li>
+<li><a class="reference internal" href="#kyngchaos"><span class="std std-ref">KyngChaos packages</span></a></li>
+<li><a class="reference internal" href="#fink"><span class="std std-ref">Fink</span></a></li>
+<li><a class="reference internal" href="#macports"><span class="std std-ref">MacPorts</span></a></li>
+<li><a class="reference internal" href="geolibs.html#build-from-source"><span class="std std-ref">Building from source</span></a></li>
+</ul>
+<p>This section also includes instructions for installing an upgraded version
+of <a class="reference internal" href="#macos-python"><span class="std std-ref">Python</span></a> from packages provided by the Python Software
+Foundation, however, this is not required.</p>
+<div class="section" id="s-python">
+<span id="s-macos-python"></span><span id="python"></span><span id="macos-python"></span><h4>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h4>
+<p>Although macOS comes with Python installed, users can use <a class="reference external" href="https://www.python.org/ftp/python/">framework
+installers</a> provided by the Python Software Foundation.  An advantage to
+using the installer is that macOS's Python will remain &quot;pristine&quot; for internal
+operating system use.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>You will need to modify the <code class="docutils literal notranslate"><span class="pre">PATH</span></code> environment variable in your
+<code class="docutils literal notranslate"><span class="pre">.profile</span></code> file so that the new version of Python is used when
+<code class="docutils literal notranslate"><span class="pre">python</span></code> is entered at the command-line:</p>
+<div class="last highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">export PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="s-postgres-app">
+<span id="s-postgresapp"></span><span id="postgres-app"></span><span id="postgresapp"></span><h4>Postgres.app<a class="headerlink" href="#postgres-app" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference external" href="https://postgresapp.com/">Postgres.app</a> is a standalone PostgreSQL server
+that includes the PostGIS extension. You will also need to install <code class="docutils literal notranslate"><span class="pre">gdal</span></code> and
+<code class="docutils literal notranslate"><span class="pre">libgeoip</span></code> with <a class="reference internal" href="#homebrew"><span class="std std-ref">Homebrew</span></a>.</p>
+<p>After installing Postgres.app, add the following to your <code class="docutils literal notranslate"><span class="pre">.bash_profile</span></code> so
+you can run the package's programs from the command-line. Replace <code class="docutils literal notranslate"><span class="pre">X.Y</span></code> with
+the version of PostgreSQL in the Postgres.app you installed:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:/Applications/Postgres.app/Contents/Versions/X.Y/bin
+</pre></div>
+</div>
+<p>You can check if the path is set up correctly by typing <code class="docutils literal notranslate"><span class="pre">which</span> <span class="pre">psql</span></code> at a
+terminal prompt.</p>
+</div>
+<div class="section" id="s-homebrew">
+<span id="s-id9"></span><span id="homebrew"></span><span id="id9"></span><h4>Homebrew<a class="headerlink" href="#homebrew" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference external" href="https://brew.sh/">Homebrew</a> provides &quot;recipes&quot; for building binaries and packages from source.
+It provides recipes for the GeoDjango prerequisites on Macintosh computers
+running macOS. Because Homebrew still builds the software from source, <a class="reference external" href="https://developer.apple.com/xcode/">Xcode</a>
+is required.</p>
+<p>Summary:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> brew install postgresql
+<span class="gp">$</span> brew install postgis
+<span class="gp">$</span> brew install gdal
+<span class="gp">$</span> brew install libgeoip
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-kyngchaos-packages">
+<span id="s-kyngchaos"></span><span id="kyngchaos-packages"></span><span id="kyngchaos"></span><h4>KyngChaos packages<a class="headerlink" href="#kyngchaos-packages" title="Permalink to this headline">¶</a></h4>
+<p>William Kyngesburye provides a number of <a class="reference external" href="https://www.kyngchaos.com/software/frameworks">geospatial library binary packages</a>
+that make it simple to get GeoDjango installed on macOS without compiling
+them from source.  However, <a class="reference external" href="https://developer.apple.com/xcode/">Xcode</a> is still necessary for compiling the
+Python database adapters <a class="reference internal" href="#psycopg2-kyngchaos"><span class="std std-ref">psycopg2</span></a> (for PostGIS).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">SpatiaLite users should consult the <a class="reference internal" href="spatialite.html#spatialite-macos"><span class="std std-ref">macOS-specific instructions</span></a> section
+after installing the packages for additional instructions.</p>
+</div>
+<p>Download the framework packages for:</p>
+<ul class="simple">
+<li>UnixImageIO</li>
+<li>PROJ</li>
+<li>GEOS</li>
+<li>SQLite3 (includes the SpatiaLite library)</li>
+<li>GDAL</li>
+</ul>
+<p>Install the packages in the order they are listed above, as the GDAL and SQLite
+packages require the packages listed before them.</p>
+<p>Afterwards, you can also install the KyngChaos binary packages for <a class="reference external" href="https://www.kyngchaos.com/software/postgres">PostgreSQL
+and PostGIS</a>.</p>
+<p>After installing the binary packages, you'll want to add the following to
+your <code class="docutils literal notranslate"><span class="pre">.profile</span></code> to be able to run the package programs from the command-line:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">export PATH=/Library/Frameworks/UnixImageIO.framework/Programs:$PATH</span>
+<span class="go">export PATH=/Library/Frameworks/PROJ.framework/Programs:$PATH</span>
+<span class="go">export PATH=/Library/Frameworks/GEOS.framework/Programs:$PATH</span>
+<span class="go">export PATH=/Library/Frameworks/SQLite3.framework/Programs:$PATH</span>
+<span class="go">export PATH=/Library/Frameworks/GDAL.framework/Programs:$PATH</span>
+<span class="go">export PATH=/usr/local/pgsql/bin:$PATH</span>
+</pre></div>
+</div>
+<div class="section" id="s-psycopg2">
+<span id="s-psycopg2-kyngchaos"></span><span id="psycopg2"></span><span id="psycopg2-kyngchaos"></span><h5>psycopg2<a class="headerlink" href="#psycopg2" title="Permalink to this headline">¶</a></h5>
+<p>After you've installed the KyngChaos binaries and modified your <code class="docutils literal notranslate"><span class="pre">PATH</span></code>, as
+described above, <code class="docutils literal notranslate"><span class="pre">psycopg2</span></code> may be installed using the following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install psycopg2
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you don't have <code class="docutils literal notranslate"><span class="pre">pip</span></code>, follow the <a class="reference internal" href="../../../../topics/install.html#installing-official-release"><span class="std std-ref">installation instructions</span></a> to install it.</p>
+</div>
+</div>
+<div class="section" id="s-fink">
+<span id="s-id13"></span><span id="fink"></span><span id="id13"></span><h5>Fink<a class="headerlink" href="#fink" title="Permalink to this headline">¶</a></h5>
+<p><a class="reference external" href="https://schwehr.blogspot.com/">Kurt Schwehr</a> has been gracious enough to create GeoDjango packages for users
+of the <a class="reference external" href="http://www.finkproject.org/">Fink</a> package system. <a class="reference external" href="http://pdb.finkproject.org/pdb/browse.php?summary=django-gis">Different packages are available</a> (starting
+with <code class="docutils literal notranslate"><span class="pre">django-gis</span></code>), depending on which version of Python you want to use.</p>
+</div>
+</div>
+<div class="section" id="s-macports">
+<span id="s-id17"></span><span id="macports"></span><span id="id17"></span><h4>MacPorts<a class="headerlink" href="#macports" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference external" href="https://www.macports.org/">MacPorts</a> may be used to install GeoDjango prerequisites on computers
+running macOS.  Because MacPorts still builds the software from source,
+<a class="reference external" href="https://developer.apple.com/xcode/">Xcode</a> is required.</p>
+<p>Summary:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> sudo port install postgresql93-server
+<span class="gp">$</span> sudo port install geos
+<span class="gp">$</span> sudo port install proj
+<span class="gp">$</span> sudo port install postgis
+<span class="gp">$</span> sudo port install gdal +geos
+<span class="gp">$</span> sudo port install libgeoip
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>You will also have to modify the <code class="docutils literal notranslate"><span class="pre">PATH</span></code> in your <code class="docutils literal notranslate"><span class="pre">.profile</span></code> so
+that the MacPorts programs are accessible from the command-line:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">export PATH=/opt/local/bin:/opt/local/lib/postgresql93/bin</span>
+</pre></div>
+</div>
+<p>In addition, add the <code class="docutils literal notranslate"><span class="pre">DYLD_FALLBACK_LIBRARY_PATH</span></code> setting so that
+the libraries can be found by Python:</p>
+<div class="last highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">export DYLD_FALLBACK_LIBRARY_PATH=/opt/local/lib:/opt/local/lib/postgresql93</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="s-windows">
+<span id="s-id19"></span><span id="windows"></span><span id="id19"></span><h3>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h3>
+<p>Proceed through the following sections sequentially in order to install
+GeoDjango on Windows.</p>
+<div class="section" id="s-id20">
+<span id="id20"></span><h4>Python<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference internal" href="../../../../howto/windows.html"><span class="doc">Install Python</span></a>.</p>
+</div>
+<div class="section" id="s-postgresql">
+<span id="postgresql"></span><h4>PostgreSQL<a class="headerlink" href="#postgresql" title="Permalink to this headline">¶</a></h4>
+<p>First, download the latest <a class="reference external" href="https://www.enterprisedb.com/downloads/postgres-postgresql-downloads">PostgreSQL 9.x installer</a> from the
+<a class="reference external" href="https://www.enterprisedb.com">EnterpriseDB</a> website.  After downloading, simply run the installer,
+follow the on-screen directions, and keep the default options unless
+you know the consequences of changing them.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The PostgreSQL installer creates both a new Windows user to be the
+'postgres service account' and a <code class="docutils literal notranslate"><span class="pre">postgres</span></code> database superuser
+You will be prompted once to set the password for both accounts --
+make sure to remember it!</p>
+</div>
+<p>When the installer completes, it will ask to launch the Application Stack
+Builder (ASB) on exit -- keep this checked, as it is necessary to
+install <a class="reference internal" href="#postgisasb"><span class="std std-ref">PostGIS</span></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If installed successfully, the PostgreSQL server will run in the
+background each time the system as started as a Windows service.
+A <span class="menuselection">PostgreSQL 9.x</span> start menu group will created
+and contains shortcuts for the ASB as well as the 'SQL Shell',
+which will launch a <code class="docutils literal notranslate"><span class="pre">psql</span></code> command window.</p>
+</div>
+</div>
+<div class="section" id="s-postgis">
+<span id="s-postgisasb"></span><span id="postgis"></span><span id="postgisasb"></span><h4>PostGIS<a class="headerlink" href="#postgis" title="Permalink to this headline">¶</a></h4>
+<p>From within the Application Stack Builder (to run outside of the installer,
+<span class="menuselection">Start ‣ Programs ‣ PostgreSQL 9.x</span>), select
+<span class="menuselection">PostgreSQL Database Server 9.x on port 5432</span> from the drop down
+menu.  Next, expand the <span class="menuselection">Categories ‣ Spatial Extensions</span> menu
+tree and select <span class="menuselection">PostGIS X.Y for PostgreSQL 9.x</span>.</p>
+<p>After clicking next, you will be prompted to select your mirror, PostGIS
+will be downloaded, and the PostGIS installer will begin.  Select only the
+default options during install (e.g., do not uncheck the option to create a
+default PostGIS database).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You will be prompted to enter your <code class="docutils literal notranslate"><span class="pre">postgres</span></code> database superuser
+password in the 'Database Connection Information' dialog.</p>
+</div>
+</div>
+<div class="section" id="s-id23">
+<span id="id23"></span><h4>psycopg2<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">psycopg2</span></code> Python module provides the interface between Python and the
+PostgreSQL database.  Download the latest <a class="reference external" href="http://www.stickpeople.com/projects/python/win-psycopg/">Windows installer</a> for your version
+of Python and PostgreSQL and run using the default settings. <a class="footnote-reference" href="#id28" id="id24">[2]</a></p>
+</div>
+<div class="section" id="s-osgeo4w">
+<span id="s-id26"></span><span id="osgeo4w"></span><span id="id26"></span><h4>OSGeo4W<a class="headerlink" href="#osgeo4w" title="Permalink to this headline">¶</a></h4>
+<p>The <a class="reference external" href="https://trac.osgeo.org/osgeo4w/">OSGeo4W installer</a> makes it simple to install the PROJ.4, GDAL, and GEOS
+libraries required by GeoDjango.  First, download the <a class="reference external" href="https://trac.osgeo.org/osgeo4w/">OSGeo4W installer</a>,
+and run it.  Select <span class="menuselection">Express Web-GIS Install</span> and click next.
+In the 'Select Packages' list, ensure that GDAL is selected; MapServer and
+Apache are also enabled by default, but are not required by GeoDjango and
+may be unchecked safely.  After clicking next, the packages will be
+automatically downloaded and installed, after which you may exit the
+installer.</p>
+</div>
+<div class="section" id="s-modify-windows-environment">
+<span id="modify-windows-environment"></span><h4>Modify Windows environment<a class="headerlink" href="#modify-windows-environment" title="Permalink to this headline">¶</a></h4>
+<p>In order to use GeoDjango, you will need to add your Python and OSGeo4W
+directories to your Windows system <code class="docutils literal notranslate"><span class="pre">Path</span></code>, as well as create <code class="docutils literal notranslate"><span class="pre">GDAL_DATA</span></code>
+and <code class="docutils literal notranslate"><span class="pre">PROJ_LIB</span></code> environment variables.  The following set of commands,
+executable with <code class="docutils literal notranslate"><span class="pre">cmd.exe</span></code>, will set this up:</p>
+<div class="highlight-bat notranslate"><div class="highlight"><pre><span></span><span class="k">set</span> <span class="nv">OSGEO4W_ROOT</span><span class="p">=</span>C:\OSGeo4W
+<span class="k">set</span> <span class="nv">PYTHON_ROOT</span><span class="p">=</span>C:\Python3X
+<span class="k">set</span> <span class="nv">GDAL_DATA</span><span class="p">=</span><span class="nv">%OSGEO4W_ROOT%</span>\share\gdal
+<span class="k">set</span> <span class="nv">PROJ_LIB</span><span class="p">=</span><span class="nv">%OSGEO4W_ROOT%</span>\share\proj
+<span class="k">set</span> <span class="nv">PATH</span><span class="p">=</span><span class="nv">%PATH%</span>;<span class="nv">%PYTHON_ROOT%</span>;<span class="nv">%OSGEO4W_ROOT%</span>\bin
+reg ADD <span class="s2">&quot;HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment&quot;</span> /v Path /t REG_EXPAND_SZ /f /d <span class="s2">&quot;</span><span class="nv">%PATH%</span><span class="s2">&quot;</span>
+reg ADD <span class="s2">&quot;HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment&quot;</span> /v GDAL_DATA /t REG_EXPAND_SZ /f /d <span class="s2">&quot;</span><span class="nv">%GDAL_DATA%</span><span class="s2">&quot;</span>
+reg ADD <span class="s2">&quot;HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment&quot;</span> /v PROJ_LIB /t REG_EXPAND_SZ /f /d <span class="s2">&quot;</span><span class="nv">%PROJ_LIB%</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Administrator privileges are required to execute these commands.
+To do this, create a <code class="docutils literal notranslate"><span class="pre">bat</span></code> script with the commands, right-click it, and
+select <span class="menuselection">Run as administrator</span>. You need to log out and log
+back in again for the settings to take effect.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you customized the Python or OSGeo4W installation directories,
+then you will need to modify the <code class="docutils literal notranslate"><span class="pre">OSGEO4W_ROOT</span></code> and/or <code class="docutils literal notranslate"><span class="pre">PYTHON_ROOT</span></code>
+variables accordingly.</p>
+</div>
+</div>
+<div class="section" id="s-install-django-and-set-up-database">
+<span id="install-django-and-set-up-database"></span><h4>Install Django and set up database<a class="headerlink" href="#install-django-and-set-up-database" title="Permalink to this headline">¶</a></h4>
+<p>Finally, <a class="reference internal" href="../../../../topics/install.html#installing-official-release"><span class="std std-ref">install Django</span></a> on your system.</p>
+<p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="id27" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[1]</a></td><td>GeoDjango uses the <a class="reference external" href="https://docs.python.org/3/library/ctypes.html#ctypes.util.find_library" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">find_library()</span></code></a> routine from
+<code class="docutils literal notranslate"><span class="pre">ctypes.util</span></code> to locate shared libraries.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id28" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id24">[2]</a></td><td>The <code class="docutils literal notranslate"><span class="pre">psycopg2</span></code> Windows installers are packaged and maintained by
+<a class="reference external" href="http://www.stickpeople.com/projects/python/win-psycopg/">Jason Erickson</a>.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">GeoDjango Installation</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#requirements">Requirements</a><ul>
+<li><a class="reference internal" href="#python-and-django">Python and Django</a></li>
+<li><a class="reference internal" href="#spatial-database">Spatial database</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#geospatial-libraries">Geospatial libraries</a></li>
+<li><a class="reference internal" href="#database-installation">Database installation</a></li>
+<li><a class="reference internal" href="#databases-configuration"><code class="docutils literal notranslate"><span class="pre">DATABASES</span></code> configuration</a></li>
+<li><a class="reference internal" href="#add-django-contrib-gis-to-installed-apps">Add <code class="docutils literal notranslate"><span class="pre">django.contrib.gis</span></code> to <code class="docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
+<li><a class="reference internal" href="#library-environment-settings">Library environment settings</a><ul>
+<li><a class="reference internal" href="#ld-library-path-environment-variable"><code class="docutils literal notranslate"><span class="pre">LD_LIBRARY_PATH</span></code> environment variable</a></li>
+<li><a class="reference internal" href="#setting-system-library-path">Setting system library path</a></li>
+<li><a class="reference internal" href="#install-binutils">Install <code class="docutils literal notranslate"><span class="pre">binutils</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#platform-specific-instructions">Platform-specific instructions</a><ul>
+<li><a class="reference internal" href="#macos">macOS</a><ul>
+<li><a class="reference internal" href="#python">Python</a></li>
+<li><a class="reference internal" href="#postgres-app">Postgres.app</a></li>
+<li><a class="reference internal" href="#homebrew">Homebrew</a></li>
+<li><a class="reference internal" href="#kyngchaos-packages">KyngChaos packages</a><ul>
+<li><a class="reference internal" href="#psycopg2">psycopg2</a></li>
+<li><a class="reference internal" href="#fink">Fink</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#macports">MacPorts</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#windows">Windows</a><ul>
+<li><a class="reference internal" href="#id20">Python</a></li>
+<li><a class="reference internal" href="#postgresql">PostgreSQL</a></li>
+<li><a class="reference internal" href="#postgis">PostGIS</a></li>
+<li><a class="reference internal" href="#id23">psycopg2</a></li>
+<li><a class="reference internal" href="#osgeo4w">OSGeo4W</a></li>
+<li><a class="reference internal" href="#modify-windows-environment">Modify Windows environment</a></li>
+<li><a class="reference internal" href="#install-django-and-set-up-database">Install Django and set up database</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../tutorial.html"
+                        title="previous chapter">GeoDjango Tutorial</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="geolibs.html"
+                        title="next chapter">Installing Geospatial libraries</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../_sources/ref/contrib/gis/install/index.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="../tutorial.html" title="GeoDjango Tutorial">previous</a>
+     |
+    <a href="../../../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="geolibs.html" title="Installing Geospatial libraries">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

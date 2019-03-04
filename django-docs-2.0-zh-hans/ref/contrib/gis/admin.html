@@ -1,0 +1,243 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>GeoDjango&#39;s admin site &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Geographic Feeds" href="feeds.html" />
+    <link rel="prev" title="GeoDjango Management Commands" href="commands.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="commands.html" title="GeoDjango Management Commands">previous</a>
+     |
+    <a href="../../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="feeds.html" title="Geographic Feeds">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="ref-contrib-gis-admin">
+            
+  <div class="section" id="s-module-django.contrib.gis.admin">
+<span id="s-geodjango-s-admin-site"></span><span id="module-django.contrib.gis.admin"></span><span id="geodjango-s-admin-site"></span><h1>GeoDjango's admin site<a class="headerlink" href="#module-django.contrib.gis.admin" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="s-geomodeladmin">
+<span id="geomodeladmin"></span><h2><code class="docutils literal notranslate"><span class="pre">GeoModelAdmin</span></code><a class="headerlink" href="#geomodeladmin" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.contrib.gis.admin.GeoModelAdmin">
+<em class="property">class </em><code class="descname">GeoModelAdmin</code><a class="headerlink" href="#django.contrib.gis.admin.GeoModelAdmin" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="django.contrib.gis.admin.GeoModelAdmin.default_lon">
+<code class="descname">default_lon</code><a class="headerlink" href="#django.contrib.gis.admin.GeoModelAdmin.default_lon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The default center longitude.</p>
+<dl class="attribute">
+<dt id="django.contrib.gis.admin.GeoModelAdmin.default_lat">
+<code class="descname">default_lat</code><a class="headerlink" href="#django.contrib.gis.admin.GeoModelAdmin.default_lat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The default center latitude.</p>
+<dl class="attribute">
+<dt id="django.contrib.gis.admin.GeoModelAdmin.default_zoom">
+<code class="descname">default_zoom</code><a class="headerlink" href="#django.contrib.gis.admin.GeoModelAdmin.default_zoom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The default zoom level to use.  Defaults to 4.</p>
+<dl class="attribute">
+<dt id="django.contrib.gis.admin.GeoModelAdmin.extra_js">
+<code class="descname">extra_js</code><a class="headerlink" href="#django.contrib.gis.admin.GeoModelAdmin.extra_js" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Sequence of URLs to any extra JavaScript to include.</p>
+<dl class="attribute">
+<dt id="django.contrib.gis.admin.GeoModelAdmin.map_template">
+<code class="descname">map_template</code><a class="headerlink" href="#django.contrib.gis.admin.GeoModelAdmin.map_template" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Override the template used to generate the JavaScript slippy map.
+Default is <code class="docutils literal notranslate"><span class="pre">'gis/admin/openlayers.html'</span></code>.</p>
+<dl class="attribute">
+<dt id="django.contrib.gis.admin.GeoModelAdmin.map_width">
+<code class="descname">map_width</code><a class="headerlink" href="#django.contrib.gis.admin.GeoModelAdmin.map_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Width of the map, in pixels.  Defaults to 600.</p>
+<dl class="attribute">
+<dt id="django.contrib.gis.admin.GeoModelAdmin.map_height">
+<code class="descname">map_height</code><a class="headerlink" href="#django.contrib.gis.admin.GeoModelAdmin.map_height" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Height of the map, in pixels.  Defaults to 400.</p>
+<dl class="attribute">
+<dt id="django.contrib.gis.admin.GeoModelAdmin.openlayers_url">
+<code class="descname">openlayers_url</code><a class="headerlink" href="#django.contrib.gis.admin.GeoModelAdmin.openlayers_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Link to the URL of the OpenLayers JavaScript.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'</span></code>.</p>
+<div class="versionchanged">
+<span class="title">Changed in Django 1.11:</span> <p>Older versions default to
+<code class="docutils literal notranslate"><span class="pre">'http://openlayers.org/api/2.13.1/OpenLayers.js'</span></code>.</p>
+</div>
+<dl class="attribute">
+<dt id="django.contrib.gis.admin.GeoModelAdmin.modifiable">
+<code class="descname">modifiable</code><a class="headerlink" href="#django.contrib.gis.admin.GeoModelAdmin.modifiable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.  When set to <code class="docutils literal notranslate"><span class="pre">False</span></code>, disables editing of
+existing geometry fields in the admin.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is different from adding the geometry field to
+<a class="reference internal" href="../admin/index.html#django.contrib.admin.ModelAdmin.readonly_fields" title="django.contrib.admin.ModelAdmin.readonly_fields"><code class="xref py py-attr docutils literal notranslate"><span class="pre">readonly_fields</span></code></a>,
+which will only display the WKT of the geometry. Setting
+<code class="docutils literal notranslate"><span class="pre">modifiable=False</span></code>, actually displays the geometry in a map,
+but disables the ability to edit its vertices.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="s-osmgeoadmin">
+<span id="osmgeoadmin"></span><h2><code class="docutils literal notranslate"><span class="pre">OSMGeoAdmin</span></code><a class="headerlink" href="#osmgeoadmin" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.contrib.gis.admin.OSMGeoAdmin">
+<em class="property">class </em><code class="descname">OSMGeoAdmin</code><a class="headerlink" href="#django.contrib.gis.admin.OSMGeoAdmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>A subclass of <a class="reference internal" href="#django.contrib.gis.admin.GeoModelAdmin" title="django.contrib.gis.admin.GeoModelAdmin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeoModelAdmin</span></code></a> that uses a Spherical Mercator projection
+with <a class="reference external" href="https://www.openstreetmap.org/">OpenStreetMap</a> street data tiles.
+See the <a class="reference internal" href="tutorial.html#osmgeoadmin-intro"><span class="std std-ref">OSMGeoAdmin introduction</span></a>
+in the tutorial for a usage example.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">GeoDjango's admin site</a><ul>
+<li><a class="reference internal" href="#geomodeladmin"><code class="docutils literal notranslate"><span class="pre">GeoModelAdmin</span></code></a></li>
+<li><a class="reference internal" href="#osmgeoadmin"><code class="docutils literal notranslate"><span class="pre">OSMGeoAdmin</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="commands.html"
+                        title="previous chapter">GeoDjango Management Commands</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="feeds.html"
+                        title="next chapter">Geographic Feeds</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/ref/contrib/gis/admin.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="commands.html" title="GeoDjango Management Commands">previous</a>
+     |
+    <a href="../../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="feeds.html" title="Geographic Feeds">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

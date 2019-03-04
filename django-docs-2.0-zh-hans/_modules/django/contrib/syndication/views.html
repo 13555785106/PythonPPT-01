@@ -1,0 +1,338 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>django.contrib.syndication.views &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    <a href="../../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="_modules-django-contrib-syndication-views">
+            
+  <h1>Source code for django.contrib.syndication.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">calendar</span> <span class="k">import</span> <span class="n">timegm</span>
+
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="k">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">django.contrib.sites.shortcuts</span> <span class="k">import</span> <span class="n">get_current_site</span>
+<span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="k">import</span> <span class="n">ImproperlyConfigured</span><span class="p">,</span> <span class="n">ObjectDoesNotExist</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="k">import</span> <span class="n">Http404</span><span class="p">,</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span> <span class="nn">django.template</span> <span class="k">import</span> <span class="n">TemplateDoesNotExist</span><span class="p">,</span> <span class="n">loader</span>
+<span class="kn">from</span> <span class="nn">django.utils</span> <span class="k">import</span> <span class="n">feedgenerator</span>
+<span class="kn">from</span> <span class="nn">django.utils.encoding</span> <span class="k">import</span> <span class="n">iri_to_uri</span>
+<span class="kn">from</span> <span class="nn">django.utils.html</span> <span class="k">import</span> <span class="n">escape</span>
+<span class="kn">from</span> <span class="nn">django.utils.http</span> <span class="k">import</span> <span class="n">http_date</span>
+<span class="kn">from</span> <span class="nn">django.utils.timezone</span> <span class="k">import</span> <span class="n">get_default_timezone</span><span class="p">,</span> <span class="n">is_naive</span><span class="p">,</span> <span class="n">make_aware</span>
+
+
+<span class="k">def</span> <span class="nf">add_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">secure</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">protocol</span> <span class="o">=</span> <span class="s1">&#39;https&#39;</span> <span class="k">if</span> <span class="n">secure</span> <span class="k">else</span> <span class="s1">&#39;http&#39;</span>
+    <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;//&#39;</span><span class="p">):</span>
+        <span class="c1"># Support network-path reference (see #16753) - RSS requires a protocol</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s1">&#39;http://&#39;</span><span class="p">,</span> <span class="s1">&#39;https://&#39;</span><span class="p">,</span> <span class="s1">&#39;mailto:&#39;</span><span class="p">)):</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">iri_to_uri</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">://</span><span class="si">%s%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">url</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">url</span>
+
+
+<span class="k">class</span> <span class="nc">FeedDoesNotExist</span><span class="p">(</span><span class="n">ObjectDoesNotExist</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Feed</span><span class="p">:</span>
+    <span class="n">feed_type</span> <span class="o">=</span> <span class="n">feedgenerator</span><span class="o">.</span><span class="n">DefaultFeed</span>
+    <span class="n">title_template</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">description_template</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">ObjectDoesNotExist</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">Http404</span><span class="p">(</span><span class="s1">&#39;Feed object does not exist.&#39;</span><span class="p">)</span>
+        <span class="n">feedgen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_feed</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="n">feedgen</span><span class="o">.</span><span class="n">content_type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;item_pubdate&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;item_updateddate&#39;</span><span class="p">):</span>
+            <span class="c1"># if item_pubdate or item_updateddate is defined for the feed, set</span>
+            <span class="c1"># header so as ConditionalGetMiddleware is able to send 304 NOT MODIFIED</span>
+            <span class="n">response</span><span class="p">[</span><span class="s1">&#39;Last-Modified&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">http_date</span><span class="p">(</span>
+                <span class="n">timegm</span><span class="p">(</span><span class="n">feedgen</span><span class="o">.</span><span class="n">latest_post_date</span><span class="p">()</span><span class="o">.</span><span class="n">utctimetuple</span><span class="p">()))</span>
+        <span class="n">feedgen</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+
+    <span class="k">def</span> <span class="nf">item_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="c1"># Titles should be double escaped by default (see #6533)</span>
+        <span class="k">return</span> <span class="n">escape</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">item_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">item_link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">get_absolute_url</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ImproperlyConfigured</span><span class="p">(</span>
+                <span class="s1">&#39;Give your </span><span class="si">%s</span><span class="s1"> class a get_absolute_url() method, or define an &#39;</span>
+                <span class="s1">&#39;item_link() method in your Feed class.&#39;</span> <span class="o">%</span> <span class="n">item</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">item_enclosures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="n">enc_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;item_enclosure_url&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">enc_url</span><span class="p">:</span>
+            <span class="n">enc</span> <span class="o">=</span> <span class="n">feedgenerator</span><span class="o">.</span><span class="n">Enclosure</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">enc_url</span><span class="p">),</span>
+                <span class="n">length</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;item_enclosure_length&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">)),</span>
+                <span class="n">mime_type</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;item_enclosure_mime_type&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">)),</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">enc</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">_get_dynamic_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attname</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attname</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default</span>
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
+            <span class="c1"># Check co_argcount rather than try/excepting the function and</span>
+            <span class="c1"># catching the TypeError, because something inside the function</span>
+            <span class="c1"># may raise the TypeError. This technique is more accurate.</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">code</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="vm">__code__</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="n">code</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="fm">__call__</span><span class="o">.</span><span class="vm">__code__</span>
+            <span class="k">if</span> <span class="n">code</span><span class="o">.</span><span class="n">co_argcount</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>       <span class="c1"># one argument is &#39;self&#39;</span>
+                <span class="k">return</span> <span class="n">attr</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">attr</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">attr</span>
+
+    <span class="k">def</span> <span class="nf">feed_extra_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return an extra keyword arguments dictionary that is used when</span>
+<span class="sd">        initializing the feed generator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">item_extra_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return an extra keyword arguments dictionary that is used with</span>
+<span class="sd">        the `add_item` call of the feed generator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a dictionary to use as extra context if either</span>
+<span class="sd">        ``self.description_template`` or ``self.item_template`` are used.</span>
+
+<span class="sd">        Default implementation preserves the old behavior</span>
+<span class="sd">        of using {&#39;obj&#39;: item, &#39;site&#39;: current_site} as the context.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;obj&#39;</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">),</span> <span class="s1">&#39;site&#39;</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;site&#39;</span><span class="p">)}</span>
+
+    <span class="k">def</span> <span class="nf">get_feed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a feedgenerator.DefaultFeed object, fully populated, for</span>
+<span class="sd">        this feed. Raise FeedDoesNotExist for invalid parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">current_site</span> <span class="o">=</span> <span class="n">get_current_site</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+        <span class="n">link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;link&#39;</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+        <span class="n">link</span> <span class="o">=</span> <span class="n">add_domain</span><span class="p">(</span><span class="n">current_site</span><span class="o">.</span><span class="n">domain</span><span class="p">,</span> <span class="n">link</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">is_secure</span><span class="p">())</span>
+
+        <span class="n">feed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feed_type</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="n">obj</span><span class="p">),</span>
+            <span class="n">subtitle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;subtitle&#39;</span><span class="p">,</span> <span class="n">obj</span><span class="p">),</span>
+            <span class="n">link</span><span class="o">=</span><span class="n">link</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="n">obj</span><span class="p">),</span>
+            <span class="n">language</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">LANGUAGE_CODE</span><span class="p">,</span>
+            <span class="n">feed_url</span><span class="o">=</span><span class="n">add_domain</span><span class="p">(</span>
+                <span class="n">current_site</span><span class="o">.</span><span class="n">domain</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;feed_url&#39;</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">is_secure</span><span class="p">(),</span>
+            <span class="p">),</span>
+            <span class="n">author_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;author_name&#39;</span><span class="p">,</span> <span class="n">obj</span><span class="p">),</span>
+            <span class="n">author_link</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;author_link&#39;</span><span class="p">,</span> <span class="n">obj</span><span class="p">),</span>
+            <span class="n">author_email</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;author_email&#39;</span><span class="p">,</span> <span class="n">obj</span><span class="p">),</span>
+            <span class="n">categories</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;categories&#39;</span><span class="p">,</span> <span class="n">obj</span><span class="p">),</span>
+            <span class="n">feed_copyright</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;feed_copyright&#39;</span><span class="p">,</span> <span class="n">obj</span><span class="p">),</span>
+            <span class="n">feed_guid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;feed_guid&#39;</span><span class="p">,</span> <span class="n">obj</span><span class="p">),</span>
+            <span class="n">ttl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;ttl&#39;</span><span class="p">,</span> <span class="n">obj</span><span class="p">),</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">feed_extra_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">title_tmp</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">title_template</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">title_tmp</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">get_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title_template</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">TemplateDoesNotExist</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="n">description_tmp</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">description_template</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">description_tmp</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">get_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">description_template</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">TemplateDoesNotExist</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;items&#39;</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+            <span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="n">item</span><span class="p">,</span> <span class="n">site</span><span class="o">=</span><span class="n">current_site</span><span class="p">,</span>
+                                            <span class="n">obj</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">title_tmp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="n">title_tmp</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;item_title&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">description_tmp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">description</span> <span class="o">=</span> <span class="n">description_tmp</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;item_description&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+            <span class="n">link</span> <span class="o">=</span> <span class="n">add_domain</span><span class="p">(</span>
+                <span class="n">current_site</span><span class="o">.</span><span class="n">domain</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;item_link&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">),</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">is_secure</span><span class="p">(),</span>
+            <span class="p">)</span>
+            <span class="n">enclosures</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;item_enclosures&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+            <span class="n">author_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;item_author_name&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">author_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">author_email</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;item_author_email&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+                <span class="n">author_link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;item_author_link&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">author_email</span> <span class="o">=</span> <span class="n">author_link</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">tz</span> <span class="o">=</span> <span class="n">get_default_timezone</span><span class="p">()</span>
+
+            <span class="n">pubdate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;item_pubdate&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pubdate</span> <span class="ow">and</span> <span class="n">is_naive</span><span class="p">(</span><span class="n">pubdate</span><span class="p">):</span>
+                <span class="n">pubdate</span> <span class="o">=</span> <span class="n">make_aware</span><span class="p">(</span><span class="n">pubdate</span><span class="p">,</span> <span class="n">tz</span><span class="p">)</span>
+
+            <span class="n">updateddate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;item_updateddate&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">updateddate</span> <span class="ow">and</span> <span class="n">is_naive</span><span class="p">(</span><span class="n">updateddate</span><span class="p">):</span>
+                <span class="n">updateddate</span> <span class="o">=</span> <span class="n">make_aware</span><span class="p">(</span><span class="n">updateddate</span><span class="p">,</span> <span class="n">tz</span><span class="p">)</span>
+
+            <span class="n">feed</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span>
+                <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+                <span class="n">link</span><span class="o">=</span><span class="n">link</span><span class="p">,</span>
+                <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+                <span class="n">unique_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;item_guid&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">link</span><span class="p">),</span>
+                <span class="n">unique_id_is_permalink</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span>
+                    <span class="s1">&#39;item_guid_is_permalink&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">),</span>
+                <span class="n">enclosures</span><span class="o">=</span><span class="n">enclosures</span><span class="p">,</span>
+                <span class="n">pubdate</span><span class="o">=</span><span class="n">pubdate</span><span class="p">,</span>
+                <span class="n">updateddate</span><span class="o">=</span><span class="n">updateddate</span><span class="p">,</span>
+                <span class="n">author_name</span><span class="o">=</span><span class="n">author_name</span><span class="p">,</span>
+                <span class="n">author_email</span><span class="o">=</span><span class="n">author_email</span><span class="p">,</span>
+                <span class="n">author_link</span><span class="o">=</span><span class="n">author_link</span><span class="p">,</span>
+                <span class="n">categories</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;item_categories&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">),</span>
+                <span class="n">item_copyright</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dynamic_attr</span><span class="p">(</span><span class="s1">&#39;item_copyright&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">),</span>
+                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">item_extra_kwargs</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">feed</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    <a href="../../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

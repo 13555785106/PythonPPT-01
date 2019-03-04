@@ -1,0 +1,303 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>django.core.exceptions &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    <a href="../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="_modules-django-core-exceptions">
+            
+  <h1>Source code for django.core.exceptions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Global Django exception and warning classes.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="FieldDoesNotExist"><a class="viewcode-back" href="../../../ref/exceptions.html#django.core.exceptions.FieldDoesNotExist">[docs]</a><span class="k">class</span> <span class="nc">FieldDoesNotExist</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The requested model field does not exist&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="AppRegistryNotReady"><a class="viewcode-back" href="../../../ref/exceptions.html#django.core.exceptions.AppRegistryNotReady">[docs]</a><span class="k">class</span> <span class="nc">AppRegistryNotReady</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The django.apps registry is not populated yet&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ObjectDoesNotExist"><a class="viewcode-back" href="../../../ref/exceptions.html#django.core.exceptions.ObjectDoesNotExist">[docs]</a><span class="k">class</span> <span class="nc">ObjectDoesNotExist</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The requested object does not exist&quot;&quot;&quot;</span>
+    <span class="n">silent_variable_failure</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="MultipleObjectsReturned"><a class="viewcode-back" href="../../../ref/exceptions.html#django.core.exceptions.MultipleObjectsReturned">[docs]</a><span class="k">class</span> <span class="nc">MultipleObjectsReturned</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The query returned multiple objects when only one was expected.&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="SuspiciousOperation"><a class="viewcode-back" href="../../../ref/exceptions.html#django.core.exceptions.SuspiciousOperation">[docs]</a><span class="k">class</span> <span class="nc">SuspiciousOperation</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The user did something suspicious&quot;&quot;&quot;</span></div>
+
+
+<span class="k">class</span> <span class="nc">SuspiciousMultipartForm</span><span class="p">(</span><span class="n">SuspiciousOperation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Suspect MIME request in multipart form data&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">SuspiciousFileOperation</span><span class="p">(</span><span class="n">SuspiciousOperation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A Suspicious filesystem operation was attempted&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">DisallowedHost</span><span class="p">(</span><span class="n">SuspiciousOperation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;HTTP_HOST header contains invalid value&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">DisallowedRedirect</span><span class="p">(</span><span class="n">SuspiciousOperation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Redirect to scheme not in allowed list&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">TooManyFieldsSent</span><span class="p">(</span><span class="n">SuspiciousOperation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The number of fields in a GET or POST request exceeded</span>
+<span class="sd">    settings.DATA_UPLOAD_MAX_NUMBER_FIELDS.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">RequestDataTooBig</span><span class="p">(</span><span class="n">SuspiciousOperation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The size of the request (excluding any file uploads) exceeded</span>
+<span class="sd">    settings.DATA_UPLOAD_MAX_MEMORY_SIZE.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="PermissionDenied"><a class="viewcode-back" href="../../../ref/exceptions.html#django.core.exceptions.PermissionDenied">[docs]</a><span class="k">class</span> <span class="nc">PermissionDenied</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The user did not have permission to do that&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ViewDoesNotExist"><a class="viewcode-back" href="../../../ref/exceptions.html#django.core.exceptions.ViewDoesNotExist">[docs]</a><span class="k">class</span> <span class="nc">ViewDoesNotExist</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The requested view does not exist&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="MiddlewareNotUsed"><a class="viewcode-back" href="../../../ref/exceptions.html#django.core.exceptions.MiddlewareNotUsed">[docs]</a><span class="k">class</span> <span class="nc">MiddlewareNotUsed</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This middleware is not used in this server configuration&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ImproperlyConfigured"><a class="viewcode-back" href="../../../ref/exceptions.html#django.core.exceptions.ImproperlyConfigured">[docs]</a><span class="k">class</span> <span class="nc">ImproperlyConfigured</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Django is somehow improperly configured&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="FieldError"><a class="viewcode-back" href="../../../ref/exceptions.html#django.core.exceptions.FieldError">[docs]</a><span class="k">class</span> <span class="nc">FieldError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Some kind of problem with a model field.&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<span class="n">NON_FIELD_ERRORS</span> <span class="o">=</span> <span class="s1">&#39;__all__&#39;</span>
+
+
+<div class="viewcode-block" id="ValidationError"><a class="viewcode-back" href="../../../ref/exceptions.html#django.core.exceptions.ValidationError">[docs]</a><span class="k">class</span> <span class="nc">ValidationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An error while validating data.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The `message` argument can be a single error, a list of errors, or a</span>
+<span class="sd">        dictionary that maps field names to lists of errors. What we define as</span>
+<span class="sd">        an &quot;error&quot; can be either a simple string or an instance of</span>
+<span class="sd">        ValidationError with its message attribute set, and what we define as</span>
+<span class="sd">        list or dictionary can be an actual `list` or `dict` or an instance</span>
+<span class="sd">        of ValidationError with its `error_list` or `error_dict` attribute set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">ValidationError</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="s1">&#39;error_dict&#39;</span><span class="p">):</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">error_dict</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">):</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">error_list</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">message</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">params</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error_dict</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">messages</span> <span class="ow">in</span> <span class="n">message</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">ValidationError</span><span class="p">):</span>
+                    <span class="n">messages</span> <span class="o">=</span> <span class="n">ValidationError</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">error_dict</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">messages</span><span class="o">.</span><span class="n">error_list</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">message</span><span class="p">:</span>
+                <span class="c1"># Normalize plain strings to instances of ValidationError.</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">ValidationError</span><span class="p">):</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="n">ValidationError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="s1">&#39;error_dict&#39;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">error_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">error_dict</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="p">[]))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">error_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">error_list</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">message_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Trigger an AttributeError if this ValidationError</span>
+        <span class="c1"># doesn&#39;t have an error_dict.</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;error_dict&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">messages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;error_dict&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="p">[])</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">update_error_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;error_dict&#39;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">error_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">error_dict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">error_list</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">error_dict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">NON_FIELD_ERRORS</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">error_list</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">error_dict</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;error_dict&#39;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">errors</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">yield</span> <span class="n">field</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">ValidationError</span><span class="p">(</span><span class="n">errors</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_list</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="n">error</span><span class="o">.</span><span class="n">message</span>
+                <span class="k">if</span> <span class="n">error</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+                    <span class="n">message</span> <span class="o">%=</span> <span class="n">error</span><span class="o">.</span><span class="n">params</span>
+                <span class="k">yield</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;error_dict&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;ValidationError(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="EmptyResultSet"><a class="viewcode-back" href="../../../ref/exceptions.html#django.core.exceptions.EmptyResultSet">[docs]</a><span class="k">class</span> <span class="nc">EmptyResultSet</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A database query predicate is impossible.&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    <a href="../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

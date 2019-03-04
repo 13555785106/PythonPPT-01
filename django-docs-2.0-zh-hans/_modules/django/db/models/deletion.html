@@ -1,0 +1,438 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>django.db.models.deletion &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    <a href="../../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="_modules-django-db-models-deletion">
+            
+  <h1>Source code for django.db.models.deletion</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="k">import</span> <span class="n">attrgetter</span>
+
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="k">import</span> <span class="n">IntegrityError</span><span class="p">,</span> <span class="n">connections</span><span class="p">,</span> <span class="n">transaction</span>
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">signals</span><span class="p">,</span> <span class="n">sql</span>
+
+
+<span class="k">class</span> <span class="nc">ProtectedError</span><span class="p">(</span><span class="n">IntegrityError</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">protected_objects</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">protected_objects</span> <span class="o">=</span> <span class="n">protected_objects</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">protected_objects</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CASCADE"><a class="viewcode-back" href="../../../../ref/models/fields.html#django.db.CASCADE">[docs]</a><span class="k">def</span> <span class="nf">CASCADE</span><span class="p">(</span><span class="n">collector</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">sub_objs</span><span class="p">,</span> <span class="n">using</span><span class="p">):</span>
+    <span class="n">collector</span><span class="o">.</span><span class="n">collect</span><span class="p">(</span><span class="n">sub_objs</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">field</span><span class="o">.</span><span class="n">remote_field</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+                      <span class="n">source_attr</span><span class="o">=</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="n">field</span><span class="o">.</span><span class="n">null</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">null</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">connections</span><span class="p">[</span><span class="n">using</span><span class="p">]</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">can_defer_constraint_checks</span><span class="p">:</span>
+        <span class="n">collector</span><span class="o">.</span><span class="n">add_field_update</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sub_objs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PROTECT"><a class="viewcode-back" href="../../../../ref/models/fields.html#django.db.PROTECT">[docs]</a><span class="k">def</span> <span class="nf">PROTECT</span><span class="p">(</span><span class="n">collector</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">sub_objs</span><span class="p">,</span> <span class="n">using</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="n">ProtectedError</span><span class="p">(</span>
+        <span class="s2">&quot;Cannot delete some instances of model &#39;</span><span class="si">%s</span><span class="s2">&#39; because they are &quot;</span>
+        <span class="s2">&quot;referenced through a protected foreign key: &#39;</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">field</span><span class="o">.</span><span class="n">remote_field</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">sub_objs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">),</span>
+        <span class="n">sub_objs</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SET"><a class="viewcode-back" href="../../../../ref/models/fields.html#django.db.SET">[docs]</a><span class="k">def</span> <span class="nf">SET</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">set_on_delete</span><span class="p">(</span><span class="n">collector</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">sub_objs</span><span class="p">,</span> <span class="n">using</span><span class="p">):</span>
+            <span class="n">collector</span><span class="o">.</span><span class="n">add_field_update</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">(),</span> <span class="n">sub_objs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">set_on_delete</span><span class="p">(</span><span class="n">collector</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">sub_objs</span><span class="p">,</span> <span class="n">using</span><span class="p">):</span>
+            <span class="n">collector</span><span class="o">.</span><span class="n">add_field_update</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">sub_objs</span><span class="p">)</span>
+    <span class="n">set_on_delete</span><span class="o">.</span><span class="n">deconstruct</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;django.db.models.SET&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">value</span><span class="p">,),</span> <span class="p">{})</span>
+    <span class="k">return</span> <span class="n">set_on_delete</span></div>
+
+
+<div class="viewcode-block" id="SET_NULL"><a class="viewcode-back" href="../../../../ref/models/fields.html#django.db.SET_NULL">[docs]</a><span class="k">def</span> <span class="nf">SET_NULL</span><span class="p">(</span><span class="n">collector</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">sub_objs</span><span class="p">,</span> <span class="n">using</span><span class="p">):</span>
+    <span class="n">collector</span><span class="o">.</span><span class="n">add_field_update</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sub_objs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SET_DEFAULT"><a class="viewcode-back" href="../../../../ref/models/fields.html#django.db.SET_DEFAULT">[docs]</a><span class="k">def</span> <span class="nf">SET_DEFAULT</span><span class="p">(</span><span class="n">collector</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">sub_objs</span><span class="p">,</span> <span class="n">using</span><span class="p">):</span>
+    <span class="n">collector</span><span class="o">.</span><span class="n">add_field_update</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">get_default</span><span class="p">(),</span> <span class="n">sub_objs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DO_NOTHING"><a class="viewcode-back" href="../../../../ref/models/fields.html#django.db.DO_NOTHING">[docs]</a><span class="k">def</span> <span class="nf">DO_NOTHING</span><span class="p">(</span><span class="n">collector</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">sub_objs</span><span class="p">,</span> <span class="n">using</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="k">def</span> <span class="nf">get_candidate_relations_to_delete</span><span class="p">(</span><span class="n">opts</span><span class="p">):</span>
+    <span class="c1"># The candidate relations are the ones that come from N-1 and 1-1 relations.</span>
+    <span class="c1"># N-N  (i.e., many-to-many) relations aren&#39;t candidates for deletion.</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">opts</span><span class="o">.</span><span class="n">get_fields</span><span class="p">(</span><span class="n">include_hidden</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">auto_created</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">concrete</span> <span class="ow">and</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">one_to_one</span> <span class="ow">or</span> <span class="n">f</span><span class="o">.</span><span class="n">one_to_many</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Collector</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">using</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">using</span> <span class="o">=</span> <span class="n">using</span>
+        <span class="c1"># Initially, {model: {instances}}, later values become lists.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field_updates</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># {model: {(field, value): {instances}}}</span>
+        <span class="c1"># fast_deletes is a list of queryset-likes that can be deleted without</span>
+        <span class="c1"># fetching the objects into memory.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fast_deletes</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Tracks deletion-order dependency for databases without transactions</span>
+        <span class="c1"># or ability to defer constraint checks. Only concrete model classes</span>
+        <span class="c1"># should be included, as the dependencies exist only between actual</span>
+        <span class="c1"># database tables; proxy models are represented here by their concrete</span>
+        <span class="c1"># parent.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># {model: {models}}</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objs</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reverse_dependency</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add &#39;objs&#39; to the collection of objects to be deleted.  If the call is</span>
+<span class="sd">        the result of a cascade, &#39;source&#39; should be the model that caused it,</span>
+<span class="sd">        and &#39;nullable&#39; should be set to True if the relation can be null.</span>
+
+<span class="sd">        Return a list of all objects that were not already collected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">objs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="n">new_objs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">objs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="n">instances</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obj</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">:</span>
+                <span class="n">new_objs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="n">instances</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_objs</span><span class="p">)</span>
+        <span class="c1"># Nullable relationships can be ignored -- they are nulled out before</span>
+        <span class="c1"># deleting, and therefore do not affect the order in which objects have</span>
+        <span class="c1"># to be deleted.</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">nullable</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">reverse_dependency</span><span class="p">:</span>
+                <span class="n">source</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span> <span class="n">source</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
+                <span class="n">source</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">concrete_model</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">concrete_model</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_objs</span>
+
+    <span class="k">def</span> <span class="nf">add_field_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">objs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Schedule a field update. &#39;objs&#39; must be a homogeneous iterable</span>
+<span class="sd">        collection of model instances (e.g. a QuerySet).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">objs</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">objs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field_updates</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">objs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">can_fast_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objs</span><span class="p">,</span> <span class="n">from_field</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determine if the objects in the given queryset-like can be</span>
+<span class="sd">        fast-deleted. This can be done if there are no cascades, no</span>
+<span class="sd">        parents and no signal listeners for the object class.</span>
+
+<span class="sd">        The &#39;from_field&#39; tells where we are coming from - we need this to</span>
+<span class="sd">        determine if the objects are in fact to be deleted. Allow also</span>
+<span class="sd">        skipping parent -&gt; child -&gt; parent chain preventing fast delete of</span>
+<span class="sd">        the child.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">from_field</span> <span class="ow">and</span> <span class="n">from_field</span><span class="o">.</span><span class="n">remote_field</span><span class="o">.</span><span class="n">on_delete</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">CASCADE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">objs</span><span class="p">,</span> <span class="s1">&#39;model&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">objs</span><span class="p">,</span> <span class="s1">&#39;_raw_delete&#39;</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">objs</span><span class="o">.</span><span class="n">model</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">signals</span><span class="o">.</span><span class="n">pre_delete</span><span class="o">.</span><span class="n">has_listeners</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="ow">or</span>
+                <span class="n">signals</span><span class="o">.</span><span class="n">post_delete</span><span class="o">.</span><span class="n">has_listeners</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="ow">or</span>
+                <span class="n">signals</span><span class="o">.</span><span class="n">m2m_changed</span><span class="o">.</span><span class="n">has_listeners</span><span class="p">(</span><span class="n">model</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># The use of from_field comes from the need to avoid cascade back to</span>
+        <span class="c1"># parent when parent delete is cascading to child.</span>
+        <span class="n">opts</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">_meta</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">link</span> <span class="o">!=</span> <span class="n">from_field</span> <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">opts</span><span class="o">.</span><span class="n">concrete_model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">parents</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># Foreign keys pointing to this model, both from m2m and other</span>
+        <span class="c1"># models.</span>
+        <span class="k">for</span> <span class="n">related</span> <span class="ow">in</span> <span class="n">get_candidate_relations_to_delete</span><span class="p">(</span><span class="n">opts</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">related</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">remote_field</span><span class="o">.</span><span class="n">on_delete</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">DO_NOTHING</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">private_fields</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="s1">&#39;bulk_related_objects&#39;</span><span class="p">):</span>
+                <span class="c1"># It&#39;s something like generic foreign key.</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">get_del_batches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objs</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the objs in suitably sized batches for the used connection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">conn_batch_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+            <span class="n">connections</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">using</span><span class="p">]</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">bulk_batch_size</span><span class="p">([</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">objs</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">objs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">conn_batch_size</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">objs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">conn_batch_size</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">objs</span><span class="p">),</span> <span class="n">conn_batch_size</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">objs</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">collect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objs</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">collect_related</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">source_attr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reverse_dependency</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">keep_parents</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add &#39;objs&#39; to the collection of objects to be deleted as well as all</span>
+<span class="sd">        parent instances.  &#39;objs&#39; must be a homogeneous iterable collection of</span>
+<span class="sd">        model instances (e.g. a QuerySet).  If &#39;collect_related&#39; is True,</span>
+<span class="sd">        related objects will be handled by their respective on_delete handler.</span>
+
+<span class="sd">        If the call is the result of a cascade, &#39;source&#39; should be the model</span>
+<span class="sd">        that caused it and &#39;nullable&#39; should be set to True, if the relation</span>
+<span class="sd">        can be null.</span>
+
+<span class="sd">        If &#39;reverse_dependency&#39; is True, &#39;source&#39; will be deleted before the</span>
+<span class="sd">        current model, rather than after. (Needed for cascading to parent</span>
+<span class="sd">        models, the one case in which the cascade follows the forwards</span>
+<span class="sd">        direction of an FK rather than the reverse direction.)</span>
+
+<span class="sd">        If &#39;keep_parents&#39; is True, data of parent model&#39;s will be not deleted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_fast_delete</span><span class="p">(</span><span class="n">objs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fast_deletes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objs</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">new_objs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">objs</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">nullable</span><span class="p">,</span>
+                            <span class="n">reverse_dependency</span><span class="o">=</span><span class="n">reverse_dependency</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_objs</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">new_objs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__class__</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">keep_parents</span><span class="p">:</span>
+            <span class="c1"># Recursively collect concrete model&#39;s parent models, but not their</span>
+            <span class="c1"># related objects. These will be found by meta.get_fields()</span>
+            <span class="n">concrete_model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">concrete_model</span>
+            <span class="k">for</span> <span class="n">ptr</span> <span class="ow">in</span> <span class="n">concrete_model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">parents</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">ptr</span><span class="p">:</span>
+                    <span class="n">parent_objs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ptr</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">new_objs</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">collect</span><span class="p">(</span><span class="n">parent_objs</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                                 <span class="n">source_attr</span><span class="o">=</span><span class="n">ptr</span><span class="o">.</span><span class="n">remote_field</span><span class="o">.</span><span class="n">related_name</span><span class="p">,</span>
+                                 <span class="n">collect_related</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                 <span class="n">reverse_dependency</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">collect_related</span><span class="p">:</span>
+            <span class="n">parents</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">parents</span>
+            <span class="k">for</span> <span class="n">related</span> <span class="ow">in</span> <span class="n">get_candidate_relations_to_delete</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">_meta</span><span class="p">):</span>
+                <span class="c1"># Preserve parent reverse relationships if keep_parents=True.</span>
+                <span class="k">if</span> <span class="n">keep_parents</span> <span class="ow">and</span> <span class="n">related</span><span class="o">.</span><span class="n">model</span> <span class="ow">in</span> <span class="n">parents</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">field</span> <span class="o">=</span> <span class="n">related</span><span class="o">.</span><span class="n">field</span>
+                <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">remote_field</span><span class="o">.</span><span class="n">on_delete</span> <span class="o">==</span> <span class="n">DO_NOTHING</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">batches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_del_batches</span><span class="p">(</span><span class="n">new_objs</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">batches</span><span class="p">:</span>
+                    <span class="n">sub_objs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">related_objects</span><span class="p">(</span><span class="n">related</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_fast_delete</span><span class="p">(</span><span class="n">sub_objs</span><span class="p">,</span> <span class="n">from_field</span><span class="o">=</span><span class="n">field</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">fast_deletes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub_objs</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">sub_objs</span><span class="p">:</span>
+                        <span class="n">field</span><span class="o">.</span><span class="n">remote_field</span><span class="o">.</span><span class="n">on_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">sub_objs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">using</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">private_fields</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="s1">&#39;bulk_related_objects&#39;</span><span class="p">):</span>
+                    <span class="c1"># It&#39;s something like generic foreign key.</span>
+                    <span class="n">sub_objs</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">bulk_related_objects</span><span class="p">(</span><span class="n">new_objs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">using</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">collect</span><span class="p">(</span><span class="n">sub_objs</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">related_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">related</span><span class="p">,</span> <span class="n">objs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a QuerySet of objects related to `objs` via the relation `related`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">related</span><span class="o">.</span><span class="n">related_model</span><span class="o">.</span><span class="n">_base_manager</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">using</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="o">**</span><span class="p">{</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">__in&quot;</span> <span class="o">%</span> <span class="n">related</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">objs</span><span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">instances_with_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">model</span><span class="p">,</span> <span class="n">instances</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">model</span><span class="p">,</span> <span class="n">obj</span>
+
+    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">sorted_models</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">concrete_models</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_models</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">sorted_models</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">dependencies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">concrete_model</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dependencies</span> <span class="ow">and</span> <span class="n">dependencies</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">concrete_models</span><span class="p">)):</span>
+                    <span class="n">sorted_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+                    <span class="n">concrete_models</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">concrete_model</span><span class="p">)</span>
+                    <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+                <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">((</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">model</span><span class="p">])</span>
+                                <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">sorted_models</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># sort instance collections</span>
+        <span class="k">for</span> <span class="n">model</span><span class="p">,</span> <span class="n">instances</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">model</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">instances</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">attrgetter</span><span class="p">(</span><span class="s2">&quot;pk&quot;</span><span class="p">))</span>
+
+        <span class="c1"># if possible, bring the models in an order suitable for databases that</span>
+        <span class="c1"># don&#39;t support transactions or cannot defer constraint checks until the</span>
+        <span class="c1"># end of a transaction.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="c1"># number of objects deleted for each model label</span>
+        <span class="n">deleted_counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="n">transaction</span><span class="o">.</span><span class="n">atomic</span><span class="p">(</span><span class="n">using</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">using</span><span class="p">,</span> <span class="n">savepoint</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="c1"># send pre_delete signals</span>
+            <span class="k">for</span> <span class="n">model</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">instances_with_model</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">auto_created</span><span class="p">:</span>
+                    <span class="n">signals</span><span class="o">.</span><span class="n">pre_delete</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+                        <span class="n">sender</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span> <span class="n">using</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">using</span>
+                    <span class="p">)</span>
+
+            <span class="c1"># fast deletes</span>
+            <span class="k">for</span> <span class="n">qs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_deletes</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="n">qs</span><span class="o">.</span><span class="n">_raw_delete</span><span class="p">(</span><span class="n">using</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">using</span><span class="p">)</span>
+                <span class="n">deleted_counter</span><span class="p">[</span><span class="n">qs</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">label</span><span class="p">]</span> <span class="o">+=</span> <span class="n">count</span>
+
+            <span class="c1"># update fields</span>
+            <span class="k">for</span> <span class="n">model</span><span class="p">,</span> <span class="n">instances_for_fieldvalues</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_updates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="n">instances</span> <span class="ow">in</span> <span class="n">instances_for_fieldvalues</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">query</span> <span class="o">=</span> <span class="n">sql</span><span class="o">.</span><span class="n">UpdateQuery</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+                    <span class="n">query</span><span class="o">.</span><span class="n">update_batch</span><span class="p">([</span><span class="n">obj</span><span class="o">.</span><span class="n">pk</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">],</span>
+                                       <span class="p">{</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">value</span><span class="p">},</span> <span class="bp">self</span><span class="o">.</span><span class="n">using</span><span class="p">)</span>
+
+            <span class="c1"># reverse instance collections</span>
+            <span class="k">for</span> <span class="n">instances</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">instances</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+
+            <span class="c1"># delete instances</span>
+            <span class="k">for</span> <span class="n">model</span><span class="p">,</span> <span class="n">instances</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="n">sql</span><span class="o">.</span><span class="n">DeleteQuery</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+                <span class="n">pk_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">pk</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">]</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">delete_batch</span><span class="p">(</span><span class="n">pk_list</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">using</span><span class="p">)</span>
+                <span class="n">deleted_counter</span><span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">label</span><span class="p">]</span> <span class="o">+=</span> <span class="n">count</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">auto_created</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">:</span>
+                        <span class="n">signals</span><span class="o">.</span><span class="n">post_delete</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+                            <span class="n">sender</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span> <span class="n">using</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">using</span>
+                        <span class="p">)</span>
+
+        <span class="c1"># update collected instances</span>
+        <span class="k">for</span> <span class="n">model</span><span class="p">,</span> <span class="n">instances_for_fieldvalues</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_updates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="n">instances</span> <span class="ow">in</span> <span class="n">instances_for_fieldvalues</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">:</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">attname</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">model</span><span class="p">,</span> <span class="n">instances</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">instance</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">pk</span><span class="o">.</span><span class="n">attname</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">deleted_counter</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">deleted_counter</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    <a href="../../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

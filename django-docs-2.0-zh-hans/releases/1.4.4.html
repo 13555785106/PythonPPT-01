@@ -1,0 +1,223 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Django 1.4.4 release notes &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Django 1.4.3 release notes" href="1.4.3.html" />
+    <link rel="prev" title="Django 1.4.5 release notes" href="1.4.5.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="1.4.5.html" title="Django 1.4.5 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.4.3.html" title="Django 1.4.3 release notes">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="releases-1.4.4">
+            
+  <div class="section" id="s-django-1-4-4-release-notes">
+<span id="django-1-4-4-release-notes"></span><h1>Django 1.4.4 release notes<a class="headerlink" href="#django-1-4-4-release-notes" title="Permalink to this headline">¶</a></h1>
+<p><em>February 19, 2013</em></p>
+<p>Django 1.4.4 fixes four security issues present in previous Django releases in
+the 1.4 series, as well as several other bugs and numerous documentation
+improvements.</p>
+<p>This is the fourth bugfix/security release in the Django 1.4 series.</p>
+<div class="section" id="s-host-header-poisoning">
+<span id="host-header-poisoning"></span><h2>Host header poisoning<a class="headerlink" href="#host-header-poisoning" title="Permalink to this headline">¶</a></h2>
+<p>Some parts of Django -- independent of end-user-written applications -- make
+use of full URLs, including domain name, which are generated from the HTTP Host
+header. Django's documentation has for some time contained notes advising users
+on how to configure Web servers to ensure that only valid Host headers can reach
+the Django application. However, it has been reported to us that even with the
+recommended Web server configurations there are still techniques available for
+tricking many common Web servers into supplying the application with an
+incorrect and possibly malicious Host header.</p>
+<p>For this reason, Django 1.4.4 adds a new setting, <code class="docutils literal notranslate"><span class="pre">ALLOWED_HOSTS</span></code>, containing
+an explicit list of valid host/domain names for this site. A request with a
+Host header not matching an entry in this list will raise
+<code class="docutils literal notranslate"><span class="pre">SuspiciousOperation</span></code> if <code class="docutils literal notranslate"><span class="pre">request.get_host()</span></code> is called. For full details
+see the documentation for the <a class="reference internal" href="../ref/settings.html#std:setting-ALLOWED_HOSTS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">ALLOWED_HOSTS</span></code></a> setting.</p>
+<p>The default value for this setting in Django 1.4.4 is <code class="docutils literal notranslate"><span class="pre">['*']</span></code> (matching any
+host), for backwards-compatibility, but we strongly encourage all sites to set
+a more restrictive value.</p>
+<p>This host validation is disabled when <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> or when running tests.</p>
+</div>
+<div class="section" id="s-xml-deserialization">
+<span id="xml-deserialization"></span><h2>XML deserialization<a class="headerlink" href="#xml-deserialization" title="Permalink to this headline">¶</a></h2>
+<p>The XML parser in the Python standard library is vulnerable to a number of
+attacks via external entities and entity expansion. Django uses this parser for
+deserializing XML-formatted database fixtures. This deserializer is not
+intended for use with untrusted data, but in order to err on the side of safety
+in Django 1.4.4 the XML deserializer refuses to parse an XML document with a
+DTD (DOCTYPE definition), which closes off these attack avenues.</p>
+<p>These issues in the Python standard library are CVE-2013-1664 and
+CVE-2013-1665. More information available <a class="reference external" href="http://blog.python.org/2013/02/announcing-defusedxml-fixes-for-xml.html">from the Python security team</a>.</p>
+<p>Django's XML serializer does not create documents with a DTD, so this should
+not cause any issues with the typical round-trip from <code class="docutils literal notranslate"><span class="pre">dumpdata</span></code> to
+<code class="docutils literal notranslate"><span class="pre">loaddata</span></code>, but if you feed your own XML documents to the <code class="docutils literal notranslate"><span class="pre">loaddata</span></code>
+management command, you will need to ensure they do not contain a DTD.</p>
+</div>
+<div class="section" id="s-formset-memory-exhaustion">
+<span id="formset-memory-exhaustion"></span><h2>Formset memory exhaustion<a class="headerlink" href="#formset-memory-exhaustion" title="Permalink to this headline">¶</a></h2>
+<p>Previous versions of Django did not validate or limit the form-count data
+provided by the client in a formset's management form, making it possible to
+exhaust a server's available memory by forcing it to create very large numbers
+of forms.</p>
+<p>In Django 1.4.4, all formsets have a strictly-enforced maximum number of forms
+(1000 by default, though it can be set higher via the <code class="docutils literal notranslate"><span class="pre">max_num</span></code> formset
+factory argument).</p>
+</div>
+<div class="section" id="s-admin-history-view-information-leakage">
+<span id="admin-history-view-information-leakage"></span><h2>Admin history view information leakage<a class="headerlink" href="#admin-history-view-information-leakage" title="Permalink to this headline">¶</a></h2>
+<p>In previous versions of Django, an admin user without change permission on a
+model could still view the unicode representation of instances via their admin
+history log. Django 1.4.4 now limits the admin history log view for an object
+to users with change permission for that model.</p>
+</div>
+<div class="section" id="s-other-bugfixes-and-changes">
+<span id="other-bugfixes-and-changes"></span><h2>Other bugfixes and changes<a class="headerlink" href="#other-bugfixes-and-changes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Prevented transaction state from leaking from one request to the next (#19707).</li>
+<li>Changed an SQL command syntax to be MySQL 4 compatible (#19702).</li>
+<li>Added backwards-compatibility with old unsalted MD5 passwords (#18144).</li>
+<li>Numerous documentation improvements and fixes.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Django 1.4.4 release notes</a><ul>
+<li><a class="reference internal" href="#host-header-poisoning">Host header poisoning</a></li>
+<li><a class="reference internal" href="#xml-deserialization">XML deserialization</a></li>
+<li><a class="reference internal" href="#formset-memory-exhaustion">Formset memory exhaustion</a></li>
+<li><a class="reference internal" href="#admin-history-view-information-leakage">Admin history view information leakage</a></li>
+<li><a class="reference internal" href="#other-bugfixes-and-changes">Other bugfixes and changes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="1.4.5.html"
+                        title="previous chapter">Django 1.4.5 release notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="1.4.3.html"
+                        title="next chapter">Django 1.4.3 release notes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/releases/1.4.4.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="1.4.5.html" title="Django 1.4.5 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.4.3.html" title="Django 1.4.3 release notes">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

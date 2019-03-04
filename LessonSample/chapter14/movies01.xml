@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<collection description="简单描述" shelf="新电影来袭，请速看，到期不候！">
+    <movie title="敌后">
+        <type>战争,惊悚</type>
+        <format>DVD</format>
+        <year>2003</year>
+        <rating>PG</rating>
+        <stars>10</stars>
+        <description>关于美日战争的电影</description>
+    </movie>
+    <movie title="变形金刚">
+        <type>动漫,科幻</type>
+        <format>DVD</format>
+        <year>1989</year>
+        <rating>R</rating>
+        <stars>8</stars>
+        <description>科幻小说改变</description>
+    </movie>
+    <movie title="枪神">
+        <type>动画,动作</type>
+        <format>DVD</format>
+        <episodes>4</episodes>
+        <rating>PG</rating>
+        <stars>10</stars>
+        <description>法修·史丹比特!</description>
+    </movie>
+    <movie title="伊斯达">
+        <type>喜剧、冒险、音乐</type>
+        <format>VHS</format>
+        <rating>PG</rating>
+        <stars>2</stars>
+        <description>很无聊的肥皂剧</description>
+    </movie>
+    <movie title="无极">
+        <type>古装、神剧</type>
+        <year>2007</year>
+        <format>VHS</format>
+        <rating>PG</rating>
+        <stars>5</stars>
+        <description>陈凯歌神剧</description>
+    </movie>
+</collection>

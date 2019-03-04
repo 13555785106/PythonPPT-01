@@ -1,0 +1,206 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>快速安装指南 &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="编写你的第一个 Django 应用，第 1 部分" href="tutorial01.html" />
+    <link rel="prev" title="初识 Django" href="overview.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="overview.html" title="初识 Django">previous</a>
+     |
+    <a href="index.html" title="开始" accesskey="U">up</a>
+   |
+    <a href="tutorial01.html" title="编写你的第一个 Django 应用，第 1 部分">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="intro-install">
+            
+  <div class="section" id="s-quick-install-guide">
+<span id="quick-install-guide"></span><h1>快速安装指南<a class="headerlink" href="#quick-install-guide" title="Permalink to this headline">¶</a></h1>
+<p>开始用 Django 前，需要先进行安装。我们写了 <a class="reference internal" href="../topics/install.html"><span class="doc">complete installation guide</span></a> 罗列了各种安装方法；它会指导你完成最小，快速安装。</p>
+<div class="section" id="s-install-python">
+<span id="install-python"></span><h2>安装 Python<a class="headerlink" href="#install-python" title="Permalink to this headline">¶</a></h2>
+<p>作为一个 Python Web 框架，Django 需要 Python。更多细节请参见 <a class="reference internal" href="../faq/install.html#faq-python-version-support"><span class="std std-ref">我应该使用哪个版本的Python来配合Django?</span></a>。Python 包含了一个名为 <a class="reference external" href="https://sqlite.org/">SQLite</a> 的轻量级数据库，所以你暂时不必自行设置一个数据库。</p>
+<p>最新版本的 Python 可以通过访问 <a class="reference external" href="https://www.python.org/downloads/">https://www.python.org/downloads/</a> 或者操作系统的包管理工具获取。</p>
+<p>你可以在你的 shell 中输入 <code class="docutils literal notranslate"><span class="pre">python</span></code> 来确定你是否安装过 Python；你看到的可能是像这样子的:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Python</span> <span class="mf">3.4</span><span class="o">.</span><span class="n">x</span>
+<span class="p">[</span><span class="n">GCC</span> <span class="mf">4.</span><span class="n">x</span><span class="p">]</span> <span class="n">on</span> <span class="n">linux</span>
+<span class="n">Type</span> <span class="s2">&quot;help&quot;</span><span class="p">,</span> <span class="s2">&quot;copyright&quot;</span><span class="p">,</span> <span class="s2">&quot;credits&quot;</span> <span class="ow">or</span> <span class="s2">&quot;license&quot;</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span><span class="o">.</span>
+<span class="o">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-set-up-a-database">
+<span id="set-up-a-database"></span><h2>设置数据库<a class="headerlink" href="#set-up-a-database" title="Permalink to this headline">¶</a></h2>
+<p>此步骤仅在你打算使用诸如 PostgreSQL, MySQL, 或者 Oracle 这些大型数据库引擎时需要。要安装这种数据库, 请参考 <a class="reference internal" href="../topics/install.html#database-installation"><span class="std std-ref">database installation information</span></a>。</p>
+</div>
+<div class="section" id="s-remove-any-old-versions-of-django">
+<span id="remove-any-old-versions-of-django"></span><h2>移除任何老版本的 Django<a class="headerlink" href="#remove-any-old-versions-of-django" title="Permalink to this headline">¶</a></h2>
+<p>如果你打算从前一版本的 Django 升级，, 你将需要 <a class="reference internal" href="../topics/install.html#removing-old-versions-of-django"><span class="std std-ref">uninstall the old Django version before installing the new version</span></a>。</p>
+</div>
+<div class="section" id="s-install-django">
+<span id="install-django"></span><h2>安装 Django<a class="headerlink" href="#install-django" title="Permalink to this headline">¶</a></h2>
+<p>你有三个简单的方法来安装 Django：</p>
+<ul class="simple">
+<li><a class="reference internal" href="../topics/install.html#installing-official-release"><span class="std std-ref">Install an official release</span></a> 适合大部分用户。</li>
+<li>安装 Django <a class="reference internal" href="../topics/install.html#installing-distribution-package"><span class="std std-ref">provided by your operating system distribution</span></a>。</li>
+<li><a class="reference internal" href="../topics/install.html#installing-development-version"><span class="std std-ref">Install the latest development version</span></a> 这个选择是针对那些想要体验最新和最好的特性的爱好者们，并不怕运行全新代码。你在开发版中可能会遇到新的 bug，可以报告给社区团队帮助 Django 开发。此外，第三方发行的软件包也可能不与开发版进行兼容。</li>
+</ul>
+<div class="admonition-always-refer-to-the-documentation-that-corresponds-to-the-version-of-django-you-re-using admonition">
+<p class="first admonition-title">请始终参考与你所使用的版本对应的 Django 文档！</p>
+<p class="last">如果采用了前两种方式进行安装，你需要注意在文档中标明  <strong>在开发版中新增</strong>。这个标记表明这个特性仅适用开发版 Django，并且他们可能不会在官方发布的稳定版中出现。</p>
+</div>
+</div>
+<div class="section" id="s-verifying">
+<span id="verifying"></span><h2>验证<a class="headerlink" href="#verifying" title="Permalink to this headline">¶</a></h2>
+<p>若要验证 Django 是否能被 Python 识别，可以在 shell 中输入 <code class="docutils literal notranslate"><span class="pre">python</span></code>。 然后在 Python 提示符下，尝试导入 Django：</p>
+<pre class="literal-block">
+&gt;&gt;&gt; import django
+&gt;&gt;&gt; print(django.get_version())
+2.0
+</pre>
+<p>当然了，你也可能安装的是其它版本的 Django。</p>
+</div>
+<div class="section" id="s-that-s-it">
+<span id="that-s-it"></span><h2>搞定！<a class="headerlink" href="#that-s-it" title="Permalink to this headline">¶</a></h2>
+<p>搞定，现在你可以 <a class="reference internal" href="tutorial01.html"><span class="doc">move onto the tutorial</span></a>。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">快速安装指南</a><ul>
+<li><a class="reference internal" href="#install-python">安装 Python</a></li>
+<li><a class="reference internal" href="#set-up-a-database">设置数据库</a></li>
+<li><a class="reference internal" href="#remove-any-old-versions-of-django">移除任何老版本的 Django</a></li>
+<li><a class="reference internal" href="#install-django">安装 Django</a></li>
+<li><a class="reference internal" href="#verifying">验证</a></li>
+<li><a class="reference internal" href="#that-s-it">搞定！</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="overview.html"
+                        title="previous chapter">初识 Django</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tutorial01.html"
+                        title="next chapter">编写你的第一个 Django 应用，第 1 部分</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/intro/install.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="overview.html" title="初识 Django">previous</a>
+     |
+    <a href="index.html" title="开始" accesskey="U">up</a>
+   |
+    <a href="tutorial01.html" title="编写你的第一个 Django 应用，第 1 部分">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

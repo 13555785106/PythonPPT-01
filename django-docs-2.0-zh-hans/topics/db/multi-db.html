@@ -1,0 +1,870 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Multiple databases &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Tablespaces" href="tablespaces.html" />
+    <link rel="prev" title="数据库事务" href="transactions.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="transactions.html" title="数据库事务">previous</a>
+     |
+    <a href="../index.html" title="Using Django" accesskey="U">up</a>
+   |
+    <a href="tablespaces.html" title="Tablespaces">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="topics-db-multi-db">
+            
+  <div class="section" id="s-multiple-databases">
+<span id="multiple-databases"></span><h1>Multiple databases<a class="headerlink" href="#multiple-databases" title="Permalink to this headline">¶</a></h1>
+<p>This topic guide describes Django's support for interacting with
+multiple databases. Most of the rest of Django's documentation assumes
+you are interacting with a single database. If you want to interact
+with multiple databases, you'll need to take some additional steps.</p>
+<div class="section" id="s-defining-your-databases">
+<span id="defining-your-databases"></span><h2>Defining your databases<a class="headerlink" href="#defining-your-databases" title="Permalink to this headline">¶</a></h2>
+<p>The first step to using more than one database with Django is to tell
+Django about the database servers you'll be using. This is done using
+the <a class="reference internal" href="../../ref/settings.html#std:setting-DATABASES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DATABASES</span></code></a> setting. This setting maps database aliases,
+which are a way to refer to a specific database throughout Django, to
+a dictionary of settings for that specific connection. The settings in
+the inner dictionaries are described fully in the <a class="reference internal" href="../../ref/settings.html#std:setting-DATABASES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DATABASES</span></code></a>
+documentation.</p>
+<p>Databases can have any alias you choose. However, the alias
+<code class="docutils literal notranslate"><span class="pre">default</span></code> has special significance. Django uses the database with
+the alias of <code class="docutils literal notranslate"><span class="pre">default</span></code> when no other database has been selected.</p>
+<p>The following is an example <code class="docutils literal notranslate"><span class="pre">settings.py</span></code> snippet defining two
+databases -- a default PostgreSQL database and a MySQL database called
+<code class="docutils literal notranslate"><span class="pre">users</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="s1">&#39;app_data&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ENGINE&#39;</span><span class="p">:</span> <span class="s1">&#39;django.db.backends.postgresql&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;USER&#39;</span><span class="p">:</span> <span class="s1">&#39;postgres_user&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PASSWORD&#39;</span><span class="p">:</span> <span class="s1">&#39;s3krit&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;users&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="s1">&#39;user_data&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ENGINE&#39;</span><span class="p">:</span> <span class="s1">&#39;django.db.backends.mysql&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;USER&#39;</span><span class="p">:</span> <span class="s1">&#39;mysql_user&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PASSWORD&#39;</span><span class="p">:</span> <span class="s1">&#39;priv4te&#39;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If the concept of a <code class="docutils literal notranslate"><span class="pre">default</span></code> database doesn't make sense in the context
+of your project, you need to be careful to always specify the database
+that you want to use. Django requires that a <code class="docutils literal notranslate"><span class="pre">default</span></code> database entry
+be defined, but the parameters dictionary can be left blank if it will not be
+used. To do this, you must set up <a class="reference internal" href="../../ref/settings.html#std:setting-DATABASE_ROUTERS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DATABASE_ROUTERS</span></code></a> for all of your
+apps' models, including those in any contrib and third-party apps you're using,
+so that no queries are routed to the default database. The following is an
+example <code class="docutils literal notranslate"><span class="pre">settings.py</span></code> snippet defining two non-default databases, with the
+<code class="docutils literal notranslate"><span class="pre">default</span></code> entry intentionally left empty:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">&#39;users&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="s1">&#39;user_data&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ENGINE&#39;</span><span class="p">:</span> <span class="s1">&#39;django.db.backends.mysql&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;USER&#39;</span><span class="p">:</span> <span class="s1">&#39;mysql_user&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PASSWORD&#39;</span><span class="p">:</span> <span class="s1">&#39;superS3cret&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;customers&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="s1">&#39;customer_data&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ENGINE&#39;</span><span class="p">:</span> <span class="s1">&#39;django.db.backends.mysql&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;USER&#39;</span><span class="p">:</span> <span class="s1">&#39;mysql_cust&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PASSWORD&#39;</span><span class="p">:</span> <span class="s1">&#39;veryPriv@ate&#39;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If you attempt to access a database that you haven't defined in your
+<a class="reference internal" href="../../ref/settings.html#std:setting-DATABASES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DATABASES</span></code></a> setting, Django will raise a
+<code class="docutils literal notranslate"><span class="pre">django.db.utils.ConnectionDoesNotExist</span></code> exception.</p>
+</div>
+<div class="section" id="s-synchronizing-your-databases">
+<span id="synchronizing-your-databases"></span><h2>Synchronizing your databases<a class="headerlink" href="#synchronizing-your-databases" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../../ref/django-admin.html#django-admin-migrate"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">migrate</span></code></a> management command operates on one database at a
+time. By default, it operates on the <code class="docutils literal notranslate"><span class="pre">default</span></code> database, but by
+providing the <a class="reference internal" href="../../ref/django-admin.html#cmdoption-migrate-database"><code class="xref std std-option docutils literal notranslate"><span class="pre">--database</span></code></a> option, you can tell it
+to synchronize a different database. So, to synchronize all models onto
+all databases in the first example above, you would need to call:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./manage.py migrate
+$ ./manage.py migrate --database=users
+</pre></div>
+</div>
+<p>If you don't want every application to be synchronized onto a
+particular database, you can define a <a class="reference internal" href="#topics-db-multi-db-routing"><span class="std std-ref">database
+router</span></a> that implements a policy
+constraining the availability of particular models.</p>
+<p>If, as in the second example above, you've left the <code class="docutils literal notranslate"><span class="pre">default</span></code> database empty,
+you must provide a database name each time you run <a class="reference internal" href="../../ref/django-admin.html#django-admin-migrate"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">migrate</span></code></a>. Omitting
+the database name would raise an error. For the second example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./manage.py migrate --database=users
+$ ./manage.py migrate --database=customers
+</pre></div>
+</div>
+<div class="section" id="s-using-other-management-commands">
+<span id="using-other-management-commands"></span><h3>Using other management commands<a class="headerlink" href="#using-other-management-commands" title="Permalink to this headline">¶</a></h3>
+<p>Most other <code class="docutils literal notranslate"><span class="pre">django-admin</span></code> commands that interact with the database operate in
+the same way as <a class="reference internal" href="../../ref/django-admin.html#django-admin-migrate"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">migrate</span></code></a> -- they only ever operate on one database at
+a time, using <code class="docutils literal notranslate"><span class="pre">--database</span></code> to control the database used.</p>
+<p>An exception to this rule is the <a class="reference internal" href="../../ref/django-admin.html#django-admin-makemigrations"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">makemigrations</span></code></a> command. It
+validates the migration history in the databases to catch problems with the
+existing migration files (which could be caused by editing them) before
+creating new migrations. By default, it checks only the <code class="docutils literal notranslate"><span class="pre">default</span></code> database,
+but it consults the <a class="reference internal" href="#allow_migrate" title="allow_migrate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">allow_migrate()</span></code></a> method of <a class="reference internal" href="#topics-db-multi-db-routing"><span class="std std-ref">routers</span></a> if any are installed.</p>
+</div>
+</div>
+<div class="section" id="s-automatic-database-routing">
+<span id="s-topics-db-multi-db-routing"></span><span id="automatic-database-routing"></span><span id="topics-db-multi-db-routing"></span><h2>Automatic database routing<a class="headerlink" href="#automatic-database-routing" title="Permalink to this headline">¶</a></h2>
+<p>The easiest way to use multiple databases is to set up a database
+routing scheme. The default routing scheme ensures that objects remain
+'sticky' to their original database (i.e., an object retrieved from
+the <code class="docutils literal notranslate"><span class="pre">foo</span></code> database will be saved on the same database). The default
+routing scheme ensures that if a database isn't specified, all queries
+fall back to the <code class="docutils literal notranslate"><span class="pre">default</span></code> database.</p>
+<p>You don't have to do anything to activate the default routing scheme
+-- it is provided 'out of the box' on every Django project. However,
+if you want to implement more interesting database allocation
+behaviors, you can define and install your own database routers.</p>
+<div class="section" id="s-database-routers">
+<span id="database-routers"></span><h3>Database routers<a class="headerlink" href="#database-routers" title="Permalink to this headline">¶</a></h3>
+<p>A database Router is a class that provides up to four methods:</p>
+<dl class="method">
+<dt id="db_for_read">
+<code class="descname">db_for_read</code>(<em>model</em>, <em>**hints</em>)<a class="headerlink" href="#db_for_read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Suggest the database that should be used for read operations for
+objects of type <code class="docutils literal notranslate"><span class="pre">model</span></code>.</p>
+<p>If a database operation is able to provide any additional
+information that might assist in selecting a database, it will be
+provided in the <code class="docutils literal notranslate"><span class="pre">hints</span></code> dictionary. Details on valid hints are
+provided <a class="reference internal" href="#topics-db-multi-db-hints"><span class="std std-ref">below</span></a>.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> if there is no suggestion.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="db_for_write">
+<code class="descname">db_for_write</code>(<em>model</em>, <em>**hints</em>)<a class="headerlink" href="#db_for_write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Suggest the database that should be used for writes of objects of
+type Model.</p>
+<p>If a database operation is able to provide any additional
+information that might assist in selecting a database, it will be
+provided in the <code class="docutils literal notranslate"><span class="pre">hints</span></code> dictionary. Details on valid hints are
+provided <a class="reference internal" href="#topics-db-multi-db-hints"><span class="std std-ref">below</span></a>.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> if there is no suggestion.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="allow_relation">
+<code class="descname">allow_relation</code>(<em>obj1</em>, <em>obj2</em>, <em>**hints</em>)<a class="headerlink" href="#allow_relation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if a relation between <code class="docutils literal notranslate"><span class="pre">obj1</span></code> and <code class="docutils literal notranslate"><span class="pre">obj2</span></code> should be
+allowed, <code class="docutils literal notranslate"><span class="pre">False</span></code> if the relation should be prevented, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if
+the router has no opinion. This is purely a validation operation,
+used by foreign key and many to many operations to determine if a
+relation should be allowed between two objects.</p>
+<p>If no router has an opinion (i.e. all routers return <code class="docutils literal notranslate"><span class="pre">None</span></code>), only
+relations within the same database are allowed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="allow_migrate">
+<code class="descname">allow_migrate</code>(<em>db</em>, <em>app_label</em>, <em>model_name=None</em>, <em>**hints</em>)<a class="headerlink" href="#allow_migrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if the migration operation is allowed to run on the database with
+alias <code class="docutils literal notranslate"><span class="pre">db</span></code>. Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if the operation should run, <code class="docutils literal notranslate"><span class="pre">False</span></code> if it
+shouldn't run, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the router has no opinion.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">app_label</span></code> positional argument is the label of the application
+being migrated.</p>
+<p><code class="docutils literal notranslate"><span class="pre">model_name</span></code> is set by most migration operations to the value of
+<code class="docutils literal notranslate"><span class="pre">model._meta.model_name</span></code> (the lowercased version of the model
+<code class="docutils literal notranslate"><span class="pre">__name__</span></code>) of the model being migrated. Its value is <code class="docutils literal notranslate"><span class="pre">None</span></code> for the
+<a class="reference internal" href="../../ref/migration-operations.html#django.db.migrations.operations.RunPython" title="django.db.migrations.operations.RunPython"><code class="xref py py-class docutils literal notranslate"><span class="pre">RunPython</span></code></a> and
+<a class="reference internal" href="../../ref/migration-operations.html#django.db.migrations.operations.RunSQL" title="django.db.migrations.operations.RunSQL"><code class="xref py py-class docutils literal notranslate"><span class="pre">RunSQL</span></code></a> operations unless they
+provide it using hints.</p>
+<p><code class="docutils literal notranslate"><span class="pre">hints</span></code> are used by certain operations to communicate additional
+information to the router.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">model_name</span></code> is set, <code class="docutils literal notranslate"><span class="pre">hints</span></code> normally contains the model class
+under the key <code class="docutils literal notranslate"><span class="pre">'model'</span></code>. Note that it may be a <a class="reference internal" href="../migrations.html#historical-models"><span class="std std-ref">historical model</span></a>, and thus not have any custom attributes, methods, or
+managers. You should only rely on <code class="docutils literal notranslate"><span class="pre">_meta</span></code>.</p>
+<p>This method can also be used to determine the availability of a model on a
+given database.</p>
+<p><a class="reference internal" href="../../ref/django-admin.html#django-admin-makemigrations"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">makemigrations</span></code></a> always creates migrations for model changes, but
+if <code class="docutils literal notranslate"><span class="pre">allow_migrate()</span></code> returns <code class="docutils literal notranslate"><span class="pre">False</span></code>, any migration operations for the
+<code class="docutils literal notranslate"><span class="pre">model_name</span></code> will be silently skipped when running <a class="reference internal" href="../../ref/django-admin.html#django-admin-migrate"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">migrate</span></code></a> on
+the <code class="docutils literal notranslate"><span class="pre">db</span></code>. Changing the behavior of <code class="docutils literal notranslate"><span class="pre">allow_migrate()</span></code> for models that
+already have migrations may result in broken foreign keys, extra tables,
+or missing tables. When <a class="reference internal" href="../../ref/django-admin.html#django-admin-makemigrations"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">makemigrations</span></code></a> verifies the migration
+history, it skips databases where no app is allowed to migrate.</p>
+</dd></dl>
+
+<p>A router doesn't have to provide <em>all</em> these methods -- it may omit one
+or more of them. If one of the methods is omitted, Django will skip
+that router when performing the relevant check.</p>
+<div class="section" id="s-hints">
+<span id="s-topics-db-multi-db-hints"></span><span id="hints"></span><span id="topics-db-multi-db-hints"></span><h4>Hints<a class="headerlink" href="#hints" title="Permalink to this headline">¶</a></h4>
+<p>The hints received by the database router can be used to decide which
+database should receive a given request.</p>
+<p>At present, the only hint that will be provided is <code class="docutils literal notranslate"><span class="pre">instance</span></code>, an
+object instance that is related to the read or write operation that is
+underway. This might be the instance that is being saved, or it might
+be an instance that is being added in a many-to-many relation. In some
+cases, no instance hint will be provided at all. The router checks for
+the existence of an instance hint, and determine if that hint should be
+used to alter routing behavior.</p>
+</div>
+</div>
+<div class="section" id="s-using-routers">
+<span id="using-routers"></span><h3>Using routers<a class="headerlink" href="#using-routers" title="Permalink to this headline">¶</a></h3>
+<p>Database routers are installed using the <a class="reference internal" href="../../ref/settings.html#std:setting-DATABASE_ROUTERS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DATABASE_ROUTERS</span></code></a>
+setting. This setting defines a list of class names, each specifying a
+router that should be used by the master router
+(<code class="docutils literal notranslate"><span class="pre">django.db.router</span></code>).</p>
+<p>The master router is used by Django's database operations to allocate
+database usage. Whenever a query needs to know which database to use,
+it calls the master router, providing a model and a hint (if
+available). Django then tries each router in turn until a database
+suggestion can be found. If no suggestion can be found, it tries the
+current <code class="docutils literal notranslate"><span class="pre">_state.db</span></code> of the hint instance. If a hint instance wasn't
+provided, or the instance doesn't currently have database state, the
+master router will allocate the <code class="docutils literal notranslate"><span class="pre">default</span></code> database.</p>
+</div>
+<div class="section" id="s-an-example">
+<span id="an-example"></span><h3>一个例子<a class="headerlink" href="#an-example" title="Permalink to this headline">¶</a></h3>
+<div class="admonition-example-purposes-only admonition">
+<p class="first admonition-title">Example purposes only!</p>
+<p>This example is intended as a demonstration of how the router
+infrastructure can be used to alter database usage. It
+intentionally ignores some complex issues in order to
+demonstrate how routers are used.</p>
+<p>This example won't work if any of the models in <code class="docutils literal notranslate"><span class="pre">myapp</span></code> contain
+relationships to models outside of the <code class="docutils literal notranslate"><span class="pre">other</span></code> database.
+<a class="reference internal" href="#no-cross-database-relations"><span class="std std-ref">Cross-database relationships</span></a>
+introduce referential integrity problems that Django can't
+currently handle.</p>
+<p class="last">The primary/replica (referred to as master/slave by some databases)
+configuration described is also flawed -- it
+doesn't provide any solution for handling replication lag (i.e.,
+query inconsistencies introduced because of the time taken for a
+write to propagate to the replicas). It also doesn't consider the
+interaction of transactions with the database utilization strategy.</p>
+</div>
+<p>So - what does this mean in practice? Let's consider another sample
+configuration. This one will have several databases: one for the
+<code class="docutils literal notranslate"><span class="pre">auth</span></code> application, and all other apps using a primary/replica setup
+with two read replicas. Here are the settings specifying these
+databases:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">&#39;auth_db&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="s1">&#39;auth_db&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ENGINE&#39;</span><span class="p">:</span> <span class="s1">&#39;django.db.backends.mysql&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;USER&#39;</span><span class="p">:</span> <span class="s1">&#39;mysql_user&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PASSWORD&#39;</span><span class="p">:</span> <span class="s1">&#39;swordfish&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;primary&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="s1">&#39;primary&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ENGINE&#39;</span><span class="p">:</span> <span class="s1">&#39;django.db.backends.mysql&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;USER&#39;</span><span class="p">:</span> <span class="s1">&#39;mysql_user&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PASSWORD&#39;</span><span class="p">:</span> <span class="s1">&#39;spam&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;replica1&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="s1">&#39;replica1&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ENGINE&#39;</span><span class="p">:</span> <span class="s1">&#39;django.db.backends.mysql&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;USER&#39;</span><span class="p">:</span> <span class="s1">&#39;mysql_user&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PASSWORD&#39;</span><span class="p">:</span> <span class="s1">&#39;eggs&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;replica2&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="s1">&#39;replica2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ENGINE&#39;</span><span class="p">:</span> <span class="s1">&#39;django.db.backends.mysql&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;USER&#39;</span><span class="p">:</span> <span class="s1">&#39;mysql_user&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PASSWORD&#39;</span><span class="p">:</span> <span class="s1">&#39;bacon&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Now we'll need to handle routing. First we want a router that knows to
+send queries for the <code class="docutils literal notranslate"><span class="pre">auth</span></code> app to <code class="docutils literal notranslate"><span class="pre">auth_db</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AuthRouter</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A router to control all database operations on models in the</span>
+<span class="sd">    auth application.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">db_for_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">hints</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Attempts to read auth models go to auth_db.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">app_label</span> <span class="o">==</span> <span class="s1">&#39;auth&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;auth_db&#39;</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">db_for_write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">hints</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Attempts to write auth models go to auth_db.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">app_label</span> <span class="o">==</span> <span class="s1">&#39;auth&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;auth_db&#39;</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">allow_relation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj1</span><span class="p">,</span> <span class="n">obj2</span><span class="p">,</span> <span class="o">**</span><span class="n">hints</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allow relations if a model in the auth app is involved.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">obj1</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">app_label</span> <span class="o">==</span> <span class="s1">&#39;auth&#39;</span> <span class="ow">or</span> \
+           <span class="n">obj2</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">app_label</span> <span class="o">==</span> <span class="s1">&#39;auth&#39;</span><span class="p">:</span>
+           <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">allow_migrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">app_label</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">hints</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make sure the auth app only appears in the &#39;auth_db&#39;</span>
+<span class="sd">        database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">app_label</span> <span class="o">==</span> <span class="s1">&#39;auth&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">db</span> <span class="o">==</span> <span class="s1">&#39;auth_db&#39;</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>And we also want a router that sends all other apps to the
+primary/replica configuration, and randomly chooses a replica to read
+from:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+
+<span class="k">class</span> <span class="nc">PrimaryReplicaRouter</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">db_for_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">hints</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads go to a randomly-chosen replica.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s1">&#39;replica1&#39;</span><span class="p">,</span> <span class="s1">&#39;replica2&#39;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">db_for_write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">hints</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes always go to primary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;primary&#39;</span>
+
+    <span class="k">def</span> <span class="nf">allow_relation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj1</span><span class="p">,</span> <span class="n">obj2</span><span class="p">,</span> <span class="o">**</span><span class="n">hints</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Relations between objects are allowed if both objects are</span>
+<span class="sd">        in the primary/replica pool.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">db_list</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;primary&#39;</span><span class="p">,</span> <span class="s1">&#39;replica1&#39;</span><span class="p">,</span> <span class="s1">&#39;replica2&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">obj1</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">db</span> <span class="ow">in</span> <span class="n">db_list</span> <span class="ow">and</span> <span class="n">obj2</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">db</span> <span class="ow">in</span> <span class="n">db_list</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">allow_migrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">app_label</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">hints</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        All non-auth models end up in this pool.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>Finally, in the settings file, we add the following (substituting
+<code class="docutils literal notranslate"><span class="pre">path.to.</span></code> with the actual Python path to the module(s) where the
+routers are defined):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DATABASE_ROUTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;path.to.AuthRouter&#39;</span><span class="p">,</span> <span class="s1">&#39;path.to.PrimaryReplicaRouter&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The order in which routers are processed is significant. Routers will
+be queried in the order they are listed in the
+<a class="reference internal" href="../../ref/settings.html#std:setting-DATABASE_ROUTERS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DATABASE_ROUTERS</span></code></a> setting. In this example, the
+<code class="docutils literal notranslate"><span class="pre">AuthRouter</span></code> is processed before the <code class="docutils literal notranslate"><span class="pre">PrimaryReplicaRouter</span></code>, and as a
+result, decisions concerning the models in <code class="docutils literal notranslate"><span class="pre">auth</span></code> are processed
+before any other decision is made. If the <a class="reference internal" href="../../ref/settings.html#std:setting-DATABASE_ROUTERS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DATABASE_ROUTERS</span></code></a>
+setting listed the two routers in the other order,
+<code class="docutils literal notranslate"><span class="pre">PrimaryReplicaRouter.allow_migrate()</span></code> would be processed first. The
+catch-all nature of the PrimaryReplicaRouter implementation would mean
+that all models would be available on all databases.</p>
+<p>With this setup installed, lets run some Django code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># This retrieval will be performed on the &#39;auth_db&#39; database</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fred</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s1">&#39;fred&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fred</span><span class="o">.</span><span class="n">first_name</span> <span class="o">=</span> <span class="s1">&#39;Frederick&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This save will also be directed to &#39;auth_db&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fred</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># These retrieval will be randomly allocated to a replica database</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dna</span> <span class="o">=</span> <span class="n">Person</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Douglas Adams&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># A new object has no database allocation when created</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mh</span> <span class="o">=</span> <span class="n">Book</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Mostly Harmless&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This assignment will consult the router, and set mh onto</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># the same database as the author object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mh</span><span class="o">.</span><span class="n">author</span> <span class="o">=</span> <span class="n">dna</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This save will force the &#39;mh&#39; instance onto the primary database...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mh</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ... but if we re-retrieve the object, it will come back on a replica</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mh</span> <span class="o">=</span> <span class="n">Book</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Mostly Harmless&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This example defined a router to handle interaction with models from the
+<code class="docutils literal notranslate"><span class="pre">auth</span></code> app, and other routers to handle interaction with all other apps. If
+you left your <code class="docutils literal notranslate"><span class="pre">default</span></code> database empty and don't want to define a catch-all
+database router to handle all apps not otherwise specified, your routers must
+handle the names of all apps in <a class="reference internal" href="../../ref/settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a> before you migrate.
+See <a class="reference internal" href="#contrib-app-multiple-databases"><span class="std std-ref">Behavior of contrib apps</span></a> for information about contrib apps
+that must be together in one database.</p>
+</div>
+</div>
+<div class="section" id="s-manually-selecting-a-database">
+<span id="manually-selecting-a-database"></span><h2>Manually selecting a database<a class="headerlink" href="#manually-selecting-a-database" title="Permalink to this headline">¶</a></h2>
+<p>Django also provides an API that allows you to maintain complete control
+over database usage in your code. A manually specified database allocation
+will take priority over a database allocated by a router.</p>
+<div class="section" id="s-manually-selecting-a-database-for-a-queryset">
+<span id="manually-selecting-a-database-for-a-queryset"></span><h3>Manually selecting a database for a <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code><a class="headerlink" href="#manually-selecting-a-database-for-a-queryset" title="Permalink to this headline">¶</a></h3>
+<p>You can select the database for a <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code> at any point in the
+<code class="docutils literal notranslate"><span class="pre">QuerySet</span></code> &quot;chain.&quot; Just call <code class="docutils literal notranslate"><span class="pre">using()</span></code> on the <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code> to get
+another <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code> that uses the specified database.</p>
+<p><code class="docutils literal notranslate"><span class="pre">using()</span></code> takes a single argument: the alias of the database on
+which you want to run the query. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># This will run on the &#39;default&#39; database.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># So will this.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This will run on the &#39;other&#39; database.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s1">&#39;other&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-selecting-a-database-for-save">
+<span id="selecting-a-database-for-save"></span><h3>Selecting a database for <code class="docutils literal notranslate"><span class="pre">save()</span></code><a class="headerlink" href="#selecting-a-database-for-save" title="Permalink to this headline">¶</a></h3>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">using</span></code> keyword to <code class="docutils literal notranslate"><span class="pre">Model.save()</span></code> to specify to which
+database the data should be saved.</p>
+<p>For example, to save an object to the <code class="docutils literal notranslate"><span class="pre">legacy_users</span></code> database, you'd
+use this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_object</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">using</span><span class="o">=</span><span class="s1">&#39;legacy_users&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you don't specify <code class="docutils literal notranslate"><span class="pre">using</span></code>, the <code class="docutils literal notranslate"><span class="pre">save()</span></code> method will save into
+the default database allocated by the routers.</p>
+<div class="section" id="s-moving-an-object-from-one-database-to-another">
+<span id="moving-an-object-from-one-database-to-another"></span><h4>Moving an object from one database to another<a class="headerlink" href="#moving-an-object-from-one-database-to-another" title="Permalink to this headline">¶</a></h4>
+<p>If you've saved an instance to one database, it might be tempting to
+use <code class="docutils literal notranslate"><span class="pre">save(using=...)</span></code> as a way to migrate the instance to a new
+database. However, if you don't take appropriate steps, this could
+have some unexpected consequences.</p>
+<p>Consider the following example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Fred&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">using</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)</span>  <span class="c1"># (statement 1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">using</span><span class="o">=</span><span class="s1">&#39;second&#39;</span><span class="p">)</span> <span class="c1"># (statement 2)</span>
+</pre></div>
+</div>
+<p>In statement 1, a new <code class="docutils literal notranslate"><span class="pre">Person</span></code> object is saved to the <code class="docutils literal notranslate"><span class="pre">first</span></code>
+database. At this time, <code class="docutils literal notranslate"><span class="pre">p</span></code> doesn't have a primary key, so Django
+issues an SQL <code class="docutils literal notranslate"><span class="pre">INSERT</span></code> statement. This creates a primary key, and
+Django assigns that primary key to <code class="docutils literal notranslate"><span class="pre">p</span></code>.</p>
+<p>When the save occurs in statement 2, <code class="docutils literal notranslate"><span class="pre">p</span></code> already has a primary key
+value, and Django will attempt to use that primary key on the new
+database. If the primary key value isn't in use in the <code class="docutils literal notranslate"><span class="pre">second</span></code>
+database, then you won't have any problems -- the object will be
+copied to the new database.</p>
+<p>However, if the primary key of <code class="docutils literal notranslate"><span class="pre">p</span></code> is already in use on the
+<code class="docutils literal notranslate"><span class="pre">second</span></code> database, the existing object in the <code class="docutils literal notranslate"><span class="pre">second</span></code> database
+will be overridden when <code class="docutils literal notranslate"><span class="pre">p</span></code> is saved.</p>
+<p>You can avoid this in two ways. First, you can clear the primary key
+of the instance. If an object has no primary key, Django will treat it
+as a new object, avoiding any loss of data on the <code class="docutils literal notranslate"><span class="pre">second</span></code>
+database:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Fred&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">using</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">pk</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># Clear the primary key.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">using</span><span class="o">=</span><span class="s1">&#39;second&#39;</span><span class="p">)</span> <span class="c1"># Write a completely new object.</span>
+</pre></div>
+</div>
+<p>The second option is to use the <code class="docutils literal notranslate"><span class="pre">force_insert</span></code> option to <code class="docutils literal notranslate"><span class="pre">save()</span></code>
+to ensure that Django does an SQL <code class="docutils literal notranslate"><span class="pre">INSERT</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Fred&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">using</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">using</span><span class="o">=</span><span class="s1">&#39;second&#39;</span><span class="p">,</span> <span class="n">force_insert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will ensure that the person named <code class="docutils literal notranslate"><span class="pre">Fred</span></code> will have the same
+primary key on both databases. If that primary key is already in use
+when you try to save onto the <code class="docutils literal notranslate"><span class="pre">second</span></code> database, an error will be
+raised.</p>
+</div>
+</div>
+<div class="section" id="s-selecting-a-database-to-delete-from">
+<span id="selecting-a-database-to-delete-from"></span><h3>Selecting a database to delete from<a class="headerlink" href="#selecting-a-database-to-delete-from" title="Permalink to this headline">¶</a></h3>
+<p>By default, a call to delete an existing object will be executed on
+the same database that was used to retrieve the object in the first
+place:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s1">&#39;legacy_users&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s1">&#39;fred&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span> <span class="c1"># will delete from the `legacy_users` database</span>
+</pre></div>
+</div>
+<p>To specify the database from which a model will be deleted, pass a
+<code class="docutils literal notranslate"><span class="pre">using</span></code> keyword argument to the <code class="docutils literal notranslate"><span class="pre">Model.delete()</span></code> method. This
+argument works just like the <code class="docutils literal notranslate"><span class="pre">using</span></code> keyword argument to <code class="docutils literal notranslate"><span class="pre">save()</span></code>.</p>
+<p>For example, if you're migrating a user from the <code class="docutils literal notranslate"><span class="pre">legacy_users</span></code>
+database to the <code class="docutils literal notranslate"><span class="pre">new_users</span></code> database, you might use these commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">user_obj</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">using</span><span class="o">=</span><span class="s1">&#39;new_users&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">user_obj</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">using</span><span class="o">=</span><span class="s1">&#39;legacy_users&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-using-managers-with-multiple-databases">
+<span id="using-managers-with-multiple-databases"></span><h3>Using managers with multiple databases<a class="headerlink" href="#using-managers-with-multiple-databases" title="Permalink to this headline">¶</a></h3>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">db_manager()</span></code> method on managers to give managers access to
+a non-default database.</p>
+<p>For example, say you have a custom manager method that touches the
+database -- <code class="docutils literal notranslate"><span class="pre">User.objects.create_user()</span></code>. Because <code class="docutils literal notranslate"><span class="pre">create_user()</span></code>
+is a manager method, not a <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code> method, you can't do
+<code class="docutils literal notranslate"><span class="pre">User.objects.using('new_users').create_user()</span></code>. (The
+<code class="docutils literal notranslate"><span class="pre">create_user()</span></code> method is only available on <code class="docutils literal notranslate"><span class="pre">User.objects</span></code>, the
+manager, not on <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code> objects derived from the manager.) The
+solution is to use <code class="docutils literal notranslate"><span class="pre">db_manager()</span></code>, like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">db_manager</span><span class="p">(</span><span class="s1">&#39;new_users&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">db_manager()</span></code> returns a copy of the manager bound to the database you specify.</p>
+<div class="section" id="s-using-get-queryset-with-multiple-databases">
+<span id="using-get-queryset-with-multiple-databases"></span><h4>Using <code class="docutils literal notranslate"><span class="pre">get_queryset()</span></code> with multiple databases<a class="headerlink" href="#using-get-queryset-with-multiple-databases" title="Permalink to this headline">¶</a></h4>
+<p>If you're overriding <code class="docutils literal notranslate"><span class="pre">get_queryset()</span></code> on your manager, be sure to
+either call the method on the parent (using <code class="docutils literal notranslate"><span class="pre">super()</span></code>) or do the
+appropriate handling of the <code class="docutils literal notranslate"><span class="pre">_db</span></code> attribute on the manager (a string
+containing the name of the database to use).</p>
+<p>For example, if you want to return a custom <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code> class from
+the <code class="docutils literal notranslate"><span class="pre">get_queryset</span></code> method, you could do this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyManager</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Manager</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">qs</span> <span class="o">=</span> <span class="n">CustomQuerySet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">qs</span> <span class="o">=</span> <span class="n">qs</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">qs</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="s-exposing-multiple-databases-in-django-s-admin-interface">
+<span id="exposing-multiple-databases-in-django-s-admin-interface"></span><h2>Exposing multiple databases in Django's admin interface<a class="headerlink" href="#exposing-multiple-databases-in-django-s-admin-interface" title="Permalink to this headline">¶</a></h2>
+<p>Django's admin doesn't have any explicit support for multiple
+databases. If you want to provide an admin interface for a model on a
+database other than that specified by your router chain, you'll
+need to write custom <a class="reference internal" href="../../ref/contrib/admin/index.html#django.contrib.admin.ModelAdmin" title="django.contrib.admin.ModelAdmin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelAdmin</span></code></a> classes
+that will direct the admin to use a specific database for content.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ModelAdmin</span></code> objects have five methods that require customization for
+multiple-database support:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MultiDBModelAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="c1"># A handy constant for the name of the alternate database.</span>
+    <span class="n">using</span> <span class="o">=</span> <span class="s1">&#39;other&#39;</span>
+
+    <span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="n">change</span><span class="p">):</span>
+        <span class="c1"># Tell Django to save objects to the &#39;other&#39; database.</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">using</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">using</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">delete_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="c1"># Tell Django to delete objects from the &#39;other&#39; database</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">using</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">using</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="c1"># Tell Django to look for objects on the &#39;other&#39; database.</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_queryset</span><span class="p">(</span><span class="n">request</span><span class="p">)</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">using</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">formfield_for_foreignkey</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_field</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Tell Django to populate ForeignKey widgets using a query</span>
+        <span class="c1"># on the &#39;other&#39; database.</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">formfield_for_foreignkey</span><span class="p">(</span><span class="n">db_field</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">using</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">using</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">formfield_for_manytomany</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_field</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Tell Django to populate ManyToMany widgets using a query</span>
+        <span class="c1"># on the &#39;other&#39; database.</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">formfield_for_manytomany</span><span class="p">(</span><span class="n">db_field</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">using</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">using</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The implementation provided here implements a multi-database strategy
+where all objects of a given type are stored on a specific database
+(e.g., all <code class="docutils literal notranslate"><span class="pre">User</span></code> objects are in the <code class="docutils literal notranslate"><span class="pre">other</span></code> database). If your
+usage of multiple databases is more complex, your <code class="docutils literal notranslate"><span class="pre">ModelAdmin</span></code> will
+need to reflect that strategy.</p>
+<p><a class="reference internal" href="../../ref/contrib/admin/index.html#django.contrib.admin.InlineModelAdmin" title="django.contrib.admin.InlineModelAdmin"><code class="xref py py-class docutils literal notranslate"><span class="pre">InlineModelAdmin</span></code></a> objects can be handled in a
+similar fashion. They require three customized methods:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MultiDBTabularInline</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">TabularInline</span><span class="p">):</span>
+    <span class="n">using</span> <span class="o">=</span> <span class="s1">&#39;other&#39;</span>
+
+    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="c1"># Tell Django to look for inline objects on the &#39;other&#39; database.</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_queryset</span><span class="p">(</span><span class="n">request</span><span class="p">)</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">using</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">formfield_for_foreignkey</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_field</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Tell Django to populate ForeignKey widgets using a query</span>
+        <span class="c1"># on the &#39;other&#39; database.</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">formfield_for_foreignkey</span><span class="p">(</span><span class="n">db_field</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">using</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">using</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">formfield_for_manytomany</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_field</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Tell Django to populate ManyToMany widgets using a query</span>
+        <span class="c1"># on the &#39;other&#39; database.</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">formfield_for_manytomany</span><span class="p">(</span><span class="n">db_field</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">using</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">using</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Once you've written your model admin definitions, they can be
+registered with any <code class="docutils literal notranslate"><span class="pre">Admin</span></code> instance:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="k">import</span> <span class="n">admin</span>
+
+<span class="c1"># Specialize the multi-db admin objects for use with specific models.</span>
+<span class="k">class</span> <span class="nc">BookInline</span><span class="p">(</span><span class="n">MultiDBTabularInline</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Book</span>
+
+<span class="k">class</span> <span class="nc">PublisherAdmin</span><span class="p">(</span><span class="n">MultiDBModelAdmin</span><span class="p">):</span>
+    <span class="n">inlines</span> <span class="o">=</span> <span class="p">[</span><span class="n">BookInline</span><span class="p">]</span>
+
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Author</span><span class="p">,</span> <span class="n">MultiDBModelAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Publisher</span><span class="p">,</span> <span class="n">PublisherAdmin</span><span class="p">)</span>
+
+<span class="n">othersite</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">AdminSite</span><span class="p">(</span><span class="s1">&#39;othersite&#39;</span><span class="p">)</span>
+<span class="n">othersite</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Publisher</span><span class="p">,</span> <span class="n">MultiDBModelAdmin</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This example sets up two admin sites. On the first site, the
+<code class="docutils literal notranslate"><span class="pre">Author</span></code> and <code class="docutils literal notranslate"><span class="pre">Publisher</span></code> objects are exposed; <code class="docutils literal notranslate"><span class="pre">Publisher</span></code>
+objects have a tabular inline showing books published by that
+publisher. The second site exposes just publishers, without the
+inlines.</p>
+</div>
+<div class="section" id="s-using-raw-cursors-with-multiple-databases">
+<span id="using-raw-cursors-with-multiple-databases"></span><h2>Using raw cursors with multiple databases<a class="headerlink" href="#using-raw-cursors-with-multiple-databases" title="Permalink to this headline">¶</a></h2>
+<p>If you are using more than one database you can use
+<code class="docutils literal notranslate"><span class="pre">django.db.connections</span></code> to obtain the connection (and cursor) for a
+specific database. <code class="docutils literal notranslate"><span class="pre">django.db.connections</span></code> is a dictionary-like
+object that allows you to retrieve a specific connection using its
+alias:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="k">import</span> <span class="n">connections</span>
+<span class="n">cursor</span> <span class="o">=</span> <span class="n">connections</span><span class="p">[</span><span class="s1">&#39;my_db_alias&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-limitations-of-multiple-databases">
+<span id="limitations-of-multiple-databases"></span><h2>Limitations of multiple databases<a class="headerlink" href="#limitations-of-multiple-databases" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-cross-database-relations">
+<span id="s-no-cross-database-relations"></span><span id="cross-database-relations"></span><span id="no-cross-database-relations"></span><h3>Cross-database relations<a class="headerlink" href="#cross-database-relations" title="Permalink to this headline">¶</a></h3>
+<p>Django doesn't currently provide any support for foreign key or
+many-to-many relationships spanning multiple databases. If you
+have used a router to partition models to different databases,
+any foreign key and many-to-many relationships defined by those
+models must be internal to a single database.</p>
+<p>This is because of referential integrity. In order to maintain a
+relationship between two objects, Django needs to know that the
+primary key of the related object is valid. If the primary key is
+stored on a separate database, it's not possible to easily evaluate
+the validity of a primary key.</p>
+<p>If you're using Postgres, Oracle, or MySQL with InnoDB, this is
+enforced at the database integrity level -- database level key
+constraints prevent the creation of relations that can't be validated.</p>
+<p>However, if you're using SQLite or MySQL with MyISAM tables, there is
+no enforced referential integrity; as a result, you may be able to
+'fake' cross database foreign keys. However, this configuration is not
+officially supported by Django.</p>
+</div>
+<div class="section" id="s-behavior-of-contrib-apps">
+<span id="s-contrib-app-multiple-databases"></span><span id="behavior-of-contrib-apps"></span><span id="contrib-app-multiple-databases"></span><h3>Behavior of contrib apps<a class="headerlink" href="#behavior-of-contrib-apps" title="Permalink to this headline">¶</a></h3>
+<p>Several contrib apps include models, and some apps depend on others. Since
+cross-database relationships are impossible, this creates some restrictions on
+how you can split these models across databases:</p>
+<ul class="simple">
+<li>each one of <code class="docutils literal notranslate"><span class="pre">contenttypes.ContentType</span></code>, <code class="docutils literal notranslate"><span class="pre">sessions.Session</span></code> and
+<code class="docutils literal notranslate"><span class="pre">sites.Site</span></code> can be stored in any database, given a suitable router.</li>
+<li><code class="docutils literal notranslate"><span class="pre">auth</span></code> models — <code class="docutils literal notranslate"><span class="pre">User</span></code>, <code class="docutils literal notranslate"><span class="pre">Group</span></code> and <code class="docutils literal notranslate"><span class="pre">Permission</span></code> — are linked
+together and linked to <code class="docutils literal notranslate"><span class="pre">ContentType</span></code>, so they must be stored in the same
+database as <code class="docutils literal notranslate"><span class="pre">ContentType</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">admin</span></code> depends on <code class="docutils literal notranslate"><span class="pre">auth</span></code>, so its models must be in the same database
+as <code class="docutils literal notranslate"><span class="pre">auth</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">flatpages</span></code> and <code class="docutils literal notranslate"><span class="pre">redirects</span></code> depend on <code class="docutils literal notranslate"><span class="pre">sites</span></code>, so their models must be
+in the same database as <code class="docutils literal notranslate"><span class="pre">sites</span></code>.</li>
+</ul>
+<p>In addition, some objects are automatically created just after
+<a class="reference internal" href="../../ref/django-admin.html#django-admin-migrate"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">migrate</span></code></a> creates a table to hold them in a database:</p>
+<ul class="simple">
+<li>a default <code class="docutils literal notranslate"><span class="pre">Site</span></code>,</li>
+<li>a <code class="docutils literal notranslate"><span class="pre">ContentType</span></code> for each model (including those not stored in that
+database),</li>
+<li>three <code class="docutils literal notranslate"><span class="pre">Permission</span></code> for each model (including those not stored in that
+database).</li>
+</ul>
+<p>For common setups with multiple databases, it isn't useful to have these
+objects in more than one database. Common setups include primary/replica and
+connecting to external databases. Therefore, it's recommended to write a
+<a class="reference internal" href="#topics-db-multi-db-routing"><span class="std std-ref">database router</span></a> that allows synchronizing
+these three models to only one database. Use the same approach for contrib
+and third-party apps that don't need their tables in multiple databases.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If you're synchronizing content types to more than one database, be aware
+that their primary keys may not match across databases. This may result in
+data corruption or data loss.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Multiple databases</a><ul>
+<li><a class="reference internal" href="#defining-your-databases">Defining your databases</a></li>
+<li><a class="reference internal" href="#synchronizing-your-databases">Synchronizing your databases</a><ul>
+<li><a class="reference internal" href="#using-other-management-commands">Using other management commands</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#automatic-database-routing">Automatic database routing</a><ul>
+<li><a class="reference internal" href="#database-routers">Database routers</a><ul>
+<li><a class="reference internal" href="#hints">Hints</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-routers">Using routers</a></li>
+<li><a class="reference internal" href="#an-example">一个例子</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#manually-selecting-a-database">Manually selecting a database</a><ul>
+<li><a class="reference internal" href="#manually-selecting-a-database-for-a-queryset">Manually selecting a database for a <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code></a></li>
+<li><a class="reference internal" href="#selecting-a-database-for-save">Selecting a database for <code class="docutils literal notranslate"><span class="pre">save()</span></code></a><ul>
+<li><a class="reference internal" href="#moving-an-object-from-one-database-to-another">Moving an object from one database to another</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#selecting-a-database-to-delete-from">Selecting a database to delete from</a></li>
+<li><a class="reference internal" href="#using-managers-with-multiple-databases">Using managers with multiple databases</a><ul>
+<li><a class="reference internal" href="#using-get-queryset-with-multiple-databases">Using <code class="docutils literal notranslate"><span class="pre">get_queryset()</span></code> with multiple databases</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#exposing-multiple-databases-in-django-s-admin-interface">Exposing multiple databases in Django's admin interface</a></li>
+<li><a class="reference internal" href="#using-raw-cursors-with-multiple-databases">Using raw cursors with multiple databases</a></li>
+<li><a class="reference internal" href="#limitations-of-multiple-databases">Limitations of multiple databases</a><ul>
+<li><a class="reference internal" href="#cross-database-relations">Cross-database relations</a></li>
+<li><a class="reference internal" href="#behavior-of-contrib-apps">Behavior of contrib apps</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="transactions.html"
+                        title="previous chapter">数据库事务</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tablespaces.html"
+                        title="next chapter">Tablespaces</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/topics/db/multi-db.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="transactions.html" title="数据库事务">previous</a>
+     |
+    <a href="../index.html" title="Using Django" accesskey="U">up</a>
+   |
+    <a href="tablespaces.html" title="Tablespaces">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,758 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b53b49ac-aa25-406d-8448-e7e57628a44b" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../DjangoSample/ch06/exam_01.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/13_SQLite数据库_Insert_Delete.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../chapter12/04_进程之间地址空间独立.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../chapter12/05_进程间同步_01.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../chapter12/08_线程的等待_1.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../chapter13/02_多路复用IO的select.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Django Web开发-V01.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Django Web开发-V01.pptx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/DjangoSample/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/DjangoSample/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/DjangoSample/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/DjangoSample/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch01/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch01/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/detail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/results.html" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch01/templates/ch01/results.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch03/01_create.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch03/exam_01.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch03/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch03/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch03/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch03/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch04/templatetags/custom_tags.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch04/templatetags/custom_tags.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch05/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch05/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch05/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch05/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch06/test01.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch06/test02.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch06/exam_02.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch06/test03.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch06/test04.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch06/exam_03.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter01/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter01/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter03/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter03/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter04/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter04/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/04_读文本文件.py" beforeDir="false" afterPath="$PROJECT_DIR$/04_读文本文件.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/07_读Excel文件.py" beforeDir="false" afterPath="$PROJECT_DIR$/07_读Excel文件.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/08_写Excel文件.py" beforeDir="false" afterPath="$PROJECT_DIR$/08_写Excel文件.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/10_SQLite数据库操作.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter08/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter08/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter08/mymodule.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter08/mymodule.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/20_a_类的动态创建.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/20_01_类的动态创建.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/20_b_函数的动态创建.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/20_02_函数的动态创建.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/20_c_类的动态创建.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/20_03_类的动态创建.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter09/20_d_使用元类动态创建类.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter09/20_04_使用元类动态创建类.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter10/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter10/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter11/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter11/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter11/07_分组命名.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter11/07_分组命名.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter11/09_勉强模式与贪婪模式.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter11/09_勉强模式与贪婪模式.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter12/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter12/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter12/01_进程的创建.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter12/01_进程的创建_a.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter12/03_进程之间地址空间独立.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter12/04_进程池.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter12/03_进程池.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter12/05_简单线程的创建.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter12/07_线程的创建_03.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter12/05_简单线程的同步.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter12/20_简单线程的同步.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter12/05_进程的同步.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter12/06_线程的创建与等待.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter12/07_线程的数据不同步.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter12/30_线程的数据不同步.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter12/08_线程的数据同步_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter12/21_线程的数据同步_1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter12/08_线程的数据同步_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter12/32_线程的数据同步_2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter12/09_信号量.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter12/33_信号量.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter12/10_线程池.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter12/14_线程池.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter12/11_队列.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter12/10_队列_2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter12/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter12/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter13/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter13/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter13/01_原始Socket简单服务器.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter13/01_socket简单服务器.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter13/02_多线程Socket服务器.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter13/03_多线程Socket服务器.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter13/03_多路复用IO的Socket服务器.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter13/04_Twisted框架服务器.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter13/04_Twisted框架_a_服务器.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter13/05_Socket客户端.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter13/55_Socket客户端.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter13/06_Twisted客户端.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter13/04_Twisted框架_b_客户端.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter13/08_HTTP文件下载.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter13/08_HTTP文件下载.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter13/09_urlparse模块.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter13/09_urlparse模块.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter13/12_简单网络蜘蛛.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter13/12_简单网络蜘蛛.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter13/13_HTMLParser.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter13/13_HTMLParser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter13/epa-oregon-crest-to-coast_overview_c20140401.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter13/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter13/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter14/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter14/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter14/02_DOM解析XML.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter14/02_DOM解析XML.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter14/04_ElementTree读_改_添加_保存.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter14/04_ElementTree读_改_添加_保存.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter14/06_PythonתΪתΪJSON.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter14/06_Python2JSON.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter14/07_JSON转为Python对象.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter14/07_JSON2Python.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter14/movies.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter14/movies.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter14/movies01.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter14/movies01.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter15/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter15/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter16/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter16/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter16/MySQLDBTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter16/MySQLDBTest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter16/OracleDBTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter16/OracleDBTest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter18/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter18/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter18/_trial_temp/test.log" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter18/_trial_temp/test.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter18/mymodule.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter18/mymodule.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter18/testcase.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter18/testcase_01.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter18/性能分析.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter18/性能分析.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/.idea/chapter19.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter19/.idea/chapter19.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter19/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter19/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/chapter19/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/chapter19/settings.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/chapter19/urls.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/chapter19/views.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/chapter19/wsgi.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/Adobe-Dreamweaver-icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/css/base.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/css/changelists.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/css/dashboard.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/css/fonts.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/css/forms.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/css/login.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/css/rtl.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/css/widgets.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/fonts/LICENSE.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/fonts/README.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/fonts/Roboto-Bold-webfont.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/fonts/Roboto-Light-webfont.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/fonts/Roboto-Regular-webfont.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/README.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/calendar-icons.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/gis/move_vertex_off.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/gis/move_vertex_on.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/icon-addlink.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/icon-alert.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/icon-calendar.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/icon-changelink.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/icon-clock.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/icon-deletelink.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/icon-no.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/icon-unknown-alt.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/icon-unknown.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/icon-yes.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/inline-delete.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/search.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/selector-icons.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/sorting-icons.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/tooltag-add.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/img/tooltag-arrowright.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/SelectBox.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/SelectFilter2.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/actions.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/actions.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/admin/DateTimeShortcuts.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/admin/RelatedObjectLookups.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/calendar.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/cancel.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/change_form.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/collapse.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/collapse.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/core.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/inlines.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/inlines.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/jquery.init.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/popup_response.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/prepopulate.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/prepopulate.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/prepopulate_init.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/timeparse.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/urlify.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/vendor/jquery/LICENSE-JQUERY.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/vendor/jquery/jquery.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/vendor/jquery/jquery.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/vendor/xregexp/LICENSE-XREGEXP.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/vendor/xregexp/xregexp.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/admin/js/vendor/xregexp/xregexp.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/sample/angry-bird-icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/collected_static/sample/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/db.sqlite3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/dbtest.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/formtest.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/manage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/media/Adobe-Dreamweaver-icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/media/bullfinch_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/media/callcenter-girls-glasses-icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/media/fff.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/media/nicedit/2018/11/21/bug.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/media/upload/&quot;+dir+&quot;/new_name_bug.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/media/upload/2018/11/21/callcenter-girls-glasses-icon.png.09bbd640ed9c11e8ba18406c8f4e28c0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/media/upload/2018/11/21/new_name_apple-green-icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/media/upload/2018/11/21/new_name_bullfinch_2.pnge325476eed9b11e88be6406c8f4e28c0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/media/upload/2018/11/23/donkey-icon.png.7a7805d9eeef11e8920c406c8f4e28c0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/media/upload/photo/new_name_donkey-icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/apps.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/forms.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/management/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/management/commands/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/management/commands/testcommand.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/migrations/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/static/sample/angry-bird-icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/static/sample/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/1.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/author_list.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/base.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/formtest.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/helloworld02.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/login.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/reqattrs.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/show_list.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/tag_autoescape.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/tag_circle.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/tag_comment.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/tag_filter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/tag_firstof.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/tag_for.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/tag_if.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/tag_now.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/template_test.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/test.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/test_tag.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templates/sample/upload.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templatetags/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/templatetags/mytags.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/tests.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/urls.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample/views.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample01/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample01/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample01/apps.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample01/models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample01/templates/sample01/helloworld02.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample01/tests.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample01/urls.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/sample01/views.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/static/Adobe-Dreamweaver-icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/static/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/templates/registration/login.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/test.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter19/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/.idea/chapter19.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/chapter19/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/chapter19/settings.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/chapter19/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/chapter19/wsgi.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/db.sqlite3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/manage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/sample/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/sample/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/sample/apps.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/sample/migrations/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/sample/models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/sample/static/sample/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/sample/templates/sample/helloworld02.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/sample/templates/sample/reqattrs.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/sample/tests.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/sample/views.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter191/static/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter20/.idea/chapter20.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter20/.idea/chapter20.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter20/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter20/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter20/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter20/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chapter20/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chapter20/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../djangosample/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../djangosample/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../temp/HelloWorld/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../temp/HelloWorld/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../temp/HelloWorld/app01/1.html" beforeDir="false" afterPath="$PROJECT_DIR$/../temp/HelloWorld/app01/1.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Python 8天教学大纲.docx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Python 8天教学大纲.docx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Python程序设计-V01.pptx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../VSCode/ex01.py" beforeDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/12_SQLite数据库创建表.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="190">
+              <caret line="10" column="9" selection-start-line="5" selection-end-line="12" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/db_sqlite.py" />
+        <option value="$PROJECT_DIR$/01_文件操作.py" />
+        <option value="$PROJECT_DIR$/02_目录的遍历.py" />
+        <option value="$PROJECT_DIR$/03_写文本文件.py" />
+        <option value="$PROJECT_DIR$/05_写二进制文件.py" />
+        <option value="$PROJECT_DIR$/06_读二进制文件.py" />
+        <option value="$PROJECT_DIR$/09_读写Excel文件.py" />
+        <option value="$PROJECT_DIR$/练习" />
+        <option value="$PROJECT_DIR$/07_读Excel文件.py" />
+        <option value="$PROJECT_DIR$/08_写Excel文件.py" />
+        <option value="$PROJECT_DIR$/10_SQLite数据库操作.py" />
+        <option value="$PROJECT_DIR$/11_SQLite数据库事务.py" />
+        <option value="$PROJECT_DIR$/foo.txt" />
+        <option value="$PROJECT_DIR$/04_读文本文件.py" />
+        <option value="$PROJECT_DIR$/12_with读文本文件.py" />
+        <option value="$PROJECT_DIR$/13_with上下文管理器.py" />
+        <option value="$PROJECT_DIR$/10_SQLite数据库创建表.py" />
+        <option value="$PROJECT_DIR$/12_SQLite数据库Select.py" />
+        <option value="$PROJECT_DIR$/11_SQLite数据库Insert.py" />
+        <option value="$PROJECT_DIR$/97_SQLite数据库事务.py" />
+        <option value="$PROJECT_DIR$/12_SQLite数据库_Select_Update.py" />
+        <option value="$PROJECT_DIR$/eggs.csv" />
+        <option value="$PROJECT_DIR$/emps02.csv" />
+        <option value="$PROJECT_DIR$/10_写csv文件.py" />
+        <option value="$PROJECT_DIR$/emps01.csv" />
+        <option value="$PROJECT_DIR$/11_读csv文件.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="y" value="23" />
+    <option name="width" value="1280" />
+    <option name="height" value="728" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="chapter07" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chapter07" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="C:\Users\xiaojf\PycharmProjects\chapter07" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.11_读csv文件">
+    <configuration name="10_写csv文件" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter07" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/10_写csv文件.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="11_SQLite数据库Insert" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter07" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/13_SQLite数据库_Insert_Delete.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="11_读csv文件" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter07" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/11_读csv文件.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="12_SQLite数据库Select" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter07" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/14_SQLite数据库_Select_Update.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="97_SQLite数据库事务" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter07" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/15_SQLite数据库事务.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.11_SQLite数据库Insert" />
+      <item itemvalue="Python.12_SQLite数据库Select" />
+      <item itemvalue="Python.97_SQLite数据库事务" />
+      <item itemvalue="Python.10_写csv文件" />
+      <item itemvalue="Python.11_读csv文件" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.11_读csv文件" />
+        <item itemvalue="Python.10_写csv文件" />
+        <item itemvalue="Python.12_SQLite数据库Select" />
+        <item itemvalue="Python.97_SQLite数据库事务" />
+        <item itemvalue="Python.11_SQLite数据库Insert" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b53b49ac-aa25-406d-8448-e7e57628a44b" name="Default Changelist" comment="" />
+      <created>1541512868935</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1541512868935</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="23" width="1280" height="728" extended-state="0" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21207307" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info id="Project Explorer" order="3" />
+      <window_info id="DB Browser" order="4" />
+      <window_info id="Job Explorer" order="5" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32704404" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.46226415" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info anchor="bottom" id="Console" order="11" />
+      <window_info anchor="bottom" id="DB Execution Console" order="12" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/venv/Lib/os.py" />
+    <entry file="file://$PROJECT_DIR$/venv/Lib/re.py" />
+    <entry file="file://$PROJECT_DIR$/venv/Lib/site.py" />
+    <entry file="file://C:/Python27/Lib/json/__init__.py" />
+    <entry file="file://$PROJECT_DIR$/01_文件操作.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="6" column="12" selection-start-line="6" selection-start-column="9" selection-end-line="6" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/foo.bin">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/05_写二进制文件.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="7" column="26" selection-start-line="7" selection-start-column="26" selection-end-line="7" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/06_读二进制文件.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="8" selection-start-line="8" selection-end-line="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/os.py" />
+    <entry file="file://$PROJECT_DIR$/练习">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="5" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/07_读Excel文件.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="494">
+          <caret line="26" selection-start-line="26" selection-end-line="26" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/xlrd/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="418">
+          <caret line="43" column="4" selection-start-line="43" selection-start-column="4" selection-end-line="43" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/08_写Excel文件.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="16" selection-start-line="16" selection-end-line="20" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/employees.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2and3/sqlite3/__init__.pyi">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="17" lean-forward="true" selection-start-column="17" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2and3/sqlite3/dbapi2.pyi">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="187" column="29" selection-start-line="187" selection-start-column="29" selection-end-line="187" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharmCE2018.3/python_stubs/-1698384448/exceptions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="79" column="15" selection-start-line="79" selection-start-column="6" selection-end-line="79" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/foo.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="6" selection-start-line="6" selection-end-line="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/02_目录的遍历.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="5" column="30" selection-start-line="5" selection-start-column="30" selection-end-line="5" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/03_写文本文件.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="7" column="4" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/04_读文本文件.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="3" column="2" selection-start-line="3" selection-end-line="12" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/98_with读文本文件.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="4" column="10" selection-start-line="4" selection-start-column="10" selection-end-line="4" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/99_with上下文管理器.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="3" selection-start-line="3" selection-end-line="14" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharmCE2018.3/python_stubs/-1698384448/_sqlite3.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-903">
+          <caret line="164" column="8" selection-start-line="164" selection-start-column="8" selection-end-line="164" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/13_SQLite数据库_Insert_Delete.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="124">
+          <caret line="16" column="30" selection-start-line="16" selection-start-column="30" selection-end-line="16" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/15_SQLite数据库事务.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="232">
+          <caret line="14" selection-start-line="14" selection-end-line="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/14_SQLite数据库_Select_Update.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="9" column="16" selection-start-line="9" selection-start-column="16" selection-end-line="9" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/eggs.csv" />
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharmCE2018.3/python_stubs/-1698384448/_csv.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="155">
+          <caret line="131" column="4" selection-start-line="131" selection-start-column="4" selection-end-line="131" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/emps02.csv">
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="57">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/csv.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19">
+          <caret line="21" column="51" selection-start-line="21" selection-start-column="51" selection-end-line="21" selection-end-column="51" />
+          <folding>
+            <element signature="e#52#61#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/emps01.csv">
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="57">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/10_写csv文件.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/09_读写Excel文件.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="6" column="25" selection-start-line="6" selection-start-column="25" selection-end-line="6" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/11_读csv文件.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="3" column="8" selection-start-line="3" selection-start-column="8" selection-end-line="3" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/12_SQLite数据库创建表.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="9" selection-start-line="5" selection-end-line="12" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

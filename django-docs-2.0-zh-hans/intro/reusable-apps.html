@@ -1,0 +1,365 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>进阶指南：如何编写可重用程序 &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="下一步看什么" href="whatsnext.html" />
+    <link rel="prev" title="编写你的第一个 Django 应用，第 7 部分" href="tutorial07.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="tutorial07.html" title="编写你的第一个 Django 应用，第 7 部分">previous</a>
+     |
+    <a href="index.html" title="开始" accesskey="U">up</a>
+   |
+    <a href="whatsnext.html" title="下一步看什么">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="intro-reusable-apps">
+            
+  <div class="section" id="s-advanced-tutorial-how-to-write-reusable-apps">
+<span id="advanced-tutorial-how-to-write-reusable-apps"></span><h1>进阶指南：如何编写可重用程序<a class="headerlink" href="#advanced-tutorial-how-to-write-reusable-apps" title="Permalink to this headline">¶</a></h1>
+<p>这篇进阶指南从 <a class="reference internal" href="tutorial07.html"><span class="doc">Tutorial 7</span></a> 结尾的地方继续讲起。我们将会把我们的 Web-poll 放进一个独立的 Python 包中，以便你在新的项目中重用它或将它与他人分享。</p>
+<p>如果你尚未完成教程 1-7，我们推荐你先浏览一遍教程，这样你的样例工程会和下面的一致。</p>
+<div class="section" id="s-reusability-matters">
+<span id="reusability-matters"></span><h2>可重用性很重要<a class="headerlink" href="#reusability-matters" title="Permalink to this headline">¶</a></h2>
+<p>设计，构建，测试以及维护一个 web 应用要做很多的工作。很多 Python 以及 Django 项目都有一些常见问题。如果我们能保存并利用这些重复的工作岂不是更好？</p>
+<p>可重用性是Python的生存方式。 <a class="reference external" href="https://pypi.org/">Python软件包索引（PyPI）</a> 有很多可以在你自己的Python程序中使用的软件包。查看 <a class="reference external" href="https://djangopackages.org">Django Packages</a> 以了解您可以整合到项目中的现有可重用应用。Django本身也只是一个Python包。这意味着您可以将现有的Python包或Django应用组合到您自己的Web项目中。您只需编写您项目独一无二的部分。</p>
+<p>假设你现在创建了一个新的项目，并且需要一个类似我们之前做的投票应用。你该如何复用这个应用呢？庆幸的是，其实你已经知道了一些。在 <a class="reference internal" href="tutorial03.html"><span class="doc">教程 3</span></a>，我们使用过 <code class="docutils literal notranslate"><span class="pre">include</span></code> 从项目级别的 URLconf 分割出 polls。在本教程中，我们将进一步使这个应用易用于新的项目中，并发布给其他人安装使用。</p>
+<div class="admonition-package-app admonition">
+<p class="first admonition-title">包？应用？</p>
+<p>一个 <a class="reference external" href="https://docs.python.org/3/glossary.html#term-package" title="(in Python v3.7)"><span class="xref std std-term">package</span></a> 提供了一组关联的 Python 代码的简单复用方式。一个包（“模块”）包含了一个或多个 Python 代码文件。</p>
+<p>一个包通过 <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">foo.bar</span></code> 或 <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">foo</span> <span class="pre">import</span> <span class="pre">bar</span></code> 的形式导入。一个目录（例如 <code class="docutils literal notranslate"><span class="pre">polls</span></code>）要成为一个包，它必须包含一个特定的文件 <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>，即便这个文件是空的。</p>
+<p>Django <em>应用</em> 仅仅是专用于 Django 项目的 Python 包。应用会按照 Django 约定，创建好 <code class="docutils literal notranslate"><span class="pre">models</span></code>,  <code class="docutils literal notranslate"><span class="pre">tests</span></code>,  <code class="docutils literal notranslate"><span class="pre">urls</span></code>, 以及 <code class="docutils literal notranslate"><span class="pre">views</span></code> 等子模块。</p>
+<p class="last">稍后，我们将解释术语 <em>打包</em> ——为了方便其它人安装 Python 包的处理流程。我知道，这可能会使你感到一点点迷惑。</p>
+</div>
+</div>
+<div class="section" id="s-your-project-and-your-reusable-app">
+<span id="your-project-and-your-reusable-app"></span><h2>你的项目和可复用应用<a class="headerlink" href="#your-project-and-your-reusable-app" title="Permalink to this headline">¶</a></h2>
+<p>通过前面的教程，我们的工程应该看起来像这样:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mysite</span><span class="o">/</span>
+    <span class="n">manage</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">mysite</span><span class="o">/</span>
+        <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+        <span class="n">settings</span><span class="o">.</span><span class="n">py</span>
+        <span class="n">urls</span><span class="o">.</span><span class="n">py</span>
+        <span class="n">wsgi</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">polls</span><span class="o">/</span>
+        <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+        <span class="n">admin</span><span class="o">.</span><span class="n">py</span>
+        <span class="n">migrations</span><span class="o">/</span>
+            <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+            <span class="mi">0001</span><span class="n">_initial</span><span class="o">.</span><span class="n">py</span>
+        <span class="n">models</span><span class="o">.</span><span class="n">py</span>
+        <span class="n">static</span><span class="o">/</span>
+            <span class="n">polls</span><span class="o">/</span>
+                <span class="n">images</span><span class="o">/</span>
+                    <span class="n">background</span><span class="o">.</span><span class="n">gif</span>
+                <span class="n">style</span><span class="o">.</span><span class="n">css</span>
+        <span class="n">templates</span><span class="o">/</span>
+            <span class="n">polls</span><span class="o">/</span>
+                <span class="n">detail</span><span class="o">.</span><span class="n">html</span>
+                <span class="n">index</span><span class="o">.</span><span class="n">html</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">html</span>
+        <span class="n">tests</span><span class="o">.</span><span class="n">py</span>
+        <span class="n">urls</span><span class="o">.</span><span class="n">py</span>
+        <span class="n">views</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">templates</span><span class="o">/</span>
+        <span class="n">admin</span><span class="o">/</span>
+            <span class="n">base_site</span><span class="o">.</span><span class="n">html</span>
+</pre></div>
+</div>
+<p>1</p>
+<p>目录 <code class="docutils literal notranslate"><span class="pre">polls</span></code> 现在可以被拷贝至一个新的 Django 工程，且立刻被复用。不过现在还不是发布它的时候。为了这样做，我们需要打包这个应用，便于其他人安装它。</p>
+</div>
+<div class="section" id="s-installing-some-prerequisites">
+<span id="s-installing-reusable-apps-prerequisites"></span><span id="installing-some-prerequisites"></span><span id="installing-reusable-apps-prerequisites"></span><h2>安装必须环境<a class="headerlink" href="#installing-some-prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>目前，打包 Python 程序需要工具，有许多工具可以完成此项工作。在此教程中，我们将使用 <a class="reference external" href="https://pypi.org/project/setuptools/">setuptools</a> 来打包我们的程序。这是推荐的打包工具（与 <code class="docutils literal notranslate"><span class="pre">发布</span></code> 分支合并）。我们仍旧使用 <a class="reference external" href="https://pypi.org/project/pip/">pip</a> 来安装和卸载这个工具。现在，你需要安装这两个包。如果你需要帮助，你可以参考 <a class="reference internal" href="../topics/install.html#installing-official-release"><span class="std std-ref">如何通过 pip 安装 Django</span></a>，你可以通过相同的方式安装 <code class="docutils literal notranslate"><span class="pre">setuptools</span></code>。</p>
+</div>
+<div class="section" id="s-packaging-your-app">
+<span id="packaging-your-app"></span><h2>打包你的应用<a class="headerlink" href="#packaging-your-app" title="Permalink to this headline">¶</a></h2>
+<p>Python 的 <em>打包</em> 将以一种特殊的格式组织你的应用，意在方便安装和使用这个应用。Django 本身就被打包成类似的形式。对于一个小应用，例如 polls，这不会太难。</p>
+<ol class="arabic">
+<li><p class="first">首先，在你的 Django 项目目录外创建一个名为 <code class="docutils literal notranslate"><span class="pre">django-polls</span></code> 的文件夹，用于盛放 <code class="docutils literal notranslate"><span class="pre">polls</span></code>。</p>
+<div class="admonition-choosing-a-name-for-your-app admonition">
+<p class="first admonition-title">为你的应用选择一个名字</p>
+<p>当为你的包选一个名字时，避免使用像 PyPI 这样已存在的包名，否则会导致冲突。当你创建你的发布包时，可以在模块名前增加 <code class="docutils literal notranslate"><span class="pre">django-</span></code> 前缀，这是一个很常用也很有用的避免包名冲突的方法。同时也有助于他人在寻找 Django 应用时确认你的 app 是 Django 独有的。</p>
+<p class="last">应用标签（指用点分隔的包名的最后一部分）在 <a class="reference internal" href="../ref/settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a> 中 <em>必须</em> 是独一无二的。避免使用任何与 Django <a class="reference internal" href="../ref/contrib/index.html"><span class="doc">contrib packages</span></a> 文档中相同的标签名，比如 <code class="docutils literal notranslate"><span class="pre">auth</span></code>，<code class="docutils literal notranslate"><span class="pre">admin</span></code>，<code class="docutils literal notranslate"><span class="pre">messages</span></code>。</p>
+</div>
+</li>
+<li><p class="first">将 <code class="docutils literal notranslate"><span class="pre">polls</span></code> 目录移入 <code class="docutils literal notranslate"><span class="pre">django-polls</span></code> 目录。</p>
+</li>
+<li><p class="first">创建一个名为 <code class="docutils literal notranslate"><span class="pre">django-polls/README.rst</span></code> 的文件，包含以下内容：</p>
+<div class="highlight-default snippet"><div class="snippet-filename">django-polls/README.rst</div>
+<div class="highlight"><pre><span></span>=====
+Polls
+=====
+
+Polls is a simple Django app to conduct Web-based polls. For each
+question, visitors can choose between a fixed number of answers.
+
+Detailed documentation is in the &quot;docs&quot; directory.
+
+Quick start
+-----------
+
+1. Add &quot;polls&quot; to your INSTALLED_APPS setting like this::
+
+    INSTALLED_APPS = [
+        ...
+        &#39;polls&#39;,
+    ]
+
+2. Include the polls URLconf in your project urls.py like this::
+
+    path(&#39;polls/&#39;, include(&#39;polls.urls&#39;)),
+
+3. Run `python manage.py migrate` to create the polls models.
+
+4. Start the development server and visit http://127.0.0.1:8000/admin/
+   to create a poll (you&#39;ll need the Admin app enabled).
+
+5. Visit http://127.0.0.1:8000/polls/ to participate in the poll.
+</pre></div>
+</div>
+</li>
+<li><p class="first">创建一个 <code class="docutils literal notranslate"><span class="pre">django-polls/LICENSE</span></code> 文件。选择一个非本教程使用的授权协议，但是要足以说明发布代码没有授权证书是 <em>不可能的</em> 。Django 和很多兼容 Django 的应用是以 BSD 授权协议发布的；不过，你可以自己选择一个授权协议。只要确定你选择的协议能够限制未来会使用你的代码的人。</p>
+</li>
+<li><p class="first">下一步我们将创建 <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> 用于说明如何构建和安装应用的细节。关于此文件的完整介绍超出了此教程的范围，但是 <a class="reference external" href="https://setuptools.readthedocs.io/en/latest/">setuptools docs</a> 有详细的介绍。创建文件 <code class="docutils literal notranslate"><span class="pre">django-polls/setup.py</span></code> 包含以下内容：</p>
+<div class="highlight-default snippet"><div class="snippet-filename">django-polls/setup.py</div>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">setuptools</span> <span class="k">import</span> <span class="n">find_packages</span><span class="p">,</span> <span class="n">setup</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;README.rst&#39;</span><span class="p">))</span> <span class="k">as</span> <span class="n">readme</span><span class="p">:</span>
+    <span class="n">README</span> <span class="o">=</span> <span class="n">readme</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="c1"># allow setup.py to be run from any path</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">pardir</span><span class="p">)))</span>
+
+<span class="n">setup</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;django-polls&#39;</span><span class="p">,</span>
+    <span class="n">version</span><span class="o">=</span><span class="s1">&#39;0.1&#39;</span><span class="p">,</span>
+    <span class="n">packages</span><span class="o">=</span><span class="n">find_packages</span><span class="p">(),</span>
+    <span class="n">include_package_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">license</span><span class="o">=</span><span class="s1">&#39;BSD License&#39;</span><span class="p">,</span>  <span class="c1"># example license</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;A simple Django app to conduct Web-based polls.&#39;</span><span class="p">,</span>
+    <span class="n">long_description</span><span class="o">=</span><span class="n">README</span><span class="p">,</span>
+    <span class="n">url</span><span class="o">=</span><span class="s1">&#39;https://www.example.com/&#39;</span><span class="p">,</span>
+    <span class="n">author</span><span class="o">=</span><span class="s1">&#39;Your Name&#39;</span><span class="p">,</span>
+    <span class="n">author_email</span><span class="o">=</span><span class="s1">&#39;yourname@example.com&#39;</span><span class="p">,</span>
+    <span class="n">classifiers</span><span class="o">=</span><span class="p">[</span>
+        <span class="s1">&#39;Environment :: Web Environment&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Framework :: Django&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Framework :: Django :: X.Y&#39;</span><span class="p">,</span>  <span class="c1"># replace &quot;X.Y&quot; as appropriate</span>
+        <span class="s1">&#39;Intended Audience :: Developers&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;License :: OSI Approved :: BSD License&#39;</span><span class="p">,</span>  <span class="c1"># example license</span>
+        <span class="s1">&#39;Operating System :: OS Independent&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Programming Language :: Python&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Programming Language :: Python :: 3.5&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Programming Language :: Python :: 3.6&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Topic :: Internet :: WWW/HTTP&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Topic :: Internet :: WWW/HTTP :: Dynamic Content&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">默认包中只包含 Python 模块和包。为了包含额外文件，我们需要创建一个名为 <code class="docutils literal notranslate"><span class="pre">MANIFEST.in</span></code> 的文件。上一步中关于 setuptools 的文档详细介绍了这个文件。为了包含模板、<code class="docutils literal notranslate"><span class="pre">README.rst</span></code> 和我们的 <code class="docutils literal notranslate"><span class="pre">LICENSE</span></code> 文件，创建文件 <code class="docutils literal notranslate"><span class="pre">django-polls/MANIFEST.in</span></code> 包含以下内容：</p>
+<div class="highlight-default snippet"><div class="snippet-filename">django-polls/MANIFEST.in</div>
+<div class="highlight"><pre><span></span><span class="n">include</span> <span class="n">LICENSE</span>
+<span class="n">include</span> <span class="n">README</span><span class="o">.</span><span class="n">rst</span>
+<span class="n">recursive</span><span class="o">-</span><span class="n">include</span> <span class="n">polls</span><span class="o">/</span><span class="n">static</span> <span class="o">*</span>
+<span class="n">recursive</span><span class="o">-</span><span class="n">include</span> <span class="n">polls</span><span class="o">/</span><span class="n">templates</span> <span class="o">*</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">在应用中包含详细文档是可选的，但我们推荐你这样做。创建一个空目录 <code class="docutils literal notranslate"><span class="pre">django-polls/docs</span></code> 用于未来编写文档。额外添加一行至 <code class="docutils literal notranslate"><span class="pre">django-polls/MANIFEST.in</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">recursive</span><span class="o">-</span><span class="n">include</span> <span class="n">docs</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p>注意，现在 <code class="docutils literal notranslate"><span class="pre">docs</span></code> 目录不会被加入你的应用包，除非你往这个目录加几个文件。许多 Django 应用也提供他们的在线文档通过类似 <a class="reference external" href="https://readthedocs.org">readthedocs.org</a> 这样的网站。</p>
+</li>
+<li><p class="first">试着构建你自己的应用包通过 <code class="docutils literal notranslate"><span class="pre">ptyhon</span> <span class="pre">setup.py</span> <span class="pre">sdist</span></code> （在 <code class="docutils literal notranslate"><span class="pre">django-polls``目录内）。这将创建一个名为</span> <span class="pre">``dist</span></code> 的目录并构建你自己的应用包， <code class="docutils literal notranslate"><span class="pre">django-polls-0.1.tar.gz</span></code>。</p>
+</li>
+</ol>
+<p>更多关于打包的信息，见 Python 的 <a class="reference external" href="https://packaging.python.org/distributing/">关于打包和发布项目的教程</a>。</p>
+</div>
+<div class="section" id="s-using-your-own-package">
+<span id="using-your-own-package"></span><h2>使用你自己的包名<a class="headerlink" href="#using-your-own-package" title="Permalink to this headline">¶</a></h2>
+<p>由于我们把 <code class="docutils literal notranslate"><span class="pre">polls</span></code> 目录移出了项目，所以它无法工作了。我们现在要通过安装我们的新 <code class="docutils literal notranslate"><span class="pre">django-polls</span></code> 应用来修复这个问题。</p>
+<div class="admonition-installing-as-a-user-library admonition">
+<p class="first admonition-title">作为用户库安装</p>
+<p>以下步骤将 <code class="docutils literal notranslate"><span class="pre">django-polls</span></code> 以用户库的形式安装。与安装整个系统的软件包相比，用户安装具有许多优点，例如可在没有管理员访问权的系统上使用，以及防止应用包影响系统服务和其他用户。</p>
+<p class="last">注意，用户安装仍然会影响以这个用户身份运行的系统工具，所以 <code class="docutils literal notranslate"><span class="pre">virtualenv</span></code> 是一个更强大的解决方案（如下所示）。</p>
+</div>
+<ol class="arabic">
+<li><p class="first">为了安装这个包，使用 pip (你早已 <a class="reference internal" href="#installing-reusable-apps-prerequisites"><span class="std std-ref">安装 pip</span></a>, 对吗？):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="n">django</span><span class="o">-</span><span class="n">polls</span><span class="o">/</span><span class="n">dist</span><span class="o">/</span><span class="n">django</span><span class="o">-</span><span class="n">polls</span><span class="o">-</span><span class="mf">0.1</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">幸运的话，你的 Django 项目应该再一次正确运行。启动服务器确认这一点。</p>
+</li>
+<li><p class="first">通过 pip 卸载包:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">uninstall</span> <span class="n">django</span><span class="o">-</span><span class="n">polls</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="s-publishing-your-app">
+<span id="publishing-your-app"></span><h2>发布你的应用<a class="headerlink" href="#publishing-your-app" title="Permalink to this headline">¶</a></h2>
+<p>现在，你已经对 <code class="docutils literal notranslate"><span class="pre">django-polls</span></code> 完成了打包和测试，准备好向世界分享它！如果这不是一个例子应用，你现在就可以这样做。</p>
+<ul class="simple">
+<li>通过邮件将你的包发送给朋友。</li>
+<li>将这个包上传至你的网站。</li>
+<li>将你的包发布至公共仓库，比如 <a class="reference internal" href="#the-python-package-index-pypi">the Python Package Index (PyPI)</a>。 <a class="reference external" href="https://packaging.python.org">packaging.python.org</a> 有一个不错的 <a class="reference external" href="https://packaging.python.org/distributing/#uploading-your-project-to-pypi">教程</a> 说明如何发布至公共仓库。</li>
+</ul>
+</div>
+<div class="section" id="s-installing-python-packages-with-virtualenv">
+<span id="installing-python-packages-with-virtualenv"></span><h2>通过 virtualenv 安装 Python 包<a class="headerlink" href="#installing-python-packages-with-virtualenv" title="Permalink to this headline">¶</a></h2>
+<p>早些时候，我们以用户库的形式安装了投票应用。这样做有一些缺点。</p>
+<ul class="simple">
+<li>修改用户库会影响你系统上的其他 Python 软件。</li>
+<li>你将不能运行此包的多个版本（或者其它用有相同包名的包）。</li>
+</ul>
+<p>一般来说，这些状况只在你同时运行多个 Django 项目时出现。当这个问题出现时，最好的解决办法是使用 <a class="reference external" href="https://virtualenv.pypa.io/">virtualenv</a>。这个工具允许你同时运行多个相互独立的Python环境，每个环境都有各自库和应用包命名空间的拷贝。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">进阶指南：如何编写可重用程序</a><ul>
+<li><a class="reference internal" href="#reusability-matters">可重用性很重要</a></li>
+<li><a class="reference internal" href="#your-project-and-your-reusable-app">你的项目和可复用应用</a></li>
+<li><a class="reference internal" href="#installing-some-prerequisites">安装必须环境</a></li>
+<li><a class="reference internal" href="#packaging-your-app">打包你的应用</a></li>
+<li><a class="reference internal" href="#using-your-own-package">使用你自己的包名</a></li>
+<li><a class="reference internal" href="#publishing-your-app">发布你的应用</a></li>
+<li><a class="reference internal" href="#installing-python-packages-with-virtualenv">通过 virtualenv 安装 Python 包</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial07.html"
+                        title="previous chapter">编写你的第一个 Django 应用，第 7 部分</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="whatsnext.html"
+                        title="next chapter">下一步看什么</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/intro/reusable-apps.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="tutorial07.html" title="编写你的第一个 Django 应用，第 7 部分">previous</a>
+     |
+    <a href="index.html" title="开始" accesskey="U">up</a>
+   |
+    <a href="whatsnext.html" title="下一步看什么">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,198 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Django 1.11.2 release notes &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Django 1.11.1 release notes" href="1.11.1.html" />
+    <link rel="prev" title="Django 1.11.3 release notes" href="1.11.3.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="1.11.3.html" title="Django 1.11.3 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.11.1.html" title="Django 1.11.1 release notes">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="releases-1.11.2">
+            
+  <div class="section" id="s-django-1-11-2-release-notes">
+<span id="django-1-11-2-release-notes"></span><h1>Django 1.11.2 release notes<a class="headerlink" href="#django-1-11-2-release-notes" title="Permalink to this headline">¶</a></h1>
+<p><em>June 1, 2017</em></p>
+<p>Django 1.11.2 adds a minor feature and fixes several bugs in 1.11.1. Also, the
+latest string translations from Transifex are incorporated.</p>
+<div class="section" id="s-minor-feature">
+<span id="minor-feature"></span><h2>Minor feature<a class="headerlink" href="#minor-feature" title="Permalink to this headline">¶</a></h2>
+<p>The new <code class="docutils literal notranslate"><span class="pre">LiveServerTestCase.port</span></code> attribute reallows the use case of binding
+to a specific port following the <a class="reference internal" href="1.11.html#liveservertestcase-port-zero-change"><span class="std std-ref">bind to port zero</span></a> change in Django 1.11.</p>
+</div>
+<div class="section" id="s-bugfixes">
+<span id="bugfixes"></span><h2>Bugfixes<a class="headerlink" href="#bugfixes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Added detection for GDAL 2.1 and 2.0, and removed detection for unsupported
+versions 1.7 and 1.8 (<a class="reference external" href="https://code.djangoproject.com/ticket/28181">#28181</a>).</li>
+<li>Changed <code class="docutils literal notranslate"><span class="pre">contrib.gis</span></code> to raise <code class="docutils literal notranslate"><span class="pre">ImproperlyConfigured</span></code> rather than
+<code class="docutils literal notranslate"><span class="pre">GDALException</span></code> if <code class="docutils literal notranslate"><span class="pre">gdal</span></code> isn't installed, to allow third-party apps to
+catch that exception (<a class="reference external" href="https://code.djangoproject.com/ticket/28178">#28178</a>).</li>
+<li>Fixed <code class="docutils literal notranslate"><span class="pre">django.utils.http.is_safe_url()</span></code> crash on invalid IPv6 URLs
+(<a class="reference external" href="https://code.djangoproject.com/ticket/28142">#28142</a>).</li>
+<li>Fixed regression causing pickling of model fields to crash (<a class="reference external" href="https://code.djangoproject.com/ticket/28188">#28188</a>).</li>
+<li>Fixed <code class="docutils literal notranslate"><span class="pre">django.contrib.auth.authenticate()</span></code> when multiple authentication
+backends don't accept a positional <code class="docutils literal notranslate"><span class="pre">request</span></code> argument (<a class="reference external" href="https://code.djangoproject.com/ticket/28207">#28207</a>).</li>
+<li>Fixed introspection of index field ordering on PostgreSQL (<a class="reference external" href="https://code.djangoproject.com/ticket/28197">#28197</a>).</li>
+<li>Fixed a regression where <code class="docutils literal notranslate"><span class="pre">Model._state.adding</span></code> wasn't set correctly on
+multi-table inheritance parent models after saving a child model
+(<a class="reference external" href="https://code.djangoproject.com/ticket/28210">#28210</a>).</li>
+<li>Allowed <code class="docutils literal notranslate"><span class="pre">DjangoJSONEncoder</span></code> to serialize
+<code class="docutils literal notranslate"><span class="pre">django.utils.deprecation.CallableBool</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/28230">#28230</a>).</li>
+<li>Relaxed the validation added in Django 1.11 of the fields in the <code class="docutils literal notranslate"><span class="pre">defaults</span></code>
+argument of <code class="docutils literal notranslate"><span class="pre">QuerySet.get_or_create()</span></code> and <code class="docutils literal notranslate"><span class="pre">update_or_create()</span></code> to
+reallow settable model properties (<a class="reference external" href="https://code.djangoproject.com/ticket/28222">#28222</a>).</li>
+<li>Fixed <code class="docutils literal notranslate"><span class="pre">MultipleObjectMixin.paginate_queryset()</span></code> crash on Python 2 if the
+<code class="docutils literal notranslate"><span class="pre">InvalidPage</span></code> message contains non-ASCII (<a class="reference external" href="https://code.djangoproject.com/ticket/28204">#28204</a>).</li>
+<li>Prevented <code class="docutils literal notranslate"><span class="pre">Subquery</span></code> from adding an unnecessary <code class="docutils literal notranslate"><span class="pre">CAST</span></code> which resulted in
+invalid SQL (<a class="reference external" href="https://code.djangoproject.com/ticket/28199">#28199</a>).</li>
+<li>Corrected detection of GDAL 2.1 on Windows (<a class="reference external" href="https://code.djangoproject.com/ticket/28181">#28181</a>).</li>
+<li>Made date-based generic views return a 404 rather than crash when given an
+out of range date (<a class="reference external" href="https://code.djangoproject.com/ticket/28209">#28209</a>).</li>
+<li>Fixed a regression where <code class="docutils literal notranslate"><span class="pre">file_move_safe()</span></code> crashed when moving files to a
+CIFS mount (<a class="reference external" href="https://code.djangoproject.com/ticket/28170">#28170</a>).</li>
+<li>Moved the <code class="docutils literal notranslate"><span class="pre">ImageField</span></code> file extension validation added in Django 1.11 from
+the model field to the form field to reallow the use case of storing images
+without an extension (<a class="reference external" href="https://code.djangoproject.com/ticket/28242">#28242</a>).</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Django 1.11.2 release notes</a><ul>
+<li><a class="reference internal" href="#minor-feature">Minor feature</a></li>
+<li><a class="reference internal" href="#bugfixes">Bugfixes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="1.11.3.html"
+                        title="previous chapter">Django 1.11.3 release notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="1.11.1.html"
+                        title="next chapter">Django 1.11.1 release notes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/releases/1.11.2.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="1.11.3.html" title="Django 1.11.3 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.11.1.html" title="Django 1.11.1 release notes">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,206 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Forms &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="The Forms API" href="api.html" />
+    <link rel="prev" title="Uploaded Files and Upload Handlers" href="../files/uploads.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="../files/uploads.html" title="Uploaded Files and Upload Handlers">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="api.html" title="The Forms API">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="ref-forms-index">
+            
+  <div class="section" id="s-forms">
+<span id="forms"></span><h1>Forms<a class="headerlink" href="#forms" title="Permalink to this headline">¶</a></h1>
+<p>Detailed form API reference. For introductory material, see the
+<a class="reference internal" href="../../topics/forms/index.html"><span class="doc">使用表单</span></a> topic guide.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">The Forms API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#bound-and-unbound-forms">Bound and unbound forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#using-forms-to-validate-data">Using forms to validate data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#dynamic-initial-values">Dynamic initial values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#checking-which-form-data-has-changed">Checking which form data has changed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#accessing-the-fields-from-the-form">Accessing the fields from the form</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#accessing-clean-data">Accessing &quot;clean&quot; data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#outputting-forms-as-html">Outputting forms as HTML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#more-granular-output">More granular output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#customizing-boundfield">Customizing <code class="docutils literal notranslate"><span class="pre">BoundField</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#binding-uploaded-files-to-a-form">Binding uploaded files to a form</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#subclassing-forms">Subclassing forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#prefixes-for-forms">Prefixes for forms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fields.html">Form fields</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fields.html#core-field-arguments">Core field arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fields.html#checking-if-the-field-data-has-changed">Checking if the field data has changed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fields.html#built-in-field-classes">Built-in <code class="docutils literal notranslate"><span class="pre">Field</span></code> classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fields.html#slightly-complex-built-in-field-classes">Slightly complex built-in <code class="docutils literal notranslate"><span class="pre">Field</span></code> classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fields.html#fields-which-handle-relationships">Fields which handle relationships</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fields.html#creating-custom-fields">Creating custom fields</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Model Form Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="models.html#modelform-factory"><code class="docutils literal notranslate"><span class="pre">modelform_factory</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#modelformset-factory"><code class="docutils literal notranslate"><span class="pre">modelformset_factory</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#inlineformset-factory"><code class="docutils literal notranslate"><span class="pre">inlineformset_factory</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="formsets.html">Formset Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="formsets.html#formset-factory"><code class="docutils literal notranslate"><span class="pre">formset_factory</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="renderers.html">The form rendering API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="renderers.html#the-low-level-render-api">The low-level render API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="renderers.html#built-in-template-form-renderers">Built-in-template form renderers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="renderers.html#context-available-in-widget-templates">Context available in widget templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="renderers.html#overriding-built-in-widget-templates">Overriding built-in widget templates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="widgets.html">Widgets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="widgets.html#specifying-widgets">Specifying widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets.html#setting-arguments-for-widgets">Setting arguments for widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets.html#widgets-inheriting-from-the-select-widget">Widgets inheriting from the <code class="docutils literal notranslate"><span class="pre">Select</span></code> widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets.html#customizing-widget-instances">Customizing widget instances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets.html#base-widget-classes">Base widget classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets.html#built-in-widgets">Built-in widgets</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="validation.html">Form and field validation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="validation.html#raising-validationerror">Raising <code class="docutils literal notranslate"><span class="pre">ValidationError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="validation.html#using-validation-in-practice">Using validation in practice</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../files/uploads.html"
+                        title="previous chapter">Uploaded Files and Upload Handlers</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api.html"
+                        title="next chapter">The Forms API</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/ref/forms/index.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="../files/uploads.html" title="Uploaded Files and Upload Handlers">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="api.html" title="The Forms API">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

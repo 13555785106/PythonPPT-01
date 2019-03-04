@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>用户列表</title>
+    <style type="text/css">
+    *{margin:0;padding:0px;font-size:1em;}
+    table{border-collapse:collapse;margin:0px auto;}
+    table, td, th{border:1px solid black;}
+
+    </style>
+</head>
+<body>
+
+<form method="post">
+    {% csrf_token %}
+    <table align="center" border="1" style="margin:0px auto; ">
+        <caption>用户列表</caption>
+        <tr>
+            <th>账号</th>
+            <th>密码</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>生日</th>
+            <th>邮件</th>
+            <th>年收入</th>
+            <th>爱好</th>
+            <th>头像</th>
+            <th><a href="{% url 'ch05:add_user' %}">添加</a></th>
+        </tr>
+        {% for user in page.object_list %}
+        <tr>
+            <td>{{ user.account }}</td>
+            <td>{{ user.passwd }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.sex }}</td>
+            <td>{% if user.birthday %}{{ user.birthday }}{% endif %}</td>
+            <td>{% if user.email %}{{ user.email }}{% endif %}</td>
+            <td>{% if user.annual_income > 0 %}{{ user.annual_income }}{% endif %}</td>
+            <td>{% for hobby in user.hobbies.all %}{{ hobby.name }}{% if not forloop.last %},{% endif %}{% endfor %}
+            </td>
+            <td>
+                {% if user.thumbnail %}
+                <img width="64" height="64" src="/media/{{ user.thumbnail }}"/>
+                {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'ch05:chg_user' user.id %}">修改</a>
+                <a href="{% url 'ch05:del_user' user.id %}">删除</a>
+            </td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="10" align="center">
+                {% if page%}
+                <input name="number" type="hidden" value="{{ page.number }}">
+                {% if page.has_previous %}
+                <input name="first_page" type="submit" value="首页">
+                {% if page.number > 2 %}
+                <input name="previous_page" type="submit" value="前页">
+                {% endif %}
+                {% endif %}
+
+                {{ page.number }}
+
+                {% if page.has_next %}
+                {% if page.number < page.paginator.num_pages|add:-1 %}
+                <input name="next_page" type="submit" value="下页">
+                {% endif %}
+                <input name="last_page" type="submit" value="尾页">
+                {% endif %}
+                {% else %}
+                无任何结果
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+
+</form>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <link rel="stylesheet" href="style.css"/>
+    <title>{% block title %}BASE TITLE{% endblock title%}</title>
+</head>
+
+<body>
+
+<div id="sidebar">
+    {% block sidebar %}
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/blog/">Blog</a></li>
+    </ul>
+    {% endblock sidebar%}
+</div>
+
+<div id="content">
+    {% block content %}
+哇哈哈哈哈<br/>
+    {% endblock content%}
+</div>
+</body>
+</html>

@@ -1,0 +1,754 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>django.urls.resolvers &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    <a href="../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="_modules-django-urls-resolvers">
+            
+  <h1>Source code for django.urls.resolvers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module converts requested URLs to callback view functions.</span>
+
+<span class="sd">URLResolver is the main class here. Its resolve() method takes a URL (as</span>
+<span class="sd">a string) and returns a ResolverMatch object which provides access to all</span>
+<span class="sd">attributes of the resolved URL match.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">from</span> <span class="nn">importlib</span> <span class="k">import</span> <span class="n">import_module</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="k">import</span> <span class="n">quote</span>
+
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="k">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">django.core.checks</span> <span class="k">import</span> <span class="ne">Warning</span>
+<span class="kn">from</span> <span class="nn">django.core.checks.urls</span> <span class="k">import</span> <span class="n">check_resolver</span>
+<span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="k">import</span> <span class="n">ImproperlyConfigured</span>
+<span class="kn">from</span> <span class="nn">django.utils.datastructures</span> <span class="k">import</span> <span class="n">MultiValueDict</span>
+<span class="kn">from</span> <span class="nn">django.utils.functional</span> <span class="k">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span> <span class="nn">django.utils.http</span> <span class="k">import</span> <span class="n">RFC3986_SUBDELIMS</span><span class="p">,</span> <span class="n">escape_leading_slashes</span>
+<span class="kn">from</span> <span class="nn">django.utils.regex_helper</span> <span class="k">import</span> <span class="n">normalize</span>
+<span class="kn">from</span> <span class="nn">django.utils.translation</span> <span class="k">import</span> <span class="n">get_language</span>
+
+<span class="kn">from</span> <span class="nn">.converters</span> <span class="k">import</span> <span class="n">get_converter</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="k">import</span> <span class="n">NoReverseMatch</span><span class="p">,</span> <span class="n">Resolver404</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">get_callable</span>
+
+
+<div class="viewcode-block" id="ResolverMatch"><a class="viewcode-back" href="../../../ref/urlresolvers.html#django.urls.ResolverMatch">[docs]</a><span class="k">class</span> <span class="nc">ResolverMatch</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">url_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">app_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">namespaces</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url_name</span> <span class="o">=</span> <span class="n">url_name</span>
+
+        <span class="c1"># If a URLRegexResolver doesn&#39;t have a namespace or app_name, it passes</span>
+        <span class="c1"># in an empty value.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">app_names</span> <span class="k">if</span> <span class="n">x</span><span class="p">]</span> <span class="k">if</span> <span class="n">app_names</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app_name</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app_names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">namespaces</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">namespaces</span> <span class="k">if</span> <span class="n">x</span><span class="p">]</span> <span class="k">if</span> <span class="n">namespaces</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">namespaces</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">):</span>
+            <span class="c1"># A class-based view</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_func_path</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">func</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># A function-based view</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_func_path</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
+
+        <span class="n">view_path</span> <span class="o">=</span> <span class="n">url_name</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_name</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">namespaces</span> <span class="o">+</span> <span class="p">[</span><span class="n">view_path</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;ResolverMatch(func=</span><span class="si">%s</span><span class="s2">, args=</span><span class="si">%s</span><span class="s2">, kwargs=</span><span class="si">%s</span><span class="s2">, url_name=</span><span class="si">%s</span><span class="s2">, app_names=</span><span class="si">%s</span><span class="s2">, namespaces=</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_func_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">url_name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">app_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">namespaces</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_resolver</span><span class="p">(</span><span class="n">urlconf</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">urlconf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">django.conf</span> <span class="k">import</span> <span class="n">settings</span>
+        <span class="n">urlconf</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">ROOT_URLCONF</span>
+    <span class="k">return</span> <span class="n">URLResolver</span><span class="p">(</span><span class="n">RegexPattern</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^/&#39;</span><span class="p">),</span> <span class="n">urlconf</span><span class="p">)</span>
+
+
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_ns_resolver</span><span class="p">(</span><span class="n">ns_pattern</span><span class="p">,</span> <span class="n">resolver</span><span class="p">,</span> <span class="n">converters</span><span class="p">):</span>
+    <span class="c1"># Build a namespaced resolver for the given parent URLconf pattern.</span>
+    <span class="c1"># This makes it possible to have captured parameters in the parent</span>
+    <span class="c1"># URLconf pattern.</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">RegexPattern</span><span class="p">(</span><span class="n">ns_pattern</span><span class="p">)</span>
+    <span class="n">pattern</span><span class="o">.</span><span class="n">converters</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">converters</span><span class="p">)</span>
+    <span class="n">ns_resolver</span> <span class="o">=</span> <span class="n">URLResolver</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">resolver</span><span class="o">.</span><span class="n">url_patterns</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">URLResolver</span><span class="p">(</span><span class="n">RegexPattern</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^/&#39;</span><span class="p">),</span> <span class="p">[</span><span class="n">ns_resolver</span><span class="p">])</span>
+
+
+<span class="k">class</span> <span class="nc">LocaleRegexDescriptor</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">=</span> <span class="n">attr</span>
+
+    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a compiled regular expression based on the active language.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="c1"># As a performance optimization, if the given regex string is a regular</span>
+        <span class="c1"># string (not a lazily-translated string proxy), compile it once and</span>
+        <span class="c1"># avoid per-language compilation.</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">instance</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;regex&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">_compile</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;regex&#39;</span><span class="p">]</span>
+        <span class="n">language_code</span> <span class="o">=</span> <span class="n">get_language</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">language_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">_regex_dict</span><span class="p">:</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">_regex_dict</span><span class="p">[</span><span class="n">language_code</span><span class="p">]</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">_compile</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pattern</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">_regex_dict</span><span class="p">[</span><span class="n">language_code</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">CheckURLMixin</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Format the URL pattern for display in warning messages.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="n">description</span> <span class="o">+=</span> <span class="s2">&quot; [name=&#39;</span><span class="si">{}</span><span class="s2">&#39;]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">description</span>
+
+    <span class="k">def</span> <span class="nf">_check_pattern_startswith_slash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check that the pattern does not begin with a forward slash.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">regex_pattern</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">pattern</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">settings</span><span class="o">.</span><span class="n">APPEND_SLASH</span><span class="p">:</span>
+            <span class="c1"># Skip check as it can be useful to start a URL pattern with a slash</span>
+            <span class="c1"># when APPEND_SLASH=False.</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">regex_pattern</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;^/&#39;</span><span class="p">,</span> <span class="s1">&#39;^</span><span class="se">\\</span><span class="s1">/&#39;</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">regex_pattern</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+            <span class="n">warning</span> <span class="o">=</span> <span class="ne">Warning</span><span class="p">(</span>
+                <span class="s2">&quot;Your URL pattern </span><span class="si">{}</span><span class="s2"> has a route beginning with a &#39;/&#39;. Remove this &quot;</span>
+                <span class="s2">&quot;slash as it is unnecessary. If this pattern is targeted in an &quot;</span>
+                <span class="s2">&quot;include(), ensure the include() pattern has a trailing &#39;/&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+                <span class="p">),</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;urls.W002&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">warning</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+
+<span class="k">class</span> <span class="nc">RegexPattern</span><span class="p">(</span><span class="n">CheckURLMixin</span><span class="p">):</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">LocaleRegexDescriptor</span><span class="p">(</span><span class="s1">&#39;_regex&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_regex</span> <span class="o">=</span> <span class="n">regex</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_regex_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_endpoint</span> <span class="o">=</span> <span class="n">is_endpoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">converters</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="c1"># If there are any named groups, use those as kwargs, ignoring</span>
+            <span class="c1"># non-named groups. Otherwise, pass all non-named arguments as</span>
+            <span class="c1"># positional arguments.</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groupdict</span><span class="p">()</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">()</span> <span class="k">if</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">path</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">():],</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">warnings</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_pattern_startswith_slash</span><span class="p">())</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_endpoint</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_include_trailing_dollar</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">warnings</span>
+
+    <span class="k">def</span> <span class="nf">_check_include_trailing_dollar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">regex_pattern</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">pattern</span>
+        <span class="k">if</span> <span class="n">regex_pattern</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;$&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">regex_pattern</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\$&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="ne">Warning</span><span class="p">(</span>
+                <span class="s2">&quot;Your URL pattern </span><span class="si">{}</span><span class="s2"> uses include with a route ending with a &#39;$&#39;. &quot;</span>
+                <span class="s2">&quot;Remove the dollar from the route to avoid problems including &quot;</span>
+                <span class="s2">&quot;URLs.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">()),</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;urls.W001&#39;</span><span class="p">,</span>
+            <span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">_compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compile and return the given regular expression.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">re</span><span class="o">.</span><span class="n">error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ImproperlyConfigured</span><span class="p">(</span>
+                <span class="s1">&#39;&quot;</span><span class="si">%s</span><span class="s1">&quot; is not a valid regular expression: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_regex</span><span class="p">)</span>
+
+
+<span class="n">_PATH_PARAMETER_COMPONENT_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+    <span class="sa">r</span><span class="s1">&#39;&lt;(?:(?P&lt;converter&gt;[^&gt;:]+):)?(?P&lt;parameter&gt;\w+)&gt;&#39;</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_route_to_regex</span><span class="p">(</span><span class="n">route</span><span class="p">,</span> <span class="n">is_endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a path pattern into a regular expression. Return the regular</span>
+<span class="sd">    expression and a dictionary mapping the capture names to the converters.</span>
+<span class="sd">    For example, &#39;foo/&lt;int:pk&gt;&#39; returns &#39;^foo\\/(?P&lt;pk&gt;[0-9]+)&#39;</span>
+<span class="sd">    and {&#39;pk&#39;: &lt;django.urls.converters.IntConverter&gt;}.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">original_route</span> <span class="o">=</span> <span class="n">route</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;^&#39;</span><span class="p">]</span>
+    <span class="n">converters</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">_PATH_PARAMETER_COMPONENT_RE</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">route</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">route</span><span class="p">))</span>
+            <span class="k">break</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">route</span><span class="p">[:</span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()]))</span>
+        <span class="n">route</span> <span class="o">=</span> <span class="n">route</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">():]</span>
+        <span class="n">parameter</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;parameter&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">parameter</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">ImproperlyConfigured</span><span class="p">(</span>
+                <span class="s2">&quot;URL route &#39;</span><span class="si">%s</span><span class="s2">&#39; uses parameter name </span><span class="si">%r</span><span class="s2"> which isn&#39;t a valid &quot;</span>
+                <span class="s2">&quot;Python identifier.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">original_route</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">raw_converter</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;converter&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">raw_converter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># If a converter isn&#39;t specified, the default is `str`.</span>
+            <span class="n">raw_converter</span> <span class="o">=</span> <span class="s1">&#39;str&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">converter</span> <span class="o">=</span> <span class="n">get_converter</span><span class="p">(</span><span class="n">raw_converter</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ImproperlyConfigured</span><span class="p">(</span>
+                <span class="s2">&quot;URL route &#39;</span><span class="si">%s</span><span class="s2">&#39; uses invalid converter </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">original_route</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">converters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">converter</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;(?P&lt;&#39;</span> <span class="o">+</span> <span class="n">parameter</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span> <span class="o">+</span> <span class="n">converter</span><span class="o">.</span><span class="n">regex</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_endpoint</span><span class="p">:</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;$&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">),</span> <span class="n">converters</span>
+
+
+<span class="k">class</span> <span class="nc">RoutePattern</span><span class="p">(</span><span class="n">CheckURLMixin</span><span class="p">):</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">LocaleRegexDescriptor</span><span class="p">(</span><span class="s1">&#39;_route&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">route</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_route</span> <span class="o">=</span> <span class="n">route</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_regex_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_endpoint</span> <span class="o">=</span> <span class="n">is_endpoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">converters</span> <span class="o">=</span> <span class="n">_route_to_regex</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">route</span><span class="p">),</span> <span class="n">is_endpoint</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="c1"># RoutePattern doesn&#39;t allow non-named groups so args are ignored.</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groupdict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">converter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">converters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">to_python</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="n">path</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">():],</span> <span class="p">(),</span> <span class="n">kwargs</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">warnings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_pattern_startswith_slash</span><span class="p">()</span>
+        <span class="n">route</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_route</span>
+        <span class="k">if</span> <span class="s1">&#39;(?P&lt;&#39;</span> <span class="ow">in</span> <span class="n">route</span> <span class="ow">or</span> <span class="n">route</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;^&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">route</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;$&#39;</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="ne">Warning</span><span class="p">(</span>
+                <span class="s2">&quot;Your URL pattern </span><span class="si">{}</span><span class="s2"> has a route that contains &#39;(?P&lt;&#39;, begins &quot;</span>
+                <span class="s2">&quot;with a &#39;^&#39;, or ends with a &#39;$&#39;. This was likely an oversight &quot;</span>
+                <span class="s2">&quot;when migrating to django.urls.path().&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">()),</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;2_0.W001&#39;</span><span class="p">,</span>
+            <span class="p">))</span>
+        <span class="k">return</span> <span class="n">warnings</span>
+
+    <span class="k">def</span> <span class="nf">_compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">route</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">_route_to_regex</span><span class="p">(</span><span class="n">route</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_endpoint</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_route</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">LocalePrefixPattern</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix_default_language</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix_default_language</span> <span class="o">=</span> <span class="n">prefix_default_language</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">converters</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">regex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># This is only used by reverse() and cached in _reverse_dict.</span>
+        <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">language_prefix</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">language_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">language_code</span> <span class="o">=</span> <span class="n">get_language</span><span class="p">()</span> <span class="ow">or</span> <span class="n">settings</span><span class="o">.</span><span class="n">LANGUAGE_CODE</span>
+        <span class="k">if</span> <span class="n">language_code</span> <span class="o">==</span> <span class="n">settings</span><span class="o">.</span><span class="n">LANGUAGE_CODE</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix_default_language</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/&#39;</span> <span class="o">%</span> <span class="n">language_code</span>
+
+    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">language_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">language_prefix</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">language_prefix</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">path</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">language_prefix</span><span class="p">):],</span> <span class="p">(),</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">language_prefix</span>
+
+
+<span class="k">class</span> <span class="nc">URLPattern</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">default_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span> <span class="o">=</span> <span class="n">pattern</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="n">callback</span>  <span class="c1"># the view</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_args</span> <span class="o">=</span> <span class="n">default_args</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">warnings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_pattern_name</span><span class="p">()</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">check</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">warnings</span>
+
+    <span class="k">def</span> <span class="nf">_check_pattern_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check that the pattern name does not contain a colon.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;:&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="n">warning</span> <span class="o">=</span> <span class="ne">Warning</span><span class="p">(</span>
+                <span class="s2">&quot;Your URL pattern </span><span class="si">{}</span><span class="s2"> has a name including a &#39;:&#39;. Remove the colon, to &quot;</span>
+                <span class="s2">&quot;avoid ambiguous namespace references.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">describe</span><span class="p">()),</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;urls.W003&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">warning</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">new_path</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">match</span>
+            <span class="c1"># Pass any extra_kwargs as **kwargs.</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_args</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ResolverMatch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">lookup_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A string that identifies the view (e.g. &#39;path.to.view_function&#39; or</span>
+<span class="sd">        &#39;path.to.ClassBasedView&#39;).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">callback</span>
+        <span class="c1"># Python 3.5 collapses nested partials, so can change &quot;while&quot; to &quot;if&quot;</span>
+        <span class="c1"># when it&#39;s the minimum supported version.</span>
+        <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">):</span>
+            <span class="n">callback</span> <span class="o">=</span> <span class="n">callback</span><span class="o">.</span><span class="n">func</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">callback</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">callback</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">return</span> <span class="n">callback</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">callback</span><span class="o">.</span><span class="vm">__qualname__</span>
+
+
+<span class="k">class</span> <span class="nc">URLResolver</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">urlconf_name</span><span class="p">,</span> <span class="n">default_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">app_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span> <span class="o">=</span> <span class="n">pattern</span>
+        <span class="c1"># urlconf_name is the dotted Python path to the module defining</span>
+        <span class="c1"># urlpatterns. It may also be an object with an urlpatterns attribute</span>
+        <span class="c1"># or urlpatterns itself.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">urlconf_name</span> <span class="o">=</span> <span class="n">urlconf_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_kwargs</span> <span class="o">=</span> <span class="n">default_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span> <span class="o">=</span> <span class="n">namespace</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app_name</span> <span class="o">=</span> <span class="n">app_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reverse_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_namespace_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_app_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># set of dotted paths to all functions and classes that are used in</span>
+        <span class="c1"># urlpatterns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callback_strs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_populated</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">urlconf_name</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">urlconf_name</span><span class="p">):</span>
+            <span class="c1"># Don&#39;t bother to output the whole list, it can be huge</span>
+            <span class="n">urlconf_repr</span> <span class="o">=</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1"> list&gt;&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">urlconf_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">urlconf_repr</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">urlconf_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> (</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">) </span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">urlconf_repr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">app_name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">describe</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">warnings</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">url_patterns</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">check_resolver</span><span class="p">(</span><span class="n">pattern</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">warnings</span><span class="p">:</span>
+            <span class="n">warnings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">warnings</span>
+
+    <span class="k">def</span> <span class="nf">_populate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Short-circuit if called recursively in this thread to prevent</span>
+        <span class="c1"># infinite recursion. Concurrent threads may call this at the same</span>
+        <span class="c1"># time and will need to continue, so set &#39;populating&#39; on a</span>
+        <span class="c1"># thread-local variable.</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="p">,</span> <span class="s1">&#39;populating&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">populating</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">lookups</span> <span class="o">=</span> <span class="n">MultiValueDict</span><span class="p">()</span>
+            <span class="n">namespaces</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">apps</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">language_code</span> <span class="o">=</span> <span class="n">get_language</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">url_pattern</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url_patterns</span><span class="p">):</span>
+                <span class="n">p_pattern</span> <span class="o">=</span> <span class="n">url_pattern</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">pattern</span>
+                <span class="k">if</span> <span class="n">p_pattern</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;^&#39;</span><span class="p">):</span>
+                    <span class="n">p_pattern</span> <span class="o">=</span> <span class="n">p_pattern</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">url_pattern</span><span class="p">,</span> <span class="n">URLPattern</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_callback_strs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">url_pattern</span><span class="o">.</span><span class="n">lookup_str</span><span class="p">)</span>
+                    <span class="n">bits</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">url_pattern</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">pattern</span><span class="p">)</span>
+                    <span class="n">lookups</span><span class="o">.</span><span class="n">appendlist</span><span class="p">(</span>
+                        <span class="n">url_pattern</span><span class="o">.</span><span class="n">callback</span><span class="p">,</span>
+                        <span class="p">(</span><span class="n">bits</span><span class="p">,</span> <span class="n">p_pattern</span><span class="p">,</span> <span class="n">url_pattern</span><span class="o">.</span><span class="n">default_args</span><span class="p">,</span> <span class="n">url_pattern</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">converters</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="n">url_pattern</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">lookups</span><span class="o">.</span><span class="n">appendlist</span><span class="p">(</span>
+                            <span class="n">url_pattern</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="p">(</span><span class="n">bits</span><span class="p">,</span> <span class="n">p_pattern</span><span class="p">,</span> <span class="n">url_pattern</span><span class="o">.</span><span class="n">default_args</span><span class="p">,</span> <span class="n">url_pattern</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">converters</span><span class="p">)</span>
+                        <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>  <span class="c1"># url_pattern is a URLResolver.</span>
+                    <span class="n">url_pattern</span><span class="o">.</span><span class="n">_populate</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">url_pattern</span><span class="o">.</span><span class="n">app_name</span><span class="p">:</span>
+                        <span class="n">apps</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">url_pattern</span><span class="o">.</span><span class="n">app_name</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">url_pattern</span><span class="o">.</span><span class="n">namespace</span><span class="p">)</span>
+                        <span class="n">namespaces</span><span class="p">[</span><span class="n">url_pattern</span><span class="o">.</span><span class="n">namespace</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">p_pattern</span><span class="p">,</span> <span class="n">url_pattern</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">url_pattern</span><span class="o">.</span><span class="n">reverse_dict</span><span class="p">:</span>
+                            <span class="k">for</span> <span class="n">matches</span><span class="p">,</span> <span class="n">pat</span><span class="p">,</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">converters</span> <span class="ow">in</span> <span class="n">url_pattern</span><span class="o">.</span><span class="n">reverse_dict</span><span class="o">.</span><span class="n">getlist</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+                                <span class="n">new_matches</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">p_pattern</span> <span class="o">+</span> <span class="n">pat</span><span class="p">)</span>
+                                <span class="n">new_converters</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">converters</span><span class="p">,</span> <span class="o">**</span><span class="n">url_pattern</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">converters</span><span class="p">)</span>
+                                <span class="n">new_converters</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">new_converters</span><span class="p">,</span> <span class="o">**</span><span class="n">converters</span><span class="p">)</span>
+                                <span class="n">lookups</span><span class="o">.</span><span class="n">appendlist</span><span class="p">(</span>
+                                    <span class="n">name</span><span class="p">,</span>
+                                    <span class="p">(</span>
+                                        <span class="n">new_matches</span><span class="p">,</span>
+                                        <span class="n">p_pattern</span> <span class="o">+</span> <span class="n">pat</span><span class="p">,</span>
+                                        <span class="nb">dict</span><span class="p">(</span><span class="n">defaults</span><span class="p">,</span> <span class="o">**</span><span class="n">url_pattern</span><span class="o">.</span><span class="n">default_kwargs</span><span class="p">),</span>
+                                        <span class="n">new_converters</span>
+                                    <span class="p">)</span>
+                                <span class="p">)</span>
+                        <span class="k">for</span> <span class="n">namespace</span><span class="p">,</span> <span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">sub_pattern</span><span class="p">)</span> <span class="ow">in</span> <span class="n">url_pattern</span><span class="o">.</span><span class="n">namespace_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                            <span class="n">namespaces</span><span class="p">[</span><span class="n">namespace</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">p_pattern</span> <span class="o">+</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">sub_pattern</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">app_name</span><span class="p">,</span> <span class="n">namespace_list</span> <span class="ow">in</span> <span class="n">url_pattern</span><span class="o">.</span><span class="n">app_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                            <span class="n">apps</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">app_name</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">namespace_list</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_callback_strs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">url_pattern</span><span class="o">.</span><span class="n">_callback_strs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_namespace_dict</span><span class="p">[</span><span class="n">language_code</span><span class="p">]</span> <span class="o">=</span> <span class="n">namespaces</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_app_dict</span><span class="p">[</span><span class="n">language_code</span><span class="p">]</span> <span class="o">=</span> <span class="n">apps</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reverse_dict</span><span class="p">[</span><span class="n">language_code</span><span class="p">]</span> <span class="o">=</span> <span class="n">lookups</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populated</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">populating</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">reverse_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">language_code</span> <span class="o">=</span> <span class="n">get_language</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">language_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reverse_dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populate</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reverse_dict</span><span class="p">[</span><span class="n">language_code</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">namespace_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">language_code</span> <span class="o">=</span> <span class="n">get_language</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">language_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_namespace_dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populate</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_namespace_dict</span><span class="p">[</span><span class="n">language_code</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">app_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">language_code</span> <span class="o">=</span> <span class="n">get_language</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">language_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_app_dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populate</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_app_dict</span><span class="p">[</span><span class="n">language_code</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_is_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_populated</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populate</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback_strs</span>
+
+    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>  <span class="c1"># path may be a reverse_lazy object</span>
+        <span class="n">tried</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">new_path</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">match</span>
+            <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">url_patterns</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">sub_match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">Resolver404</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">sub_tried</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tried&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">sub_tried</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">tried</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">pattern</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">sub_tried</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">tried</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">pattern</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">sub_match</span><span class="p">:</span>
+                        <span class="c1"># Merge captured arguments in match with submatch</span>
+                        <span class="n">sub_match_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">default_kwargs</span><span class="p">)</span>
+                        <span class="c1"># Update the sub_match_dict with the kwargs from the sub_match.</span>
+                        <span class="n">sub_match_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sub_match</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+                        <span class="c1"># If there are *any* named groups, ignore all non-named groups.</span>
+                        <span class="c1"># Otherwise, pass all non-named arguments as positional arguments.</span>
+                        <span class="n">sub_match_args</span> <span class="o">=</span> <span class="n">sub_match</span><span class="o">.</span><span class="n">args</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">sub_match_dict</span><span class="p">:</span>
+                            <span class="n">sub_match_args</span> <span class="o">=</span> <span class="n">args</span> <span class="o">+</span> <span class="n">sub_match</span><span class="o">.</span><span class="n">args</span>
+                        <span class="k">return</span> <span class="n">ResolverMatch</span><span class="p">(</span>
+                            <span class="n">sub_match</span><span class="o">.</span><span class="n">func</span><span class="p">,</span>
+                            <span class="n">sub_match_args</span><span class="p">,</span>
+                            <span class="n">sub_match_dict</span><span class="p">,</span>
+                            <span class="n">sub_match</span><span class="o">.</span><span class="n">url_name</span><span class="p">,</span>
+                            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">app_name</span><span class="p">]</span> <span class="o">+</span> <span class="n">sub_match</span><span class="o">.</span><span class="n">app_names</span><span class="p">,</span>
+                            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">]</span> <span class="o">+</span> <span class="n">sub_match</span><span class="o">.</span><span class="n">namespaces</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="n">tried</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">pattern</span><span class="p">])</span>
+            <span class="k">raise</span> <span class="n">Resolver404</span><span class="p">({</span><span class="s1">&#39;tried&#39;</span><span class="p">:</span> <span class="n">tried</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="n">new_path</span><span class="p">})</span>
+        <span class="k">raise</span> <span class="n">Resolver404</span><span class="p">({</span><span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="n">path</span><span class="p">})</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">urlconf_module</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">urlconf_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">import_module</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">urlconf_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">urlconf_name</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">url_patterns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># urlconf_module might be a valid set of patterns, so we default to it</span>
+        <span class="n">patterns</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">urlconf_module</span><span class="p">,</span> <span class="s2">&quot;urlpatterns&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">urlconf_module</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">iter</span><span class="p">(</span><span class="n">patterns</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;The included URLconf &#39;</span><span class="si">{name}</span><span class="s2">&#39; does not appear to have any &quot;</span>
+                <span class="s2">&quot;patterns in it. If you see valid patterns in the file then &quot;</span>
+                <span class="s2">&quot;the issue is probably caused by a circular import.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ImproperlyConfigured</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">urlconf_name</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">patterns</span>
+
+    <span class="k">def</span> <span class="nf">resolve_error_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view_type</span><span class="p">):</span>
+        <span class="n">callback</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">urlconf_module</span><span class="p">,</span> <span class="s1">&#39;handler</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">view_type</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">callback</span><span class="p">:</span>
+            <span class="c1"># No handler specified in file; use lazy import, since</span>
+            <span class="c1"># django.conf.urls imports this file.</span>
+            <span class="kn">from</span> <span class="nn">django.conf</span> <span class="k">import</span> <span class="n">urls</span>
+            <span class="n">callback</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">urls</span><span class="p">,</span> <span class="s1">&#39;handler</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">view_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">get_callable</span><span class="p">(</span><span class="n">callback</span><span class="p">),</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">reverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lookup_view</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reverse_with_prefix</span><span class="p">(</span><span class="n">lookup_view</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_reverse_with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lookup_view</span><span class="p">,</span> <span class="n">_prefix</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">args</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Don&#39;t mix *args and **kwargs in call to reverse()!&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_populated</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populate</span><span class="p">()</span>
+
+        <span class="n">possibilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverse_dict</span><span class="o">.</span><span class="n">getlist</span><span class="p">(</span><span class="n">lookup_view</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">possibility</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">converters</span> <span class="ow">in</span> <span class="n">possibilities</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">result</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">possibility</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+                        <span class="k">continue</span>
+                    <span class="n">candidate_subs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">symmetric_difference</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">defaults</span><span class="p">):</span>
+                        <span class="k">continue</span>
+                    <span class="n">matches</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">defaults</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">!=</span> <span class="n">v</span><span class="p">:</span>
+                            <span class="n">matches</span> <span class="o">=</span> <span class="kc">False</span>
+                            <span class="k">break</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">matches</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">candidate_subs</span> <span class="o">=</span> <span class="n">kwargs</span>
+                <span class="c1"># Convert the candidate subs to text using Converter.to_url().</span>
+                <span class="n">text_candidate_subs</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">candidate_subs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">converters</span><span class="p">:</span>
+                        <span class="n">text_candidate_subs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">converters</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">to_url</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">text_candidate_subs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="c1"># WSGI provides decoded URLs, without %xx escapes, and the URL</span>
+                <span class="c1"># resolver operates on such URLs. First substitute arguments</span>
+                <span class="c1"># without quoting to build a decoded URL and look for a match.</span>
+                <span class="c1"># Then, if we have a match, redo the substitution with quoted</span>
+                <span class="c1"># arguments in order to return a properly encoded URL.</span>
+                <span class="n">candidate_pat</span> <span class="o">=</span> <span class="n">_prefix</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%%</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">result</span>
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;^</span><span class="si">%s%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">_prefix</span><span class="p">),</span> <span class="n">pattern</span><span class="p">),</span> <span class="n">candidate_pat</span> <span class="o">%</span> <span class="n">text_candidate_subs</span><span class="p">):</span>
+                    <span class="c1"># safe characters from `pchar` definition of RFC 3986</span>
+                    <span class="n">url</span> <span class="o">=</span> <span class="n">quote</span><span class="p">(</span><span class="n">candidate_pat</span> <span class="o">%</span> <span class="n">text_candidate_subs</span><span class="p">,</span> <span class="n">safe</span><span class="o">=</span><span class="n">RFC3986_SUBDELIMS</span> <span class="o">+</span> <span class="s1">&#39;/~:@&#39;</span><span class="p">)</span>
+                    <span class="c1"># Don&#39;t allow construction of scheme relative urls.</span>
+                    <span class="k">return</span> <span class="n">escape_leading_slashes</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="c1"># lookup_view can be URL name or callable, but callables are not</span>
+        <span class="c1"># friendly in error messages.</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">lookup_view</span><span class="p">,</span> <span class="s1">&#39;__module__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">lookup_view</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">lookup_view_s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lookup_view_s</span> <span class="o">=</span> <span class="n">lookup_view</span>
+
+        <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="n">pattern</span> <span class="k">for</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="n">possibilities</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">patterns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+                <span class="n">arg_msg</span> <span class="o">=</span> <span class="s2">&quot;arguments &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">args</span><span class="p">,)</span>
+            <span class="k">elif</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">arg_msg</span> <span class="o">=</span> <span class="s2">&quot;keyword arguments &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">,)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">arg_msg</span> <span class="o">=</span> <span class="s2">&quot;no arguments&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Reverse for &#39;</span><span class="si">%s</span><span class="s2">&#39; with </span><span class="si">%s</span><span class="s2"> not found. </span><span class="si">%d</span><span class="s2"> pattern(s) tried: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>
+                <span class="p">(</span><span class="n">lookup_view_s</span><span class="p">,</span> <span class="n">arg_msg</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">patterns</span><span class="p">),</span> <span class="n">patterns</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Reverse for &#39;</span><span class="si">%(view)s</span><span class="s2">&#39; not found. &#39;</span><span class="si">%(view)s</span><span class="s2">&#39; is not &quot;</span>
+                <span class="s2">&quot;a valid view function or pattern name.&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s1">&#39;view&#39;</span><span class="p">:</span> <span class="n">lookup_view_s</span><span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">NoReverseMatch</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    <a href="../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

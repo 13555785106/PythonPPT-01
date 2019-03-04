@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>投票结果</title>
+</head>
+<body>
+<table align="center" border="1">
+    <tr>
+        <td>
+
+            <h1 align="center">{{ question.question_text }}</h1>
+            <ul>
+                {% for choice in question.choice_set.all %}
+                <li>{{ choice.choice_text }} -- {{ choice.votes }}票</li>
+                {% endfor %}
+            </ul>
+
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <a href="{% url 'ch01:detail' question.id %}">再次投票</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

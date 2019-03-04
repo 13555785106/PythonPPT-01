@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>标签测试</title>
+</head>
+<body>
+{% load humanize %}
+{% load static %}
+
+{% with a=1 b=0 c=None%}
+{{ a|ordinal}}
+{% endwith %}
+
+
+{% url 'test_tag' year=2009 month=12 %}
+
+{% spaceless %}
+{% regroup cities|dictsort:"country" by country as country_list %}
+
+<ul>
+    {% for country, local_cities in country_list %}
+    <li>{{ country }}
+        <ul>
+            {% for city in local_cities %}
+            <li>{{ city.name }}: {{ city.population }}</li>
+            {% endfor %}
+        </ul>
+    </li>
+    {% endfor %}
+</ul>
+{% endspaceless %}
+<img src="{% static 'sample/angry-bird-icon.png' %}" alt="Hi!"/>
+</body>
+</html>

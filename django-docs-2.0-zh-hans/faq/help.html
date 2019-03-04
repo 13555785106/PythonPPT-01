@@ -1,0 +1,182 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>FAQ:获取帮助 &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="FAQ：数据库和模型" href="models.html" />
+    <link rel="prev" title="FAQ: 使用Django" href="usage.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="usage.html" title="FAQ: 使用Django">previous</a>
+     |
+    <a href="index.html" title="Django FAQ" accesskey="U">up</a>
+   |
+    <a href="models.html" title="FAQ：数据库和模型">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="faq-help">
+            
+  <div class="section" id="s-faq-getting-help">
+<span id="faq-getting-help"></span><h1>FAQ:获取帮助<a class="headerlink" href="#faq-getting-help" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="s-how-do-i-do-x-why-doesn-t-y-work-where-can-i-go-to-get-help">
+<span id="how-do-i-do-x-why-doesn-t-y-work-where-can-i-go-to-get-help"></span><h2>我该如何做 X？Y为什么不工作？我可以去哪里寻求帮助？<a class="headerlink" href="#how-do-i-do-x-why-doesn-t-y-work-where-can-i-go-to-get-help" title="Permalink to this headline">¶</a></h2>
+<p>如果FAQ没有包含对你问题的回答，你可以试试 <a class="reference internal" href="../internals/mailing-lists.html#django-users-mailing-list"><span class="std std-ref">django-users</span></a>&nbsp; 的邮件列表，随意问任何有关安装，使用或调试 Django 的问题。</p>
+<p>如果你更喜欢IRC，Freenode IRC网络上的`#django IRC channel`_&nbsp;是一个有帮助的个人谁可能能够解决您的问题积极的社区。</p>
+</div>
+<div class="section" id="s-why-hasn-t-my-message-appeared-on-django-users">
+<span id="s-message-does-not-appear-on-django-users"></span><span id="why-hasn-t-my-message-appeared-on-django-users"></span><span id="message-does-not-appear-on-django-users"></span><h2>为什么我的信息没有出现在 <a href="#id1"><span class="problematic" id="id2">`</span></a>django-users`上面？<a class="headerlink" href="#why-hasn-t-my-message-appeared-on-django-users" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../internals/mailing-lists.html#django-users-mailing-list"><span class="std std-ref">django-users</span></a> 有很多订阅者。这对社区是好事, 因为这意味着有许多人可以来回答问题. 不过这也意味着 <a class="reference internal" href="../internals/mailing-lists.html#django-users-mailing-list"><span class="std std-ref">django-users</span></a> 对垃圾邮件发送者来说是一个充满吸引力的目标。</p>
+<p>为了解决垃圾邮件问题, 当你加入 <a class="reference internal" href="../internals/mailing-lists.html#django-users-mailing-list"><span class="std std-ref">django-users</span></a> 邮件列表，我们会手工的调整你向该邮件列表发送的第一封邮件，这意味着如果有垃圾邮件发送者，将会被发现， 但也同时意味着你的第一封求助邮件会用很长的时间才获得回复，我们对这种策略带来的不便感到抱歉。</p>
+</div>
+<div class="section" id="s-nobody-on-django-users-answered-my-question-what-should-i-do">
+<span id="nobody-on-django-users-answered-my-question-what-should-i-do"></span><h2>没有在`Django-users`邮件列表上回答我的问题，我应该怎么办呢？<a class="headerlink" href="#nobody-on-django-users-answered-my-question-what-should-i-do" title="Permalink to this headline">¶</a></h2>
+<p>试着更加具体地介绍你的问题，或提供一个关于你问题的更好的例子。</p>
+<p>像大多数开源软件的的邮件列表，<cite>Django-users`邮件列表上的人员大部分都是志愿者，如果没有人回答你的问题，可能因为是没有人能理解这个问题，或者因为其他人员太忙。你可以试一下在IRC频道上问一下你的问题，请访问Freenode上的`#django IRC channel</cite>。</p>
+<p>你也许注意到了我们还有第二个邮箱列表 <a class="reference internal" href="../internals/mailing-lists.html#django-developers-mailing-list"><span class="std std-ref">django-developers</span></a>，但是，请不要向这个邮件列表咨询支持问题。 这个邮件列表仅供讨论 Django 自身的发展过程。咨询技术支持问题略显粗鲁。</p>
+</div>
+<div class="section" id="s-i-think-i-ve-found-a-bug-what-should-i-do">
+<span id="i-think-i-ve-found-a-bug-what-should-i-do"></span><h2>我认为我找到了个bug！我应该做什么呢？<a class="headerlink" href="#i-think-i-ve-found-a-bug-what-should-i-do" title="Permalink to this headline">¶</a></h2>
+<p>如何处理一个潜在的 bug 可以详细参考我们的指南 <cite>Guide to contributing to Django &lt;reporting-bugs&gt;</cite>。</p>
+</div>
+<div class="section" id="s-i-think-i-ve-found-a-security-problem-what-should-i-do">
+<span id="i-think-i-ve-found-a-security-problem-what-should-i-do"></span><h2>我认为我已经发现了个安全问题！我应该做什么？<a class="headerlink" href="#i-think-i-ve-found-a-security-problem-what-should-i-do" title="Permalink to this headline">¶</a></h2>
+<p>如果你认为你找到了一个 Django 的安全问题， 请告诉 <a class="reference external" href="mailto:security&#37;&#52;&#48;djangoproject&#46;com">security<span>&#64;</span>djangoproject<span>&#46;</span>com</a>。这是一个仅供值得信赖的 Django 开发者使用的长期有效的私人邮箱；并且该邮箱的档案不公开。</p>
+<p>由于人们对安全问题有一种与生俱来的敏感，如果你认为你找到了安全问题，请不要给公共邮箱发送消息。这里可以看到 Django 对于安全问题的处理政策 &lt;reporting-security-issues&gt;；当重大缺陷发现的时候，我们会尽可能的降低人们对缺陷的认知所带来的任何损失。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">FAQ:获取帮助</a><ul>
+<li><a class="reference internal" href="#how-do-i-do-x-why-doesn-t-y-work-where-can-i-go-to-get-help">我该如何做 X？Y为什么不工作？我可以去哪里寻求帮助？</a></li>
+<li><a class="reference internal" href="#why-hasn-t-my-message-appeared-on-django-users">为什么我的信息没有出现在 `django-users`上面？</a></li>
+<li><a class="reference internal" href="#nobody-on-django-users-answered-my-question-what-should-i-do">没有在`Django-users`邮件列表上回答我的问题，我应该怎么办呢？</a></li>
+<li><a class="reference internal" href="#i-think-i-ve-found-a-bug-what-should-i-do">我认为我找到了个bug！我应该做什么呢？</a></li>
+<li><a class="reference internal" href="#i-think-i-ve-found-a-security-problem-what-should-i-do">我认为我已经发现了个安全问题！我应该做什么？</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="usage.html"
+                        title="previous chapter">FAQ: 使用Django</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="models.html"
+                        title="next chapter">FAQ：数据库和模型</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/faq/help.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="usage.html" title="FAQ: 使用Django">previous</a>
+     |
+    <a href="index.html" title="Django FAQ" accesskey="U">up</a>
+   |
+    <a href="models.html" title="FAQ：数据库和模型">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

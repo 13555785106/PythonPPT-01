@@ -1,0 +1,260 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>下一步看什么 &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="编写你的第一个 Django 补丁" href="contributing.html" />
+    <link rel="prev" title="进阶指南：如何编写可重用程序" href="reusable-apps.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="reusable-apps.html" title="进阶指南：如何编写可重用程序">previous</a>
+     |
+    <a href="index.html" title="开始" accesskey="U">up</a>
+   |
+    <a href="contributing.html" title="编写你的第一个 Django 补丁">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="intro-whatsnext">
+            
+  <div class="section" id="s-what-to-read-next">
+<span id="what-to-read-next"></span><h1>下一步看什么<a class="headerlink" href="#what-to-read-next" title="Permalink to this headline">¶</a></h1>
+<p>如果你已经读完了 <a class="reference internal" href="index.html"><span class="doc">介绍文档</span></a>，且对继续使用 Django 感兴趣。不过，你读的是整体文档的精简版（实际上，如果你逐字阅读了此文档，你已经阅读了整体文档的 5%）。</p>
+<p>那么下一步做什么？</p>
+<p>不错，我们已经通过边学边做成为了 Django 的死忠粉了。此时，你应该已经知道如何开始你自己的工程，且会到处搜索其它文档了。想知道更多技巧的话，请回到文档页。</p>
+<p>为了使 Django 的文档达到更易使用，更易阅读，更加全面的目的，我们付出了巨大的努力。本文档的剩余部分将更详细地介绍此文档的工作方式，以便您可以充分利用它。</p>
+<p>（是的，这就是传说中的说明文档的说明文档。请放心，我们不打算写一篇关于如何阅读此文档的文档。）</p>
+<div class="section" id="s-finding-documentation">
+<span id="finding-documentation"></span><h2>查找文档<a class="headerlink" href="#finding-documentation" title="Permalink to this headline">¶</a></h2>
+<p>Django有 <em>许多</em> 的文档——差不多有 450000 字（英文单词），所以查找你需要的文档可能需要点技巧。对此，有几个不错的去处，<a class="reference internal" href="../search.html"><span class="std std-ref">Search Page</span></a> 和 <a class="reference internal" href="../genindex.html"><span class="std std-ref">Index</span></a>。</p>
+<p>或者你可以只是四处看看！</p>
+</div>
+<div class="section" id="s-how-the-documentation-is-organized">
+<span id="how-the-documentation-is-organized"></span><h2>文档是如何组成<a class="headerlink" href="#how-the-documentation-is-organized" title="Permalink to this headline">¶</a></h2>
+<p>Django的主要文档以“块”的形式划分，用于满足不同的需求：</p>
+<ul>
+<li><p class="first">The <a class="reference internal" href="index.html"><span class="doc">介绍文档</span></a> 是专为 Django 初学者或 Web 初学者设计的。它不会做任何的深入，只是以高度概括的方式介绍了如果以 Django “风格”开发应用的方式。</p>
+</li>
+<li><p class="first">另一方面，The <a class="reference internal" href="../topics/index.html"><span class="doc">主题指南</span></a> 则深入介绍 Django 的各个部分。那里有更多完整的关于 Django的 <a class="reference internal" href="../topics/db/index.html"><span class="doc">模板系统</span></a>,  <a class="reference internal" href="../topics/templates.html"><span class="doc">模板引擎</span></a>, <a class="reference internal" href="../topics/forms/index.html"><span class="doc">表单框架</span></a> 和其它东西的信息。</p>
+<p>这可能是你会花费你大部分时间的地方。如果你详细阅读了这些指南，你就能了解几乎所有关于 Django 的知识。</p>
+</li>
+<li><p class="first">Web 开发通常是广而不深的——问题通常跨越多个领域。我们已经写了一系列的文档 <a class="reference internal" href="../howto/index.html"><span class="doc">how-to 指引</span></a> 用于回答常见的“为什么我会……？”系列问题。在这里，你可以找到关于 <a class="reference internal" href="../howto/outputting-pdf.html"><span class="doc">通过 Django 生成 PDF</span></a>，<a class="reference internal" href="../howto/custom-template-tags.html"><span class="doc">定义自定义模板标签</span></a> 的文档，当然，还有其它的文档。</p>
+<p>关于常见问题的回答可参见 <a class="reference internal" href="../faq/index.html"><span class="doc">FAQ</span></a>。</p>
+</li>
+<li><p class="first">这个引导和怎么做的文档不会覆盖 Django 中每个可用的类，函数和方法——在你想学的时候，你会发现实在是太多了。作为替代，每个类，函数，方法和模块的细节在 <a class="reference internal" href="../ref/index.html"><span class="doc">参考</span></a> 中介绍。那是你未来查找某个函数的细节或其它你需要的东西的地方。</p>
+</li>
+<li><p class="first">如果你对部署一个公用的工程感兴趣，我们有介绍各种部署设置的文档 <a class="reference internal" href="../howto/deployment/index.html"><span class="doc">几个指引</span></a> 和介绍你几个你需要了解的东西的文档 <a class="reference internal" href="../howto/deployment/checklist.html"><span class="doc">部署清单</span></a>。</p>
+</li>
+<li><p class="first">最后，这里有一些与大部分开发者无关的“专业”文档。包含 <a class="reference internal" href="../releases/index.html"><span class="doc">发布说明</span></a> 和 <a class="reference internal" href="../internals/index.html"><span class="doc">内部文档</span></a> ，用于向那些想向 Django 提交代码的专业人士。还有一份文档 <a class="reference internal" href="../misc/index.html"><span class="doc">不适合放到其它地方的一点内容</span></a> 。</p>
+</li>
+</ul>
+</div>
+<div class="section" id="s-how-documentation-is-updated">
+<span id="how-documentation-is-updated"></span><h2>这个文档是如何更新的<a class="headerlink" href="#how-documentation-is-updated" title="Permalink to this headline">¶</a></h2>
+<p>就像 Django 的源码每天都被更新和提升一样，我们的文档也会持续优化。我们因为以下几个原因优化文档：</p>
+<ul class="simple">
+<li>更正内容，如更正语法/拼写错误。</li>
+<li>向已有的需要被扩展的某个章节添加介绍信息或例子。</li>
+<li>记录尚未记录的 Django 功能。 （这些功能的列表正在缩小，但仍然存在。）</li>
+<li>在新特性被添加时，或 Django 的 API 或行为有变化时，会添加新文档。</li>
+</ul>
+<p>Django  的文档以和它的代码一样，以代码版本管理系统方式进行管理。它被保存在 git 仓库的 <a class="reference external" href="https://github.com/django/django/tree/master/docs">docs</a> 目录内。每份在线文档都是仓库内的一份独立文本文件。</p>
+</div>
+<div class="section" id="s-where-to-get-it">
+<span id="where-to-get-it"></span><h2>从哪里获取这个<a class="headerlink" href="#where-to-get-it" title="Permalink to this headline">¶</a></h2>
+<p>你可以以好几种形式阅读 Django 的文档。他们按照优先顺序排列：</p>
+<div class="section" id="s-on-the-web">
+<span id="on-the-web"></span><h3>在网络上<a class="headerlink" href="#on-the-web" title="Permalink to this headline">¶</a></h3>
+<p>Django 最新的在线版文档位于 <a class="reference external" href="https://docs.djangoproject.com/en/dev/">https://docs.djangoproject.com/en/dev/</a>。这些网页由 Django 的源码控制系统中的纯文本文件自动生成。这意味着它们展示了 Django “最新最好” 的修改——它们包含最新的更正和补充，并讨论了最新的Django功能，这些功能只可供Django开发版的用户使用。（参见以下关于“不同版本之间的差异”的介绍。）</p>
+<p>为提高文档质量，你可以选择在 <a class="reference external" href="https://code.djangoproject.com/">工单系统</a> 中提交变更，修正以及建议，为此我们将十分欣喜。 Django 的开发者们会积极的监控工单系统，并使用你的反馈为大家改善文档。</p>
+<p>值得一提的是，工单(ticket)应该明确地关联到文档，而不是询问笼统的技术支持问题。 如果你需要针对你的 Django 配置寻求帮助，尝试联系 <a class="reference internal" href="../internals/mailing-lists.html#django-users-mailing-list"><span class="std std-ref">django-users</span></a> 邮件组 或者 <a class="reference external" href="irc://irc.freenode.net/django">#django IRC channel</a> 。</p>
+</div>
+<div class="section" id="s-in-plain-text">
+<span id="in-plain-text"></span><h3>纯文本形式<a class="headerlink" href="#in-plain-text" title="Permalink to this headline">¶</a></h3>
+<p>离线阅读，或仅仅是为了方便，你可以阅读 Djano 文档的纯文本形式。</p>
+<p>如果你正在使用的是 Django 的某个正式发布版，注意有一个代码压缩包，包含了 <code class="docutils literal notranslate"><span class="pre">docs/</span></code> 目录，内含这个版本的完整文档。</p>
+<p>如果你正在使用开发版的 Django （又名“trunk”），注意目录 <code class="docutils literal notranslate"><span class="pre">docs/</span></code> 包含所有的文档。你可以通过 git 获取最新的修改。</p>
+<p>一种没啥技术含量的利用纯文本文档的方式是使用 Unix 的 <code class="docutils literal notranslate"><span class="pre">grep</span></code> 工具在文档中全局中搜索一个短语。举个例子，接下来会向你展示 Django 文档中所有提到这个特定短语 &quot;max_length&quot; 的地方：</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> grep -r max_length /path/to/django/docs/
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-as-html-locally">
+<span id="as-html-locally"></span><h3>以本地网页形式阅读<a class="headerlink" href="#as-html-locally" title="Permalink to this headline">¶</a></h3>
+<p>经过几步简单的操作，你可以获得一份网页文档的备份：</p>
+<ul>
+<li><p class="first">Django 文档使用了一个叫做 <a class="reference external" href="http://sphinx-doc.org/">Sphinx</a> 的系统将纯文本转换为网页。你可以通过 Sphinx 的官方网站或 <code class="docutils literal notranslate"><span class="pre">pip</span></code> 来下载和安装它：</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install Sphinx
+</pre></div>
+</div>
+</li>
+<li><p class="first">接着，仅需使用其中的 <code class="docutils literal notranslate"><span class="pre">Makefile</span></code> 工具将文档转换为网页：</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nb">cd</span> path/to/django/docs
+<span class="gp">$</span> make html
+</pre></div>
+</div>
+<p>你需要为此安装 <a class="reference external" href="https://www.gnu.org/software/make/">GNU Make</a> 工具。</p>
+<p>如果你是 Windows 系统，你应该使用其中的批处理文件：</p>
+<div class="highlight-bat notranslate"><div class="highlight"><pre><span></span><span class="k">cd</span> path\to\django\docs
+make.bat html
+</pre></div>
+</div>
+</li>
+<li><p class="first">这个 HTML 文档将会被放置在 <code class="docutils literal notranslate"><span class="pre">docs/_build/html</span></code>。</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-differences-between-versions">
+<span id="s-differences-between-doc-versions"></span><span id="differences-between-versions"></span><span id="differences-between-doc-versions"></span><h2>版本之间的差异<a class="headerlink" href="#differences-between-versions" title="Permalink to this headline">¶</a></h2>
+<p>如前所述，我们 Git 仓库中的纯文本文档包含“最新最好”的修改和扩展。这些修改通常也包含介绍 Django 开发版中的新特性的文档——Django 的 Git（“trunk”）版本。因此，保存各个版本的文档是值得的。</p>
+<p>我们遵循以下原则：</p>
+<ul class="simple">
+<li>djangoproject.com 上的主要文档是 Git 中最新文档的 HTML 版本。 这些文档总是对应于官方最新的 Django 发布版本，包含所有 <em>自</em> 最新发布版起，我们在框架中添加或修改的功能。</li>
+<li>当我们为 Django 的开发版本添加功能时，我们会在相同的 Git commit 事务中更新文档。</li>
+<li>为区分文档中功能的修改或添加，我们使用短语：“在版本 X.Y 新增”，X.Y是指下一个发布版本（因此，这个这本正在开发中）。</li>
+<li>文档的修复和提升可能只会提交到最新的一个发布版本，这取决于提交者，然而，一旦一个 Django 的版本处于 <a class="reference internal" href="../internals/release-process.html#supported-versions-policy"><span class="std std-ref">不在维护列表</span></a> 中，这个版本对应的文档将不再更新。</li>
+<li><a class="reference external" href="https://docs.djangoproject.com/en/dev/">主要文档页面</a> 包含了指向所有旧版本文档的链接。确保你正在阅读和你使用的 Django 版本匹配的文档！</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">下一步看什么</a><ul>
+<li><a class="reference internal" href="#finding-documentation">查找文档</a></li>
+<li><a class="reference internal" href="#how-the-documentation-is-organized">文档是如何组成</a></li>
+<li><a class="reference internal" href="#how-documentation-is-updated">这个文档是如何更新的</a></li>
+<li><a class="reference internal" href="#where-to-get-it">从哪里获取这个</a><ul>
+<li><a class="reference internal" href="#on-the-web">在网络上</a></li>
+<li><a class="reference internal" href="#in-plain-text">纯文本形式</a></li>
+<li><a class="reference internal" href="#as-html-locally">以本地网页形式阅读</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#differences-between-versions">版本之间的差异</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="reusable-apps.html"
+                        title="previous chapter">进阶指南：如何编写可重用程序</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="contributing.html"
+                        title="next chapter">编写你的第一个 Django 补丁</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/intro/whatsnext.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="reusable-apps.html" title="进阶指南：如何编写可重用程序">previous</a>
+     |
+    <a href="index.html" title="开始" accesskey="U">up</a>
+   |
+    <a href="contributing.html" title="编写你的第一个 Django 补丁">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

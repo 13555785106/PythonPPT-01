@@ -1,0 +1,833 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>django.test.runner &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    <a href="../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="_modules-django-test-runner">
+            
+  <h1>Source code for django.test.runner</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">ctypes</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">textwrap</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">importlib</span> <span class="k">import</span> <span class="n">import_module</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">StringIO</span>
+
+<span class="kn">from</span> <span class="nn">django.core.management</span> <span class="k">import</span> <span class="n">call_command</span>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="k">import</span> <span class="n">connections</span>
+<span class="kn">from</span> <span class="nn">django.test</span> <span class="k">import</span> <span class="n">SimpleTestCase</span><span class="p">,</span> <span class="n">TestCase</span>
+<span class="kn">from</span> <span class="nn">django.test.utils</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">setup_databases</span> <span class="k">as</span> <span class="n">_setup_databases</span><span class="p">,</span> <span class="n">setup_test_environment</span><span class="p">,</span>
+    <span class="n">teardown_databases</span> <span class="k">as</span> <span class="n">_teardown_databases</span><span class="p">,</span> <span class="n">teardown_test_environment</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">django.utils.datastructures</span> <span class="k">import</span> <span class="n">OrderedSet</span>
+<span class="kn">from</span> <span class="nn">django.utils.deprecation</span> <span class="k">import</span> <span class="n">RemovedInDjango21Warning</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">tblib.pickling_support</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">tblib</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="k">class</span> <span class="nc">DebugSQLTextTestResult</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TextTestResult</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">descriptions</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;django.db.backends&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">descriptions</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">startTest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug_sql_stream</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_sql_stream</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handler</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">startTest</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">stopTest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stopTest</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handler</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">showAll</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">debug_sql_stream</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_sql_stream</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">writeln</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">separator2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">addError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">err</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">addError</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug_sql_stream</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_sql_stream</span><span class="o">.</span><span class="n">read</span><span class="p">(),)</span>
+
+    <span class="k">def</span> <span class="nf">addFailure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">err</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">addFailure</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug_sql_stream</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">failures</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">failures</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_sql_stream</span><span class="o">.</span><span class="n">read</span><span class="p">(),)</span>
+
+    <span class="k">def</span> <span class="nf">addSubTest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">subtest</span><span class="p">,</span> <span class="n">err</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">addSubTest</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">subtest</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">debug_sql_stream</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">failures</span> <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">err</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">test</span><span class="o">.</span><span class="n">failureException</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">errors</span>
+            <span class="n">errors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_sql_stream</span><span class="o">.</span><span class="n">read</span><span class="p">(),)</span>
+
+    <span class="k">def</span> <span class="nf">printErrorList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flavour</span><span class="p">,</span> <span class="n">errors</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">test</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">sql_debug</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">writeln</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">separator1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">writeln</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">flavour</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">getDescription</span><span class="p">(</span><span class="n">test</span><span class="p">)))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">writeln</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">separator2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">writeln</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">err</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">writeln</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">separator2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">writeln</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sql_debug</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">RemoteTestResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Record information about which tests have succeeded and which have failed.</span>
+
+<span class="sd">    The sole purpose of this class is to record events in the child processes</span>
+<span class="sd">    so they can be replayed in the master process. As a consequence it doesn&#39;t</span>
+<span class="sd">    inherit unittest.TestResult and doesn&#39;t attempt to implement all its API.</span>
+
+<span class="sd">    The implementation matches the unpythonic coding style of unittest2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">tblib</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tblib</span><span class="o">.</span><span class="n">pickling_support</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">failfast</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shouldStop</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">testsRun</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">test_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">testsRun</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">_confirm_picklable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Confirm that obj can be pickled and unpickled as multiprocessing will</span>
+<span class="sd">        need to pickle the exception in the child process and unpickle it in</span>
+<span class="sd">        the parent process. Let the exception rise, if not.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_print_unpicklable_subtest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">subtest</span><span class="p">,</span> <span class="n">pickle_exc</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Subtest failed:</span>
+
+<span class="s2">    test: </span><span class="si">{}</span><span class="s2"></span>
+<span class="s2"> subtest: </span><span class="si">{}</span><span class="s2"></span>
+
+<span class="s2">Unfortunately, the subtest that failed cannot be pickled, so the parallel</span>
+<span class="s2">test runner cannot handle it cleanly. Here is the pickling error:</span>
+
+<span class="s2">&gt; </span><span class="si">{}</span><span class="s2"></span>
+
+<span class="s2">You should re-run this test with --parallel=1 to reproduce the failure</span>
+<span class="s2">with a cleaner failure message.</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">subtest</span><span class="p">,</span> <span class="n">pickle_exc</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">check_picklable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">err</span><span class="p">):</span>
+        <span class="c1"># Ensure that sys.exc_info() tuples are picklable. This displays a</span>
+        <span class="c1"># clear multiprocessing.pool.RemoteTraceback generated in the child</span>
+        <span class="c1"># process instead of a multiprocessing.pool.MaybeEncodingError, making</span>
+        <span class="c1"># the root cause easier to figure out for users who aren&#39;t familiar</span>
+        <span class="c1"># with the multiprocessing module. Since we&#39;re in a forked process,</span>
+        <span class="c1"># our best chance to communicate with them is to print to stdout.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_confirm_picklable</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">original_exc_txt</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">err</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">original_exc_txt</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">original_exc_txt</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="n">initial_indent</span><span class="o">=</span><span class="s1">&#39;    &#39;</span><span class="p">,</span> <span class="n">subsequent_indent</span><span class="o">=</span><span class="s1">&#39;    &#39;</span><span class="p">)</span>
+            <span class="n">pickle_exc_txt</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+            <span class="n">pickle_exc_txt</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">pickle_exc_txt</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="n">initial_indent</span><span class="o">=</span><span class="s1">&#39;    &#39;</span><span class="p">,</span> <span class="n">subsequent_indent</span><span class="o">=</span><span class="s1">&#39;    &#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tblib</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+
+<span class="si">{}</span><span class="s2"> failed:</span>
+
+<span class="si">{}</span><span class="s2"></span>
+
+<span class="s2">Unfortunately, tracebacks cannot be pickled, making it impossible for the</span>
+<span class="s2">parallel test runner to handle this exception cleanly.</span>
+
+<span class="s2">In order to see the traceback, you should install tblib:</span>
+
+<span class="s2">    pip install tblib</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">original_exc_txt</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+
+<span class="si">{}</span><span class="s2"> failed:</span>
+
+<span class="si">{}</span><span class="s2"></span>
+
+<span class="s2">Unfortunately, the exception it raised cannot be pickled, making it impossible</span>
+<span class="s2">for the parallel test runner to handle it cleanly.</span>
+
+<span class="s2">Here&#39;s the error encountered while trying to pickle the exception:</span>
+
+<span class="si">{}</span><span class="s2"></span>
+
+<span class="s2">You should re-run this test with the --parallel=1 option to reproduce the</span>
+<span class="s2">failure and get a correct traceback.</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">original_exc_txt</span><span class="p">,</span> <span class="n">pickle_exc_txt</span><span class="p">))</span>
+            <span class="k">raise</span>
+
+    <span class="k">def</span> <span class="nf">check_subtest_picklable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">subtest</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_confirm_picklable</span><span class="p">(</span><span class="n">subtest</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_print_unpicklable_subtest</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">subtest</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
+            <span class="k">raise</span>
+
+    <span class="k">def</span> <span class="nf">stop_if_failfast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">failfast</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shouldStop</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">startTestRun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;startTestRun&#39;</span><span class="p">,))</span>
+
+    <span class="k">def</span> <span class="nf">stopTestRun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;stopTestRun&#39;</span><span class="p">,))</span>
+
+    <span class="k">def</span> <span class="nf">startTest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">testsRun</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;startTest&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_index</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">stopTest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;stopTest&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_index</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">addError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">err</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_picklable</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;addError&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_index</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_if_failfast</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">addFailure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">err</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_picklable</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;addFailure&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_index</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_if_failfast</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">addSubTest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">subtest</span><span class="p">,</span> <span class="n">err</span><span class="p">):</span>
+        <span class="c1"># Follow Python 3.5&#39;s implementation of unittest.TestResult.addSubTest()</span>
+        <span class="c1"># by not doing anything when a subtest is successful.</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Call check_picklable() before check_subtest_picklable() since</span>
+            <span class="c1"># check_picklable() performs the tblib check.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_picklable</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_subtest_picklable</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">subtest</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;addSubTest&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_index</span><span class="p">,</span> <span class="n">subtest</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stop_if_failfast</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">addSuccess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;addSuccess&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_index</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">addSkip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">reason</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;addSkip&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_index</span><span class="p">,</span> <span class="n">reason</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">addExpectedFailure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">err</span><span class="p">):</span>
+        <span class="c1"># If tblib isn&#39;t installed, pickling the traceback will always fail.</span>
+        <span class="c1"># However we don&#39;t want tblib to be required for running the tests</span>
+        <span class="c1"># when they pass or fail as expected. Drop the traceback when an</span>
+        <span class="c1"># expected failure occurs.</span>
+        <span class="k">if</span> <span class="n">tblib</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="n">err</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">err</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_picklable</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;addExpectedFailure&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_index</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">addUnexpectedSuccess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;addUnexpectedSuccess&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_index</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_if_failfast</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">RemoteTestRunner</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run tests and record everything but don&#39;t display anything.</span>
+
+<span class="sd">    The implementation matches the unpythonic coding style of unittest2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">resultclass</span> <span class="o">=</span> <span class="n">RemoteTestResult</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">failfast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resultclass</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">failfast</span> <span class="o">=</span> <span class="n">failfast</span>
+        <span class="k">if</span> <span class="n">resultclass</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resultclass</span> <span class="o">=</span> <span class="n">resultclass</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resultclass</span><span class="p">()</span>
+        <span class="n">unittest</span><span class="o">.</span><span class="n">registerResult</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">failfast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">failfast</span>
+        <span class="n">test</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">default_test_processes</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Default number of test processes when using the --parallel option.&quot;&quot;&quot;</span>
+    <span class="c1"># The current implementation of the parallel test runner requires</span>
+    <span class="c1"># multiprocessing to start subprocesses with fork().</span>
+    <span class="k">if</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">get_start_method</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;fork&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;DJANGO_TEST_PROCESSES&#39;</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+
+
+<span class="n">_worker_id</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="k">def</span> <span class="nf">_init_worker</span><span class="p">(</span><span class="n">counter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Switch to databases dedicated to this worker.</span>
+
+<span class="sd">    This helper lives at module-level because of the multiprocessing module&#39;s</span>
+<span class="sd">    requirements.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">global</span> <span class="n">_worker_id</span>
+
+    <span class="k">with</span> <span class="n">counter</span><span class="o">.</span><span class="n">get_lock</span><span class="p">():</span>
+        <span class="n">counter</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">_worker_id</span> <span class="o">=</span> <span class="n">counter</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">connections</span><span class="p">:</span>
+        <span class="n">connection</span> <span class="o">=</span> <span class="n">connections</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span>
+        <span class="n">settings_dict</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">creation</span><span class="o">.</span><span class="n">get_test_db_clone_settings</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">_worker_id</span><span class="p">))</span>
+        <span class="c1"># connection.settings_dict must be updated in place for changes to be</span>
+        <span class="c1"># reflected in django.db.connections. If the following line assigned</span>
+        <span class="c1"># connection.settings_dict = settings_dict, new threads would connect</span>
+        <span class="c1"># to the default database instead of the appropriate clone.</span>
+        <span class="n">connection</span><span class="o">.</span><span class="n">settings_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">settings_dict</span><span class="p">)</span>
+        <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_run_subsuite</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run a suite of tests with a RemoteTestRunner and return a RemoteTestResult.</span>
+
+<span class="sd">    This helper lives at module-level and its arguments are wrapped in a tuple</span>
+<span class="sd">    because of the multiprocessing module&#39;s requirements.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">runner_class</span><span class="p">,</span> <span class="n">subsuite_index</span><span class="p">,</span> <span class="n">subsuite</span><span class="p">,</span> <span class="n">failfast</span> <span class="o">=</span> <span class="n">args</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">runner_class</span><span class="p">(</span><span class="n">failfast</span><span class="o">=</span><span class="n">failfast</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">subsuite</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">subsuite_index</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">events</span>
+
+
+<span class="k">class</span> <span class="nc">ParallelTestSuite</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestSuite</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run a series of tests in parallel in several processes.</span>
+
+<span class="sd">    While the unittest module&#39;s documentation implies that orchestrating the</span>
+<span class="sd">    execution of tests is the responsibility of the test runner, in practice,</span>
+<span class="sd">    it appears that TestRunner classes are more concerned with formatting and</span>
+<span class="sd">    displaying test results.</span>
+
+<span class="sd">    Since there are fewer use cases for customizing TestSuite than TestRunner,</span>
+<span class="sd">    implementing parallelization at the level of the TestSuite improves</span>
+<span class="sd">    interoperability with existing custom test runners. A single instance of a</span>
+<span class="sd">    test runner can still collect results from all tests without being aware</span>
+<span class="sd">    that they have been run in parallel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># In case someone wants to modify these in a subclass.</span>
+    <span class="n">init_worker</span> <span class="o">=</span> <span class="n">_init_worker</span>
+    <span class="n">run_subsuite</span> <span class="o">=</span> <span class="n">_run_subsuite</span>
+    <span class="n">runner_class</span> <span class="o">=</span> <span class="n">RemoteTestRunner</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">suite</span><span class="p">,</span> <span class="n">processes</span><span class="p">,</span> <span class="n">failfast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subsuites</span> <span class="o">=</span> <span class="n">partition_suite_by_case</span><span class="p">(</span><span class="n">suite</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">processes</span> <span class="o">=</span> <span class="n">processes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">failfast</span> <span class="o">=</span> <span class="n">failfast</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Distribute test cases across workers.</span>
+
+<span class="sd">        Return an identifier of each test case with its result in order to use</span>
+<span class="sd">        imap_unordered to show results as soon as they&#39;re available.</span>
+
+<span class="sd">        To minimize pickling errors when getting results from workers:</span>
+
+<span class="sd">        - pass back numeric indexes in self.subsuites instead of tests</span>
+<span class="sd">        - make tracebacks picklable with tblib, if available</span>
+
+<span class="sd">        Even with tblib, errors may still occur for dynamically created</span>
+<span class="sd">        exception classes such Model.DoesNotExist which cannot be unpickled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span>
+            <span class="n">processes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">processes</span><span class="p">,</span>
+            <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">init_worker</span><span class="o">.</span><span class="vm">__func__</span><span class="p">,</span>
+            <span class="n">initargs</span><span class="o">=</span><span class="p">[</span><span class="n">counter</span><span class="p">])</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner_class</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">subsuite</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">failfast</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">subsuite</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subsuites</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">test_results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">imap_unordered</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_subsuite</span><span class="o">.</span><span class="vm">__func__</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">shouldStop</span><span class="p">:</span>
+                <span class="n">pool</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+                <span class="k">break</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">subsuite_index</span><span class="p">,</span> <span class="n">events</span> <span class="o">=</span> <span class="n">test_results</span><span class="o">.</span><span class="n">next</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+                <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">break</span>
+
+            <span class="n">tests</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subsuites</span><span class="p">[</span><span class="n">subsuite_index</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+                <span class="n">event_name</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">handler</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">handler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">test</span> <span class="o">=</span> <span class="n">tests</span><span class="p">[</span><span class="n">event</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+                <span class="n">handler</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+
+<div class="viewcode-block" id="DiscoverRunner"><a class="viewcode-back" href="../../../topics/testing/advanced.html#django.test.runner.DiscoverRunner">[docs]</a><span class="k">class</span> <span class="nc">DiscoverRunner</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A Django test runner that uses unittest2 test discovery.&quot;&quot;&quot;</span>
+
+    <span class="n">test_suite</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestSuite</span>
+    <span class="n">parallel_test_suite</span> <span class="o">=</span> <span class="n">ParallelTestSuite</span>
+    <span class="n">test_runner</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TextTestRunner</span>
+    <span class="n">test_loader</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">defaultTestLoader</span>
+    <span class="n">reorder_by</span> <span class="o">=</span> <span class="p">(</span><span class="n">TestCase</span><span class="p">,</span> <span class="n">SimpleTestCase</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">top_level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">interactive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">failfast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">keepdb</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">debug_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">debug_sql</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span> <span class="o">=</span> <span class="n">pattern</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_level</span> <span class="o">=</span> <span class="n">top_level</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interactive</span> <span class="o">=</span> <span class="n">interactive</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">failfast</span> <span class="o">=</span> <span class="n">failfast</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keepdb</span> <span class="o">=</span> <span class="n">keepdb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="n">reverse</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug_mode</span> <span class="o">=</span> <span class="n">debug_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug_sql</span> <span class="o">=</span> <span class="n">debug_sql</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parallel</span> <span class="o">=</span> <span class="n">parallel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">tags</span> <span class="ow">or</span> <span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exclude_tags</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">exclude_tags</span> <span class="ow">or</span> <span class="p">[])</span>
+
+<div class="viewcode-block" id="DiscoverRunner.add_arguments"><a class="viewcode-back" href="../../../topics/testing/advanced.html#django.test.runner.DiscoverRunner.add_arguments">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_arguments</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parser</span><span class="p">):</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s1">&#39;-t&#39;</span><span class="p">,</span> <span class="s1">&#39;--top-level-directory&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;top_level&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Top level of project for unittest discovery.&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--pattern&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;pattern&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;test*.py&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;The test matching pattern. Defaults to test*.py.&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s1">&#39;-k&#39;</span><span class="p">,</span> <span class="s1">&#39;--keepdb&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;keepdb&#39;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Preserves the test DB between runs.&#39;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="s1">&#39;--reverse&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;reverse&#39;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Reverses test cases order.&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s1">&#39;--debug-mode&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;debug_mode&#39;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Sets settings.DEBUG to True.&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s1">&#39;-d&#39;</span><span class="p">,</span> <span class="s1">&#39;--debug-sql&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;debug_sql&#39;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Prints logged SQL queries on failure.&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s1">&#39;--parallel&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;parallel&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">const</span><span class="o">=</span><span class="n">default_test_processes</span><span class="p">(),</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;N&#39;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Run tests using up to N parallel processes.&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s1">&#39;--tag&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;tags&#39;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Run only tests with the specified tag. Can be used multiple times.&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s1">&#39;--exclude-tag&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;exclude_tags&#39;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Do not run tests with the specified tag. Can be used multiple times.&#39;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DiscoverRunner.setup_test_environment"><a class="viewcode-back" href="../../../topics/testing/advanced.html#django.test.runner.DiscoverRunner.setup_test_environment">[docs]</a>    <span class="k">def</span> <span class="nf">setup_test_environment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">setup_test_environment</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_mode</span><span class="p">)</span>
+        <span class="n">unittest</span><span class="o">.</span><span class="n">installHandler</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DiscoverRunner.build_suite"><a class="viewcode-back" href="../../../topics/testing/advanced.html#django.test.runner.DiscoverRunner.build_suite">[docs]</a>    <span class="k">def</span> <span class="nf">build_suite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_tests</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">suite</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_suite</span><span class="p">()</span>
+        <span class="n">test_labels</span> <span class="o">=</span> <span class="n">test_labels</span> <span class="ow">or</span> <span class="p">[</span><span class="s1">&#39;.&#39;</span><span class="p">]</span>
+        <span class="n">extra_tests</span> <span class="o">=</span> <span class="n">extra_tests</span> <span class="ow">or</span> <span class="p">[]</span>
+
+        <span class="n">discover_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">discover_kwargs</span><span class="p">[</span><span class="s1">&#39;pattern&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">discover_kwargs</span><span class="p">[</span><span class="s1">&#39;top_level_dir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_level</span>
+
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">test_labels</span><span class="p">:</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="n">discover_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">tests</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">label_as_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+
+            <span class="c1"># if a module, or &quot;module.ClassName[.method_name]&quot;, just run those</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">label_as_path</span><span class="p">):</span>
+                <span class="n">tests</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_loader</span><span class="o">.</span><span class="n">loadTestsFromName</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">label_as_path</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_level</span><span class="p">:</span>
+                <span class="c1"># Try to be a bit smarter than unittest about finding the</span>
+                <span class="c1"># default top-level for a given directory path, to avoid</span>
+                <span class="c1"># breaking relative imports. (Unittest&#39;s default is to set</span>
+                <span class="c1"># top-level equal to the path, which means relative imports</span>
+                <span class="c1"># will result in &quot;Attempted relative import in non-package.&quot;).</span>
+
+                <span class="c1"># We&#39;d be happy to skip this and require dotted module paths</span>
+                <span class="c1"># (which don&#39;t cause this problem) instead of file paths (which</span>
+                <span class="c1"># do), but in the case of a directory in the cwd, which would</span>
+                <span class="c1"># be equally valid if considered as a top-level module or as a</span>
+                <span class="c1"># directory path, unittest unfortunately prefers the latter.</span>
+
+                <span class="n">top_level</span> <span class="o">=</span> <span class="n">label_as_path</span>
+                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">init_py</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">top_level</span><span class="p">,</span> <span class="s1">&#39;__init__.py&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">init_py</span><span class="p">):</span>
+                        <span class="n">try_next</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">top_level</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">try_next</span> <span class="o">==</span> <span class="n">top_level</span><span class="p">:</span>
+                            <span class="c1"># __init__.py all the way down? give up.</span>
+                            <span class="k">break</span>
+                        <span class="n">top_level</span> <span class="o">=</span> <span class="n">try_next</span>
+                        <span class="k">continue</span>
+                    <span class="k">break</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;top_level_dir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">top_level</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">tests</span> <span class="ow">and</span> <span class="n">tests</span><span class="o">.</span><span class="n">countTestCases</span><span class="p">())</span> <span class="ow">and</span> <span class="n">is_discoverable</span><span class="p">(</span><span class="n">label</span><span class="p">):</span>
+                <span class="c1"># Try discovery if path is a package or directory</span>
+                <span class="n">tests</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_loader</span><span class="o">.</span><span class="n">discover</span><span class="p">(</span><span class="n">start_dir</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+                <span class="c1"># Make unittest forget the top-level dir it calculated from this</span>
+                <span class="c1"># run, to support running tests from two different top-levels.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">test_loader</span><span class="o">.</span><span class="n">_top_level_dir</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">suite</span><span class="o">.</span><span class="n">addTests</span><span class="p">(</span><span class="n">tests</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">extra_tests</span><span class="p">:</span>
+            <span class="n">suite</span><span class="o">.</span><span class="n">addTest</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude_tags</span><span class="p">:</span>
+            <span class="n">suite</span> <span class="o">=</span> <span class="n">filter_tests_by_tags</span><span class="p">(</span><span class="n">suite</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude_tags</span><span class="p">)</span>
+        <span class="n">suite</span> <span class="o">=</span> <span class="n">reorder_suite</span><span class="p">(</span><span class="n">suite</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reorder_by</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">parallel_suite</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_test_suite</span><span class="p">(</span><span class="n">suite</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">failfast</span><span class="p">)</span>
+
+            <span class="c1"># Since tests are distributed across processes on a per-TestCase</span>
+            <span class="c1"># basis, there&#39;s no need for more processes than TestCases.</span>
+            <span class="n">parallel_units</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parallel_suite</span><span class="o">.</span><span class="n">subsuites</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel</span> <span class="o">&gt;</span> <span class="n">parallel_units</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parallel</span> <span class="o">=</span> <span class="n">parallel_units</span>
+
+            <span class="c1"># If there&#39;s only one TestCase, parallelization isn&#39;t needed.</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">suite</span> <span class="o">=</span> <span class="n">parallel_suite</span>
+
+        <span class="k">return</span> <span class="n">suite</span></div>
+
+<div class="viewcode-block" id="DiscoverRunner.setup_databases"><a class="viewcode-back" href="../../../topics/testing/advanced.html#django.test.runner.DiscoverRunner.setup_databases">[docs]</a>    <span class="k">def</span> <span class="nf">setup_databases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_setup_databases</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">interactive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">keepdb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug_sql</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parallel</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">get_resultclass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DebugSQLTextTestResult</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug_sql</span> <span class="k">else</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="DiscoverRunner.get_test_runner_kwargs"><a class="viewcode-back" href="../../../topics/testing/advanced.html#django.test.runner.DiscoverRunner.get_test_runner_kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">get_test_runner_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;failfast&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">failfast</span><span class="p">,</span>
+            <span class="s1">&#39;resultclass&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_resultclass</span><span class="p">(),</span>
+            <span class="s1">&#39;verbosity&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="DiscoverRunner.run_checks"><a class="viewcode-back" href="../../../topics/testing/advanced.html#django.test.runner.DiscoverRunner.run_checks">[docs]</a>    <span class="k">def</span> <span class="nf">run_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Checks are run after database creation since some checks require</span>
+        <span class="c1"># database access.</span>
+        <span class="n">call_command</span><span class="p">(</span><span class="s1">&#39;check&#39;</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DiscoverRunner.run_suite"><a class="viewcode-back" href="../../../topics/testing/advanced.html#django.test.runner.DiscoverRunner.run_suite">[docs]</a>    <span class="k">def</span> <span class="nf">run_suite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">suite</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_test_runner_kwargs</span><span class="p">()</span>
+        <span class="n">runner</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_runner</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">suite</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DiscoverRunner.teardown_databases"><a class="viewcode-back" href="../../../topics/testing/advanced.html#django.test.runner.DiscoverRunner.teardown_databases">[docs]</a>    <span class="k">def</span> <span class="nf">teardown_databases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old_config</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Destroy all the non-mirror databases.&quot;&quot;&quot;</span>
+        <span class="n">_teardown_databases</span><span class="p">(</span>
+            <span class="n">old_config</span><span class="p">,</span>
+            <span class="n">verbosity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span><span class="p">,</span>
+            <span class="n">parallel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parallel</span><span class="p">,</span>
+            <span class="n">keepdb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">keepdb</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DiscoverRunner.teardown_test_environment"><a class="viewcode-back" href="../../../topics/testing/advanced.html#django.test.runner.DiscoverRunner.teardown_test_environment">[docs]</a>    <span class="k">def</span> <span class="nf">teardown_test_environment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">unittest</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">()</span>
+        <span class="n">teardown_test_environment</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DiscoverRunner.suite_result"><a class="viewcode-back" href="../../../topics/testing/advanced.html#django.test.runner.DiscoverRunner.suite_result">[docs]</a>    <span class="k">def</span> <span class="nf">suite_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">suite</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">failures</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DiscoverRunner.run_tests"><a class="viewcode-back" href="../../../topics/testing/advanced.html#django.test.runner.DiscoverRunner.run_tests">[docs]</a>    <span class="k">def</span> <span class="nf">run_tests</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_labels</span><span class="p">,</span> <span class="n">extra_tests</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the unit tests for all the test labels in the provided list.</span>
+
+<span class="sd">        Test labels should be dotted Python paths to test modules, test</span>
+<span class="sd">        classes, or test methods.</span>
+
+<span class="sd">        A list of &#39;extra&#39; tests may also be provided; these tests</span>
+<span class="sd">        will be added to the test suite.</span>
+
+<span class="sd">        Return the number of tests that failed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_test_environment</span><span class="p">()</span>
+        <span class="n">suite</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_suite</span><span class="p">(</span><span class="n">test_labels</span><span class="p">,</span> <span class="n">extra_tests</span><span class="p">)</span>
+        <span class="n">old_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup_databases</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_checks</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_suite</span><span class="p">(</span><span class="n">suite</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">teardown_databases</span><span class="p">(</span><span class="n">old_config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">teardown_test_environment</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">suite_result</span><span class="p">(</span><span class="n">suite</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">is_discoverable</span><span class="p">(</span><span class="n">label</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a test label points to a python package or file directory.</span>
+
+<span class="sd">    Relative labels like &quot;.&quot; and &quot;..&quot; are seen as directories.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="s1">&#39;__path__&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">reorder_suite</span><span class="p">(</span><span class="n">suite</span><span class="p">,</span> <span class="n">classes</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reorder a test suite by test type.</span>
+
+<span class="sd">    `classes` is a sequence of types</span>
+
+<span class="sd">    All tests of type classes[0] are placed first, then tests of type</span>
+<span class="sd">    classes[1], etc. Tests with no match in classes are placed last.</span>
+
+<span class="sd">    If `reverse` is True, sort tests within classes in opposite order but</span>
+<span class="sd">    don&#39;t reverse test classes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">class_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">classes</span><span class="p">)</span>
+    <span class="n">suite_class</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">suite</span><span class="p">)</span>
+    <span class="n">bins</span> <span class="o">=</span> <span class="p">[</span><span class="n">OrderedSet</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">class_count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="n">partition_suite_by_type</span><span class="p">(</span><span class="n">suite</span><span class="p">,</span> <span class="n">classes</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
+    <span class="n">reordered_suite</span> <span class="o">=</span> <span class="n">suite_class</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">class_count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">reordered_suite</span><span class="o">.</span><span class="n">addTests</span><span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">reordered_suite</span>
+
+
+<span class="k">def</span> <span class="nf">partition_suite_by_type</span><span class="p">(</span><span class="n">suite</span><span class="p">,</span> <span class="n">classes</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Partition a test suite by test type. Also prevent duplicated tests.</span>
+
+<span class="sd">    classes is a sequence of types</span>
+<span class="sd">    bins is a sequence of TestSuites, one more than classes</span>
+<span class="sd">    reverse changes the ordering of tests within bins</span>
+
+<span class="sd">    Tests of type classes[i] are added to bins[i],</span>
+<span class="sd">    tests with no match found in classes are place in bins[-1]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">suite_class</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">suite</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
+        <span class="n">suite</span> <span class="o">=</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">suite</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">suite</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">suite_class</span><span class="p">):</span>
+            <span class="n">partition_suite_by_type</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">classes</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">classes</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">classes</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+                    <span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bins</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">partition_suite_by_case</span><span class="p">(</span><span class="n">suite</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Partition a test suite by test case, preserving the order of tests.&quot;&quot;&quot;</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">suite_class</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">suite</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">test_type</span><span class="p">,</span> <span class="n">test_group</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">suite</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">test_type</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+            <span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">suite_class</span><span class="p">(</span><span class="n">test_group</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">test_group</span><span class="p">:</span>
+                <span class="n">groups</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">partition_suite_by_case</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">groups</span>
+
+
+<span class="k">def</span> <span class="nf">setup_databases</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s1">&#39;`django.test.runner.setup_databases()` has moved to &#39;</span>
+        <span class="s1">&#39;`django.test.utils.setup_databases()`.&#39;</span><span class="p">,</span>
+        <span class="n">RemovedInDjango21Warning</span><span class="p">,</span>
+        <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">_setup_databases</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">filter_tests_by_tags</span><span class="p">(</span><span class="n">suite</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">exclude_tags</span><span class="p">):</span>
+    <span class="n">suite_class</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">suite</span><span class="p">)</span>
+    <span class="n">filtered_suite</span> <span class="o">=</span> <span class="n">suite_class</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">suite</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">suite_class</span><span class="p">):</span>
+            <span class="n">filtered_suite</span><span class="o">.</span><span class="n">addTests</span><span class="p">(</span><span class="n">filter_tests_by_tags</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">exclude_tags</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">test_tags</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="s1">&#39;tags&#39;</span><span class="p">,</span> <span class="nb">set</span><span class="p">()))</span>
+            <span class="n">test_fn_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="s1">&#39;_testMethodName&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">test</span><span class="p">))</span>
+            <span class="n">test_fn</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">test_fn_name</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span>
+            <span class="n">test_fn_tags</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">test_fn</span><span class="p">,</span> <span class="s1">&#39;tags&#39;</span><span class="p">,</span> <span class="nb">set</span><span class="p">()))</span>
+            <span class="n">all_tags</span> <span class="o">=</span> <span class="n">test_tags</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">test_fn_tags</span><span class="p">)</span>
+            <span class="n">matched_tags</span> <span class="o">=</span> <span class="n">all_tags</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">matched_tags</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">tags</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">all_tags</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">exclude_tags</span><span class="p">):</span>
+                <span class="n">filtered_suite</span><span class="o">.</span><span class="n">addTest</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">filtered_suite</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    <a href="../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

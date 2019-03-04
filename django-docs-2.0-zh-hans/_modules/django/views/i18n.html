@@ -1,0 +1,455 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>django.views.i18n &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    <a href="../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="_modules-django-views-i18n">
+            
+  <h1>Source code for django.views.i18n</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="k">import</span> <span class="n">unquote</span>
+
+<span class="kn">from</span> <span class="nn">django.apps</span> <span class="k">import</span> <span class="n">apps</span>
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="k">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="k">import</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">HttpResponseRedirect</span><span class="p">,</span> <span class="n">JsonResponse</span>
+<span class="kn">from</span> <span class="nn">django.template</span> <span class="k">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Engine</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="k">import</span> <span class="n">translate_url</span>
+<span class="kn">from</span> <span class="nn">django.utils.formats</span> <span class="k">import</span> <span class="n">get_format</span>
+<span class="kn">from</span> <span class="nn">django.utils.http</span> <span class="k">import</span> <span class="n">is_safe_url</span>
+<span class="kn">from</span> <span class="nn">django.utils.translation</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">LANGUAGE_SESSION_KEY</span><span class="p">,</span> <span class="n">check_for_language</span><span class="p">,</span> <span class="n">get_language</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">django.utils.translation.trans_real</span> <span class="k">import</span> <span class="n">DjangoTranslation</span>
+<span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">View</span>
+
+<span class="n">LANGUAGE_QUERY_PARAMETER</span> <span class="o">=</span> <span class="s1">&#39;language&#39;</span>
+
+
+<div class="viewcode-block" id="set_language"><a class="viewcode-back" href="../../../topics/i18n/translation.html#django.views.i18n.set_language">[docs]</a><span class="k">def</span> <span class="nf">set_language</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Redirect to a given URL while setting the chosen language in the session or</span>
+<span class="sd">    cookie. The URL and the language code need to be specified in the request</span>
+<span class="sd">    parameters.</span>
+
+<span class="sd">    Since this view changes how the user will see the rest of the site, it must</span>
+<span class="sd">    only be accessed as a POST request. If called as a GET request, it will</span>
+<span class="sd">    redirect to the page in the request (the &#39;next&#39; parameter) without changing</span>
+<span class="sd">    any state.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">next</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;next&#39;</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;next&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="p">((</span><span class="nb">next</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">is_ajax</span><span class="p">())</span> <span class="ow">and</span>
+            <span class="ow">not</span> <span class="n">is_safe_url</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="nb">next</span><span class="p">,</span> <span class="n">allowed_hosts</span><span class="o">=</span><span class="p">{</span><span class="n">request</span><span class="o">.</span><span class="n">get_host</span><span class="p">()},</span> <span class="n">require_https</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">is_secure</span><span class="p">())):</span>
+        <span class="nb">next</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HTTP_REFERER&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">next</span><span class="p">:</span>
+            <span class="nb">next</span> <span class="o">=</span> <span class="n">unquote</span><span class="p">(</span><span class="nb">next</span><span class="p">)</span>  <span class="c1"># HTTP_REFERER may be encoded.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_safe_url</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="nb">next</span><span class="p">,</span> <span class="n">allowed_hosts</span><span class="o">=</span><span class="p">{</span><span class="n">request</span><span class="o">.</span><span class="n">get_host</span><span class="p">()},</span> <span class="n">require_https</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">is_secure</span><span class="p">()):</span>
+            <span class="nb">next</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">HttpResponseRedirect</span><span class="p">(</span><span class="nb">next</span><span class="p">)</span> <span class="k">if</span> <span class="nb">next</span> <span class="k">else</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">204</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">lang_code</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">LANGUAGE_QUERY_PARAMETER</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lang_code</span> <span class="ow">and</span> <span class="n">check_for_language</span><span class="p">(</span><span class="n">lang_code</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">next</span><span class="p">:</span>
+                <span class="n">next_trans</span> <span class="o">=</span> <span class="n">translate_url</span><span class="p">(</span><span class="nb">next</span><span class="p">,</span> <span class="n">lang_code</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">next_trans</span> <span class="o">!=</span> <span class="nb">next</span><span class="p">:</span>
+                    <span class="n">response</span> <span class="o">=</span> <span class="n">HttpResponseRedirect</span><span class="p">(</span><span class="n">next_trans</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">):</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="n">LANGUAGE_SESSION_KEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">lang_code</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">response</span><span class="o">.</span><span class="n">set_cookie</span><span class="p">(</span>
+                    <span class="n">settings</span><span class="o">.</span><span class="n">LANGUAGE_COOKIE_NAME</span><span class="p">,</span> <span class="n">lang_code</span><span class="p">,</span>
+                    <span class="n">max_age</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">LANGUAGE_COOKIE_AGE</span><span class="p">,</span>
+                    <span class="n">path</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">LANGUAGE_COOKIE_PATH</span><span class="p">,</span>
+                    <span class="n">domain</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">LANGUAGE_COOKIE_DOMAIN</span><span class="p">,</span>
+                <span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span></div>
+
+
+<span class="k">def</span> <span class="nf">get_formats</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Return all formats strings required for i18n to work.&quot;&quot;&quot;</span>
+    <span class="n">FORMAT_SETTINGS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;DATE_FORMAT&#39;</span><span class="p">,</span> <span class="s1">&#39;DATETIME_FORMAT&#39;</span><span class="p">,</span> <span class="s1">&#39;TIME_FORMAT&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;YEAR_MONTH_FORMAT&#39;</span><span class="p">,</span> <span class="s1">&#39;MONTH_DAY_FORMAT&#39;</span><span class="p">,</span> <span class="s1">&#39;SHORT_DATE_FORMAT&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;SHORT_DATETIME_FORMAT&#39;</span><span class="p">,</span> <span class="s1">&#39;FIRST_DAY_OF_WEEK&#39;</span><span class="p">,</span> <span class="s1">&#39;DECIMAL_SEPARATOR&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;THOUSAND_SEPARATOR&#39;</span><span class="p">,</span> <span class="s1">&#39;NUMBER_GROUPING&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;DATE_INPUT_FORMATS&#39;</span><span class="p">,</span> <span class="s1">&#39;TIME_INPUT_FORMATS&#39;</span><span class="p">,</span> <span class="s1">&#39;DATETIME_INPUT_FORMATS&#39;</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">attr</span><span class="p">:</span> <span class="n">get_format</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">FORMAT_SETTINGS</span><span class="p">}</span>
+
+
+<span class="n">js_catalog_template</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">{% autoescape off %}</span>
+<span class="s2">(function(globals) {</span>
+
+<span class="s2">  var django = globals.django || (globals.django = </span><span class="si">{}</span><span class="s2">);</span>
+
+<span class="s2">  {</span><span class="si">% i</span><span class="s2">f plural %}</span>
+<span class="s2">  django.pluralidx = function(n) {</span>
+<span class="s2">    var v={{ plural }};</span>
+<span class="s2">    if (typeof(v) == &#39;boolean&#39;) {</span>
+<span class="s2">      return v ? 1 : 0;</span>
+<span class="s2">    } else {</span>
+<span class="s2">      return v;</span>
+<span class="s2">    }</span>
+<span class="s2">  };</span>
+<span class="s2">  {</span><span class="si">% e</span><span class="s2">lse %}</span>
+<span class="s2">  django.pluralidx = function(count) { return (count == 1) ? 0 : 1; };</span>
+<span class="s2">  {</span><span class="si">% e</span><span class="s2">ndif %}</span>
+
+<span class="s2">  /* gettext library */</span>
+
+<span class="s2">  django.catalog = django.catalog || </span><span class="si">{}</span><span class="s2">;</span>
+<span class="s2">  {</span><span class="si">% i</span><span class="s2">f catalog_str %}</span>
+<span class="s2">  var newcatalog = {{ catalog_str }};</span>
+<span class="s2">  for (var key in newcatalog) {</span>
+<span class="s2">    django.catalog[key] = newcatalog[key];</span>
+<span class="s2">  }</span>
+<span class="s2">  {</span><span class="si">% e</span><span class="s2">ndif %}</span>
+
+<span class="s2">  if (!django.jsi18n_initialized) {</span>
+<span class="s2">    django.gettext = function(msgid) {</span>
+<span class="s2">      var value = django.catalog[msgid];</span>
+<span class="s2">      if (typeof(value) == &#39;undefined&#39;) {</span>
+<span class="s2">        return msgid;</span>
+<span class="s2">      } else {</span>
+<span class="s2">        return (typeof(value) == &#39;string&#39;) ? value : value[0];</span>
+<span class="s2">      }</span>
+<span class="s2">    };</span>
+
+<span class="s2">    django.ngettext = function(singular, plural, count) {</span>
+<span class="s2">      var value = django.catalog[singular];</span>
+<span class="s2">      if (typeof(value) == &#39;undefined&#39;) {</span>
+<span class="s2">        return (count == 1) ? singular : plural;</span>
+<span class="s2">      } else {</span>
+<span class="s2">        return value[django.pluralidx(count)];</span>
+<span class="s2">      }</span>
+<span class="s2">    };</span>
+
+<span class="s2">    django.gettext_noop = function(msgid) { return msgid; };</span>
+
+<span class="s2">    django.pgettext = function(context, msgid) {</span>
+<span class="s2">      var value = django.gettext(context + &#39;\x04&#39; + msgid);</span>
+<span class="s2">      if (value.indexOf(&#39;\x04&#39;) != -1) {</span>
+<span class="s2">        value = msgid;</span>
+<span class="s2">      }</span>
+<span class="s2">      return value;</span>
+<span class="s2">    };</span>
+
+<span class="s2">    django.npgettext = function(context, singular, plural, count) {</span>
+<span class="s2">      var value = django.ngettext(context + &#39;\x04&#39; + singular, context + &#39;\x04&#39; + plural, count);</span>
+<span class="s2">      if (value.indexOf(&#39;\x04&#39;) != -1) {</span>
+<span class="s2">        value = django.ngettext(singular, plural, count);</span>
+<span class="s2">      }</span>
+<span class="s2">      return value;</span>
+<span class="s2">    };</span>
+
+<span class="s2">    django.interpolate = function(fmt, obj, named) {</span>
+<span class="s2">      if (named) {</span>
+<span class="s2">        return fmt.replace(/%\(\w+\)s/g, function(match){return String(obj[match.slice(2,-2)])});</span>
+<span class="s2">      } else {</span>
+<span class="s2">        return fmt.replace(/</span><span class="si">%s</span><span class="s2">/g, function(match){return String(obj.shift())});</span>
+<span class="s2">      }</span>
+<span class="s2">    };</span>
+
+
+<span class="s2">    /* formatting library */</span>
+
+<span class="s2">    django.formats = {{ formats_str }};</span>
+
+<span class="s2">    django.get_format = function(format_type) {</span>
+<span class="s2">      var value = django.formats[format_type];</span>
+<span class="s2">      if (typeof(value) == &#39;undefined&#39;) {</span>
+<span class="s2">        return format_type;</span>
+<span class="s2">      } else {</span>
+<span class="s2">        return value;</span>
+<span class="s2">      }</span>
+<span class="s2">    };</span>
+
+<span class="s2">    /* add to global namespace */</span>
+<span class="s2">    globals.pluralidx = django.pluralidx;</span>
+<span class="s2">    globals.gettext = django.gettext;</span>
+<span class="s2">    globals.ngettext = django.ngettext;</span>
+<span class="s2">    globals.gettext_noop = django.gettext_noop;</span>
+<span class="s2">    globals.pgettext = django.pgettext;</span>
+<span class="s2">    globals.npgettext = django.npgettext;</span>
+<span class="s2">    globals.interpolate = django.interpolate;</span>
+<span class="s2">    globals.get_format = django.get_format;</span>
+
+<span class="s2">    django.jsi18n_initialized = true;</span>
+<span class="s2">  }</span>
+
+<span class="s2">}(this));</span>
+<span class="s2">{</span><span class="si">% e</span><span class="s2">ndautoescape %}</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">render_javascript_catalog</span><span class="p">(</span><span class="n">catalog</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plural</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">template</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">()</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">js_catalog_template</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">indent</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">  &#39;</span><span class="p">)</span>
+
+    <span class="n">context</span> <span class="o">=</span> <span class="n">Context</span><span class="p">({</span>
+        <span class="s1">&#39;catalog_str&#39;</span><span class="p">:</span> <span class="n">indent</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+            <span class="n">catalog</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span> <span class="k">if</span> <span class="n">catalog</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s1">&#39;formats_str&#39;</span><span class="p">:</span> <span class="n">indent</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+            <span class="n">get_formats</span><span class="p">(),</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)),</span>
+        <span class="s1">&#39;plural&#39;</span><span class="p">:</span> <span class="n">plural</span><span class="p">,</span>
+    <span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">context</span><span class="p">),</span> <span class="s1">&#39;text/javascript&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">null_javascript_catalog</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">packages</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return &quot;identity&quot; versions of the JavaScript i18n functions -- i.e.,</span>
+<span class="sd">    versions that don&#39;t actually do anything.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_javascript_catalog</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="JavaScriptCatalog"><a class="viewcode-back" href="../../../topics/i18n/translation.html#django.views.i18n.JavaScriptCatalog">[docs]</a><span class="k">class</span> <span class="nc">JavaScriptCatalog</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the selected language catalog as a JavaScript library.</span>
+
+<span class="sd">    Receive the list of packages to check for translations in the `packages`</span>
+<span class="sd">    kwarg either from the extra dictionary passed to the url() function or as a</span>
+<span class="sd">    plus-sign delimited string from the request. Default is &#39;django.conf&#39;.</span>
+
+<span class="sd">    You can override the gettext domain for this view, but usually you don&#39;t</span>
+<span class="sd">    want to do that as JavaScript messages go to the djangojs domain. This</span>
+<span class="sd">    might be needed if you deliver your JavaScript source from Django templates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">domain</span> <span class="o">=</span> <span class="s1">&#39;djangojs&#39;</span>
+    <span class="n">packages</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">locale</span> <span class="o">=</span> <span class="n">get_language</span><span class="p">()</span>
+        <span class="n">domain</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;domain&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">)</span>
+        <span class="c1"># If packages are not provided, default to all installed packages, as</span>
+        <span class="c1"># DjangoTranslation without localedirs harvests them all.</span>
+        <span class="n">packages</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;packages&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">packages</span> <span class="o">=</span> <span class="n">packages</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">packages</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">packages</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_paths</span><span class="p">(</span><span class="n">packages</span><span class="p">)</span> <span class="k">if</span> <span class="n">packages</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">translation</span> <span class="o">=</span> <span class="n">DjangoTranslation</span><span class="p">(</span><span class="n">locale</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span> <span class="n">localedirs</span><span class="o">=</span><span class="n">paths</span><span class="p">)</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_to_response</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">packages</span><span class="p">):</span>
+        <span class="n">allowable_packages</span> <span class="o">=</span> <span class="p">{</span><span class="n">app_config</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">app_config</span> <span class="k">for</span> <span class="n">app_config</span> <span class="ow">in</span> <span class="n">apps</span><span class="o">.</span><span class="n">get_app_configs</span><span class="p">()}</span>
+        <span class="n">app_configs</span> <span class="o">=</span> <span class="p">[</span><span class="n">allowable_packages</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">packages</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">allowable_packages</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">app_configs</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">packages</span><span class="p">):</span>
+            <span class="n">excluded</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">packages</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowable_packages</span><span class="p">]</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Invalid package(s) provided to JavaScriptCatalog: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">excluded</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="c1"># paths of requested packages</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;locale&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">app</span> <span class="ow">in</span> <span class="n">app_configs</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_num_plurals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the number of plurals for this catalog language, or 2 if no</span>
+<span class="sd">        plural string is available.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;nplurals=\s*(\d+)&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plural_string</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="mi">2</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_plural_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the plural string (including nplurals) for this catalog language,</span>
+<span class="sd">        or None if no plural string is available.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s1">&#39;&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation</span><span class="o">.</span><span class="n">_catalog</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation</span><span class="o">.</span><span class="n">_catalog</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Plural-Forms:&#39;</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">get_plural</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">plural</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plural_string</span>
+        <span class="k">if</span> <span class="n">plural</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># This should be a compiled function of a typical plural-form:</span>
+            <span class="c1"># Plural-Forms: nplurals=3; plural=n%10==1 &amp;&amp; n%100!=11 ? 0 :</span>
+            <span class="c1">#               n%10&gt;=2 &amp;&amp; n%10&lt;=4 &amp;&amp; (n%100&lt;10 || n%100&gt;=20) ? 1 : 2;</span>
+            <span class="n">plural</span> <span class="o">=</span> <span class="p">[</span><span class="n">el</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">plural</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">el</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;plural=&#39;</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">plural</span>
+
+    <span class="k">def</span> <span class="nf">get_catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pdict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">num_plurals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_plurals</span>
+        <span class="n">catalog</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">trans_cat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation</span><span class="o">.</span><span class="n">_catalog</span>
+        <span class="n">trans_fallback_cat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation</span><span class="o">.</span><span class="n">_fallback</span><span class="o">.</span><span class="n">_catalog</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation</span><span class="o">.</span><span class="n">_fallback</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="n">seen_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">trans_cat</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">trans_fallback_cat</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">seen_keys</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">catalog</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">msgid</span><span class="p">,</span> <span class="n">cnt</span> <span class="o">=</span> <span class="n">key</span>
+                <span class="n">pdict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">msgid</span><span class="p">,</span> <span class="p">{})[</span><span class="n">cnt</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">seen_keys</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pdict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">catalog</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_plurals</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">catalog</span>
+
+    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;catalog&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_catalog</span><span class="p">(),</span>
+            <span class="s1">&#39;formats&#39;</span><span class="p">:</span> <span class="n">get_formats</span><span class="p">(),</span>
+            <span class="s1">&#39;plural&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_plural</span><span class="p">(),</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">render_to_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="o">**</span><span class="n">response_kwargs</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">indent</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">  &#39;</span><span class="p">)</span>
+
+        <span class="n">template</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">()</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">js_catalog_template</span><span class="p">)</span>
+        <span class="n">context</span><span class="p">[</span><span class="s1">&#39;catalog_str&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">indent</span><span class="p">(</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">context</span><span class="p">[</span><span class="s1">&#39;catalog&#39;</span><span class="p">],</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="p">)</span> <span class="k">if</span> <span class="n">context</span><span class="p">[</span><span class="s1">&#39;catalog&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">context</span><span class="p">[</span><span class="s1">&#39;formats_str&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">indent</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">context</span><span class="p">[</span><span class="s1">&#39;formats&#39;</span><span class="p">],</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">Context</span><span class="p">(</span><span class="n">context</span><span class="p">)),</span> <span class="s1">&#39;text/javascript&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="JSONCatalog"><a class="viewcode-back" href="../../../topics/i18n/translation.html#django.views.i18n.JSONCatalog">[docs]</a><span class="k">class</span> <span class="nc">JSONCatalog</span><span class="p">(</span><span class="n">JavaScriptCatalog</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the selected language catalog as a JSON object.</span>
+
+<span class="sd">    Receive the same parameters as JavaScriptCatalog and return a response</span>
+<span class="sd">    with a JSON object of the following format:</span>
+
+<span class="sd">        {</span>
+<span class="sd">            &quot;catalog&quot;: {</span>
+<span class="sd">                # Translations catalog</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;formats&quot;: {</span>
+<span class="sd">                # Language formats for date, time, etc.</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;plural&quot;: &#39;...&#39;  # Expression for plural forms, or null.</span>
+<span class="sd">        }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">render_to_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="o">**</span><span class="n">response_kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">(</span><span class="n">context</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    <a href="../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

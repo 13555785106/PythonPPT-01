@@ -1,0 +1,230 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Django 1.11.1 release notes &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Django 1.11 release notes" href="1.11.html" />
+    <link rel="prev" title="Django 1.11.2 release notes" href="1.11.2.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="1.11.2.html" title="Django 1.11.2 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.11.html" title="Django 1.11 release notes">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="releases-1.11.1">
+            
+  <div class="section" id="s-django-1-11-1-release-notes">
+<span id="django-1-11-1-release-notes"></span><h1>Django 1.11.1 release notes<a class="headerlink" href="#django-1-11-1-release-notes" title="Permalink to this headline">¶</a></h1>
+<p><em>May 6, 2017</em></p>
+<p>Django 1.11.1 adds a minor feature and fixes several bugs in 1.11.</p>
+<div class="section" id="s-allowed-disabling-server-side-cursors-on-postgresql">
+<span id="allowed-disabling-server-side-cursors-on-postgresql"></span><h2>Allowed disabling server-side cursors on PostgreSQL<a class="headerlink" href="#allowed-disabling-server-side-cursors-on-postgresql" title="Permalink to this headline">¶</a></h2>
+<p>The change in Django 1.11 to make <a class="reference internal" href="../ref/models/querysets.html#django.db.models.query.QuerySet.iterator" title="django.db.models.query.QuerySet.iterator"><code class="xref py py-meth docutils literal notranslate"><span class="pre">QuerySet.iterator()</span></code></a> use server-side
+cursors on PostgreSQL prevents running Django with <cite>pgBouncer</cite> in transaction
+pooling mode. To reallow that, use the <a class="reference internal" href="../ref/settings.html#std:setting-DATABASE-DISABLE_SERVER_SIDE_CURSORS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DISABLE_SERVER_SIDE_CURSORS</span></code></a> setting in <a class="reference internal" href="../ref/settings.html#std:setting-DATABASES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DATABASES</span></code></a>.</p>
+<p>See <a class="reference internal" href="../ref/databases.html#transaction-pooling-server-side-cursors"><span class="std std-ref">Transaction pooling and server-side cursors</span></a> for more discussion.</p>
+</div>
+<div class="section" id="s-bugfixes">
+<span id="bugfixes"></span><h2>Bugfixes<a class="headerlink" href="#bugfixes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Made migrations respect <code class="docutils literal notranslate"><span class="pre">Index</span></code>’s <code class="docutils literal notranslate"><span class="pre">name</span></code> argument. If you created a
+named index with Django 1.11, <code class="docutils literal notranslate"><span class="pre">makemigrations</span></code> will create a migration to
+recreate the index with the correct name (<a class="reference external" href="https://code.djangoproject.com/ticket/28051">#28051</a>).</li>
+<li>Fixed a crash when using a <code class="docutils literal notranslate"><span class="pre">__icontains</span></code> lookup on a <code class="docutils literal notranslate"><span class="pre">ArrayField</span></code>
+(<a class="reference external" href="https://code.djangoproject.com/ticket/28038">#28038</a>).</li>
+<li>Fixed a crash when using a two-tuple in <code class="docutils literal notranslate"><span class="pre">EmailMessage</span></code>’s <code class="docutils literal notranslate"><span class="pre">attachments</span></code>
+argument (<a class="reference external" href="https://code.djangoproject.com/ticket/28042">#28042</a>).</li>
+<li>Fixed <code class="docutils literal notranslate"><span class="pre">QuerySet.filter()</span></code> crash when it references the name of a
+<code class="docutils literal notranslate"><span class="pre">OneToOneField</span></code> primary key (<a class="reference external" href="https://code.djangoproject.com/ticket/28047">#28047</a>).</li>
+<li>Fixed empty POST data table appearing instead of &quot;No POST data&quot; in HTML debug
+page (<a class="reference external" href="https://code.djangoproject.com/ticket/28079">#28079</a>).</li>
+<li>Restored <code class="docutils literal notranslate"><span class="pre">BoundField</span></code>s without any <code class="docutils literal notranslate"><span class="pre">choices</span></code> evaluating to <code class="docutils literal notranslate"><span class="pre">True</span></code>
+(<a class="reference external" href="https://code.djangoproject.com/ticket/28058">#28058</a>).</li>
+<li>Prevented <code class="docutils literal notranslate"><span class="pre">SessionBase.cycle_key()</span></code> from losing session data if
+<code class="docutils literal notranslate"><span class="pre">_session_cache</span></code> isn't populated (<a class="reference external" href="https://code.djangoproject.com/ticket/28066">#28066</a>).</li>
+<li>Fixed layout of <code class="docutils literal notranslate"><span class="pre">ReadOnlyPasswordHashWidget</span></code> (used in the admin's user
+change page) (<a class="reference external" href="https://code.djangoproject.com/ticket/28097">#28097</a>).</li>
+<li>Allowed prefetch calls on managers with custom <code class="docutils literal notranslate"><span class="pre">ModelIterable</span></code> subclasses
+(<a class="reference external" href="https://code.djangoproject.com/ticket/28096">#28096</a>).</li>
+<li>Fixed change password link in the <code class="docutils literal notranslate"><span class="pre">contrib.auth</span></code> admin for <code class="docutils literal notranslate"><span class="pre">el</span></code>,
+<code class="docutils literal notranslate"><span class="pre">es_MX</span></code>, and <code class="docutils literal notranslate"><span class="pre">pt</span></code> translations (<a class="reference external" href="https://code.djangoproject.com/ticket/28100">#28100</a>).</li>
+<li>Restored the output of the <code class="docutils literal notranslate"><span class="pre">class</span></code> attribute in the <code class="docutils literal notranslate"><span class="pre">&lt;ul&gt;</span></code> of widgets
+that use the <code class="docutils literal notranslate"><span class="pre">multiple_input.html</span></code> template. This fixes
+<code class="docutils literal notranslate"><span class="pre">ModelAdmin.radio_fields</span></code> with <code class="docutils literal notranslate"><span class="pre">admin.HORIZONTAL</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/28059">#28059</a>).</li>
+<li>Fixed crash in <code class="docutils literal notranslate"><span class="pre">BaseGeometryWidget.subwidgets()</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/28039">#28039</a>).</li>
+<li>Fixed exception reraising in ORM query execution when <code class="docutils literal notranslate"><span class="pre">cursor.execute()</span></code>
+fails and the subsequent <code class="docutils literal notranslate"><span class="pre">cursor.close()</span></code> also fails (<a class="reference external" href="https://code.djangoproject.com/ticket/28091">#28091</a>).</li>
+<li>Fixed a regression where <code class="docutils literal notranslate"><span class="pre">CheckboxSelectMultiple</span></code>, <code class="docutils literal notranslate"><span class="pre">NullBooleanSelect</span></code>,
+<code class="docutils literal notranslate"><span class="pre">RadioSelect</span></code>, <code class="docutils literal notranslate"><span class="pre">SelectMultiple</span></code>, and <code class="docutils literal notranslate"><span class="pre">Select</span></code> localized option values
+(<a class="reference external" href="https://code.djangoproject.com/ticket/28075">#28075</a>).</li>
+<li>Corrected the stack level of unordered queryset pagination warnings
+(<a class="reference external" href="https://code.djangoproject.com/ticket/28109">#28109</a>).</li>
+<li>Fixed a regression causing incorrect queries for <code class="docutils literal notranslate"><span class="pre">__in</span></code> subquery lookups
+when models use <code class="docutils literal notranslate"><span class="pre">ForeignKey.to_field</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/28101">#28101</a>).</li>
+<li>Fixed crash when overriding the template of
+<code class="docutils literal notranslate"><span class="pre">django.views.static.directory_index()</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/28122">#28122</a>).</li>
+<li>Fixed a regression in formset <code class="docutils literal notranslate"><span class="pre">min_num</span></code> validation with unchanged forms
+that have initial data (<a class="reference external" href="https://code.djangoproject.com/ticket/28130">#28130</a>).</li>
+<li>Prepared for <code class="docutils literal notranslate"><span class="pre">cx_Oracle</span></code> 6.0 support (<a class="reference external" href="https://code.djangoproject.com/ticket/28138">#28138</a>).</li>
+<li>Updated the <code class="docutils literal notranslate"><span class="pre">contrib.postgres</span></code> <code class="docutils literal notranslate"><span class="pre">SplitArrayWidget</span></code> to use template-based
+widget rendering (<a class="reference external" href="https://code.djangoproject.com/ticket/28040">#28040</a>).</li>
+<li>Fixed crash in <code class="docutils literal notranslate"><span class="pre">BaseGeometryWidget.get_context()</span></code> when overriding existing
+<code class="docutils literal notranslate"><span class="pre">attrs</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/28105">#28105</a>).</li>
+<li>Prevented <code class="docutils literal notranslate"><span class="pre">AddIndex</span></code> and <code class="docutils literal notranslate"><span class="pre">RemoveIndex</span></code> from mutating model state
+(<a class="reference external" href="https://code.djangoproject.com/ticket/28043">#28043</a>).</li>
+<li>Prevented migrations from dropping database indexes from <code class="docutils literal notranslate"><span class="pre">Meta.indexes</span></code>
+when changing <code class="docutils literal notranslate"><span class="pre">Field.db_index</span></code> to <code class="docutils literal notranslate"><span class="pre">False</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/28052">#28052</a>).</li>
+<li>Fixed a regression in choice ordering in form fields with grouped and
+non-grouped options (<a class="reference external" href="https://code.djangoproject.com/ticket/28157">#28157</a>).</li>
+<li>Fixed crash in  <code class="docutils literal notranslate"><span class="pre">BaseInlineFormSet._construct_form()</span></code> when using
+<code class="docutils literal notranslate"><span class="pre">save_as_new</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/28159">#28159</a>).</li>
+<li>Fixed a regression where <code class="docutils literal notranslate"><span class="pre">Model._state.db</span></code> wasn't set correctly on
+multi-table inheritance parent models after saving a child model
+(<a class="reference external" href="https://code.djangoproject.com/ticket/28166">#28166</a>).</li>
+<li>Corrected the return type of <code class="docutils literal notranslate"><span class="pre">ArrayField(CITextField())</span></code> values retrieved
+from the database (<a class="reference external" href="https://code.djangoproject.com/ticket/28161">#28161</a>).</li>
+<li>Fixed <code class="docutils literal notranslate"><span class="pre">QuerySet.prefetch_related()</span></code> crash when fetching relations in nested
+<code class="docutils literal notranslate"><span class="pre">Prefetch</span></code> objects (<a class="reference external" href="https://code.djangoproject.com/ticket/27554">#27554</a>).</li>
+<li>Prevented hiding GDAL errors if it's not installed when using <code class="docutils literal notranslate"><span class="pre">contrib.gis</span></code>
+(<a class="reference external" href="https://code.djangoproject.com/ticket/28160">#28160</a>). (It's a required dependency as of Django 1.11.)</li>
+<li>Fixed a regression causing <code class="docutils literal notranslate"><span class="pre">__in</span></code> lookups on a foreign key to fail when
+using the foreign key's parent model as the lookup value (<a class="reference external" href="https://code.djangoproject.com/ticket/28175">#28175</a>).</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Django 1.11.1 release notes</a><ul>
+<li><a class="reference internal" href="#allowed-disabling-server-side-cursors-on-postgresql">Allowed disabling server-side cursors on PostgreSQL</a></li>
+<li><a class="reference internal" href="#bugfixes">Bugfixes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="1.11.2.html"
+                        title="previous chapter">Django 1.11.2 release notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="1.11.html"
+                        title="next chapter">Django 1.11 release notes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/releases/1.11.1.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="1.11.2.html" title="Django 1.11.2 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.11.html" title="Django 1.11 release notes">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

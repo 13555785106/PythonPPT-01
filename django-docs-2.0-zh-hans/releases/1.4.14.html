@@ -1,0 +1,207 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Django 1.4.14 release notes &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Django 1.4.13 release notes" href="1.4.13.html" />
+    <link rel="prev" title="Django 1.4.15 release notes" href="1.4.15.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="1.4.15.html" title="Django 1.4.15 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.4.13.html" title="Django 1.4.13 release notes">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="releases-1.4.14">
+            
+  <div class="section" id="s-django-1-4-14-release-notes">
+<span id="django-1-4-14-release-notes"></span><h1>Django 1.4.14 release notes<a class="headerlink" href="#django-1-4-14-release-notes" title="Permalink to this headline">¶</a></h1>
+<p><em>August 20, 2014</em></p>
+<p>Django 1.4.14 fixes several security issues in 1.4.13.</p>
+<div class="section" id="s-reverse-could-generate-urls-pointing-to-other-hosts">
+<span id="reverse-could-generate-urls-pointing-to-other-hosts"></span><h2><code class="docutils literal notranslate"><span class="pre">reverse()</span></code> could generate URLs pointing to other hosts<a class="headerlink" href="#reverse-could-generate-urls-pointing-to-other-hosts" title="Permalink to this headline">¶</a></h2>
+<p>In certain situations, URL reversing could generate scheme-relative URLs  (URLs
+starting with two slashes), which could unexpectedly redirect a user  to a
+different host. An attacker could exploit this, for example, by redirecting
+users to a phishing site designed to ask for user's passwords.</p>
+<p>To remedy this, URL reversing now ensures that no URL starts with two slashes
+(//), replacing the second slash with its URL encoded counterpart (%2F). This
+approach ensures that semantics stay the same, while making the URL relative to
+the domain and not to the scheme.</p>
+</div>
+<div class="section" id="s-file-upload-denial-of-service">
+<span id="file-upload-denial-of-service"></span><h2>File upload denial-of-service<a class="headerlink" href="#file-upload-denial-of-service" title="Permalink to this headline">¶</a></h2>
+<p>Before this release, Django's file upload handing in its default configuration
+may degrade to producing a huge number of <code class="docutils literal notranslate"><span class="pre">os.stat()</span></code> system calls when a
+duplicate filename is uploaded. Since <code class="docutils literal notranslate"><span class="pre">stat()</span></code> may invoke IO, this may produce
+a huge data-dependent slowdown that slowly worsens over time. The net result is
+that given enough time, a user with the ability to upload files can cause poor
+performance in the upload handler, eventually causing it to become very slow
+simply by uploading 0-byte files. At this point, even a slow network connection
+and few HTTP requests would be all that is necessary to make a site unavailable.</p>
+<p>We've remedied the issue by changing the algorithm for generating file names
+if a file with the uploaded name already exists.
+<a class="reference internal" href="../ref/files/storage.html#django.core.files.storage.Storage.get_available_name" title="django.core.files.storage.Storage.get_available_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Storage.get_available_name()</span></code></a> now appends an
+underscore plus a random 7 character alphanumeric string (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;_x3a1gho&quot;</span></code>),
+rather than iterating through an underscore followed by a number (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;_1&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;_2&quot;</span></code>, etc.).</p>
+</div>
+<div class="section" id="s-remoteusermiddleware-session-hijacking">
+<span id="remoteusermiddleware-session-hijacking"></span><h2><code class="docutils literal notranslate"><span class="pre">RemoteUserMiddleware</span></code> session hijacking<a class="headerlink" href="#remoteusermiddleware-session-hijacking" title="Permalink to this headline">¶</a></h2>
+<p>When using the <a class="reference internal" href="../ref/middleware.html#django.contrib.auth.middleware.RemoteUserMiddleware" title="django.contrib.auth.middleware.RemoteUserMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">RemoteUserMiddleware</span></code></a>
+and the <code class="docutils literal notranslate"><span class="pre">RemoteUserBackend</span></code>, a change to the <code class="docutils literal notranslate"><span class="pre">REMOTE_USER</span></code> header between
+requests without an intervening logout could result in the prior user's session
+being co-opted by the subsequent user. The middleware now logs the user out on
+a failed login attempt.</p>
+</div>
+<div class="section" id="s-data-leakage-via-query-string-manipulation-in-contrib-admin">
+<span id="data-leakage-via-query-string-manipulation-in-contrib-admin"></span><h2>Data leakage via query string manipulation in <code class="docutils literal notranslate"><span class="pre">contrib.admin</span></code><a class="headerlink" href="#data-leakage-via-query-string-manipulation-in-contrib-admin" title="Permalink to this headline">¶</a></h2>
+<p>In older versions of Django it was possible to reveal any field's data by
+modifying the &quot;popup&quot; and &quot;to_field&quot; parameters of the query string on an admin
+change form page. For example, requesting a URL like
+<code class="docutils literal notranslate"><span class="pre">/admin/auth/user/?pop=1&amp;t=password</span></code> and viewing the page's HTML allowed
+viewing the password hash of each user. While the admin requires users to have
+permissions to view the change form pages in the first place, this could leak
+data if you rely on users having access to view only certain fields on a model.</p>
+<p>To address the issue, an exception will now be raised if a <code class="docutils literal notranslate"><span class="pre">to_field</span></code> value
+that isn't a related field to a model that has been registered with the admin
+is specified.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Django 1.4.14 release notes</a><ul>
+<li><a class="reference internal" href="#reverse-could-generate-urls-pointing-to-other-hosts"><code class="docutils literal notranslate"><span class="pre">reverse()</span></code> could generate URLs pointing to other hosts</a></li>
+<li><a class="reference internal" href="#file-upload-denial-of-service">File upload denial-of-service</a></li>
+<li><a class="reference internal" href="#remoteusermiddleware-session-hijacking"><code class="docutils literal notranslate"><span class="pre">RemoteUserMiddleware</span></code> session hijacking</a></li>
+<li><a class="reference internal" href="#data-leakage-via-query-string-manipulation-in-contrib-admin">Data leakage via query string manipulation in <code class="docutils literal notranslate"><span class="pre">contrib.admin</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="1.4.15.html"
+                        title="previous chapter">Django 1.4.15 release notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="1.4.13.html"
+                        title="next chapter">Django 1.4.13 release notes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/releases/1.4.14.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="1.4.15.html" title="Django 1.4.15 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.4.13.html" title="Django 1.4.13 release notes">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

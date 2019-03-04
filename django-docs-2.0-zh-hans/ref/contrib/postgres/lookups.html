@@ -1,0 +1,200 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>PostgreSQL specific lookups &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Database migration operations" href="operations.html" />
+    <link rel="prev" title="PostgreSQL specific model indexes" href="indexes.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="indexes.html" title="PostgreSQL specific model indexes">previous</a>
+     |
+    <a href="../../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="operations.html" title="Database migration operations">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="ref-contrib-postgres-lookups">
+            
+  <div class="section" id="s-postgresql-specific-lookups">
+<span id="postgresql-specific-lookups"></span><h1>PostgreSQL specific lookups<a class="headerlink" href="#postgresql-specific-lookups" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="s-trigram-similarity">
+<span id="trigram-similarity"></span><h2>Trigram similarity<a class="headerlink" href="#trigram-similarity" title="Permalink to this headline">¶</a></h2>
+<p id="std:fieldlookup-trigram_similar">The <code class="docutils literal notranslate"><span class="pre">trigram_similar</span></code> lookup allows you to perform trigram lookups,
+measuring the number of trigrams (three consecutive characters) shared, using a
+dedicated PostgreSQL extension. A trigram lookup is given an expression and
+returns results that have a similarity measurement greater than the current
+similarity threshold.</p>
+<p>To use it, add <code class="docutils literal notranslate"><span class="pre">'django.contrib.postgres'</span></code> in your <a class="reference internal" href="../../settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a>
+and activate the <a class="reference external" href="https://www.postgresql.org/docs/current/static/pgtrgm.html">pg_trgm extension</a> on
+PostgreSQL. You can install the extension using the
+<a class="reference internal" href="operations.html#django.contrib.postgres.operations.TrigramExtension" title="django.contrib.postgres.operations.TrigramExtension"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrigramExtension</span></code></a> migration
+operation.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">trigram_similar</span></code> lookup can be used on
+<a class="reference internal" href="../../models/fields.html#django.db.models.CharField" title="django.db.models.CharField"><code class="xref py py-class docutils literal notranslate"><span class="pre">CharField</span></code></a> and <a class="reference internal" href="../../models/fields.html#django.db.models.TextField" title="django.db.models.TextField"><code class="xref py py-class docutils literal notranslate"><span class="pre">TextField</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">City</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name__trigram_similar</span><span class="o">=</span><span class="s2">&quot;Middlesborough&quot;</span><span class="p">)</span>
+<span class="go">[&#39;&lt;City: Middlesbrough&gt;&#39;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-unaccent">
+<span id="unaccent"></span><h2><code class="docutils literal notranslate"><span class="pre">Unaccent</span></code><a class="headerlink" href="#unaccent" title="Permalink to this headline">¶</a></h2>
+<p id="std:fieldlookup-unaccent">The <code class="docutils literal notranslate"><span class="pre">unaccent</span></code> lookup allows you to perform accent-insensitive lookups using
+a dedicated PostgreSQL extension.</p>
+<p>This lookup is implemented using <a class="reference internal" href="../../models/lookups.html#django.db.models.Transform" title="django.db.models.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a>, so it
+can be chained with other lookup functions. To use it, you need to add
+<code class="docutils literal notranslate"><span class="pre">'django.contrib.postgres'</span></code> in your <a class="reference internal" href="../../settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a> and activate
+the <a class="reference external" href="https://www.postgresql.org/docs/current/static/unaccent.html">unaccent extension on PostgreSQL</a>. The
+<a class="reference internal" href="operations.html#django.contrib.postgres.operations.UnaccentExtension" title="django.contrib.postgres.operations.UnaccentExtension"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnaccentExtension</span></code></a> migration
+operation is available if you want to perform this activation using migrations).</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">unaccent</span></code> lookup can be used on
+<a class="reference internal" href="../../models/fields.html#django.db.models.CharField" title="django.db.models.CharField"><code class="xref py py-class docutils literal notranslate"><span class="pre">CharField</span></code></a> and <a class="reference internal" href="../../models/fields.html#django.db.models.TextField" title="django.db.models.TextField"><code class="xref py py-class docutils literal notranslate"><span class="pre">TextField</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">City</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name__unaccent</span><span class="o">=</span><span class="s2">&quot;México&quot;</span><span class="p">)</span>
+<span class="go">[&#39;&lt;City: Mexico&gt;&#39;]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">first_name__unaccent__startswith</span><span class="o">=</span><span class="s2">&quot;Jerem&quot;</span><span class="p">)</span>
+<span class="go">[&#39;&lt;User: Jeremy&gt;&#39;, &#39;&lt;User: Jérémy&gt;&#39;, &#39;&lt;User: Jérémie&gt;&#39;, &#39;&lt;User: Jeremie&gt;&#39;]</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last"><code class="docutils literal notranslate"><span class="pre">unaccent</span></code> lookups should perform fine in most use cases. However, queries
+using this filter will generally perform full table scans, which can be slow
+on large tables. In those cases, using dedicated full text indexing tools
+might be appropriate.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">PostgreSQL specific lookups</a><ul>
+<li><a class="reference internal" href="#trigram-similarity">Trigram similarity</a></li>
+<li><a class="reference internal" href="#unaccent"><code class="docutils literal notranslate"><span class="pre">Unaccent</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="indexes.html"
+                        title="previous chapter">PostgreSQL specific model indexes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="operations.html"
+                        title="next chapter">Database migration operations</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/ref/contrib/postgres/lookups.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="indexes.html" title="PostgreSQL specific model indexes">previous</a>
+     |
+    <a href="../../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="operations.html" title="Database migration operations">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

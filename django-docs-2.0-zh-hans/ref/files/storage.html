@@ -1,0 +1,388 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>File storage API &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Uploaded Files and Upload Handlers" href="uploads.html" />
+    <link rel="prev" title="The File object" href="file.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="file.html" title="The &lt;code class=&#34;docutils literal notranslate&#34;&gt;&lt;span class=&#34;pre&#34;&gt;File&lt;/span&gt;&lt;/code&gt; object">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="uploads.html" title="Uploaded Files and Upload Handlers">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="ref-files-storage">
+            
+  <div class="section" id="s-module-django.core.files.storage">
+<span id="s-file-storage-api"></span><span id="module-django.core.files.storage"></span><span id="file-storage-api"></span><h1>File storage API<a class="headerlink" href="#module-django.core.files.storage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="s-getting-the-current-storage-class">
+<span id="getting-the-current-storage-class"></span><h2>Getting the current storage class<a class="headerlink" href="#getting-the-current-storage-class" title="Permalink to this headline">¶</a></h2>
+<p>Django provides two convenient ways to access the current storage class:</p>
+<dl class="class">
+<dt id="django.core.files.storage.DefaultStorage">
+<em class="property">class </em><code class="descname">DefaultStorage</code><a class="reference internal" href="../../_modules/django/core/files/storage.html#DefaultStorage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.DefaultStorage" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#django.core.files.storage.DefaultStorage" title="django.core.files.storage.DefaultStorage"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultStorage</span></code></a> provides
+lazy access to the current default storage system as defined by
+<a class="reference internal" href="../settings.html#std:setting-DEFAULT_FILE_STORAGE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DEFAULT_FILE_STORAGE</span></code></a>. <a class="reference internal" href="#django.core.files.storage.DefaultStorage" title="django.core.files.storage.DefaultStorage"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultStorage</span></code></a> uses
+<a class="reference internal" href="#django.core.files.storage.get_storage_class" title="django.core.files.storage.get_storage_class"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_storage_class()</span></code></a> internally.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="django.core.files.storage.get_storage_class">
+<code class="descname">get_storage_class</code>(<em>import_path=None</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#get_storage_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.get_storage_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a class or module which implements the storage API.</p>
+<p>When called without the <code class="docutils literal notranslate"><span class="pre">import_path</span></code> parameter <code class="docutils literal notranslate"><span class="pre">get_storage_class</span></code>
+will return the current default storage system as defined by
+<a class="reference internal" href="../settings.html#std:setting-DEFAULT_FILE_STORAGE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DEFAULT_FILE_STORAGE</span></code></a>. If <code class="docutils literal notranslate"><span class="pre">import_path</span></code> is provided,
+<code class="docutils literal notranslate"><span class="pre">get_storage_class</span></code> will attempt to import the class or module from the
+given path and will return it if successful. An exception will be
+raised if the import is unsuccessful.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="s-the-filesystemstorage-class">
+<span id="the-filesystemstorage-class"></span><h2>The <code class="docutils literal notranslate"><span class="pre">FileSystemStorage</span></code> class<a class="headerlink" href="#the-filesystemstorage-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.core.files.storage.FileSystemStorage">
+<em class="property">class </em><code class="descname">FileSystemStorage</code>(<em>location=None</em>, <em>base_url=None</em>, <em>file_permissions_mode=None</em>, <em>directory_permissions_mode=None</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#FileSystemStorage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.FileSystemStorage" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#django.core.files.storage.FileSystemStorage" title="django.core.files.storage.FileSystemStorage"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSystemStorage</span></code></a> class implements
+basic file storage on a local filesystem. It inherits from
+<a class="reference internal" href="#django.core.files.storage.Storage" title="django.core.files.storage.Storage"><code class="xref py py-class docutils literal notranslate"><span class="pre">Storage</span></code></a> and provides implementations
+for all the public methods thereof.</p>
+<dl class="attribute">
+<dt id="django.core.files.storage.FileSystemStorage.location">
+<code class="descname">location</code><a class="headerlink" href="#django.core.files.storage.FileSystemStorage.location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Absolute path to the directory that will hold the files.
+Defaults to the value of your <a class="reference internal" href="../settings.html#std:setting-MEDIA_ROOT"><code class="xref std std-setting docutils literal notranslate"><span class="pre">MEDIA_ROOT</span></code></a> setting.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.core.files.storage.FileSystemStorage.base_url">
+<code class="descname">base_url</code><a class="headerlink" href="#django.core.files.storage.FileSystemStorage.base_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>URL that serves the files stored at this location.
+Defaults to the value of your <a class="reference internal" href="../settings.html#std:setting-MEDIA_URL"><code class="xref std std-setting docutils literal notranslate"><span class="pre">MEDIA_URL</span></code></a> setting.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.core.files.storage.FileSystemStorage.file_permissions_mode">
+<code class="descname">file_permissions_mode</code><a class="headerlink" href="#django.core.files.storage.FileSystemStorage.file_permissions_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>The file system permissions that the file will receive when it is
+saved. Defaults to <a class="reference internal" href="../settings.html#std:setting-FILE_UPLOAD_PERMISSIONS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">FILE_UPLOAD_PERMISSIONS</span></code></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.core.files.storage.FileSystemStorage.directory_permissions_mode">
+<code class="descname">directory_permissions_mode</code><a class="headerlink" href="#django.core.files.storage.FileSystemStorage.directory_permissions_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>The file system permissions that the directory will receive when it is
+saved. Defaults to <a class="reference internal" href="../settings.html#std:setting-FILE_UPLOAD_DIRECTORY_PERMISSIONS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">FILE_UPLOAD_DIRECTORY_PERMISSIONS</span></code></a>.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">FileSystemStorage.delete()</span></code> method will not raise
+an exception if the given file name does not exist.</p>
+</div>
+<dl class="method">
+<dt id="django.core.files.storage.FileSystemStorage.get_created_time">
+<code class="descname">get_created_time</code>(<em>name</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#FileSystemStorage.get_created_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.FileSystemStorage.get_created_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a> of the system's ctime, i.e.
+<a class="reference external" href="https://docs.python.org/3/library/os.path.html#os.path.getctime" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">os.path.getctime()</span></code></a>. On some systems (like Unix), this is the
+time of the last metadata change, and on others (like Windows), it's
+the creation time of the file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="s-the-storage-class">
+<span id="the-storage-class"></span><h2>The <code class="docutils literal notranslate"><span class="pre">Storage</span></code> class<a class="headerlink" href="#the-storage-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.core.files.storage.Storage">
+<em class="property">class </em><code class="descname">Storage</code><a class="reference internal" href="../../_modules/django/core/files/storage.html#Storage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.Storage" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#django.core.files.storage.Storage" title="django.core.files.storage.Storage"><code class="xref py py-class docutils literal notranslate"><span class="pre">Storage</span></code></a> class provides a
+standardized API for storing files, along with a set of default
+behaviors that all other storage systems can inherit or override
+as necessary.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When methods return naive <code class="docutils literal notranslate"><span class="pre">datetime</span></code> objects, the effective timezone
+used will be the current value of <code class="docutils literal notranslate"><span class="pre">os.environ['TZ']</span></code>; note that this
+is usually set from Django's <a class="reference internal" href="../settings.html#std:setting-TIME_ZONE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">TIME_ZONE</span></code></a>.</p>
+</div>
+<dl class="method">
+<dt id="django.core.files.storage.Storage.delete">
+<code class="descname">delete</code>(<em>name</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#Storage.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.Storage.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the file referenced by <code class="docutils literal notranslate"><span class="pre">name</span></code>. If deletion is not supported
+on the target storage system this will raise <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>
+instead</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.storage.Storage.exists">
+<code class="descname">exists</code>(<em>name</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#Storage.exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.Storage.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if a file referenced by the given name already exists
+in the storage system, or <code class="docutils literal notranslate"><span class="pre">False</span></code> if the name is available for a new
+file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.storage.Storage.get_accessed_time">
+<code class="descname">get_accessed_time</code>(<em>name</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#Storage.get_accessed_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.Storage.get_accessed_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a> of the last accessed time of the
+file. For storage systems unable to return the last accessed time this
+will raise <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a>.</p>
+<p>If <a class="reference internal" href="../settings.html#std:setting-USE_TZ"><code class="xref std std-setting docutils literal notranslate"><span class="pre">USE_TZ</span></code></a> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, returns an aware <code class="docutils literal notranslate"><span class="pre">datetime</span></code>,
+otherwise returns a naive <code class="docutils literal notranslate"><span class="pre">datetime</span></code> in the local timezone.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.storage.Storage.get_available_name">
+<code class="descname">get_available_name</code>(<em>name</em>, <em>max_length=None</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#Storage.get_available_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.Storage.get_available_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a filename based on the <code class="docutils literal notranslate"><span class="pre">name</span></code> parameter that's free and
+available for new content to be written to on the target storage
+system.</p>
+<p>The length of the filename will not exceed <code class="docutils literal notranslate"><span class="pre">max_length</span></code>, if provided.
+If a free unique filename cannot be found, a
+<a class="reference internal" href="../exceptions.html#django.core.exceptions.SuspiciousOperation" title="django.core.exceptions.SuspiciousOperation"><code class="xref py py-exc docutils literal notranslate"><span class="pre">SuspiciousFileOperation</span></code></a> exception will be raised.</p>
+<p>If a file with <code class="docutils literal notranslate"><span class="pre">name</span></code> already exists, an underscore plus a random
+7 character alphanumeric string is appended to the filename before
+the extension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.storage.Storage.get_created_time">
+<code class="descname">get_created_time</code>(<em>name</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#Storage.get_created_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.Storage.get_created_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a> of the creation time of the file.
+For storage systems unable to return the creation time this will raise
+<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a>.</p>
+<p>If <a class="reference internal" href="../settings.html#std:setting-USE_TZ"><code class="xref std std-setting docutils literal notranslate"><span class="pre">USE_TZ</span></code></a> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, returns an aware <code class="docutils literal notranslate"><span class="pre">datetime</span></code>,
+otherwise returns a naive <code class="docutils literal notranslate"><span class="pre">datetime</span></code> in the local timezone.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.storage.Storage.get_modified_time">
+<code class="descname">get_modified_time</code>(<em>name</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#Storage.get_modified_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.Storage.get_modified_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a> of the last modified time of the
+file. For storage systems unable to return the last modified time this
+will raise <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a>.</p>
+<p>If <a class="reference internal" href="../settings.html#std:setting-USE_TZ"><code class="xref std std-setting docutils literal notranslate"><span class="pre">USE_TZ</span></code></a> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, returns an aware <code class="docutils literal notranslate"><span class="pre">datetime</span></code>,
+otherwise returns a naive <code class="docutils literal notranslate"><span class="pre">datetime</span></code> in the local timezone.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.storage.Storage.get_valid_name">
+<code class="descname">get_valid_name</code>(<em>name</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#Storage.get_valid_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.Storage.get_valid_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a filename based on the <code class="docutils literal notranslate"><span class="pre">name</span></code> parameter that's suitable
+for use on the target storage system.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.storage.Storage.generate_filename">
+<code class="descname">generate_filename</code>(<em>filename</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#Storage.generate_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.Storage.generate_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates the <code class="docutils literal notranslate"><span class="pre">filename</span></code> by calling <a class="reference internal" href="../../howto/custom-file-storage.html#django.core.files.storage.get_valid_name" title="django.core.files.storage.get_valid_name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_valid_name()</span></code></a> and
+returns a filename to be passed to the <a class="reference internal" href="#django.core.files.storage.Storage.save" title="django.core.files.storage.Storage.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save()</span></code></a> method.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">filename</span></code> argument may include a path as returned by
+<a class="reference internal" href="../models/fields.html#django.db.models.FileField.upload_to" title="django.db.models.FileField.upload_to"><code class="xref py py-attr docutils literal notranslate"><span class="pre">FileField.upload_to</span></code></a>.
+In that case, the path won't be passed to <a class="reference internal" href="../../howto/custom-file-storage.html#django.core.files.storage.get_valid_name" title="django.core.files.storage.get_valid_name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_valid_name()</span></code></a> but
+will be prepended back to the resulting name.</p>
+<p>The default implementation uses <a class="reference external" href="https://docs.python.org/3/library/os.path.html#module-os.path" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">os.path</span></code></a> operations. Override
+this method if that's not appropriate for your storage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.storage.Storage.listdir">
+<code class="descname">listdir</code>(<em>path</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#Storage.listdir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.Storage.listdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lists the contents of the specified path, returning a 2-tuple of lists;
+the first item being directories, the second item being files. For
+storage systems that aren't able to provide such a listing, this will
+raise a <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code> instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.storage.Storage.open">
+<code class="descname">open</code>(<em>name</em>, <em>mode='rb'</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#Storage.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.Storage.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the file given by <code class="docutils literal notranslate"><span class="pre">name</span></code>. Note that although the returned file
+is guaranteed to be a <code class="docutils literal notranslate"><span class="pre">File</span></code> object, it might actually be some
+subclass. In the case of remote file storage this means that
+reading/writing could be quite slow, so be warned.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.storage.Storage.path">
+<code class="descname">path</code>(<em>name</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#Storage.path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.Storage.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>The local filesystem path where the file can be opened using Python's
+standard <code class="docutils literal notranslate"><span class="pre">open()</span></code>. For storage systems that aren't accessible from
+the local filesystem, this will raise <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code> instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.storage.Storage.save">
+<code class="descname">save</code>(<em>name</em>, <em>content</em>, <em>max_length=None</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#Storage.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.Storage.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a new file using the storage system, preferably with the name
+specified. If there already exists a file with this name <code class="docutils literal notranslate"><span class="pre">name</span></code>, the
+storage system may modify the filename as necessary to get a unique
+name. The actual name of the stored file will be returned.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">max_length</span></code> argument is passed along to
+<a class="reference internal" href="../../howto/custom-file-storage.html#django.core.files.storage.get_available_name" title="django.core.files.storage.get_available_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_available_name()</span></code></a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">content</span></code> argument must be an instance of
+<a class="reference internal" href="file.html#django.core.files.File" title="django.core.files.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.files.File</span></code></a> or a file-like object that can be
+wrapped in <code class="docutils literal notranslate"><span class="pre">File</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.storage.Storage.size">
+<code class="descname">size</code>(<em>name</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#Storage.size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.Storage.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the total size, in bytes, of the file referenced by <code class="docutils literal notranslate"><span class="pre">name</span></code>.
+For storage systems that aren't able to return the file size this will
+raise <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code> instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.core.files.storage.Storage.url">
+<code class="descname">url</code>(<em>name</em>)<a class="reference internal" href="../../_modules/django/core/files/storage.html#Storage.url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.core.files.storage.Storage.url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the URL where the contents of the file referenced by <code class="docutils literal notranslate"><span class="pre">name</span></code>
+can be accessed. For storage systems that don't support access by URL
+this will raise <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code> instead.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">File storage API</a><ul>
+<li><a class="reference internal" href="#getting-the-current-storage-class">Getting the current storage class</a></li>
+<li><a class="reference internal" href="#the-filesystemstorage-class">The <code class="docutils literal notranslate"><span class="pre">FileSystemStorage</span></code> class</a></li>
+<li><a class="reference internal" href="#the-storage-class">The <code class="docutils literal notranslate"><span class="pre">Storage</span></code> class</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="file.html"
+                        title="previous chapter">The <code class="docutils literal notranslate"><span class="pre">File</span></code> object</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="uploads.html"
+                        title="next chapter">Uploaded Files and Upload Handlers</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/ref/files/storage.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="file.html" title="The &lt;code class=&#34;docutils literal notranslate&#34;&gt;&lt;span class=&#34;pre&#34;&gt;File&lt;/span&gt;&lt;/code&gt; object">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="uploads.html" title="Uploaded Files and Upload Handlers">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

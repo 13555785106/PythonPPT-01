@@ -1,0 +1,564 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>django.forms.formsets &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    <a href="../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="_modules-django-forms-formsets">
+            
+  <h1>Source code for django.forms.formsets</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="k">import</span> <span class="n">ValidationError</span>
+<span class="kn">from</span> <span class="nn">django.forms</span> <span class="k">import</span> <span class="n">Form</span>
+<span class="kn">from</span> <span class="nn">django.forms.fields</span> <span class="k">import</span> <span class="n">BooleanField</span><span class="p">,</span> <span class="n">IntegerField</span>
+<span class="kn">from</span> <span class="nn">django.forms.utils</span> <span class="k">import</span> <span class="n">ErrorList</span>
+<span class="kn">from</span> <span class="nn">django.forms.widgets</span> <span class="k">import</span> <span class="n">HiddenInput</span>
+<span class="kn">from</span> <span class="nn">django.utils.functional</span> <span class="k">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span> <span class="nn">django.utils.html</span> <span class="k">import</span> <span class="n">html_safe</span>
+<span class="kn">from</span> <span class="nn">django.utils.safestring</span> <span class="k">import</span> <span class="n">mark_safe</span>
+<span class="kn">from</span> <span class="nn">django.utils.translation</span> <span class="k">import</span> <span class="n">gettext</span> <span class="k">as</span> <span class="n">_</span><span class="p">,</span> <span class="n">ngettext</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;BaseFormSet&#39;</span><span class="p">,</span> <span class="s1">&#39;formset_factory&#39;</span><span class="p">,</span> <span class="s1">&#39;all_valid&#39;</span><span class="p">)</span>
+
+<span class="c1"># special field names</span>
+<span class="n">TOTAL_FORM_COUNT</span> <span class="o">=</span> <span class="s1">&#39;TOTAL_FORMS&#39;</span>
+<span class="n">INITIAL_FORM_COUNT</span> <span class="o">=</span> <span class="s1">&#39;INITIAL_FORMS&#39;</span>
+<span class="n">MIN_NUM_FORM_COUNT</span> <span class="o">=</span> <span class="s1">&#39;MIN_NUM_FORMS&#39;</span>
+<span class="n">MAX_NUM_FORM_COUNT</span> <span class="o">=</span> <span class="s1">&#39;MAX_NUM_FORMS&#39;</span>
+<span class="n">ORDERING_FIELD_NAME</span> <span class="o">=</span> <span class="s1">&#39;ORDER&#39;</span>
+<span class="n">DELETION_FIELD_NAME</span> <span class="o">=</span> <span class="s1">&#39;DELETE&#39;</span>
+
+<span class="c1"># default minimum number of forms in a formset</span>
+<span class="n">DEFAULT_MIN_NUM</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="c1"># default maximum number of forms in a formset, to prevent memory exhaustion</span>
+<span class="n">DEFAULT_MAX_NUM</span> <span class="o">=</span> <span class="mi">1000</span>
+
+
+<span class="k">class</span> <span class="nc">ManagementForm</span><span class="p">(</span><span class="n">Form</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Keep track of how many form instances are displayed on the page. If adding</span>
+<span class="sd">    new forms via JavaScript, you should increment the count field of this form</span>
+<span class="sd">    as well.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_fields</span><span class="p">[</span><span class="n">TOTAL_FORM_COUNT</span><span class="p">]</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">(</span><span class="n">widget</span><span class="o">=</span><span class="n">HiddenInput</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_fields</span><span class="p">[</span><span class="n">INITIAL_FORM_COUNT</span><span class="p">]</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">(</span><span class="n">widget</span><span class="o">=</span><span class="n">HiddenInput</span><span class="p">)</span>
+        <span class="c1"># MIN_NUM_FORM_COUNT and MAX_NUM_FORM_COUNT are output with the rest of</span>
+        <span class="c1"># the management form, but only for the convenience of client-side</span>
+        <span class="c1"># code. The POST value of them returned from the client is not checked.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_fields</span><span class="p">[</span><span class="n">MIN_NUM_FORM_COUNT</span><span class="p">]</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">widget</span><span class="o">=</span><span class="n">HiddenInput</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_fields</span><span class="p">[</span><span class="n">MAX_NUM_FORM_COUNT</span><span class="p">]</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">widget</span><span class="o">=</span><span class="n">HiddenInput</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BaseFormSet"><a class="viewcode-back" href="../../../topics/forms/formsets.html#django.forms.formsets.BaseFormSet">[docs]</a><span class="nd">@html_safe</span>
+<span class="k">class</span> <span class="nc">BaseFormSet</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A collection of instances of the same Form class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto_id</span><span class="o">=</span><span class="s1">&#39;id_</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">initial</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">error_class</span><span class="o">=</span><span class="n">ErrorList</span><span class="p">,</span> <span class="n">form_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_bound</span> <span class="o">=</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">files</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_prefix</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auto_id</span> <span class="o">=</span> <span class="n">auto_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="n">files</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="n">initial</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">form_kwargs</span> <span class="o">=</span> <span class="n">form_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_class</span> <span class="o">=</span> <span class="n">error_class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_errors</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_non_form_errors</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_table</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Yield the forms in the order they should be rendered.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forms</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the form at the given index, based on the rendering order.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forms</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forms</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return True since all formsets have a management form which is not</span>
+<span class="sd">        included in the length.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">management_form</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the ManagementForm instance for this FormSet.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bound</span><span class="p">:</span>
+            <span class="n">form</span> <span class="o">=</span> <span class="n">ManagementForm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">auto_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">auto_id</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span>
+                    <span class="n">_</span><span class="p">(</span><span class="s1">&#39;ManagementForm data is missing or has been tampered with&#39;</span><span class="p">),</span>
+                    <span class="n">code</span><span class="o">=</span><span class="s1">&#39;missing_management_form&#39;</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">form</span> <span class="o">=</span> <span class="n">ManagementForm</span><span class="p">(</span><span class="n">auto_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">auto_id</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="p">{</span>
+                <span class="n">TOTAL_FORM_COUNT</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_form_count</span><span class="p">(),</span>
+                <span class="n">INITIAL_FORM_COUNT</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_form_count</span><span class="p">(),</span>
+                <span class="n">MIN_NUM_FORM_COUNT</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_num</span><span class="p">,</span>
+                <span class="n">MAX_NUM_FORM_COUNT</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_num</span>
+            <span class="p">})</span>
+        <span class="k">return</span> <span class="n">form</span>
+
+    <span class="k">def</span> <span class="nf">total_form_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the total number of forms in this FormSet.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bound</span><span class="p">:</span>
+            <span class="c1"># return absolute_max if it is lower than the actual total form</span>
+            <span class="c1"># count in the data; this is DoS protection to prevent clients</span>
+            <span class="c1"># from forcing the server to instantiate arbitrary numbers of</span>
+            <span class="c1"># forms</span>
+            <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">management_form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="n">TOTAL_FORM_COUNT</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">absolute_max</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">initial_forms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_form_count</span><span class="p">()</span>
+            <span class="n">total_forms</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">initial_forms</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_num</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra</span>
+            <span class="c1"># Allow all existing related objects/inlines to be displayed,</span>
+            <span class="c1"># but don&#39;t allow extra beyond max_num.</span>
+            <span class="k">if</span> <span class="n">initial_forms</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_num</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">total_forms</span> <span class="o">=</span> <span class="n">initial_forms</span>
+            <span class="k">elif</span> <span class="n">total_forms</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_num</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">total_forms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_num</span>
+        <span class="k">return</span> <span class="n">total_forms</span>
+
+    <span class="k">def</span> <span class="nf">initial_form_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the number of forms that are required in this FormSet.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bound</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">management_form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="n">INITIAL_FORM_COUNT</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Use the length of the initial data if it&#39;s there, 0 otherwise.</span>
+            <span class="n">initial_forms</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">initial_forms</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">forms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Instantiate forms at first property access.&quot;&quot;&quot;</span>
+        <span class="c1"># DoS protection is included in total_form_count()</span>
+        <span class="n">forms</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_construct_form</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">get_form_kwargs</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_form_count</span><span class="p">())]</span>
+        <span class="k">return</span> <span class="n">forms</span>
+
+    <span class="k">def</span> <span class="nf">get_form_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return additional keyword arguments for each individual formset form.</span>
+
+<span class="sd">        index will be None if the form being constructed is a new empty</span>
+<span class="sd">        form.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_construct_form</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Instantiate and return the i-th form instance in a formset.&quot;&quot;&quot;</span>
+        <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;auto_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_id</span><span class="p">,</span>
+            <span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+            <span class="s1">&#39;error_class&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_class</span><span class="p">,</span>
+            <span class="c1"># Don&#39;t render the HTML &#39;required&#39; attribute as it may cause</span>
+            <span class="c1"># incorrect validation for extra, optional, and deleted</span>
+            <span class="c1"># forms in the formset.</span>
+            <span class="s1">&#39;use_required_attribute&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bound</span><span class="p">:</span>
+            <span class="n">defaults</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+            <span class="n">defaults</span><span class="p">[</span><span class="s1">&#39;files&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="ow">and</span> <span class="s1">&#39;initial&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">defaults</span><span class="p">[</span><span class="s1">&#39;initial&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="c1"># Allow extra forms to be empty, unless they&#39;re part of</span>
+        <span class="c1"># the minimum forms.</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_form_count</span><span class="p">()</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_num</span><span class="p">:</span>
+            <span class="n">defaults</span><span class="p">[</span><span class="s1">&#39;empty_permitted&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">defaults</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="o">**</span><span class="n">defaults</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_fields</span><span class="p">(</span><span class="n">form</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">form</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">initial_forms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of all the initial forms in this formset.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forms</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_form_count</span><span class="p">()]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">extra_forms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of all the extra forms in this formset.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forms</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_form_count</span><span class="p">():]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">empty_form</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">form</span><span class="p">(</span>
+            <span class="n">auto_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">auto_id</span><span class="p">,</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="s1">&#39;__prefix__&#39;</span><span class="p">),</span>
+            <span class="n">empty_permitted</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">use_required_attribute</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">get_form_kwargs</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_fields</span><span class="p">(</span><span class="n">form</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">form</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cleaned_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a list of form.cleaned_data dicts for every form in self.forms.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; object has no attribute &#39;cleaned_data&#39;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span> <span class="k">for</span> <span class="n">form</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forms</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">deleted_forms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of forms that have been marked for deletion.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_delete</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="c1"># construct _deleted_form_indexes which is just a list of form indexes</span>
+        <span class="c1"># that have had their deletion widget set to True</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_deleted_form_indexes&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_deleted_form_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_form_count</span><span class="p">()):</span>
+                <span class="n">form</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="c1"># if this is an extra form and hasn&#39;t changed, don&#39;t consider it</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_form_count</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">form</span><span class="o">.</span><span class="n">has_changed</span><span class="p">():</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_delete_form</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_deleted_form_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">forms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deleted_form_indexes</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ordered_forms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a list of form in the order specified by the incoming data.</span>
+<span class="sd">        Raise an AttributeError if ordering is not allowed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_order</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; object has no attribute &#39;ordered_forms&#39;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="c1"># Construct _ordering, which is a list of (form_index, order_field_value)</span>
+        <span class="c1"># tuples. After constructing this list, we&#39;ll sort it by order_field_value</span>
+        <span class="c1"># so we have a way to get to the form indexes in the order specified</span>
+        <span class="c1"># by the form data.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_ordering&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ordering</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_form_count</span><span class="p">()):</span>
+                <span class="n">form</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="c1"># if this is an extra form and hasn&#39;t changed, don&#39;t consider it</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_form_count</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">form</span><span class="o">.</span><span class="n">has_changed</span><span class="p">():</span>
+                    <span class="k">continue</span>
+                <span class="c1"># don&#39;t add data marked for deletion to self.ordered_data</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_delete</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_delete_form</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ordering</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="n">ORDERING_FIELD_NAME</span><span class="p">]))</span>
+            <span class="c1"># After we&#39;re done populating self._ordering, sort it.</span>
+            <span class="c1"># A sort function to order things numerically ascending, but</span>
+            <span class="c1"># None should be sorted below anything else. Allowing None as</span>
+            <span class="c1"># a comparison value makes it so we can leave ordering fields</span>
+            <span class="c1"># blank.</span>
+
+            <span class="k">def</span> <span class="nf">compare_ordering_key</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># +infinity, larger than any number</span>
+                <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ordering</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">compare_ordering_key</span><span class="p">)</span>
+        <span class="c1"># Return a list of form.cleaned_data dicts in the order specified by</span>
+        <span class="c1"># the form data.</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">forms</span><span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ordering</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_default_prefix</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;form&#39;</span>
+
+    <span class="k">def</span> <span class="nf">non_form_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return an ErrorList of errors that aren&#39;t associated with a particular</span>
+<span class="sd">        form -- i.e., from formset.clean(). Return an empty ErrorList if there</span>
+<span class="sd">        are none.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_form_errors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">full_clean</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_form_errors</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of form.errors for every form in self.forms.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_errors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">full_clean</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_errors</span>
+
+<div class="viewcode-block" id="BaseFormSet.total_error_count"><a class="viewcode-back" href="../../../topics/forms/formsets.html#django.forms.formsets.BaseFormSet.total_error_count">[docs]</a>    <span class="k">def</span> <span class="nf">total_error_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the number of errors across all forms in the formset.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">non_form_errors</span><span class="p">())</span> <span class="o">+</span>\
+            <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">form_errors</span><span class="p">)</span> <span class="k">for</span> <span class="n">form_errors</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_should_delete_form</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return whether or not the form was marked for deletion.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">DELETION_FIELD_NAME</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True if every form in self.forms is valid.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bound</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># We loop over every form.errors here rather than short circuiting on the</span>
+        <span class="c1"># first failure to make sure validation gets triggered for every form.</span>
+        <span class="n">forms_valid</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># This triggers a full clean.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">errors</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_form_count</span><span class="p">()):</span>
+            <span class="n">form</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_delete</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_delete_form</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+                <span class="c1"># This form is going to be deleted so any of its errors</span>
+                <span class="c1"># shouldn&#39;t cause the entire formset to be invalid.</span>
+                <span class="k">continue</span>
+            <span class="n">forms_valid</span> <span class="o">&amp;=</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">forms_valid</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_form_errors</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">full_clean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clean all of self.data and populate self._errors and</span>
+<span class="sd">        self._non_form_errors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_errors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_non_form_errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_class</span><span class="p">()</span>
+        <span class="n">empty_forms_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bound</span><span class="p">:</span>  <span class="c1"># Stop further processing.</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_form_count</span><span class="p">()):</span>
+            <span class="n">form</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="c1"># Empty forms are unchanged forms beyond those with initial data.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">form</span><span class="o">.</span><span class="n">has_changed</span><span class="p">()</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_form_count</span><span class="p">():</span>
+                <span class="n">empty_forms_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1"># Accessing errors calls full_clean() if necessary.</span>
+            <span class="c1"># _should_delete_form() requires cleaned_data.</span>
+            <span class="n">form_errors</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">errors</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_delete</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_delete_form</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">form_errors</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validate_max</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">total_form_count</span><span class="p">()</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deleted_forms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_num</span><span class="p">)</span> <span class="ow">or</span> \
+                    <span class="bp">self</span><span class="o">.</span><span class="n">management_form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="n">TOTAL_FORM_COUNT</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">absolute_max</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="n">ngettext</span><span class="p">(</span>
+                    <span class="s2">&quot;Please submit </span><span class="si">%d</span><span class="s2"> or fewer forms.&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Please submit </span><span class="si">%d</span><span class="s2"> or fewer forms.&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_num</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_num</span><span class="p">,</span>
+                    <span class="n">code</span><span class="o">=</span><span class="s1">&#39;too_many_forms&#39;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validate_min</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">total_form_count</span><span class="p">()</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deleted_forms</span><span class="p">)</span> <span class="o">-</span> <span class="n">empty_forms_count</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_num</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="n">ngettext</span><span class="p">(</span>
+                    <span class="s2">&quot;Please submit </span><span class="si">%d</span><span class="s2"> or more forms.&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Please submit </span><span class="si">%d</span><span class="s2"> or more forms.&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_num</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_num</span><span class="p">,</span>
+                    <span class="n">code</span><span class="o">=</span><span class="s1">&#39;too_few_forms&#39;</span><span class="p">)</span>
+            <span class="c1"># Give self.clean() a chance to do cross-form validation.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_non_form_errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_class</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">error_list</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Hook for doing any extra formset-wide cleaning after Form.clean() has</span>
+<span class="sd">        been called on every form. Any ValidationError raised by this method</span>
+<span class="sd">        will not be associated with a particular form; it will be accessible</span>
+<span class="sd">        via formset.non_form_errors()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">has_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True if data in any form differs from initial.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">has_changed</span><span class="p">()</span> <span class="k">for</span> <span class="n">form</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A hook for adding extra fields on to each form instance.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_order</span><span class="p">:</span>
+            <span class="c1"># Only pre-fill the ordering field for initial forms.</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_form_count</span><span class="p">():</span>
+                <span class="n">form</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="n">ORDERING_FIELD_NAME</span><span class="p">]</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s1">&#39;Order&#39;</span><span class="p">),</span> <span class="n">initial</span><span class="o">=</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">form</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="n">ORDERING_FIELD_NAME</span><span class="p">]</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s1">&#39;Order&#39;</span><span class="p">),</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_delete</span><span class="p">:</span>
+            <span class="n">form</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="n">DELETION_FIELD_NAME</span><span class="p">]</span> <span class="o">=</span> <span class="n">BooleanField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s1">&#39;Delete&#39;</span><span class="p">),</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_multipart</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return True if the formset needs to be multipart, i.e. it</span>
+<span class="sd">        has FileInput, or False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">forms</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">is_multipart</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_form</span><span class="o">.</span><span class="n">is_multipart</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">media</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># All the forms on a FormSet are the same, so you only need to</span>
+        <span class="c1"># interrogate the first form for media.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">forms</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">media</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_form</span><span class="o">.</span><span class="n">media</span>
+
+    <span class="k">def</span> <span class="nf">as_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;Return this formset rendered as HTML &lt;tr&gt;s -- excluding the &lt;table&gt;&lt;/table&gt;.&quot;</span>
+        <span class="c1"># XXX: there is no semantic division between forms here, there</span>
+        <span class="c1"># probably should be. It might make sense to render each form as a</span>
+        <span class="c1"># table row with each field as a td.</span>
+        <span class="n">forms</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">as_table</span><span class="p">()</span> <span class="k">for</span> <span class="n">form</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mark_safe</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">management_form</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">forms</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">as_p</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;Return this formset rendered as HTML &lt;p&gt;s.&quot;</span>
+        <span class="n">forms</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">as_p</span><span class="p">()</span> <span class="k">for</span> <span class="n">form</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mark_safe</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">management_form</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">forms</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">as_ul</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;Return this formset rendered as HTML &lt;li&gt;s.&quot;</span>
+        <span class="n">forms</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">as_ul</span><span class="p">()</span> <span class="k">for</span> <span class="n">form</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mark_safe</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">management_form</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">forms</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="formset_factory"><a class="viewcode-back" href="../../../ref/forms/formsets.html#django.forms.formsets.formset_factory">[docs]</a><span class="k">def</span> <span class="nf">formset_factory</span><span class="p">(</span><span class="n">form</span><span class="p">,</span> <span class="n">formset</span><span class="o">=</span><span class="n">BaseFormSet</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">can_order</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">can_delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_num</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validate_max</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">min_num</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validate_min</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a FormSet for the given form class.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">min_num</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">min_num</span> <span class="o">=</span> <span class="n">DEFAULT_MIN_NUM</span>
+    <span class="k">if</span> <span class="n">max_num</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">max_num</span> <span class="o">=</span> <span class="n">DEFAULT_MAX_NUM</span>
+    <span class="c1"># hard limit on forms instantiated, to prevent memory-exhaustion attacks</span>
+    <span class="c1"># limit is simply max_num + DEFAULT_MAX_NUM (which is 2*DEFAULT_MAX_NUM</span>
+    <span class="c1"># if max_num is None in the first place)</span>
+    <span class="n">absolute_max</span> <span class="o">=</span> <span class="n">max_num</span> <span class="o">+</span> <span class="n">DEFAULT_MAX_NUM</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">,</span> <span class="s1">&#39;extra&#39;</span><span class="p">:</span> <span class="n">extra</span><span class="p">,</span>
+             <span class="s1">&#39;can_order&#39;</span><span class="p">:</span> <span class="n">can_order</span><span class="p">,</span> <span class="s1">&#39;can_delete&#39;</span><span class="p">:</span> <span class="n">can_delete</span><span class="p">,</span>
+             <span class="s1">&#39;min_num&#39;</span><span class="p">:</span> <span class="n">min_num</span><span class="p">,</span> <span class="s1">&#39;max_num&#39;</span><span class="p">:</span> <span class="n">max_num</span><span class="p">,</span>
+             <span class="s1">&#39;absolute_max&#39;</span><span class="p">:</span> <span class="n">absolute_max</span><span class="p">,</span> <span class="s1">&#39;validate_min&#39;</span><span class="p">:</span> <span class="n">validate_min</span><span class="p">,</span>
+             <span class="s1">&#39;validate_max&#39;</span><span class="p">:</span> <span class="n">validate_max</span><span class="p">}</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;FormSet&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">formset</span><span class="p">,),</span> <span class="n">attrs</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">all_valid</span><span class="p">(</span><span class="n">formsets</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return True if every formset in formsets is valid.&quot;&quot;&quot;</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">formset</span> <span class="ow">in</span> <span class="n">formsets</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">formset</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">valid</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">valid</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    <a href="../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

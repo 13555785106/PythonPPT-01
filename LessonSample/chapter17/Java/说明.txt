@@ -1,0 +1,7 @@
+>>> import sys
+>>> sys.path.append('C:\\Users\\xiaojf\\PycharmProjects\\chapter18\\Java')
+>>> import com.sample.HelloWorld
+>>> hw = com.sample.HelloWorld()
+>>> hw.greeting()
+Hello World!
+>>>

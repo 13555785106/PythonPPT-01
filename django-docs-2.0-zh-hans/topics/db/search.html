@@ -1,0 +1,273 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Search &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Managers" href="managers.html" />
+    <link rel="prev" title="聚合" href="aggregation.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="aggregation.html" title="聚合">previous</a>
+     |
+    <a href="../index.html" title="Using Django" accesskey="U">up</a>
+   |
+    <a href="managers.html" title="Managers">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="topics-db-search">
+            
+  <div class="section" id="s-search">
+<span id="search"></span><h1>Search<a class="headerlink" href="#search" title="Permalink to this headline">¶</a></h1>
+<p>A common task for web applications is to search some data in the database with
+user input. In a simple case, this could be filtering a list of objects by a
+category. A more complex use case might require searching with weighting,
+categorization, highlighting, multiple languages, and so on. This document
+explains some of the possible use cases and the tools you can use.</p>
+<p>We'll refer to the same models used in <a class="reference internal" href="queries.html"><span class="doc">Making queries</span></a>.</p>
+<div class="section" id="s-use-cases">
+<span id="use-cases"></span><h2>Use Cases<a class="headerlink" href="#use-cases" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-standard-textual-queries">
+<span id="standard-textual-queries"></span><h3>Standard textual queries<a class="headerlink" href="#standard-textual-queries" title="Permalink to this headline">¶</a></h3>
+<p>Text-based fields have a selection of simple matching operations. For example,
+you may wish to allow lookup up an author like so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name__contains</span><span class="o">=</span><span class="s1">&#39;Terry&#39;</span><span class="p">)</span>
+<span class="go">[&lt;Author: Terry Gilliam&gt;, &lt;Author: Terry Jones&gt;]</span>
+</pre></div>
+</div>
+<p>This is a very fragile solution as it requires the user to know an exact
+substring of the author's name. A better approach could be a case-insensitive
+match (<a class="reference internal" href="../../ref/models/querysets.html#std:fieldlookup-icontains"><code class="xref std std-lookup docutils literal notranslate"><span class="pre">icontains</span></code></a>), but this is only marginally better.</p>
+</div>
+<div class="section" id="s-a-database-s-more-advanced-comparison-functions">
+<span id="a-database-s-more-advanced-comparison-functions"></span><h3>A database's more advanced comparison functions<a class="headerlink" href="#a-database-s-more-advanced-comparison-functions" title="Permalink to this headline">¶</a></h3>
+<p>If you're using PostgreSQL, Django provides <a class="reference internal" href="../../ref/contrib/postgres/search.html"><span class="doc">a selection of database
+specific tools</span></a> to allow you to leverage more
+complex querying options. Other databases have different selections of tools,
+possibly via plugins or user-defined functions. Django doesn't include any
+support for them at this time. We'll use some examples from PostgreSQL to
+demonstrate the kind of functionality databases may have.</p>
+<div class="admonition-searching-in-other-databases admonition">
+<p class="first admonition-title">Searching in other databases</p>
+<p class="last">All of the searching tools provided by <a class="reference internal" href="../../ref/contrib/postgres/index.html#module-django.contrib.postgres" title="django.contrib.postgres: PostgreSQL-specific fields and features"><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.postgres</span></code></a> are
+constructed entirely on public APIs such as <a class="reference internal" href="../../ref/models/lookups.html"><span class="doc">custom lookups</span></a> and <a class="reference internal" href="../../ref/models/database-functions.html"><span class="doc">database functions</span></a>. Depending on your database, you should
+be able to construct queries to allow similar APIs. If there are specific
+things which cannot be achieved this way, please open a ticket.</p>
+</div>
+<p>In the above example, we determined that a case insensitive lookup would be
+more useful. When dealing with non-English names, a further improvement is to
+use <a class="reference internal" href="../../ref/contrib/postgres/lookups.html#std:fieldlookup-unaccent"><code class="xref std std-lookup docutils literal notranslate"><span class="pre">unaccented</span> <span class="pre">comparison</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name__unaccent__icontains</span><span class="o">=</span><span class="s1">&#39;Helen&#39;</span><span class="p">)</span>
+<span class="go">[&lt;Author: Helen Mirren&gt;, &lt;Author: Helena Bonham Carter&gt;, &lt;Author: Hélène Joy&gt;]</span>
+</pre></div>
+</div>
+<p>This shows another issue, where we are matching against a different spelling of
+the name. In this case we have an asymmetry though - a search for <code class="docutils literal notranslate"><span class="pre">Helen</span></code>
+will pick up <code class="docutils literal notranslate"><span class="pre">Helena</span></code> or <code class="docutils literal notranslate"><span class="pre">Hélène</span></code>, but not the reverse. Another option
+would be to use a <a class="reference internal" href="../../ref/contrib/postgres/lookups.html#std:fieldlookup-trigram_similar"><code class="xref std std-lookup docutils literal notranslate"><span class="pre">trigram_similar</span></code></a> comparison, which compares
+sequences of letters.</p>
+<p>例如:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name__unaccent__lower__trigram_similar</span><span class="o">=</span><span class="s1">&#39;Hélène&#39;</span><span class="p">)</span>
+<span class="go">[&lt;Author: Helen Mirren&gt;, &lt;Author: Hélène Joy&gt;]</span>
+</pre></div>
+</div>
+<p>Now we have a different problem - the longer name of &quot;Helena Bonham Carter&quot;
+doesn't show up as it is much longer. Trigram searches consider all
+combinations of three letters, and compares how many appear in both search and
+source strings. For the longer name, there are more combinations which appear
+in the source string so it is no longer considered a close match.</p>
+<p>The correct choice of comparison functions here depends on your particular data
+set, for example the language(s) used and the type of text being searched. All
+of the examples we've seen are on short strings where the user is likely to
+enter something close (by varying definitions) to the source data.</p>
+</div>
+<div class="section" id="s-document-based-search">
+<span id="document-based-search"></span><h3>Document-based search<a class="headerlink" href="#document-based-search" title="Permalink to this headline">¶</a></h3>
+<p>Simple database operations are too simple an approach when you start
+considering large blocks of text. Whereas the examples above can be thought of
+as operations on a string of characters, full text search looks at the actual
+words. Depending on the system used, it's likely to use some of the following
+ideas:</p>
+<ul class="simple">
+<li>Ignoring &quot;stop words&quot; such as &quot;a&quot;, &quot;the&quot;, &quot;and&quot;.</li>
+<li>Stemming words, so that &quot;pony&quot; and &quot;ponies&quot; are considered similar.</li>
+<li>Weighting words based on different criteria such as how frequently they
+appear in the text, or the importance of the fields, such as the title or
+keywords, that they appear in.</li>
+</ul>
+<p>There are many alternatives for using searching software, some of the most
+prominent are <a class="reference external" href="https://www.elastic.co/">Elastic</a> and <a class="reference external" href="https://lucene.apache.org/solr/">Solr</a>. These are full document-based search
+solutions. To use them with data from Django models, you'll need a layer which
+translates your data into a textual document, including back-references to the
+database ids. When a search using the engine returns a certain document, you
+can then look it up in the database. There are a variety of third-party
+libraries which are designed to help with this process.</p>
+<div class="section" id="s-postgresql-support">
+<span id="postgresql-support"></span><h4>PostgreSQL support<a class="headerlink" href="#postgresql-support" title="Permalink to this headline">¶</a></h4>
+<p>PostgreSQL has its own full text search implementation built-in. While not as
+powerful as some other search engines, it has the advantage of being inside
+your database and so can easily be combined with other relational queries such
+as categorization.</p>
+<p>The <a class="reference internal" href="../../ref/contrib/postgres/index.html#module-django.contrib.postgres" title="django.contrib.postgres: PostgreSQL-specific fields and features"><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.postgres</span></code></a> module provides some helpers to make these
+queries. For example, a simple query might be to select all the blog entries
+which mention &quot;cheese&quot;:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Entry</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">body_text__search</span><span class="o">=</span><span class="s1">&#39;cheese&#39;</span><span class="p">)</span>
+<span class="go">[&lt;Entry: Cheese on Toast recipes&gt;, &lt;Entry: Pizza recipes&gt;]</span>
+</pre></div>
+</div>
+<p>You can also filter on a combination of fields and on related models:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Entry</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">search</span><span class="o">=</span><span class="n">SearchVector</span><span class="p">(</span><span class="s1">&#39;blog__tagline&#39;</span><span class="p">,</span> <span class="s1">&#39;body_text&#39;</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">search</span><span class="o">=</span><span class="s1">&#39;cheese&#39;</span><span class="p">)</span>
+<span class="go">[</span>
+<span class="go">    &lt;Entry: Cheese on Toast recipes&gt;,</span>
+<span class="go">    &lt;Entry: Pizza Recipes&gt;,</span>
+<span class="go">    &lt;Entry: Dairy farming in Argentina&gt;,</span>
+<span class="go">]</span>
+</pre></div>
+</div>
+<p>See the <code class="docutils literal notranslate"><span class="pre">contrib.postgres</span></code> <a class="reference internal" href="../../ref/contrib/postgres/search.html"><span class="doc">Full text search</span></a> document for
+complete details.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Search</a><ul>
+<li><a class="reference internal" href="#use-cases">Use Cases</a><ul>
+<li><a class="reference internal" href="#standard-textual-queries">Standard textual queries</a></li>
+<li><a class="reference internal" href="#a-database-s-more-advanced-comparison-functions">A database's more advanced comparison functions</a></li>
+<li><a class="reference internal" href="#document-based-search">Document-based search</a><ul>
+<li><a class="reference internal" href="#postgresql-support">PostgreSQL support</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="aggregation.html"
+                        title="previous chapter">聚合</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="managers.html"
+                        title="next chapter">Managers</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/topics/db/search.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="aggregation.html" title="聚合">previous</a>
+     |
+    <a href="../index.html" title="Using Django" accesskey="U">up</a>
+   |
+    <a href="managers.html" title="Managers">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

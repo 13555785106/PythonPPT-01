@@ -1,0 +1,17 @@
+1.创建DjangoSample项目使用如下命令
+django-admin startproject DjangoSample
+
+2.运行Django
+1) 默认使用8000端口
+python manage.py runserver
+2) 可以改用其它端口
+python manage.py runserver 8080
+
+3.在浏览器地址栏输入 http://localhost:8000访问项目
+
+4.项目主要文件的说明
+1) DjangoAmple/manage.py                用来管理当前项目的命令行工具。
+2) DjangoAmple/db.sqlite3               项目默认创建的SQLite3数据库。
+3) DjangoAmple/DjangoAmple/settings.py  项目的配置文件。
+4) DjangoAmple/DjangoAmple/urls.py      当前项目的URL映射定义文件。
+5) DjangoAmple/DjangoAmple/wsgi.py      使用uWSGI运行项目时的入口文件。

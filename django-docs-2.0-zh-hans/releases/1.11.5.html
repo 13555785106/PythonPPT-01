@@ -1,0 +1,196 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Django 1.11.5 release notes &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Django 1.11.4 release notes" href="1.11.4.html" />
+    <link rel="prev" title="Django 1.11.6 release notes" href="1.11.6.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="1.11.6.html" title="Django 1.11.6 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.11.4.html" title="Django 1.11.4 release notes">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="releases-1.11.5">
+            
+  <div class="section" id="s-django-1-11-5-release-notes">
+<span id="django-1-11-5-release-notes"></span><h1>Django 1.11.5 release notes<a class="headerlink" href="#django-1-11-5-release-notes" title="Permalink to this headline">¶</a></h1>
+<p><em>September 5, 2017</em></p>
+<p>Django 1.11.5 fixes a security issue and several bugs in 1.11.4.</p>
+<div class="section" id="s-cve-2017-12794-possible-xss-in-traceback-section-of-technical-500-debug-page">
+<span id="cve-2017-12794-possible-xss-in-traceback-section-of-technical-500-debug-page"></span><h2>CVE-2017-12794: Possible XSS in traceback section of technical 500 debug page<a class="headerlink" href="#cve-2017-12794-possible-xss-in-traceback-section-of-technical-500-debug-page" title="Permalink to this headline">¶</a></h2>
+<p>In older versions, HTML autoescaping was disabled in a portion of the template
+for the technical 500 debug page. Given the right circumstances, this allowed
+a cross-site scripting attack. This vulnerability shouldn't affect most
+production sites since you shouldn't run with <code class="docutils literal notranslate"><span class="pre">DEBUG</span> <span class="pre">=</span> <span class="pre">True</span></code> (which makes
+this page accessible) in your production settings.</p>
+</div>
+<div class="section" id="s-bugfixes">
+<span id="bugfixes"></span><h2>Bugfixes<a class="headerlink" href="#bugfixes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Fixed GEOS version parsing if the version has a commit hash at the end (new
+in GEOS 3.6.2) (<a class="reference external" href="https://code.djangoproject.com/ticket/28441">#28441</a>).</li>
+<li>Added compatibility for <code class="docutils literal notranslate"><span class="pre">cx_Oracle</span></code> 6 (<a class="reference external" href="https://code.djangoproject.com/ticket/28498">#28498</a>).</li>
+<li>Fixed select widget rendering when option values are tuples (<a class="reference external" href="https://code.djangoproject.com/ticket/28502">#28502</a>).</li>
+<li>Django 1.11 inadvertently changed the sequence and trigger naming scheme on
+Oracle. This causes errors on INSERTs for some tables if
+<code class="docutils literal notranslate"><span class="pre">'use_returning_into':</span> <span class="pre">False</span></code> is in the <code class="docutils literal notranslate"><span class="pre">OPTIONS</span></code> part of <code class="docutils literal notranslate"><span class="pre">DATABASES</span></code>.
+The pre-1.11 naming scheme is now restored. Unfortunately, it necessarily
+requires an update to Oracle tables created with Django 1.11.[1-4]. Use the
+upgrade script in <a class="reference external" href="https://code.djangoproject.com/ticket/28451">#28451</a> comment 8 to update sequence and trigger
+names to use the pre-1.11 naming scheme.</li>
+<li>Added POST request support to <code class="docutils literal notranslate"><span class="pre">LogoutView</span></code>, for equivalence with the
+function-based <code class="docutils literal notranslate"><span class="pre">logout()</span></code> view (<a class="reference external" href="https://code.djangoproject.com/ticket/28513">#28513</a>).</li>
+<li>Omitted <code class="docutils literal notranslate"><span class="pre">pages_per_range</span></code> from <code class="docutils literal notranslate"><span class="pre">BrinIndex.deconstruct()</span></code> if it's <code class="docutils literal notranslate"><span class="pre">None</span></code>
+(<a class="reference external" href="https://code.djangoproject.com/ticket/25809">#25809</a>).</li>
+<li>Fixed a regression where <code class="docutils literal notranslate"><span class="pre">SelectDateWidget</span></code> localized the years in the
+select box (<a class="reference external" href="https://code.djangoproject.com/ticket/28530">#28530</a>).</li>
+<li>Fixed a regression in 1.11.4 where <code class="docutils literal notranslate"><span class="pre">runserver</span></code> crashed with non-Unicode
+system encodings on Python 2 + Windows (<a class="reference external" href="https://code.djangoproject.com/ticket/28487">#28487</a>).</li>
+<li>Fixed a regression in Django 1.10 where changes to a <code class="docutils literal notranslate"><span class="pre">ManyToManyField</span></code>
+weren't logged in the admin change history (<a class="reference external" href="https://code.djangoproject.com/ticket/27998">#27998</a>) and prevented
+<code class="docutils literal notranslate"><span class="pre">ManyToManyField</span></code> initial data in model forms from being affected by
+subsequent model changes (<a class="reference external" href="https://code.djangoproject.com/ticket/28543">#28543</a>).</li>
+<li>Fixed non-deterministic results or an <code class="docutils literal notranslate"><span class="pre">AssertionError</span></code> crash in some
+queries with multiple joins (<a class="reference external" href="https://code.djangoproject.com/ticket/26522">#26522</a>).</li>
+<li>Fixed a regression in <code class="docutils literal notranslate"><span class="pre">contrib.auth</span></code>'s <code class="docutils literal notranslate"><span class="pre">login()</span></code> and <code class="docutils literal notranslate"><span class="pre">logout()</span></code> views
+where they ignored positional arguments (<a class="reference external" href="https://code.djangoproject.com/ticket/28550">#28550</a>).</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Django 1.11.5 release notes</a><ul>
+<li><a class="reference internal" href="#cve-2017-12794-possible-xss-in-traceback-section-of-technical-500-debug-page">CVE-2017-12794: Possible XSS in traceback section of technical 500 debug page</a></li>
+<li><a class="reference internal" href="#bugfixes">Bugfixes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="1.11.6.html"
+                        title="previous chapter">Django 1.11.6 release notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="1.11.4.html"
+                        title="next chapter">Django 1.11.4 release notes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/releases/1.11.5.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="1.11.6.html" title="Django 1.11.6 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.11.4.html" title="Django 1.11.4 release notes">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

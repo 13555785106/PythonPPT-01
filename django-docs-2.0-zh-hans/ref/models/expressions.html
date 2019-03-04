@@ -1,0 +1,1345 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Query Expressions &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Conditional Expressions" href="conditional-expressions.html" />
+    <link rel="prev" title="Lookup API reference" href="lookups.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="lookups.html" title="Lookup API reference">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="conditional-expressions.html" title="Conditional Expressions">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="ref-models-expressions">
+            
+  <div class="section" id="s-query-expressions">
+<span id="query-expressions"></span><h1>Query Expressions<a class="headerlink" href="#query-expressions" title="Permalink to this headline">¶</a></h1>
+<p>Query expressions describe a value or a computation that can be used as part of
+an update, create, filter, order by, annotation, or aggregate. There are a
+number of built-in expressions (documented below) that can be used to help you
+write queries. Expressions can be combined, or in some cases nested, to form
+more complex computations.</p>
+<div class="section" id="s-supported-arithmetic">
+<span id="supported-arithmetic"></span><h2>Supported arithmetic<a class="headerlink" href="#supported-arithmetic" title="Permalink to this headline">¶</a></h2>
+<p>Django supports addition, subtraction, multiplication, division, modulo
+arithmetic, and the power operator on query expressions, using Python constants,
+variables, and even other expressions.</p>
+</div>
+<div class="section" id="s-some-examples">
+<span id="some-examples"></span><h2>Some examples<a class="headerlink" href="#some-examples" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Count</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">Value</span>
+<span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="kn">import</span> <span class="n">Length</span><span class="p">,</span> <span class="n">Upper</span>
+
+<span class="c1"># Find companies that have more employees than chairs.</span>
+<span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">num_employees__gt</span><span class="o">=</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;num_chairs&#39;</span><span class="p">))</span>
+
+<span class="c1"># Find companies that have at least twice as many employees</span>
+<span class="c1"># as chairs. Both the querysets below are equivalent.</span>
+<span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">num_employees__gt</span><span class="o">=</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;num_chairs&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+    <span class="n">num_employees__gt</span><span class="o">=</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;num_chairs&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">F</span><span class="p">(</span><span class="s1">&#39;num_chairs&#39;</span><span class="p">))</span>
+
+<span class="c1"># How many chairs are needed for each company to seat all employees?</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">company</span> <span class="o">=</span> <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+<span class="o">...</span>    <span class="n">num_employees__gt</span><span class="o">=</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;num_chairs&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="o">...</span>    <span class="n">chairs_needed</span><span class="o">=</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;num_employees&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="n">F</span><span class="p">(</span><span class="s1">&#39;num_chairs&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">company</span><span class="o">.</span><span class="n">num_employees</span>
+<span class="mi">120</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">company</span><span class="o">.</span><span class="n">num_chairs</span>
+<span class="mi">50</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">company</span><span class="o">.</span><span class="n">chairs_needed</span>
+<span class="mi">70</span>
+
+<span class="c1"># Create a new company using expressions.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">company</span> <span class="o">=</span> <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Google&#39;</span><span class="p">,</span> <span class="n">ticker</span><span class="o">=</span><span class="n">Upper</span><span class="p">(</span><span class="n">Value</span><span class="p">(</span><span class="s1">&#39;goog&#39;</span><span class="p">)))</span>
+<span class="c1"># Be sure to refresh it if you need to access the field.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">company</span><span class="o">.</span><span class="n">refresh_from_db</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">company</span><span class="o">.</span><span class="n">ticker</span>
+<span class="s1">&#39;GOOG&#39;</span>
+
+<span class="c1"># Annotate models with an aggregated value. Both forms</span>
+<span class="c1"># below are equivalent.</span>
+<span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">num_products</span><span class="o">=</span><span class="n">Count</span><span class="p">(</span><span class="s1">&#39;products&#39;</span><span class="p">))</span>
+<span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">num_products</span><span class="o">=</span><span class="n">Count</span><span class="p">(</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;products&#39;</span><span class="p">)))</span>
+
+<span class="c1"># Aggregates can contain complex computations also</span>
+<span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">num_offerings</span><span class="o">=</span><span class="n">Count</span><span class="p">(</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;products&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">F</span><span class="p">(</span><span class="s1">&#39;services&#39;</span><span class="p">)))</span>
+
+<span class="c1"># Expressions can also be used in order_by()</span>
+<span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">Length</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">asc</span><span class="p">())</span>
+<span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">Length</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-built-in-expressions">
+<span id="built-in-expressions"></span><h2>Built-in Expressions<a class="headerlink" href="#built-in-expressions" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These expressions are defined in <code class="docutils literal notranslate"><span class="pre">django.db.models.expressions</span></code> and
+<code class="docutils literal notranslate"><span class="pre">django.db.models.aggregates</span></code>, but for convenience they're available and
+usually imported from <a class="reference internal" href="../../topics/db/models.html#module-django.db.models" title="django.db.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.db.models</span></code></a>.</p>
+</div>
+<div class="section" id="s-f-expressions">
+<span id="f-expressions"></span><h3><code class="docutils literal notranslate"><span class="pre">F()</span></code> expressions<a class="headerlink" href="#f-expressions" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.F">
+<em class="property">class </em><code class="descname">F</code><a class="reference internal" href="../../_modules/django/db/models/expressions.html#F"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.F" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>An <code class="docutils literal notranslate"><span class="pre">F()</span></code> object represents the value of a model field or annotated column. It
+makes it possible to refer to model field values and perform  database
+operations using them without actually having to pull them out of the  database
+into Python memory.</p>
+<p>Instead, Django uses the <code class="docutils literal notranslate"><span class="pre">F()</span></code> object to generate an SQL expression that
+describes the required operation at the database level.</p>
+<p>This is easiest to understand through an example. Normally, one might do
+something like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tintin filed a news story!</span>
+<span class="n">reporter</span> <span class="o">=</span> <span class="n">Reporters</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Tintin&#39;</span><span class="p">)</span>
+<span class="n">reporter</span><span class="o">.</span><span class="n">stories_filed</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="n">reporter</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Here, we have pulled the value of <code class="docutils literal notranslate"><span class="pre">reporter.stories_filed</span></code> from the database
+into memory and manipulated it using familiar Python operators, and then saved
+the object back to the database. But instead we could also have done:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">F</span>
+
+<span class="n">reporter</span> <span class="o">=</span> <span class="n">Reporters</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Tintin&#39;</span><span class="p">)</span>
+<span class="n">reporter</span><span class="o">.</span><span class="n">stories_filed</span> <span class="o">=</span> <span class="n">F</span><span class="p">(</span><span class="s1">&#39;stories_filed&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">reporter</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Although <code class="docutils literal notranslate"><span class="pre">reporter.stories_filed</span> <span class="pre">=</span> <span class="pre">F('stories_filed')</span> <span class="pre">+</span> <span class="pre">1</span></code> looks like a
+normal Python assignment of value to an instance attribute, in fact it's an SQL
+construct describing an operation on the database.</p>
+<p>When Django encounters an instance of <code class="docutils literal notranslate"><span class="pre">F()</span></code>, it overrides the standard Python
+operators to create an encapsulated SQL expression; in this case, one which
+instructs the database to increment the database field represented by
+<code class="docutils literal notranslate"><span class="pre">reporter.stories_filed</span></code>.</p>
+<p>Whatever value is or was on <code class="docutils literal notranslate"><span class="pre">reporter.stories_filed</span></code>, Python never gets to
+know about it - it is dealt with entirely by the database. All Python does,
+through Django's <code class="docutils literal notranslate"><span class="pre">F()</span></code> class, is create the SQL syntax to refer to the field
+and describe the operation.</p>
+<p>To access the new value saved this way, the object must be reloaded:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">reporter</span> <span class="o">=</span> <span class="n">Reporters</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">reporter</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+<span class="c1"># Or, more succinctly:</span>
+<span class="n">reporter</span><span class="o">.</span><span class="n">refresh_from_db</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>As well as being used in operations on single instances as above, <code class="docutils literal notranslate"><span class="pre">F()</span></code> can
+be used on <code class="docutils literal notranslate"><span class="pre">QuerySets</span></code> of object instances, with <code class="docutils literal notranslate"><span class="pre">update()</span></code>. This reduces
+the two queries we were using above - the <code class="docutils literal notranslate"><span class="pre">get()</span></code> and the
+<a class="reference internal" href="instances.html#django.db.models.Model.save" title="django.db.models.Model.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save()</span></code></a> - to just one:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">reporter</span> <span class="o">=</span> <span class="n">Reporters</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Tintin&#39;</span><span class="p">)</span>
+<span class="n">reporter</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">stories_filed</span><span class="o">=</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;stories_filed&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can also use <a class="reference internal" href="querysets.html#django.db.models.query.QuerySet.update" title="django.db.models.query.QuerySet.update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update()</span></code></a> to increment
+the field value on multiple objects - which could be very much faster than
+pulling them all into Python from the database, looping over them, incrementing
+the field value of each one, and saving each one back to the database:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Reporter</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">stories_filed</span><span class="o">=</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;stories_filed&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">F()</span></code> therefore can offer performance advantages by:</p>
+<ul class="simple">
+<li>getting the database, rather than Python, to do work</li>
+<li>reducing the number of queries some operations require</li>
+</ul>
+<div class="section" id="s-avoiding-race-conditions-using-f">
+<span id="s-id1"></span><span id="avoiding-race-conditions-using-f"></span><span id="id1"></span><h4>Avoiding race conditions using <code class="docutils literal notranslate"><span class="pre">F()</span></code><a class="headerlink" href="#avoiding-race-conditions-using-f" title="Permalink to this headline">¶</a></h4>
+<p>Another useful benefit of <code class="docutils literal notranslate"><span class="pre">F()</span></code> is that having the database - rather than
+Python - update a field's value avoids a <em>race condition</em>.</p>
+<p>If two Python threads execute the code in the first example above, one thread
+could retrieve, increment, and save a field's value after the other has
+retrieved it from the database. The value that the second thread saves will be
+based on the original value; the work of the first thread will simply be lost.</p>
+<p>If the database is responsible for updating the field, the process is more
+robust: it will only ever update the field based on the value of the field in
+the database when the <a class="reference internal" href="instances.html#django.db.models.Model.save" title="django.db.models.Model.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save()</span></code></a> or <code class="docutils literal notranslate"><span class="pre">update()</span></code> is executed, rather
+than based on its value when the instance was retrieved.</p>
+</div>
+<div class="section" id="s-f-assignments-persist-after-model-save">
+<span id="f-assignments-persist-after-model-save"></span><h4><code class="docutils literal notranslate"><span class="pre">F()</span></code> assignments persist after <code class="docutils literal notranslate"><span class="pre">Model.save()</span></code><a class="headerlink" href="#f-assignments-persist-after-model-save" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">F()</span></code> objects assigned to model fields persist after saving the model
+instance and will be applied on each <a class="reference internal" href="instances.html#django.db.models.Model.save" title="django.db.models.Model.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save()</span></code></a>. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">reporter</span> <span class="o">=</span> <span class="n">Reporters</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Tintin&#39;</span><span class="p">)</span>
+<span class="n">reporter</span><span class="o">.</span><span class="n">stories_filed</span> <span class="o">=</span> <span class="n">F</span><span class="p">(</span><span class="s1">&#39;stories_filed&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">reporter</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<span class="n">reporter</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Tintin Jr.&#39;</span>
+<span class="n">reporter</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">stories_filed</span></code> will be updated twice in this case. If it's initially <code class="docutils literal notranslate"><span class="pre">1</span></code>,
+the final value will be <code class="docutils literal notranslate"><span class="pre">3</span></code>.</p>
+</div>
+<div class="section" id="s-using-f-in-filters">
+<span id="using-f-in-filters"></span><h4>Using <code class="docutils literal notranslate"><span class="pre">F()</span></code> in filters<a class="headerlink" href="#using-f-in-filters" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">F()</span></code> is also very useful in <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code> filters, where they make it
+possible to filter a set of objects against criteria based on their field
+values, rather than on Python values.</p>
+<p>This is documented in <a class="reference internal" href="../../topics/db/queries.html#using-f-expressions-in-filters"><span class="std std-ref">using F() expressions in queries</span></a>.</p>
+</div>
+<div class="section" id="s-using-f-with-annotations">
+<span id="s-id2"></span><span id="using-f-with-annotations"></span><span id="id2"></span><h4>Using <code class="docutils literal notranslate"><span class="pre">F()</span></code> with annotations<a class="headerlink" href="#using-f-with-annotations" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">F()</span></code> can be used to create dynamic fields on your models by combining
+different fields with arithmetic:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">company</span> <span class="o">=</span> <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+    <span class="n">chairs_needed</span><span class="o">=</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;num_employees&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="n">F</span><span class="p">(</span><span class="s1">&#39;num_chairs&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>If the fields that you're combining are of different types you'll need
+to tell Django what kind of field will be returned. Since <code class="docutils literal notranslate"><span class="pre">F()</span></code> does not
+directly support <code class="docutils literal notranslate"><span class="pre">output_field</span></code> you will need to wrap the expression with
+<a class="reference internal" href="#django.db.models.ExpressionWrapper" title="django.db.models.ExpressionWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionWrapper</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">DateTimeField</span><span class="p">,</span> <span class="n">ExpressionWrapper</span><span class="p">,</span> <span class="n">F</span>
+
+<span class="n">Ticket</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+    <span class="n">expires</span><span class="o">=</span><span class="n">ExpressionWrapper</span><span class="p">(</span>
+        <span class="n">F</span><span class="p">(</span><span class="s1">&#39;active_at&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">F</span><span class="p">(</span><span class="s1">&#39;duration&#39;</span><span class="p">),</span> <span class="n">output_field</span><span class="o">=</span><span class="n">DateTimeField</span><span class="p">()))</span>
+</pre></div>
+</div>
+<p>When referencing relational fields such as <code class="docutils literal notranslate"><span class="pre">ForeignKey</span></code>, <code class="docutils literal notranslate"><span class="pre">F()</span></code> returns the
+primary key value rather than a model instance:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">car</span> <span class="o">=</span> <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">built_by</span><span class="o">=</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;manufacturer&#39;</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+<span class="o">&gt;&gt;</span> <span class="n">car</span><span class="o">.</span><span class="n">manufacturer</span>
+<span class="o">&lt;</span><span class="n">Manufacturer</span><span class="p">:</span> <span class="n">Toyota</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;</span> <span class="n">car</span><span class="o">.</span><span class="n">built_by</span>
+<span class="mi">3</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-using-f-to-sort-null-values">
+<span id="s-id3"></span><span id="using-f-to-sort-null-values"></span><span id="id3"></span><h4>Using <code class="docutils literal notranslate"><span class="pre">F()</span></code> to sort null values<a class="headerlink" href="#using-f-to-sort-null-values" title="Permalink to this headline">¶</a></h4>
+<p>Use <code class="docutils literal notranslate"><span class="pre">F()</span></code> and the <code class="docutils literal notranslate"><span class="pre">nulls_first</span></code> or <code class="docutils literal notranslate"><span class="pre">nulls_last</span></code> keyword argument to
+<a class="reference internal" href="#django.db.models.Expression.asc" title="django.db.models.Expression.asc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Expression.asc()</span></code></a> or <a class="reference internal" href="#django.db.models.Expression.desc" title="django.db.models.Expression.desc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">desc()</span></code></a> to control the ordering of
+a field's null values. By default, the ordering depends on your database.</p>
+<p>For example, to sort companies that haven't been contacted (<code class="docutils literal notranslate"><span class="pre">last_contacted</span></code>
+is null) after companies that have been contacted:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">F</span>
+<span class="n">Company</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;last_contacted&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">desc</span><span class="p">(</span><span class="n">nulls_last</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="s-func-expressions">
+<span id="s-id4"></span><span id="func-expressions"></span><span id="id4"></span><h3><code class="docutils literal notranslate"><span class="pre">Func()</span></code> expressions<a class="headerlink" href="#func-expressions" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Func()</span></code> expressions are the base type of all expressions that involve
+database functions like <code class="docutils literal notranslate"><span class="pre">COALESCE</span></code> and <code class="docutils literal notranslate"><span class="pre">LOWER</span></code>, or aggregates like <code class="docutils literal notranslate"><span class="pre">SUM</span></code>.
+They can be used directly:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">F</span><span class="p">,</span> <span class="n">Func</span>
+
+<span class="n">queryset</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">field_lower</span><span class="o">=</span><span class="n">Func</span><span class="p">(</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;field&#39;</span><span class="p">),</span> <span class="n">function</span><span class="o">=</span><span class="s1">&#39;LOWER&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>or they can be used to build a library of database functions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Lower</span><span class="p">(</span><span class="n">Func</span><span class="p">):</span>
+    <span class="n">function</span> <span class="o">=</span> <span class="s1">&#39;LOWER&#39;</span>
+
+<span class="n">queryset</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">field_lower</span><span class="o">=</span><span class="n">Lower</span><span class="p">(</span><span class="s1">&#39;field&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>But both cases will result in a queryset where each model is annotated with an
+extra attribute <code class="docutils literal notranslate"><span class="pre">field_lower</span></code> produced, roughly, from the following SQL:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span>
+    <span class="o">...</span>
+    <span class="n">LOWER</span><span class="p">(</span><span class="s2">&quot;db_table&quot;</span><span class="o">.</span><span class="s2">&quot;field&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="s2">&quot;field_lower&quot;</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="database-functions.html"><span class="doc">Database Functions</span></a> for a list of built-in database functions.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Func</span></code> API is as follows:</p>
+<dl class="class">
+<dt id="django.db.models.Func">
+<em class="property">class </em><code class="descname">Func</code>(<em>*expressions</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/expressions.html#Func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.Func" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="django.db.models.Func.function">
+<code class="descname">function</code><a class="headerlink" href="#django.db.models.Func.function" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class attribute describing the function that will be generated.
+Specifically, the <code class="docutils literal notranslate"><span class="pre">function</span></code> will be interpolated as the <code class="docutils literal notranslate"><span class="pre">function</span></code>
+placeholder within <a class="reference internal" href="#django.db.models.Func.template" title="django.db.models.Func.template"><code class="xref py py-attr docutils literal notranslate"><span class="pre">template</span></code></a>. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.db.models.Func.template">
+<code class="descname">template</code><a class="headerlink" href="#django.db.models.Func.template" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class attribute, as a format string, that describes the SQL that is
+generated for this function. Defaults to
+<code class="docutils literal notranslate"><span class="pre">'%(function)s(%(expressions)s)'</span></code>.</p>
+<p>If you're constructing SQL like <code class="docutils literal notranslate"><span class="pre">strftime('%W',</span> <span class="pre">'date')</span></code> and need a
+literal <code class="docutils literal notranslate"><span class="pre">%</span></code> character in the query, quadruple it (<code class="docutils literal notranslate"><span class="pre">%%%%</span></code>) in the
+<code class="docutils literal notranslate"><span class="pre">template</span></code> attribute because the string is interpolated twice: once
+during the template interpolation in <code class="docutils literal notranslate"><span class="pre">as_sql()</span></code> and once in the SQL
+interpolation with the query parameters in the database cursor.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.db.models.Func.arg_joiner">
+<code class="descname">arg_joiner</code><a class="headerlink" href="#django.db.models.Func.arg_joiner" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class attribute that denotes the character used to join the list of
+<code class="docutils literal notranslate"><span class="pre">expressions</span></code> together. Defaults to <code class="docutils literal notranslate"><span class="pre">',</span> <span class="pre">'</span></code>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.db.models.Func.arity">
+<code class="descname">arity</code><a class="headerlink" href="#django.db.models.Func.arity" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class attribute that denotes the number of arguments the function
+accepts. If this attribute is set and the function is called with a
+different number of expressions, <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> will be raised. Defaults
+to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.db.models.Func.as_sql">
+<code class="descname">as_sql</code>(<em>compiler</em>, <em>connection</em>, <em>function=None</em>, <em>template=None</em>, <em>arg_joiner=None</em>, <em>**extra_context</em>)<a class="reference internal" href="../../_modules/django/db/models/expressions.html#Func.as_sql"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.Func.as_sql" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates the SQL for the database function.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">as_vendor()</span></code> methods should use the <code class="docutils literal notranslate"><span class="pre">function</span></code>, <code class="docutils literal notranslate"><span class="pre">template</span></code>,
+<code class="docutils literal notranslate"><span class="pre">arg_joiner</span></code>, and any other <code class="docutils literal notranslate"><span class="pre">**extra_context</span></code> parameters to
+customize the SQL as needed. For example:</p>
+<div class="highlight-default snippet"><div class="snippet-filename">django/db/models/functions.py</div>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ConcatPair</span><span class="p">(</span><span class="n">Func</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="n">function</span> <span class="o">=</span> <span class="s1">&#39;CONCAT&#39;</span>
+    <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">as_mysql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">as_sql</span><span class="p">(</span>
+            <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span>
+            <span class="n">function</span><span class="o">=</span><span class="s1">&#39;CONCAT_WS&#39;</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(function)s</span><span class="s2">(&#39;&#39;, </span><span class="si">%(expressions)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p>To avoid a SQL injection vulnerability, <code class="docutils literal notranslate"><span class="pre">extra_context</span></code> <a class="reference internal" href="#avoiding-sql-injection-in-query-expressions"><span class="std std-ref">must
+not contain untrusted user input</span></a>
+as these values are interpolated into the SQL string rather than passed
+as query parameters, where the database driver would escape them.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>The <code class="docutils literal notranslate"><span class="pre">*expressions</span></code> argument is a list of positional expressions that the
+function will be applied to. The expressions will be converted to strings,
+joined together with <code class="docutils literal notranslate"><span class="pre">arg_joiner</span></code>, and then interpolated into the <code class="docutils literal notranslate"><span class="pre">template</span></code>
+as the <code class="docutils literal notranslate"><span class="pre">expressions</span></code> placeholder.</p>
+<p>Positional arguments can be expressions or Python values. Strings are
+assumed to be column references and will be wrapped in <code class="docutils literal notranslate"><span class="pre">F()</span></code> expressions
+while other values will be wrapped in <code class="docutils literal notranslate"><span class="pre">Value()</span></code> expressions.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">**extra</span></code> kwargs are <code class="docutils literal notranslate"><span class="pre">key=value</span></code> pairs that can be interpolated
+into the <code class="docutils literal notranslate"><span class="pre">template</span></code> attribute. To avoid a SQL injection vulnerability,
+<code class="docutils literal notranslate"><span class="pre">extra</span></code> <a class="reference internal" href="#avoiding-sql-injection-in-query-expressions"><span class="std std-ref">must not contain untrusted user input</span></a> as these values are interpolated
+into the SQL string rather than passed as query parameters, where the database
+driver would escape them.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">function</span></code>, <code class="docutils literal notranslate"><span class="pre">template</span></code>, and <code class="docutils literal notranslate"><span class="pre">arg_joiner</span></code> keywords can be used to
+replace the attributes of the same name without having to define your own
+class. <code class="docutils literal notranslate"><span class="pre">output_field</span></code> can be used to define the expected return type.</p>
+</div>
+<div class="section" id="s-aggregate-expressions">
+<span id="aggregate-expressions"></span><h3><code class="docutils literal notranslate"><span class="pre">Aggregate()</span></code> expressions<a class="headerlink" href="#aggregate-expressions" title="Permalink to this headline">¶</a></h3>
+<p>An aggregate expression is a special case of a <a class="reference internal" href="#func-expressions"><span class="std std-ref">Func() expression</span></a> that informs the query that a <code class="docutils literal notranslate"><span class="pre">GROUP</span> <span class="pre">BY</span></code> clause
+is required. All of the <a class="reference internal" href="querysets.html#aggregation-functions"><span class="std std-ref">aggregate functions</span></a>,
+like <code class="docutils literal notranslate"><span class="pre">Sum()</span></code> and <code class="docutils literal notranslate"><span class="pre">Count()</span></code>, inherit from <code class="docutils literal notranslate"><span class="pre">Aggregate()</span></code>.</p>
+<p>Since <code class="docutils literal notranslate"><span class="pre">Aggregate</span></code>s are expressions and wrap expressions, you can represent
+some complex computations:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Count</span>
+
+<span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+    <span class="n">managers_required</span><span class="o">=</span><span class="p">(</span><span class="n">Count</span><span class="p">(</span><span class="s1">&#39;num_employees&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="n">Count</span><span class="p">(</span><span class="s1">&#39;num_managers&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">Aggregate</span></code> API is as follows:</p>
+<dl class="class">
+<dt id="django.db.models.Aggregate">
+<em class="property">class </em><code class="descname">Aggregate</code>(<em>expression</em>, <em>output_field=None</em>, <em>filter=None</em>, <em>**extra</em>)<a class="reference internal" href="../../_modules/django/db/models/aggregates.html#Aggregate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.Aggregate" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="django.db.models.Aggregate.template">
+<code class="descname">template</code><a class="headerlink" href="#django.db.models.Aggregate.template" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class attribute, as a format string, that describes the SQL that is
+generated for this aggregate. Defaults to
+<code class="docutils literal notranslate"><span class="pre">'%(function)s(</span> <span class="pre">%(expressions)s</span> <span class="pre">)'</span></code>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.db.models.Aggregate.function">
+<code class="descname">function</code><a class="headerlink" href="#django.db.models.Aggregate.function" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class attribute describing the aggregate function that will be
+generated. Specifically, the <code class="docutils literal notranslate"><span class="pre">function</span></code> will be interpolated as the
+<code class="docutils literal notranslate"><span class="pre">function</span></code> placeholder within <a class="reference internal" href="#django.db.models.Aggregate.template" title="django.db.models.Aggregate.template"><code class="xref py py-attr docutils literal notranslate"><span class="pre">template</span></code></a>. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.db.models.Aggregate.window_compatible">
+<code class="descname">window_compatible</code><a class="headerlink" href="#django.db.models.Aggregate.window_compatible" title="Permalink to this definition">¶</a></dt>
+<dd><div class="versionadded">
+<span class="title">New in Django 2.0.</span> </div>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code> since most aggregate functions can be used as the
+source expression in <a class="reference internal" href="#django.db.models.expressions.Window" title="django.db.models.expressions.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>The <code class="docutils literal notranslate"><span class="pre">expression</span></code> argument can be the name of a field on the model, or another
+expression. It will be converted to a string and used as the <code class="docutils literal notranslate"><span class="pre">expressions</span></code>
+placeholder within the <code class="docutils literal notranslate"><span class="pre">template</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">output_field</span></code> argument requires a model field instance, like
+<code class="docutils literal notranslate"><span class="pre">IntegerField()</span></code> or <code class="docutils literal notranslate"><span class="pre">BooleanField()</span></code>, into which Django will load the value
+after it's retrieved from the database. Usually no arguments are needed when
+instantiating the model field as any arguments relating to data validation
+(<code class="docutils literal notranslate"><span class="pre">max_length</span></code>, <code class="docutils literal notranslate"><span class="pre">max_digits</span></code>, etc.) will not be enforced on the expression's
+output value.</p>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">output_field</span></code> is only required when Django is unable to determine
+what field type the result should be. Complex expressions that mix field types
+should define the desired <code class="docutils literal notranslate"><span class="pre">output_field</span></code>. For example, adding an
+<code class="docutils literal notranslate"><span class="pre">IntegerField()</span></code> and a <code class="docutils literal notranslate"><span class="pre">FloatField()</span></code> together should probably have
+<code class="docutils literal notranslate"><span class="pre">output_field=FloatField()</span></code> defined.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">filter</span></code> argument takes a <a class="reference internal" href="querysets.html#django.db.models.Q" title="django.db.models.Q"><code class="xref py py-class docutils literal notranslate"><span class="pre">Q</span> <span class="pre">object</span></code></a> that's
+used to filter the rows that are aggregated. See <a class="reference internal" href="conditional-expressions.html#conditional-aggregation"><span class="std std-ref">Conditional aggregation</span></a>
+and <a class="reference internal" href="../../topics/db/aggregation.html#filtering-on-annotations"><span class="std std-ref">Filtering on annotations</span></a> for example usage.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">**extra</span></code> kwargs are <code class="docutils literal notranslate"><span class="pre">key=value</span></code> pairs that can be interpolated
+into the <code class="docutils literal notranslate"><span class="pre">template</span></code> attribute.</p>
+<div class="versionchanged">
+<span class="title">Changed in Django 2.0:</span> <p>The <code class="docutils literal notranslate"><span class="pre">filter</span></code> argument was added.</p>
+</div>
+</div>
+<div class="section" id="s-creating-your-own-aggregate-functions">
+<span id="creating-your-own-aggregate-functions"></span><h3>Creating your own Aggregate Functions<a class="headerlink" href="#creating-your-own-aggregate-functions" title="Permalink to this headline">¶</a></h3>
+<p>Creating your own aggregate is extremely easy. At a minimum, you need
+to define <code class="docutils literal notranslate"><span class="pre">function</span></code>, but you can also completely customize the
+SQL that is generated. Here's a brief example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Aggregate</span>
+
+<span class="k">class</span> <span class="nc">Count</span><span class="p">(</span><span class="n">Aggregate</span><span class="p">):</span>
+    <span class="c1"># supports COUNT(distinct field)</span>
+    <span class="n">function</span> <span class="o">=</span> <span class="s1">&#39;COUNT&#39;</span>
+    <span class="n">template</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%(function)s</span><span class="s1">(</span><span class="si">%(distinct)s%(expressions)s</span><span class="s1">)&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expression</span><span class="p">,</span> <span class="n">distinct</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">extra</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">expression</span><span class="p">,</span>
+            <span class="n">distinct</span><span class="o">=</span><span class="s1">&#39;DISTINCT &#39;</span> <span class="k">if</span> <span class="n">distinct</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">output_field</span><span class="o">=</span><span class="n">IntegerField</span><span class="p">(),</span>
+            <span class="o">**</span><span class="n">extra</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-value-expressions">
+<span id="value-expressions"></span><h3><code class="docutils literal notranslate"><span class="pre">Value()</span></code> expressions<a class="headerlink" href="#value-expressions" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.Value">
+<em class="property">class </em><code class="descname">Value</code>(<em>value</em>, <em>output_field=None</em>)<a class="reference internal" href="../../_modules/django/db/models/expressions.html#Value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.Value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>A <code class="docutils literal notranslate"><span class="pre">Value()</span></code> object represents the smallest possible component of an
+expression: a simple value. When you need to represent the value of an integer,
+boolean, or string within an expression, you can wrap that value within a
+<code class="docutils literal notranslate"><span class="pre">Value()</span></code>.</p>
+<p>You will rarely need to use <code class="docutils literal notranslate"><span class="pre">Value()</span></code> directly. When you write the expression
+<code class="docutils literal notranslate"><span class="pre">F('field')</span> <span class="pre">+</span> <span class="pre">1</span></code>, Django implicitly wraps the <code class="docutils literal notranslate"><span class="pre">1</span></code> in a <code class="docutils literal notranslate"><span class="pre">Value()</span></code>,
+allowing simple values to be used in more complex expressions. You will need to
+use <code class="docutils literal notranslate"><span class="pre">Value()</span></code> when you want to pass a string to an expression. Most
+expressions interpret a string argument as the name of a field, like
+<code class="docutils literal notranslate"><span class="pre">Lower('name')</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">value</span></code> argument describes the value to be included in the expression,
+such as <code class="docutils literal notranslate"><span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">True</span></code>, or <code class="docutils literal notranslate"><span class="pre">None</span></code>. Django knows how to convert these Python
+values into their corresponding database type.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">output_field</span></code> argument should be a model field instance, like
+<code class="docutils literal notranslate"><span class="pre">IntegerField()</span></code> or <code class="docutils literal notranslate"><span class="pre">BooleanField()</span></code>, into which Django will load the value
+after it's retrieved from the database. Usually no arguments are needed when
+instantiating the model field as any arguments relating to data validation
+(<code class="docutils literal notranslate"><span class="pre">max_length</span></code>, <code class="docutils literal notranslate"><span class="pre">max_digits</span></code>, etc.) will not be enforced on the expression's
+output value.</p>
+</div>
+<div class="section" id="s-expressionwrapper-expressions">
+<span id="expressionwrapper-expressions"></span><h3><code class="docutils literal notranslate"><span class="pre">ExpressionWrapper()</span></code> expressions<a class="headerlink" href="#expressionwrapper-expressions" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.ExpressionWrapper">
+<em class="property">class </em><code class="descname">ExpressionWrapper</code>(<em>expression</em>, <em>output_field</em>)<a class="reference internal" href="../../_modules/django/db/models/expressions.html#ExpressionWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.ExpressionWrapper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p><code class="docutils literal notranslate"><span class="pre">ExpressionWrapper</span></code> simply surrounds another expression and provides access
+to properties, such as <code class="docutils literal notranslate"><span class="pre">output_field</span></code>, that may not be available on other
+expressions. <code class="docutils literal notranslate"><span class="pre">ExpressionWrapper</span></code> is necessary when using arithmetic on
+<code class="docutils literal notranslate"><span class="pre">F()</span></code> expressions with different types as described in
+<a class="reference internal" href="#using-f-with-annotations"><span class="std std-ref">Using F() with annotations</span></a>.</p>
+</div>
+<div class="section" id="s-conditional-expressions">
+<span id="conditional-expressions"></span><h3>Conditional expressions<a class="headerlink" href="#conditional-expressions" title="Permalink to this headline">¶</a></h3>
+<p>Conditional expressions allow you to use <a class="reference external" href="https://docs.python.org/3/reference/compound_stmts.html#if" title="(in Python v3.7)"><code class="xref std std-keyword docutils literal notranslate"><span class="pre">if</span></code></a> ... <a class="reference external" href="https://docs.python.org/3/reference/compound_stmts.html#elif" title="(in Python v3.7)"><code class="xref std std-keyword docutils literal notranslate"><span class="pre">elif</span></code></a> ...
+<a class="reference external" href="https://docs.python.org/3/reference/compound_stmts.html#else" title="(in Python v3.7)"><code class="xref std std-keyword docutils literal notranslate"><span class="pre">else</span></code></a> logic in queries. Django natively supports SQL <code class="docutils literal notranslate"><span class="pre">CASE</span></code>
+expressions. For more details see <a class="reference internal" href="conditional-expressions.html"><span class="doc">Conditional Expressions</span></a>.</p>
+</div>
+<div class="section" id="s-subquery-expressions">
+<span id="subquery-expressions"></span><h3><code class="docutils literal notranslate"><span class="pre">Subquery()</span></code> expressions<a class="headerlink" href="#subquery-expressions" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.Subquery">
+<em class="property">class </em><code class="descname">Subquery</code>(<em>queryset</em>, <em>output_field=None</em>)<a class="reference internal" href="../../_modules/django/db/models/expressions.html#Subquery"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.Subquery" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="versionadded">
+<span class="title">New in Django 1.11.</span> </div>
+<p>You can add an explicit subquery to a <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code> using the <code class="docutils literal notranslate"><span class="pre">Subquery</span></code>
+expression.</p>
+<p>For example, to annotate each post with the email address of the author of the
+newest comment on that post:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">OuterRef</span><span class="p">,</span> <span class="n">Subquery</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">newest</span> <span class="o">=</span> <span class="n">Comment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">post</span><span class="o">=</span><span class="n">OuterRef</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-created_at&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Post</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">newest_commenter_email</span><span class="o">=</span><span class="n">Subquery</span><span class="p">(</span><span class="n">newest</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)[:</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>On PostgreSQL, the SQL looks like:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="ss">&quot;post&quot;</span><span class="p">.</span><span class="ss">&quot;id&quot;</span><span class="p">,</span> <span class="p">(</span>
+    <span class="k">SELECT</span> <span class="n">U0</span><span class="p">.</span><span class="ss">&quot;email&quot;</span>
+    <span class="k">FROM</span> <span class="ss">&quot;comment&quot;</span> <span class="n">U0</span>
+    <span class="k">WHERE</span> <span class="n">U0</span><span class="p">.</span><span class="ss">&quot;post_id&quot;</span> <span class="o">=</span> <span class="p">(</span><span class="ss">&quot;post&quot;</span><span class="p">.</span><span class="ss">&quot;id&quot;</span><span class="p">)</span>
+    <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">U0</span><span class="p">.</span><span class="ss">&quot;created_at&quot;</span> <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="mi">1</span>
+<span class="p">)</span> <span class="k">AS</span> <span class="ss">&quot;newest_commenter_email&quot;</span> <span class="k">FROM</span> <span class="ss">&quot;post&quot;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The examples in this section are designed to show how to force
+Django to execute a subquery. In some cases it may be possible to
+write an equivalent queryset that performs the same task more
+clearly or efficiently.</p>
+</div>
+<div class="section" id="s-referencing-columns-from-the-outer-queryset">
+<span id="referencing-columns-from-the-outer-queryset"></span><h4>Referencing columns from the outer queryset<a class="headerlink" href="#referencing-columns-from-the-outer-queryset" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="django.db.models.OuterRef">
+<em class="property">class </em><code class="descname">OuterRef</code>(<em>field</em>)<a class="reference internal" href="../../_modules/django/db/models/expressions.html#OuterRef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.OuterRef" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="versionadded">
+<span class="title">New in Django 1.11.</span> </div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">OuterRef</span></code> when a queryset in a <code class="docutils literal notranslate"><span class="pre">Subquery</span></code> needs to refer to a field
+from the outer query. It acts like an <a class="reference internal" href="#django.db.models.F" title="django.db.models.F"><code class="xref py py-class docutils literal notranslate"><span class="pre">F</span></code></a> expression except that the
+check to see if it refers to a valid field isn't made until the outer queryset
+is resolved.</p>
+<p>Instances of <code class="docutils literal notranslate"><span class="pre">OuterRef</span></code> may be used in conjunction with nested instances
+of <code class="docutils literal notranslate"><span class="pre">Subquery</span></code> to refer to a containing queryset that isn't the immediate
+parent. For example, this queryset would need to be within a nested pair of
+<code class="docutils literal notranslate"><span class="pre">Subquery</span></code> instances to resolve correctly:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Book</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">author</span><span class="o">=</span><span class="n">OuterRef</span><span class="p">(</span><span class="n">OuterRef</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-limiting-a-subquery-to-a-single-column">
+<span id="limiting-a-subquery-to-a-single-column"></span><h4>Limiting a subquery to a single column<a class="headerlink" href="#limiting-a-subquery-to-a-single-column" title="Permalink to this headline">¶</a></h4>
+<p>There are times when a single column must be returned from a <code class="docutils literal notranslate"><span class="pre">Subquery</span></code>, for
+instance, to use a <code class="docutils literal notranslate"><span class="pre">Subquery</span></code> as the target of an <code class="docutils literal notranslate"><span class="pre">__in</span></code> lookup. To return
+all comments for posts published within the last day:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">timedelta</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.utils</span> <span class="k">import</span> <span class="n">timezone</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">one_day_ago</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">posts</span> <span class="o">=</span> <span class="n">Post</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">published_at__gte</span><span class="o">=</span><span class="n">one_day_ago</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Comment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">post__in</span><span class="o">=</span><span class="n">Subquery</span><span class="p">(</span><span class="n">posts</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>In this case, the subquery must use <a class="reference internal" href="querysets.html#django.db.models.query.QuerySet.values" title="django.db.models.query.QuerySet.values"><code class="xref py py-meth docutils literal notranslate"><span class="pre">values()</span></code></a>
+to return only a single column: the primary key of the post.</p>
+</div>
+<div class="section" id="s-limiting-the-subquery-to-a-single-row">
+<span id="limiting-the-subquery-to-a-single-row"></span><h4>Limiting the subquery to a single row<a class="headerlink" href="#limiting-the-subquery-to-a-single-row" title="Permalink to this headline">¶</a></h4>
+<p>To prevent a subquery from returning multiple rows, a slice (<code class="docutils literal notranslate"><span class="pre">[:1]</span></code>) of the
+queryset is used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">subquery</span> <span class="o">=</span> <span class="n">Subquery</span><span class="p">(</span><span class="n">newest</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)[:</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Post</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">newest_commenter_email</span><span class="o">=</span><span class="n">subquery</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this case, the subquery must only return a single column <em>and</em> a single
+row: the email address of the most recently created comment.</p>
+<p>(Using <a class="reference internal" href="querysets.html#django.db.models.query.QuerySet.get" title="django.db.models.query.QuerySet.get"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get()</span></code></a> instead of a slice would fail because the
+<code class="docutils literal notranslate"><span class="pre">OuterRef</span></code> cannot be resolved until the queryset is used within a
+<code class="docutils literal notranslate"><span class="pre">Subquery</span></code>.)</p>
+</div>
+<div class="section" id="s-exists-subqueries">
+<span id="exists-subqueries"></span><h4><code class="docutils literal notranslate"><span class="pre">Exists()</span></code> subqueries<a class="headerlink" href="#exists-subqueries" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="django.db.models.Exists">
+<em class="property">class </em><code class="descname">Exists</code>(<em>queryset</em>)<a class="reference internal" href="../../_modules/django/db/models/expressions.html#Exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.Exists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="versionadded">
+<span class="title">New in Django 1.11.</span> </div>
+<p><code class="docutils literal notranslate"><span class="pre">Exists</span></code> is a <code class="docutils literal notranslate"><span class="pre">Subquery</span></code> subclass that uses an SQL <code class="docutils literal notranslate"><span class="pre">EXISTS</span></code> statement. In
+many cases it will perform better than a subquery since the database is able to
+stop evaluation of the subquery when a first matching row is found.</p>
+<p>For example, to annotate each post with whether or not it has a comment from
+within the last day:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Exists</span><span class="p">,</span> <span class="n">OuterRef</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">timedelta</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.utils</span> <span class="k">import</span> <span class="n">timezone</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">one_day_ago</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recent_comments</span> <span class="o">=</span> <span class="n">Comment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">post</span><span class="o">=</span><span class="n">OuterRef</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">created_at__gte</span><span class="o">=</span><span class="n">one_day_ago</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Post</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">recent_comment</span><span class="o">=</span><span class="n">Exists</span><span class="p">(</span><span class="n">recent_comments</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>On PostgreSQL, the SQL looks like:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="ss">&quot;post&quot;</span><span class="p">.</span><span class="ss">&quot;id&quot;</span><span class="p">,</span> <span class="ss">&quot;post&quot;</span><span class="p">.</span><span class="ss">&quot;published_at&quot;</span><span class="p">,</span> <span class="k">EXISTS</span><span class="p">(</span>
+    <span class="k">SELECT</span> <span class="n">U0</span><span class="p">.</span><span class="ss">&quot;id&quot;</span><span class="p">,</span> <span class="n">U0</span><span class="p">.</span><span class="ss">&quot;post_id&quot;</span><span class="p">,</span> <span class="n">U0</span><span class="p">.</span><span class="ss">&quot;email&quot;</span><span class="p">,</span> <span class="n">U0</span><span class="p">.</span><span class="ss">&quot;created_at&quot;</span>
+    <span class="k">FROM</span> <span class="ss">&quot;comment&quot;</span> <span class="n">U0</span>
+    <span class="k">WHERE</span> <span class="p">(</span>
+        <span class="n">U0</span><span class="p">.</span><span class="ss">&quot;created_at&quot;</span> <span class="o">&gt;=</span> <span class="n">YYYY</span><span class="o">-</span><span class="n">MM</span><span class="o">-</span><span class="n">DD</span> <span class="n">HH</span><span class="p">:</span><span class="n">MM</span><span class="p">:</span><span class="n">SS</span> <span class="k">AND</span>
+        <span class="n">U0</span><span class="p">.</span><span class="ss">&quot;post_id&quot;</span> <span class="o">=</span> <span class="p">(</span><span class="ss">&quot;post&quot;</span><span class="p">.</span><span class="ss">&quot;id&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span> <span class="k">AS</span> <span class="ss">&quot;recent_comment&quot;</span> <span class="k">FROM</span> <span class="ss">&quot;post&quot;</span>
+</pre></div>
+</div>
+<p>It's unnecessary to force <code class="docutils literal notranslate"><span class="pre">Exists</span></code> to refer to a single column, since the
+columns are discarded and a boolean result is returned. Similarly, since
+ordering is unimportant within an SQL <code class="docutils literal notranslate"><span class="pre">EXISTS</span></code> subquery and would only
+degrade performance, it's automatically removed.</p>
+<p>You can query using <code class="docutils literal notranslate"><span class="pre">NOT</span> <span class="pre">EXISTS</span></code> with <code class="docutils literal notranslate"><span class="pre">~Exists()</span></code>.</p>
+</div>
+<div class="section" id="s-filtering-on-a-subquery-expression">
+<span id="filtering-on-a-subquery-expression"></span><h4>Filtering on a <code class="docutils literal notranslate"><span class="pre">Subquery</span></code> expression<a class="headerlink" href="#filtering-on-a-subquery-expression" title="Permalink to this headline">¶</a></h4>
+<p>It's not possible to filter directly using <code class="docutils literal notranslate"><span class="pre">Subquery</span></code> and <code class="docutils literal notranslate"><span class="pre">Exists</span></code>, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Post</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Exists</span><span class="p">(</span><span class="n">recent_comments</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="go">TypeError: &#39;Exists&#39; object is not iterable</span>
+</pre></div>
+</div>
+<p>You must filter on a subquery expression by first annotating the queryset
+and then filtering based on that annotation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Post</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">recent_comment</span><span class="o">=</span><span class="n">Exists</span><span class="p">(</span><span class="n">recent_comments</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">recent_comment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-using-aggregates-within-a-subquery-expression">
+<span id="using-aggregates-within-a-subquery-expression"></span><h4>Using aggregates within a <code class="docutils literal notranslate"><span class="pre">Subquery</span></code> expression<a class="headerlink" href="#using-aggregates-within-a-subquery-expression" title="Permalink to this headline">¶</a></h4>
+<p>Aggregates may be used within a <code class="docutils literal notranslate"><span class="pre">Subquery</span></code>, but they require a specific
+combination of <a class="reference internal" href="querysets.html#django.db.models.query.QuerySet.filter" title="django.db.models.query.QuerySet.filter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">filter()</span></code></a>, <a class="reference internal" href="querysets.html#django.db.models.query.QuerySet.values" title="django.db.models.query.QuerySet.values"><code class="xref py py-meth docutils literal notranslate"><span class="pre">values()</span></code></a>, and
+<a class="reference internal" href="querysets.html#django.db.models.query.QuerySet.annotate" title="django.db.models.query.QuerySet.annotate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">annotate()</span></code></a> to get the subquery grouping correct.</p>
+<p>Assuming both models have a <code class="docutils literal notranslate"><span class="pre">length</span></code> field, to find posts where the post
+length is greater than the total length of all combined comments:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">OuterRef</span><span class="p">,</span> <span class="n">Subquery</span><span class="p">,</span> <span class="n">Sum</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">comments</span> <span class="o">=</span> <span class="n">Comment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">post</span><span class="o">=</span><span class="n">OuterRef</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">order_by</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;post&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">total_comments</span> <span class="o">=</span> <span class="n">comments</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;total&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Post</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">length__gt</span><span class="o">=</span><span class="n">Subquery</span><span class="p">(</span><span class="n">total_comments</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The initial <code class="docutils literal notranslate"><span class="pre">filter(...)</span></code> limits the subquery to the relevant parameters.
+<code class="docutils literal notranslate"><span class="pre">order_by()</span></code> removes the default <a class="reference internal" href="options.html#django.db.models.Options.ordering" title="django.db.models.Options.ordering"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ordering</span></code></a>
+(if any) on the <code class="docutils literal notranslate"><span class="pre">Comment</span></code> model. <code class="docutils literal notranslate"><span class="pre">values('post')</span></code> aggregates comments by
+<code class="docutils literal notranslate"><span class="pre">Post</span></code>. Finally, <code class="docutils literal notranslate"><span class="pre">annotate(...)</span></code> performs the aggregation. The order in
+which these queryset methods are applied is important. In this case, since the
+subquery must be limited to a single column, <code class="docutils literal notranslate"><span class="pre">values('total')</span></code> is required.</p>
+<p>This is the only way to perform an aggregation within a <code class="docutils literal notranslate"><span class="pre">Subquery</span></code>, as
+using <a class="reference internal" href="querysets.html#django.db.models.query.QuerySet.aggregate" title="django.db.models.query.QuerySet.aggregate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">aggregate()</span></code></a> attempts to evaluate the queryset (and if
+there is an <code class="docutils literal notranslate"><span class="pre">OuterRef</span></code>, this will not be possible to resolve).</p>
+</div>
+</div>
+<div class="section" id="s-raw-sql-expressions">
+<span id="raw-sql-expressions"></span><h3>Raw SQL expressions<a class="headerlink" href="#raw-sql-expressions" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="django.db.models.expressions.RawSQL">
+<em class="property">class </em><code class="descname">RawSQL</code>(<em>sql</em>, <em>params</em>, <em>output_field=None</em>)<a class="reference internal" href="../../_modules/django/db/models/expressions.html#RawSQL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.expressions.RawSQL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Sometimes database expressions can't easily express a complex <code class="docutils literal notranslate"><span class="pre">WHERE</span></code> clause.
+In these edge cases, use the <code class="docutils literal notranslate"><span class="pre">RawSQL</span></code> expression. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.expressions</span> <span class="k">import</span> <span class="n">RawSQL</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">queryset</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="n">RawSQL</span><span class="p">(</span><span class="s2">&quot;select col from sometable where othercol = </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">someparam</span><span class="p">,)))</span>
+</pre></div>
+</div>
+<p>These extra lookups may not be portable to different database engines (because
+you're explicitly writing SQL code) and violate the DRY principle, so you
+should avoid them if possible.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>To protect against <a class="reference external" href="https://en.wikipedia.org/wiki/SQL_injection">SQL injection attacks</a>, you must escape any
+parameters that the user can control by using <code class="docutils literal notranslate"><span class="pre">params</span></code>. <code class="docutils literal notranslate"><span class="pre">params</span></code> is a
+required argument to force you to acknowledge that you're not interpolating
+your SQL with user-provided data.</p>
+<p>You also must not quote placeholders in the SQL string. This example is
+vulnerable to SQL injection because of the quotes around <code class="docutils literal notranslate"><span class="pre">%s</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">RawSQL</span><span class="p">(</span><span class="s2">&quot;select col from sometable where othercol = &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="p">)</span>  <span class="c1"># unsafe!</span>
+</pre></div>
+</div>
+<p class="last">You can read more about how Django's <a class="reference internal" href="../../topics/security.html#sql-injection-protection"><span class="std std-ref">SQL injection protection</span></a> works.</p>
+</div>
+</div>
+<div class="section" id="s-window-functions">
+<span id="window-functions"></span><h3>Window functions<a class="headerlink" href="#window-functions" title="Permalink to this headline">¶</a></h3>
+<div class="versionadded">
+<span class="title">New in Django 2.0.</span> </div>
+<p>Window functions provide a way to apply functions on partitions. Unlike a
+normal aggregation function which computes a final result for each set defined
+by the group by, window functions operate on <a class="reference internal" href="#window-frames"><span class="std std-ref">frames</span></a> and
+partitions, and compute the result for each row.</p>
+<p>You can specify multiple windows in the same query which in Django ORM would be
+equivalent to including multiple expressions in a <a class="reference internal" href="../../topics/db/aggregation.html"><span class="doc">QuerySet.annotate()</span></a> call. The ORM doesn't make use of named windows,
+instead they are part of the selected columns.</p>
+<dl class="class">
+<dt id="django.db.models.expressions.Window">
+<em class="property">class </em><code class="descname">Window</code>(<em>expression</em>, <em>partition_by=None</em>, <em>order_by=None</em>, <em>frame=None</em>, <em>output_field=None</em>)<a class="reference internal" href="../../_modules/django/db/models/expressions.html#Window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.expressions.Window" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="django.db.models.expressions.Window.filterable">
+<code class="descname">filterable</code><a class="headerlink" href="#django.db.models.expressions.Window.filterable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>. The SQL standard disallows referencing window
+functions in the <code class="docutils literal notranslate"><span class="pre">WHERE</span></code> clause and Django raises an exception when
+constructing a <code class="docutils literal notranslate"><span class="pre">QuerySet</span></code> that would do that.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.db.models.expressions.Window.template">
+<code class="descname">template</code><a class="headerlink" href="#django.db.models.expressions.Window.template" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defaults to <code class="docutils literal notranslate"><span class="pre">%(expression)s</span> <span class="pre">OVER</span> <span class="pre">(%(window)s)'</span></code>. If only the
+<code class="docutils literal notranslate"><span class="pre">expression</span></code> argument is provided, the window clause will be blank.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>The <code class="docutils literal notranslate"><span class="pre">Window</span></code> class is the main expression for an <code class="docutils literal notranslate"><span class="pre">OVER</span></code> clause.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">expression</span></code> argument is either a <a class="reference internal" href="database-functions.html#window-functions"><span class="std std-ref">window function</span></a>, an <a class="reference internal" href="querysets.html#aggregation-functions"><span class="std std-ref">aggregate function</span></a>, or
+an expression that's compatible in a window clause.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_by</span></code> argument is a list of expressions (column names should be
+wrapped in an <code class="docutils literal notranslate"><span class="pre">F</span></code>-object) that control the partitioning of the rows.
+Partitioning narrows which rows are used to compute the result set.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">output_field</span></code> is specified either as an argument or by the expression.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">order_by</span></code> argument accepts a sequence of expressions on which you can
+call <a class="reference internal" href="#django.db.models.Expression.asc" title="django.db.models.Expression.asc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">asc()</span></code></a> and
+<a class="reference internal" href="#django.db.models.Expression.desc" title="django.db.models.Expression.desc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">desc()</span></code></a>. The ordering controls the order in
+which the expression is applied. For example, if you sum over the rows in a
+partition, the first result is just the value of the first row, the second is
+the sum of first and second row.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">frame</span></code> parameter specifies which other rows that should be used in the
+computation. See <a class="reference internal" href="#window-frames"><span class="std std-ref">Frames</span></a> for details.</p>
+<p>For example, to annotate each movie with the average rating for the movies by
+the same studio in the same genre and release year:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Avg</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">Window</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">ExtractYear</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">avg_rating</span><span class="o">=</span><span class="n">Window</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">expression</span><span class="o">=</span><span class="n">Avg</span><span class="p">(</span><span class="s1">&#39;rating&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">partition_by</span><span class="o">=</span><span class="p">[</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;studio&#39;</span><span class="p">),</span> <span class="n">F</span><span class="p">(</span><span class="s1">&#39;genre&#39;</span><span class="p">)],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">order_by</span><span class="o">=</span><span class="n">ExtractYear</span><span class="p">(</span><span class="s1">&#39;released&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">asc</span><span class="p">(),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This makes it easy to check if a movie is rated better or worse than its peers.</p>
+<p>You may want to apply multiple expressions over the same window, i.e., the
+same partition and frame. For example, you could modify the previous example
+to also include the best and worst rating in each movie's group (same studio,
+genre, and release year) by using three window functions in the same query. The
+partition and ordering from the previous example is extracted into a dictionary
+to reduce repetition:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Avg</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">Max</span><span class="p">,</span> <span class="n">Min</span><span class="p">,</span> <span class="n">Window</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">ExtractYear</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">window</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="s1">&#39;partition_by&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;studio&#39;</span><span class="p">),</span> <span class="n">F</span><span class="p">(</span><span class="s1">&#39;genre&#39;</span><span class="p">)],</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="s1">&#39;order_by&#39;</span><span class="p">:</span> <span class="n">ExtractYear</span><span class="p">(</span><span class="s1">&#39;released&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">asc</span><span class="p">(),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">avg_rating</span><span class="o">=</span><span class="n">Window</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">expression</span><span class="o">=</span><span class="n">Avg</span><span class="p">(</span><span class="s1">&#39;rating&#39;</span><span class="p">),</span> <span class="o">**</span><span class="n">window</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">best</span><span class="o">=</span><span class="n">Window</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">expression</span><span class="o">=</span><span class="n">Max</span><span class="p">(</span><span class="s1">&#39;rating&#39;</span><span class="p">),</span> <span class="o">**</span><span class="n">window</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">worst</span><span class="o">=</span><span class="n">Window</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">expression</span><span class="o">=</span><span class="n">Min</span><span class="p">(</span><span class="s1">&#39;rating&#39;</span><span class="p">),</span> <span class="o">**</span><span class="n">window</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Among Django's built-in database backends, MySQL 8.0.2+, PostgreSQL, and Oracle
+support window expressions. Support for different window expression features
+varies among the different databases. For example, the options in
+<a class="reference internal" href="#django.db.models.Expression.asc" title="django.db.models.Expression.asc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">asc()</span></code></a> and
+<a class="reference internal" href="#django.db.models.Expression.desc" title="django.db.models.Expression.desc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">desc()</span></code></a> may not be supported. Consult the
+documentation for your database as needed.</p>
+<div class="section" id="s-frames">
+<span id="s-window-frames"></span><span id="frames"></span><span id="window-frames"></span><h4>Frames<a class="headerlink" href="#frames" title="Permalink to this headline">¶</a></h4>
+<p>For a window frame, you can choose either a range-based sequence of rows or an
+ordinary sequence of rows.</p>
+<dl class="class">
+<dt id="django.db.models.expressions.ValueRange">
+<em class="property">class </em><code class="descname">ValueRange</code>(<em>start=None</em>, <em>end=None</em>)<a class="reference internal" href="../../_modules/django/db/models/expressions.html#ValueRange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.expressions.ValueRange" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="django.db.models.expressions.ValueRange.frame_type">
+<code class="descname">frame_type</code><a class="headerlink" href="#django.db.models.expressions.ValueRange.frame_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This attribute is set to <code class="docutils literal notranslate"><span class="pre">'RANGE'</span></code>.</p>
+</dd></dl>
+
+<p>PostgreSQL has limited support for <code class="docutils literal notranslate"><span class="pre">ValueRange</span></code> and only supports use of
+the standard start and end points, such as <code class="docutils literal notranslate"><span class="pre">CURRENT</span> <span class="pre">ROW</span></code> and <code class="docutils literal notranslate"><span class="pre">UNBOUNDED</span>
+<span class="pre">FOLLOWING</span></code>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="django.db.models.expressions.RowRange">
+<em class="property">class </em><code class="descname">RowRange</code>(<em>start=None</em>, <em>end=None</em>)<a class="reference internal" href="../../_modules/django/db/models/expressions.html#RowRange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.expressions.RowRange" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="django.db.models.expressions.RowRange.frame_type">
+<code class="descname">frame_type</code><a class="headerlink" href="#django.db.models.expressions.RowRange.frame_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This attribute is set to <code class="docutils literal notranslate"><span class="pre">'ROWS'</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>Both classes return SQL with the template:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="p">(</span><span class="n">frame_type</span><span class="p">)</span><span class="n">s</span> <span class="n">BETWEEN</span> <span class="o">%</span><span class="p">(</span><span class="n">start</span><span class="p">)</span><span class="n">s</span> <span class="n">AND</span> <span class="o">%</span><span class="p">(</span><span class="n">end</span><span class="p">)</span><span class="n">s</span>
+</pre></div>
+</div>
+<p>Frames narrow the rows that are used for computing the result. They shift from
+some start point to some specified end point. Frames can be used with and
+without partitions, but it's often a good idea to specify an ordering of the
+window to ensure a deterministic result. In a frame, a peer in a frame is a row
+with an equivalent value, or all rows if an ordering clause isn't present.</p>
+<p>The default starting point for a frame is <code class="docutils literal notranslate"><span class="pre">UNBOUNDED</span> <span class="pre">PRECEDING</span></code> which is the
+first row of the partition. The end point is always explicitly included in the
+SQL generated by the ORM and is by default <code class="docutils literal notranslate"><span class="pre">UNBOUNDED</span> <span class="pre">FOLLOWING</span></code>. The default
+frame includes all rows from the partition to the last row in the set.</p>
+<p>The accepted values for the <code class="docutils literal notranslate"><span class="pre">start</span></code> and <code class="docutils literal notranslate"><span class="pre">end</span></code> arguments are <code class="docutils literal notranslate"><span class="pre">None</span></code>, an
+integer, or zero. A negative integer for <code class="docutils literal notranslate"><span class="pre">start</span></code> results in <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">preceding</span></code>,
+while <code class="docutils literal notranslate"><span class="pre">None</span></code> yields <code class="docutils literal notranslate"><span class="pre">UNBOUNDED</span> <span class="pre">PRECEDING</span></code>. For both <code class="docutils literal notranslate"><span class="pre">start</span></code> and <code class="docutils literal notranslate"><span class="pre">end</span></code>,
+zero will return <code class="docutils literal notranslate"><span class="pre">CURRENT</span> <span class="pre">ROW</span></code>. Positive integers are accepted for <code class="docutils literal notranslate"><span class="pre">end</span></code>.</p>
+<p>There's a difference in what <code class="docutils literal notranslate"><span class="pre">CURRENT</span> <span class="pre">ROW</span></code> includes. When specified in
+<code class="docutils literal notranslate"><span class="pre">ROWS</span></code> mode, the frame starts or ends with the current row. When specified in
+<code class="docutils literal notranslate"><span class="pre">RANGE</span></code> mode, the frame starts or ends at the first or last peer according to
+the ordering clause. Thus, <code class="docutils literal notranslate"><span class="pre">RANGE</span> <span class="pre">CURRENT</span> <span class="pre">ROW</span></code> evaluates the expression for
+rows which have the same value specified by the ordering. Because the template
+includes both the <code class="docutils literal notranslate"><span class="pre">start</span></code> and <code class="docutils literal notranslate"><span class="pre">end</span></code> points, this may be expressed with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ValueRange</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If a movie's &quot;peers&quot; are described as movies released by the same studio in the
+same genre in the same year, this <code class="docutils literal notranslate"><span class="pre">RowRange</span></code> example annotates each movie
+with the average rating of a movie's two prior and two following peers:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Avg</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">RowRange</span><span class="p">,</span> <span class="n">Window</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">ExtractYear</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">avg_rating</span><span class="o">=</span><span class="n">Window</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">expression</span><span class="o">=</span><span class="n">Avg</span><span class="p">(</span><span class="s1">&#39;rating&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">partition_by</span><span class="o">=</span><span class="p">[</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;studio&#39;</span><span class="p">),</span> <span class="n">F</span><span class="p">(</span><span class="s1">&#39;genre&#39;</span><span class="p">)],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">order_by</span><span class="o">=</span><span class="n">ExtractYear</span><span class="p">(</span><span class="s1">&#39;released&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">asc</span><span class="p">(),</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">frame</span><span class="o">=</span><span class="n">RowRange</span><span class="p">(</span><span class="n">start</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If the database supports it, you can specify the start and end points based on
+values of an expression in the partition. If the <code class="docutils literal notranslate"><span class="pre">released</span></code> field of the
+<code class="docutils literal notranslate"><span class="pre">Movie</span></code> model stores the release month of each movies, this <code class="docutils literal notranslate"><span class="pre">ValueRange</span></code>
+example annotates each movie with the average rating of a movie's peers
+released between twelve months before and twelve months after the each movie.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Avg</span><span class="p">,</span> <span class="n">ExpressionList</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">ValueRange</span><span class="p">,</span> <span class="n">Window</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">avg_rating</span><span class="o">=</span><span class="n">Window</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">expression</span><span class="o">=</span><span class="n">Avg</span><span class="p">(</span><span class="s1">&#39;rating&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">partition_by</span><span class="o">=</span><span class="p">[</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;studio&#39;</span><span class="p">),</span> <span class="n">F</span><span class="p">(</span><span class="s1">&#39;genre&#39;</span><span class="p">)],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">order_by</span><span class="o">=</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;released&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">asc</span><span class="p">(),</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">frame</span><span class="o">=</span><span class="n">ValueRange</span><span class="p">(</span><span class="n">start</span><span class="o">=-</span><span class="mi">12</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">12</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="s-technical-information">
+<span id="technical-information"></span><h2>Technical Information<a class="headerlink" href="#technical-information" title="Permalink to this headline">¶</a></h2>
+<p>Below you'll find technical implementation details that may be useful to
+library authors. The technical API and examples below will help with
+creating generic query expressions that can extend the built-in functionality
+that Django provides.</p>
+<div class="section" id="s-expression-api">
+<span id="expression-api"></span><h3>Expression API<a class="headerlink" href="#expression-api" title="Permalink to this headline">¶</a></h3>
+<p>Query expressions implement the <a class="reference internal" href="lookups.html#query-expression"><span class="std std-ref">query expression API</span></a>,
+but also expose a number of extra methods and attributes listed below. All
+query expressions must inherit from <code class="docutils literal notranslate"><span class="pre">Expression()</span></code> or a relevant
+subclass.</p>
+<p>When a query expression wraps another expression, it is responsible for
+calling the appropriate methods on the wrapped expression.</p>
+<dl class="class">
+<dt id="django.db.models.Expression">
+<em class="property">class </em><code class="descname">Expression</code><a class="reference internal" href="../../_modules/django/db/models/expressions.html#Expression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.db.models.Expression" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="django.db.models.Expression.contains_aggregate">
+<code class="descname">contains_aggregate</code><a class="headerlink" href="#django.db.models.Expression.contains_aggregate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tells Django that this expression contains an aggregate and that a
+<code class="docutils literal notranslate"><span class="pre">GROUP</span> <span class="pre">BY</span></code> clause needs to be added to the query.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.db.models.Expression.contains_over_clause">
+<code class="descname">contains_over_clause</code><a class="headerlink" href="#django.db.models.Expression.contains_over_clause" title="Permalink to this definition">¶</a></dt>
+<dd><div class="versionadded">
+<span class="title">New in Django 2.0.</span> </div>
+<p>Tells Django that this expression contains a
+<a class="reference internal" href="#django.db.models.expressions.Window" title="django.db.models.expressions.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></a> expression. It's used,
+for example, to disallow window function expressions in queries that
+modify data.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.db.models.Expression.filterable">
+<code class="descname">filterable</code><a class="headerlink" href="#django.db.models.Expression.filterable" title="Permalink to this definition">¶</a></dt>
+<dd><div class="versionadded">
+<span class="title">New in Django 2.0.</span> </div>
+<p>Tells Django that this expression can be referenced in
+<a class="reference internal" href="querysets.html#django.db.models.query.QuerySet.filter" title="django.db.models.query.QuerySet.filter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">QuerySet.filter()</span></code></a>. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.db.models.Expression.window_compatible">
+<code class="descname">window_compatible</code><a class="headerlink" href="#django.db.models.Expression.window_compatible" title="Permalink to this definition">¶</a></dt>
+<dd><div class="versionadded">
+<span class="title">New in Django 2.0.</span> </div>
+<p>Tells Django that this expression can be used as the source expression
+in <a class="reference internal" href="#django.db.models.expressions.Window" title="django.db.models.expressions.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></a>. Defaults to
+<code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.db.models.Expression.resolve_expression">
+<code class="descname">resolve_expression</code>(<em>query=None</em>, <em>allow_joins=True</em>, <em>reuse=None</em>, <em>summarize=False</em>, <em>for_save=False</em>)<a class="headerlink" href="#django.db.models.Expression.resolve_expression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides the chance to do any pre-processing or validation of
+the expression before it's added to the query. <code class="docutils literal notranslate"><span class="pre">resolve_expression()</span></code>
+must also be called on any nested expressions. A <code class="docutils literal notranslate"><span class="pre">copy()</span></code> of <code class="docutils literal notranslate"><span class="pre">self</span></code>
+should be returned with any necessary transformations.</p>
+<p><code class="docutils literal notranslate"><span class="pre">query</span></code> is the backend query implementation.</p>
+<p><code class="docutils literal notranslate"><span class="pre">allow_joins</span></code> is a boolean that allows or denies the use of
+joins in the query.</p>
+<p><code class="docutils literal notranslate"><span class="pre">reuse</span></code> is a set of reusable joins for multi-join scenarios.</p>
+<p><code class="docutils literal notranslate"><span class="pre">summarize</span></code> is a boolean that, when <code class="docutils literal notranslate"><span class="pre">True</span></code>, signals that the
+query being computed is a terminal aggregate query.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.db.models.Expression.get_source_expressions">
+<code class="descname">get_source_expressions</code>()<a class="headerlink" href="#django.db.models.Expression.get_source_expressions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an ordered list of inner expressions. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Sum</span><span class="p">(</span><span class="n">F</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">get_source_expressions</span><span class="p">()</span>
+<span class="go">[F(&#39;foo&#39;)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.db.models.Expression.set_source_expressions">
+<code class="descname">set_source_expressions</code>(<em>expressions</em>)<a class="headerlink" href="#django.db.models.Expression.set_source_expressions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a list of expressions and stores them such that
+<code class="docutils literal notranslate"><span class="pre">get_source_expressions()</span></code> can return them.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.db.models.Expression.relabeled_clone">
+<code class="descname">relabeled_clone</code>(<em>change_map</em>)<a class="headerlink" href="#django.db.models.Expression.relabeled_clone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a clone (copy) of <code class="docutils literal notranslate"><span class="pre">self</span></code>, with any column aliases relabeled.
+Column aliases are renamed when subqueries are created.
+<code class="docutils literal notranslate"><span class="pre">relabeled_clone()</span></code> should also be called on any nested expressions
+and assigned to the clone.</p>
+<p><code class="docutils literal notranslate"><span class="pre">change_map</span></code> is a dictionary mapping old aliases to new aliases.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">relabeled_clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">change_map</span><span class="p">):</span>
+    <span class="n">clone</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="n">clone</span><span class="o">.</span><span class="n">expression</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expression</span><span class="o">.</span><span class="n">relabeled_clone</span><span class="p">(</span><span class="n">change_map</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">clone</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.db.models.Expression.convert_value">
+<code class="descname">convert_value</code>(<em>value</em>, <em>expression</em>, <em>connection</em>)<a class="headerlink" href="#django.db.models.Expression.convert_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>A hook allowing the expression to coerce <code class="docutils literal notranslate"><span class="pre">value</span></code> into a more
+appropriate type.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.db.models.Expression.get_group_by_cols">
+<code class="descname">get_group_by_cols</code>()<a class="headerlink" href="#django.db.models.Expression.get_group_by_cols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Responsible for returning the list of columns references by
+this expression. <code class="docutils literal notranslate"><span class="pre">get_group_by_cols()</span></code> should be called on any
+nested expressions. <code class="docutils literal notranslate"><span class="pre">F()</span></code> objects, in particular, hold a reference
+to a column.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.db.models.Expression.asc">
+<code class="descname">asc</code>(<em>nulls_first=False</em>, <em>nulls_last=False</em>)<a class="headerlink" href="#django.db.models.Expression.asc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the expression ready to be sorted in ascending order.</p>
+<p><code class="docutils literal notranslate"><span class="pre">nulls_first</span></code> and <code class="docutils literal notranslate"><span class="pre">nulls_last</span></code> define how null values are sorted.
+See <a class="reference internal" href="#using-f-to-sort-null-values"><span class="std std-ref">Using F() to sort null values</span></a> for example usage.</p>
+<div class="versionchanged">
+<span class="title">Changed in Django 1.11:</span> <p>The <code class="docutils literal notranslate"><span class="pre">nulls_last</span></code> and <code class="docutils literal notranslate"><span class="pre">nulls_first</span></code> parameters were added.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.db.models.Expression.desc">
+<code class="descname">desc</code>(<em>nulls_first=False</em>, <em>nulls_last=False</em>)<a class="headerlink" href="#django.db.models.Expression.desc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the expression ready to be sorted in descending order.</p>
+<p><code class="docutils literal notranslate"><span class="pre">nulls_first</span></code> and <code class="docutils literal notranslate"><span class="pre">nulls_last</span></code> define how null values are sorted.
+See <a class="reference internal" href="#using-f-to-sort-null-values"><span class="std std-ref">Using F() to sort null values</span></a> for example usage.</p>
+<div class="versionchanged">
+<span class="title">Changed in Django 1.11:</span> <p>The <code class="docutils literal notranslate"><span class="pre">nulls_first</span></code> and <code class="docutils literal notranslate"><span class="pre">nulls_last</span></code> parameters were added.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.db.models.Expression.reverse_ordering">
+<code class="descname">reverse_ordering</code>()<a class="headerlink" href="#django.db.models.Expression.reverse_ordering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <code class="docutils literal notranslate"><span class="pre">self</span></code> with any modifications required to reverse the sort
+order within an <code class="docutils literal notranslate"><span class="pre">order_by</span></code> call. As an example, an expression
+implementing <code class="docutils literal notranslate"><span class="pre">NULLS</span> <span class="pre">LAST</span></code> would change its value to be
+<code class="docutils literal notranslate"><span class="pre">NULLS</span> <span class="pre">FIRST</span></code>. Modifications are only required for expressions that
+implement sort order like <code class="docutils literal notranslate"><span class="pre">OrderBy</span></code>. This method is called when
+<a class="reference internal" href="querysets.html#django.db.models.query.QuerySet.reverse" title="django.db.models.query.QuerySet.reverse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reverse()</span></code></a> is called on a
+queryset.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="s-writing-your-own-query-expressions">
+<span id="writing-your-own-query-expressions"></span><h3>Writing your own Query Expressions<a class="headerlink" href="#writing-your-own-query-expressions" title="Permalink to this headline">¶</a></h3>
+<p>You can write your own query expression classes that use, and can integrate
+with, other query expressions. Let's step through an example by writing an
+implementation of the <code class="docutils literal notranslate"><span class="pre">COALESCE</span></code> SQL function, without using the built-in
+<a class="reference internal" href="#func-expressions"><span class="std std-ref">Func() expressions</span></a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">COALESCE</span></code> SQL function is defined as taking a list of columns or
+values. It will return the first column or value that isn't <code class="docutils literal notranslate"><span class="pre">NULL</span></code>.</p>
+<p>We'll start by defining the template to be used for SQL generation and
+an <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> method to set some attributes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Expression</span>
+
+<span class="k">class</span> <span class="nc">Coalesce</span><span class="p">(</span><span class="n">Expression</span><span class="p">):</span>
+    <span class="n">template</span> <span class="o">=</span> <span class="s1">&#39;COALESCE( </span><span class="si">%(expressions)s</span><span class="s1"> )&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expressions</span><span class="p">,</span> <span class="n">output_field</span><span class="p">):</span>
+      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">output_field</span><span class="o">=</span><span class="n">output_field</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">expressions</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;expressions must have at least 2 elements&#39;</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">expressions</span><span class="p">:</span>
+          <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="s1">&#39;resolve_expression&#39;</span><span class="p">):</span>
+              <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%r</span><span class="s1"> is not an Expression&#39;</span> <span class="o">%</span> <span class="n">expression</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">expressions</span> <span class="o">=</span> <span class="n">expressions</span>
+</pre></div>
+</div>
+<p>We do some basic validation on the parameters, including requiring at least
+2 columns or values, and ensuring they are expressions. We are requiring
+<code class="docutils literal notranslate"><span class="pre">output_field</span></code> here so that Django knows what kind of model field to assign
+the eventual result to.</p>
+<p>Now we implement the pre-processing and validation. Since we do not have
+any of our own validation at this point, we just delegate to the nested
+expressions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">resolve_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_joins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reuse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">summarize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">for_save</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">is_summary</span> <span class="o">=</span> <span class="n">summarize</span>
+    <span class="k">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">expression</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expressions</span><span class="p">):</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">expressions</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">expression</span><span class="o">.</span><span class="n">resolve_expression</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">allow_joins</span><span class="p">,</span> <span class="n">reuse</span><span class="p">,</span> <span class="n">summarize</span><span class="p">,</span> <span class="n">for_save</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">c</span>
+</pre></div>
+</div>
+<p>Next, we write the method responsible for generating the SQL:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">as_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">sql_expressions</span><span class="p">,</span> <span class="n">sql_params</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">expression</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">expressions</span><span class="p">:</span>
+        <span class="n">sql</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">compiler</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
+        <span class="n">sql_expressions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+        <span class="n">sql_params</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">template</span> <span class="o">=</span> <span class="n">template</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;expressions&#39;</span><span class="p">:</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sql_expressions</span><span class="p">)}</span>
+    <span class="k">return</span> <span class="n">template</span> <span class="o">%</span> <span class="n">data</span><span class="p">,</span> <span class="n">params</span>
+
+<span class="k">def</span> <span class="nf">as_oracle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Example of vendor specific handling (Oracle in this case).</span>
+<span class="sd">    Let&#39;s make the function name lowercase.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_sql</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="s1">&#39;coalesce( </span><span class="si">%(expressions)s</span><span class="s1"> )&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">as_sql()</span></code> methods can support custom keyword arguments, allowing
+<code class="docutils literal notranslate"><span class="pre">as_vendorname()</span></code> methods to override data used to generate the SQL string.
+Using <code class="docutils literal notranslate"><span class="pre">as_sql()</span></code> keyword arguments for customization is preferable to
+mutating <code class="docutils literal notranslate"><span class="pre">self</span></code> within <code class="docutils literal notranslate"><span class="pre">as_vendorname()</span></code> methods as the latter can lead to
+errors when running on different database backends. If your class relies on
+class attributes to define data, consider allowing overrides in your
+<code class="docutils literal notranslate"><span class="pre">as_sql()</span></code> method.</p>
+<p>We generate the SQL for each of the <code class="docutils literal notranslate"><span class="pre">expressions</span></code> by using the
+<code class="docutils literal notranslate"><span class="pre">compiler.compile()</span></code> method, and join the result together with commas.
+Then the template is filled out with our data and the SQL and parameters
+are returned.</p>
+<p>We've also defined a custom implementation that is specific to the Oracle
+backend. The <code class="docutils literal notranslate"><span class="pre">as_oracle()</span></code> function will be called instead of <code class="docutils literal notranslate"><span class="pre">as_sql()</span></code>
+if the Oracle backend is in use.</p>
+<p>Finally, we implement the rest of the methods that allow our query expression
+to play nice with other query expressions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_source_expressions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">expressions</span>
+
+<span class="k">def</span> <span class="nf">set_source_expressions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expressions</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">expressions</span> <span class="o">=</span> <span class="n">expressions</span>
+</pre></div>
+</div>
+<p>Let's see how it works:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">F</span><span class="p">,</span> <span class="n">Value</span><span class="p">,</span> <span class="n">CharField</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qs</span> <span class="o">=</span> <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">tagline</span><span class="o">=</span><span class="n">Coalesce</span><span class="p">([</span>
+<span class="gp">... </span>       <span class="n">F</span><span class="p">(</span><span class="s1">&#39;motto&#39;</span><span class="p">),</span>
+<span class="gp">... </span>       <span class="n">F</span><span class="p">(</span><span class="s1">&#39;ticker_name&#39;</span><span class="p">),</span>
+<span class="gp">... </span>       <span class="n">F</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">),</span>
+<span class="gp">... </span>       <span class="n">Value</span><span class="p">(</span><span class="s1">&#39;No Tagline&#39;</span><span class="p">)</span>
+<span class="gp">... </span>       <span class="p">],</span> <span class="n">output_field</span><span class="o">=</span><span class="n">CharField</span><span class="p">()))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">qs</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">tagline</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="go">Google: Do No Evil</span>
+<span class="go">Apple: AAPL</span>
+<span class="go">Yahoo: Internet Company</span>
+<span class="go">Django Software Foundation: No Tagline</span>
+</pre></div>
+</div>
+<div class="section" id="s-avoiding-sql-injection">
+<span id="s-avoiding-sql-injection-in-query-expressions"></span><span id="avoiding-sql-injection"></span><span id="avoiding-sql-injection-in-query-expressions"></span><h4>Avoiding SQL injection<a class="headerlink" href="#avoiding-sql-injection" title="Permalink to this headline">¶</a></h4>
+<p>Since a <code class="docutils literal notranslate"><span class="pre">Func</span></code>'s keyword arguments for <code class="docutils literal notranslate"><span class="pre">__init__()</span></code>  (<code class="docutils literal notranslate"><span class="pre">**extra</span></code>) and
+<code class="docutils literal notranslate"><span class="pre">as_sql()</span></code> (<code class="docutils literal notranslate"><span class="pre">**extra_context</span></code>) are interpolated into the SQL string rather
+than passed as query parameters (where the database driver would escape them),
+they must not contain untrusted user input.</p>
+<p>For example, if <code class="docutils literal notranslate"><span class="pre">substring</span></code> is user-provided, this function is vulnerable to
+SQL injection:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Func</span>
+
+<span class="k">class</span> <span class="nc">Position</span><span class="p">(</span><span class="n">Func</span><span class="p">):</span>
+    <span class="n">function</span> <span class="o">=</span> <span class="s1">&#39;POSITION&#39;</span>
+    <span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(function)s</span><span class="s2">(&#39;</span><span class="si">%(substring)s</span><span class="s2">&#39; in </span><span class="si">%(expressions)s</span><span class="s2">)&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expression</span><span class="p">,</span> <span class="n">substring</span><span class="p">):</span>
+        <span class="c1"># substring=substring is a SQL injection vulnerability!</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">substring</span><span class="o">=</span><span class="n">substring</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This function generates a SQL string without any parameters. Since <code class="docutils literal notranslate"><span class="pre">substring</span></code>
+is passed to <code class="docutils literal notranslate"><span class="pre">super().__init__()</span></code> as a keyword argument, it's interpolated
+into the SQL string before the query is sent to the database.</p>
+<p>Here's a corrected rewrite:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Position</span><span class="p">(</span><span class="n">Func</span><span class="p">):</span>
+    <span class="n">function</span> <span class="o">=</span> <span class="s1">&#39;POSITION&#39;</span>
+    <span class="n">arg_joiner</span> <span class="o">=</span> <span class="s1">&#39; IN &#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expression</span><span class="p">,</span> <span class="n">substring</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">substring</span><span class="p">,</span> <span class="n">expression</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>With <code class="docutils literal notranslate"><span class="pre">substring</span></code> instead passed as a positional argument, it'll be passed as
+a parameter in the database query.</p>
+</div>
+</div>
+<div class="section" id="s-adding-support-in-third-party-database-backends">
+<span id="adding-support-in-third-party-database-backends"></span><h3>Adding support in third-party database backends<a class="headerlink" href="#adding-support-in-third-party-database-backends" title="Permalink to this headline">¶</a></h3>
+<p>If you're using a database backend that uses a different SQL syntax for a
+certain function, you can add support for it by monkey patching a new method
+onto the function's class.</p>
+<p>Let's say we're writing a backend for Microsoft's SQL Server which uses the SQL
+<code class="docutils literal notranslate"><span class="pre">LEN</span></code> instead of <code class="docutils literal notranslate"><span class="pre">LENGTH</span></code> for the <a class="reference internal" href="database-functions.html#django.db.models.functions.Length" title="django.db.models.functions.Length"><code class="xref py py-class docutils literal notranslate"><span class="pre">Length</span></code></a> function.
+We'll monkey patch a new method called <code class="docutils literal notranslate"><span class="pre">as_sqlserver()</span></code> onto the <code class="docutils literal notranslate"><span class="pre">Length</span></code>
+class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db.models.functions</span> <span class="k">import</span> <span class="n">Length</span>
+
+<span class="k">def</span> <span class="nf">sqlserver_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_sql</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="s1">&#39;LEN&#39;</span><span class="p">)</span>
+
+<span class="n">Length</span><span class="o">.</span><span class="n">as_sqlserver</span> <span class="o">=</span> <span class="n">sqlserver_length</span>
+</pre></div>
+</div>
+<p>You can also customize the SQL using the <code class="docutils literal notranslate"><span class="pre">template</span></code> parameter of <code class="docutils literal notranslate"><span class="pre">as_sql()</span></code>.</p>
+<p>We use <code class="docutils literal notranslate"><span class="pre">as_sqlserver()</span></code> because <code class="docutils literal notranslate"><span class="pre">django.db.connection.vendor</span></code> returns
+<code class="docutils literal notranslate"><span class="pre">sqlserver</span></code> for the backend.</p>
+<p>Third-party backends can register their functions in the top level
+<code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> file of the backend package or in a top level <code class="docutils literal notranslate"><span class="pre">expressions.py</span></code>
+file (or package) that is imported from the top level <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>.</p>
+<p>For user projects wishing to patch the backend that they're using, this code
+should live in an <a class="reference internal" href="../applications.html#django.apps.AppConfig.ready" title="django.apps.AppConfig.ready"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AppConfig.ready()</span></code></a> method.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Query Expressions</a><ul>
+<li><a class="reference internal" href="#supported-arithmetic">Supported arithmetic</a></li>
+<li><a class="reference internal" href="#some-examples">Some examples</a></li>
+<li><a class="reference internal" href="#built-in-expressions">Built-in Expressions</a><ul>
+<li><a class="reference internal" href="#f-expressions"><code class="docutils literal notranslate"><span class="pre">F()</span></code> expressions</a><ul>
+<li><a class="reference internal" href="#avoiding-race-conditions-using-f">Avoiding race conditions using <code class="docutils literal notranslate"><span class="pre">F()</span></code></a></li>
+<li><a class="reference internal" href="#f-assignments-persist-after-model-save"><code class="docutils literal notranslate"><span class="pre">F()</span></code> assignments persist after <code class="docutils literal notranslate"><span class="pre">Model.save()</span></code></a></li>
+<li><a class="reference internal" href="#using-f-in-filters">Using <code class="docutils literal notranslate"><span class="pre">F()</span></code> in filters</a></li>
+<li><a class="reference internal" href="#using-f-with-annotations">Using <code class="docutils literal notranslate"><span class="pre">F()</span></code> with annotations</a></li>
+<li><a class="reference internal" href="#using-f-to-sort-null-values">Using <code class="docutils literal notranslate"><span class="pre">F()</span></code> to sort null values</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#func-expressions"><code class="docutils literal notranslate"><span class="pre">Func()</span></code> expressions</a></li>
+<li><a class="reference internal" href="#aggregate-expressions"><code class="docutils literal notranslate"><span class="pre">Aggregate()</span></code> expressions</a></li>
+<li><a class="reference internal" href="#creating-your-own-aggregate-functions">Creating your own Aggregate Functions</a></li>
+<li><a class="reference internal" href="#value-expressions"><code class="docutils literal notranslate"><span class="pre">Value()</span></code> expressions</a></li>
+<li><a class="reference internal" href="#expressionwrapper-expressions"><code class="docutils literal notranslate"><span class="pre">ExpressionWrapper()</span></code> expressions</a></li>
+<li><a class="reference internal" href="#conditional-expressions">Conditional expressions</a></li>
+<li><a class="reference internal" href="#subquery-expressions"><code class="docutils literal notranslate"><span class="pre">Subquery()</span></code> expressions</a><ul>
+<li><a class="reference internal" href="#referencing-columns-from-the-outer-queryset">Referencing columns from the outer queryset</a></li>
+<li><a class="reference internal" href="#limiting-a-subquery-to-a-single-column">Limiting a subquery to a single column</a></li>
+<li><a class="reference internal" href="#limiting-the-subquery-to-a-single-row">Limiting the subquery to a single row</a></li>
+<li><a class="reference internal" href="#exists-subqueries"><code class="docutils literal notranslate"><span class="pre">Exists()</span></code> subqueries</a></li>
+<li><a class="reference internal" href="#filtering-on-a-subquery-expression">Filtering on a <code class="docutils literal notranslate"><span class="pre">Subquery</span></code> expression</a></li>
+<li><a class="reference internal" href="#using-aggregates-within-a-subquery-expression">Using aggregates within a <code class="docutils literal notranslate"><span class="pre">Subquery</span></code> expression</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#raw-sql-expressions">Raw SQL expressions</a></li>
+<li><a class="reference internal" href="#window-functions">Window functions</a><ul>
+<li><a class="reference internal" href="#frames">Frames</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#technical-information">Technical Information</a><ul>
+<li><a class="reference internal" href="#expression-api">Expression API</a></li>
+<li><a class="reference internal" href="#writing-your-own-query-expressions">Writing your own Query Expressions</a><ul>
+<li><a class="reference internal" href="#avoiding-sql-injection">Avoiding SQL injection</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#adding-support-in-third-party-database-backends">Adding support in third-party database backends</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="lookups.html"
+                        title="previous chapter">Lookup API reference</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="conditional-expressions.html"
+                        title="next chapter">Conditional Expressions</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/ref/models/expressions.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="lookups.html" title="Lookup API reference">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="conditional-expressions.html" title="Conditional Expressions">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+1.创建应用ch01
+python manage.py startapp ch01
+
+2.应用ch01文件的说明
+1) DjangoAmple/ch01/admin.py    后台管理代码。
+2) DjangoAmple/ch01/apps.py     应用程序配置代码。
+3) DjangoAmple/ch01/models.py   模型类代码。
+4) DjangoAmple/ch01/tests.py    应用测试代码。
+5) DjangoAmple/ch01/views.py    视图代码。
+6) DjangoAmple/ch01/migrations  模型迁移记录。

@@ -1,0 +1,321 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Organization of the Django Project &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Django&#39;s security policies" href="security.html" />
+    <link rel="prev" title="Mailing lists" href="mailing-lists.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="mailing-lists.html" title="Mailing lists">previous</a>
+     |
+    <a href="index.html" title="Django internals" accesskey="U">up</a>
+   |
+    <a href="security.html" title="Django&#39;s security policies">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="internals-organization">
+            
+  <div class="section" id="s-organization-of-the-django-project">
+<span id="organization-of-the-django-project"></span><h1>Organization of the Django Project<a class="headerlink" href="#organization-of-the-django-project" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="s-principles">
+<span id="principles"></span><h2>Principles<a class="headerlink" href="#principles" title="Permalink to this headline">¶</a></h2>
+<p>The Django Project is managed by a team of volunteers pursuing three goals:</p>
+<ul class="simple">
+<li>Driving the development of the Django Web Framework,</li>
+<li>Fostering the ecosystem of Django-related software,</li>
+<li>Leading the Django community in accordance with the values described in the
+<a class="reference external" href="https://www.djangoproject.com/conduct/">Django Code of Conduct</a>.</li>
+</ul>
+<p>The Django Project isn't a legal entity. The <a class="reference external" href="https://www.djangoproject.com/foundation/">Django Software Foundation</a>, a
+non-profit organization, handles financial and legal matters related to the
+Django Project. Other than that, the Django Software Foundation lets the
+Django Project manage the development of the Django framework, its ecosystem
+and its community.</p>
+<p>The Django core team makes the decisions, nominates its new members, and
+elects its technical board. While it holds decision power in theory, it aims
+at using it as rarely as possible in practice. Rough consensus should be the
+norm and formal voting an exception.</p>
+</div>
+<div class="section" id="s-core-team">
+<span id="s-id1"></span><span id="core-team"></span><span id="id1"></span><h2>Core team<a class="headerlink" href="#core-team" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-role">
+<span id="role"></span><h3>Role<a class="headerlink" href="#role" title="Permalink to this headline">¶</a></h3>
+<p>The core team is the group of trusted volunteers who manage the Django
+Project. They assume many roles required to achieve the project's goals,
+especially those that require a high level of trust. They make the decisions
+that shape the future of the project.</p>
+<p>Core team members are expected to act as role models for the community and
+custodians of the project, on behalf of the community and all those who rely
+on Django.</p>
+<p>They will intervene, where necessary, in online discussions or at official
+Django events on the rare occasions that a situation arises that requires
+intervention.</p>
+<p>They have authority over the Django Project infrastructure, including the
+Django Project website itself, the Django GitHub organization and
+repositories, the Trac bug tracker, the mailing lists, IRC channels, etc.</p>
+</div>
+<div class="section" id="s-prerogatives">
+<span id="prerogatives"></span><h3>Prerogatives<a class="headerlink" href="#prerogatives" title="Permalink to this headline">¶</a></h3>
+<p>Core team members may participate in formal votes, typically to nominate new
+team members and to elect the technical board.</p>
+<p>Some contributions don't require commit access. Depending on the reasons why a
+contributor joins the team, they may or may not have commit permissions to the
+Django code repository.</p>
+<p>However, should the need arise, any team member may ask for commit access by
+writing to the core team's mailing list. Access will be granted unless the
+person withdraws their request or the technical board vetoes the proposal.</p>
+<p>Core team members who have commit access are referred to as &quot;committers&quot; or
+&quot;core developers&quot;.</p>
+<p>Other permissions, such as access to the servers, are granted to those who
+need them through the same process.</p>
+</div>
+<div class="section" id="s-membership">
+<span id="membership"></span><h3>Membership<a class="headerlink" href="#membership" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://www.djangoproject.com/foundation/teams/">Django team members</a>
+demonstrate:</p>
+<ul class="simple">
+<li>a good grasp of the philosophy of the Django Project</li>
+<li>a solid track record of being constructive and helpful</li>
+<li>significant contributions to the project's goals, in any form</li>
+<li>willingness to dedicate some time to improving Django</li>
+</ul>
+<p>As the project matures, contributions go way beyond code. Here's an incomplete
+list of areas where contributions may be considered for joining the core team,
+in no particular order:</p>
+<ul class="simple">
+<li>Working on community management and outreach</li>
+<li>Providing support on the mailing-lists and on IRC</li>
+<li>Triaging tickets</li>
+<li>Writing patches (code, docs, or tests)</li>
+<li>Reviewing patches (code, docs, or tests)</li>
+<li>Participating in design decisions</li>
+<li>Providing expertise in a particular domain (security, i18n, etc.)</li>
+<li>Managing the continuous integration infrastructure</li>
+<li>Managing the servers (website, tracker, documentation, etc.)</li>
+<li>Maintaining related projects (djangoproject.com site, ex-contrib apps, etc.)</li>
+<li>Creating visual designs</li>
+</ul>
+<p>Very few areas are reserved to core team members:</p>
+<ul class="simple">
+<li>Reviewing security reports</li>
+<li>Merging patches (code, docs, or tests)</li>
+<li>Packaging releases</li>
+</ul>
+<p>Core team membership acknowledges sustained and valuable efforts that align
+well with the philosophy and the goals of the Django Project.</p>
+<p>It is granted by a four fifths majority of votes cast in a core team vote and
+no veto by the technical board.</p>
+<p>Core team members are always looking for promising contributors, teaching them
+how the project is managed, and submitting their names to the core team's vote
+when they're ready. If you would like to join the core team, you can contact a
+core team member privately or ask for guidance on the <a class="reference internal" href="mailing-lists.html#django-core-mentorship-mailing-list"><span class="std std-ref">Django Core
+Mentorship mailing-list</span></a>.</p>
+<p>There's no time limit on core team membership. However, in order to provide
+the general public with a reasonable idea of how many people maintain Django,
+core team members who have stopped contributing are encouraged to declare
+themselves as &quot;past team members&quot;. Those who haven't made any non-trivial
+contribution in two years may be asked to move themselves to this category,
+and moved there if they don't respond. Past team members lose their privileges
+such as voting rights and commit access.</p>
+</div>
+</div>
+<div class="section" id="s-technical-board">
+<span id="s-id2"></span><span id="technical-board"></span><span id="id2"></span><h2>Technical board<a class="headerlink" href="#technical-board" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-id3">
+<span id="id3"></span><h3>Role<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>The technical board is a group of experienced and active committers who steer
+technical choices. Their main concern is to maintain the quality and stability
+of the Django Web Framework.</p>
+</div>
+<div class="section" id="s-id4">
+<span id="id4"></span><h3>Prerogatives<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>The technical board holds two prerogatives:</p>
+<ul class="simple">
+<li>Making major technical decisions when no consensus is found otherwise. This
+happens on the <a class="reference internal" href="mailing-lists.html#django-developers-mailing-list"><span class="std std-ref">django-developers</span></a> mailing-list.</li>
+<li>Veto a grant of commit access or remove commit access. This happens on the
+<code class="docutils literal notranslate"><span class="pre">django-core</span></code> mailing-list.</li>
+</ul>
+<p>In both cases, the technical board is a last resort. In these matters, it
+fulfills a similar function to the former Benevolent Dictators For Life.</p>
+<p>When the board wants to exercise one of these prerogatives, it must hold a
+private, simple majority vote on the resolution. The quorum is the full
+committee — each member must cast a vote or abstain explicitly. Then the board
+communicates the result, and if possible the reasons, on the appropriate
+mailing-list. There's no appeal for such decisions.</p>
+<p>In addition, at its discretion, the technical board may act in an advisory
+capacity on non-technical decisions.</p>
+</div>
+<div class="section" id="s-id5">
+<span id="id5"></span><h3>Membership<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://www.djangoproject.com/foundation/teams/#technical-board-team">The technical board</a> is an elected group of five committers. They're expected
+to be experienced but there's no formal seniority requirement.</p>
+<p>A new board is elected after each feature release of Django. The election
+process is managed by a returns officer nominated by the outgoing technical
+board. The election process works as follows:</p>
+<ol class="arabic">
+<li><p class="first">Candidates advertise their application for the technical board to the team.</p>
+<p>They must be committers already. There's no term limit for technical board
+members.</p>
+</li>
+<li><p class="first">Each team member can vote for zero to five people among the candidates.
+Candidates are ranked by the total number of votes they received.</p>
+<p>In case of a tie, the person who joined the core team earlier wins.</p>
+</li>
+</ol>
+<p>Both the application and the voting period last between one and two weeks, at
+the outgoing board's discretion.</p>
+</div>
+</div>
+<div class="section" id="s-changing-the-organization">
+<span id="changing-the-organization"></span><h2>Changing the organization<a class="headerlink" href="#changing-the-organization" title="Permalink to this headline">¶</a></h2>
+<p>Changes to this document require a four fifths majority of votes cast in a
+core team vote and no veto by the technical board.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Organization of the Django Project</a><ul>
+<li><a class="reference internal" href="#principles">Principles</a></li>
+<li><a class="reference internal" href="#core-team">Core team</a><ul>
+<li><a class="reference internal" href="#role">Role</a></li>
+<li><a class="reference internal" href="#prerogatives">Prerogatives</a></li>
+<li><a class="reference internal" href="#membership">Membership</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#technical-board">Technical board</a><ul>
+<li><a class="reference internal" href="#id3">Role</a></li>
+<li><a class="reference internal" href="#id4">Prerogatives</a></li>
+<li><a class="reference internal" href="#id5">Membership</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#changing-the-organization">Changing the organization</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="mailing-lists.html"
+                        title="previous chapter">Mailing lists</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="security.html"
+                        title="next chapter">Django's security policies</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/internals/organization.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="mailing-lists.html" title="Mailing lists">previous</a>
+     |
+    <a href="index.html" title="Django internals" accesskey="U">up</a>
+   |
+    <a href="security.html" title="Django&#39;s security policies">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

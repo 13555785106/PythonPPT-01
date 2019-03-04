@@ -1,0 +1,303 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>django.urls.base &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    <a href="../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="_modules-django-urls-base">
+            
+  <h1>Source code for django.urls.base</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">local</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="k">import</span> <span class="n">urlsplit</span><span class="p">,</span> <span class="n">urlunsplit</span>
+
+<span class="kn">from</span> <span class="nn">django.utils.encoding</span> <span class="k">import</span> <span class="n">iri_to_uri</span>
+<span class="kn">from</span> <span class="nn">django.utils.functional</span> <span class="k">import</span> <span class="n">lazy</span>
+<span class="kn">from</span> <span class="nn">django.utils.translation</span> <span class="k">import</span> <span class="n">override</span>
+
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="k">import</span> <span class="n">NoReverseMatch</span><span class="p">,</span> <span class="n">Resolver404</span>
+<span class="kn">from</span> <span class="nn">.resolvers</span> <span class="k">import</span> <span class="n">get_ns_resolver</span><span class="p">,</span> <span class="n">get_resolver</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">get_callable</span>
+
+<span class="c1"># SCRIPT_NAME prefixes for each thread are stored here. If there&#39;s no entry for</span>
+<span class="c1"># the current thread (which is the only one we ever access), it is assumed to</span>
+<span class="c1"># be empty.</span>
+<span class="n">_prefixes</span> <span class="o">=</span> <span class="n">local</span><span class="p">()</span>
+
+<span class="c1"># Overridden URLconfs for each thread are stored here.</span>
+<span class="n">_urlconfs</span> <span class="o">=</span> <span class="n">local</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="resolve"><a class="viewcode-back" href="../../../ref/urlresolvers.html#django.urls.resolve">[docs]</a><span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">urlconf</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">urlconf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">urlconf</span> <span class="o">=</span> <span class="n">get_urlconf</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">get_resolver</span><span class="p">(</span><span class="n">urlconf</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="reverse"><a class="viewcode-back" href="../../../ref/urlresolvers.html#django.urls.reverse">[docs]</a><span class="k">def</span> <span class="nf">reverse</span><span class="p">(</span><span class="n">viewname</span><span class="p">,</span> <span class="n">urlconf</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">current_app</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">urlconf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">urlconf</span> <span class="o">=</span> <span class="n">get_urlconf</span><span class="p">()</span>
+    <span class="n">resolver</span> <span class="o">=</span> <span class="n">get_resolver</span><span class="p">(</span><span class="n">urlconf</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">args</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">get_script_prefix</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">viewname</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">viewname</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">viewname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+        <span class="k">if</span> <span class="n">current_app</span><span class="p">:</span>
+            <span class="n">current_path</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+            <span class="n">current_path</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">current_path</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">resolved_path</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">ns_pattern</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">ns_converters</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">while</span> <span class="n">path</span><span class="p">:</span>
+            <span class="n">ns</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="n">current_ns</span> <span class="o">=</span> <span class="n">current_path</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span> <span class="k">if</span> <span class="n">current_path</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="c1"># Lookup the name to see if it could be an app identifier.</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">app_list</span> <span class="o">=</span> <span class="n">resolver</span><span class="o">.</span><span class="n">app_dict</span><span class="p">[</span><span class="n">ns</span><span class="p">]</span>
+                <span class="c1"># Yes! Path part matches an app in the current Resolver.</span>
+                <span class="k">if</span> <span class="n">current_ns</span> <span class="ow">and</span> <span class="n">current_ns</span> <span class="ow">in</span> <span class="n">app_list</span><span class="p">:</span>
+                    <span class="c1"># If we are reversing for a particular app, use that</span>
+                    <span class="c1"># namespace.</span>
+                    <span class="n">ns</span> <span class="o">=</span> <span class="n">current_ns</span>
+                <span class="k">elif</span> <span class="n">ns</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">app_list</span><span class="p">:</span>
+                    <span class="c1"># The name isn&#39;t shared by one of the instances (i.e.,</span>
+                    <span class="c1"># the default) so pick the first instance as the default.</span>
+                    <span class="n">ns</span> <span class="o">=</span> <span class="n">app_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">if</span> <span class="n">ns</span> <span class="o">!=</span> <span class="n">current_ns</span><span class="p">:</span>
+                <span class="n">current_path</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">extra</span><span class="p">,</span> <span class="n">resolver</span> <span class="o">=</span> <span class="n">resolver</span><span class="o">.</span><span class="n">namespace_dict</span><span class="p">[</span><span class="n">ns</span><span class="p">]</span>
+                <span class="n">resolved_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
+                <span class="n">ns_pattern</span> <span class="o">=</span> <span class="n">ns_pattern</span> <span class="o">+</span> <span class="n">extra</span>
+                <span class="n">ns_converters</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">resolver</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">converters</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">key</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">resolved_path</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">NoReverseMatch</span><span class="p">(</span>
+                        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is not a registered namespace inside &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span>
+                        <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">resolved_path</span><span class="p">))</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">NoReverseMatch</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is not a registered namespace&quot;</span> <span class="o">%</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ns_pattern</span><span class="p">:</span>
+            <span class="n">resolver</span> <span class="o">=</span> <span class="n">get_ns_resolver</span><span class="p">(</span><span class="n">ns_pattern</span><span class="p">,</span> <span class="n">resolver</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ns_converters</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+
+    <span class="k">return</span> <span class="n">iri_to_uri</span><span class="p">(</span><span class="n">resolver</span><span class="o">.</span><span class="n">_reverse_with_prefix</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+
+
+<span class="n">reverse_lazy</span> <span class="o">=</span> <span class="n">lazy</span><span class="p">(</span><span class="n">reverse</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">clear_url_caches</span><span class="p">():</span>
+    <span class="n">get_callable</span><span class="o">.</span><span class="n">cache_clear</span><span class="p">()</span>
+    <span class="n">get_resolver</span><span class="o">.</span><span class="n">cache_clear</span><span class="p">()</span>
+    <span class="n">get_ns_resolver</span><span class="o">.</span><span class="n">cache_clear</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">set_script_prefix</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the script prefix for the current thread.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">prefix</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+        <span class="n">prefix</span> <span class="o">+=</span> <span class="s1">&#39;/&#39;</span>
+    <span class="n">_prefixes</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">prefix</span>
+
+
+<div class="viewcode-block" id="get_script_prefix"><a class="viewcode-back" href="../../../ref/urlresolvers.html#django.urls.get_script_prefix">[docs]</a><span class="k">def</span> <span class="nf">get_script_prefix</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the currently active script prefix. Useful for client code that</span>
+<span class="sd">    wishes to construct their own URLs manually (although accessing the request</span>
+<span class="sd">    instance is normally going to be a lot cleaner).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_prefixes</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">clear_script_prefix</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unset the script prefix for the current thread.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">_prefixes</span><span class="o">.</span><span class="n">value</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">set_urlconf</span><span class="p">(</span><span class="n">urlconf_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the URLconf for the current thread (overriding the default one in</span>
+<span class="sd">    settings). If urlconf_name is None, revert back to the default.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">urlconf_name</span><span class="p">:</span>
+        <span class="n">_urlconfs</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">urlconf_name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_urlconfs</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">_urlconfs</span><span class="o">.</span><span class="n">value</span>
+
+
+<span class="k">def</span> <span class="nf">get_urlconf</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the root URLconf to use for the current thread if it has been</span>
+<span class="sd">    changed from the default one.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_urlconfs</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">is_valid_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">urlconf</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return True if the given path resolves against the default URL resolver,</span>
+<span class="sd">    False otherwise. This is a convenience method to make working with &quot;is</span>
+<span class="sd">    this a match?&quot; cases easier, avoiding try...except blocks.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">resolve</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">urlconf</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="n">Resolver404</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span> <span class="nf">translate_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">lang_code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a URL (absolute or relative), try to get its translated version in</span>
+<span class="sd">    the `lang_code` language (either by i18n_patterns or by translated regex).</span>
+<span class="sd">    Return the original URL if no translated version is found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parsed</span> <span class="o">=</span> <span class="n">urlsplit</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">resolve</span><span class="p">(</span><span class="n">parsed</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">Resolver404</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">to_be_reversed</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">namespace</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">url_name</span><span class="p">)</span> <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">namespace</span> <span class="k">else</span> <span class="n">match</span><span class="o">.</span><span class="n">url_name</span>
+        <span class="k">with</span> <span class="n">override</span><span class="p">(</span><span class="n">lang_code</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">reverse</span><span class="p">(</span><span class="n">to_be_reversed</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">match</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">match</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">NoReverseMatch</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">urlunsplit</span><span class="p">((</span><span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">netloc</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">fragment</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">url</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    <a href="../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

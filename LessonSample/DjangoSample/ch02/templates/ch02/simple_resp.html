@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>simple_resp</title>
+</head>
+<body>
+{{message}}<br>
+Cookie 中的name属性:<span id="nameInCookie"></span><br>
+<script>
+ function getCookie(cookieName) {
+    var strCookie = document.cookie;
+    var arrCookie = strCookie.split("; ");
+    for(var i = 0; i < arrCookie.length; i++){
+        var arr = arrCookie[i].split("=");
+        if(cookieName == arr[0]){
+            return arr[1];
+        }
+    }
+    return "";
+}
+document.getElementById("nameInCookie").innerHTML=decodeURI(getCookie('name'))
+
+
+
+
+</script>
+
+</body>
+</html>

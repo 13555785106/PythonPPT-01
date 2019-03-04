@@ -1,0 +1,246 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Django 1.7.1 release notes &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Django 1.7 release notes" href="1.7.html" />
+    <link rel="prev" title="Django 1.7.2 release notes" href="1.7.2.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="1.7.2.html" title="Django 1.7.2 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.7.html" title="Django 1.7 release notes">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="releases-1.7.1">
+            
+  <div class="section" id="s-django-1-7-1-release-notes">
+<span id="django-1-7-1-release-notes"></span><h1>Django 1.7.1 release notes<a class="headerlink" href="#django-1-7-1-release-notes" title="Permalink to this headline">¶</a></h1>
+<p><em>October 22, 2014</em></p>
+<p>Django 1.7.1 fixes several bugs in 1.7.</p>
+<div class="section" id="s-bugfixes">
+<span id="bugfixes"></span><h2>Bugfixes<a class="headerlink" href="#bugfixes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Allowed related many-to-many fields to be referenced in the admin
+(<a class="reference external" href="https://code.djangoproject.com/ticket/23604">#23604</a>).</li>
+<li>Added a more helpful error message if you try to migrate an app without first
+creating the <code class="docutils literal notranslate"><span class="pre">contenttypes</span></code> table (<a class="reference external" href="https://code.djangoproject.com/ticket/22411">#22411</a>).</li>
+<li>Modified migrations dependency algorithm to avoid possible infinite recursion.</li>
+<li>Fixed a <code class="docutils literal notranslate"><span class="pre">UnicodeDecodeError</span></code> when the <code class="docutils literal notranslate"><span class="pre">flush</span></code> error message contained
+Unicode characters (<a class="reference external" href="https://code.djangoproject.com/ticket/22882">#22882</a>).</li>
+<li>Reinstated missing <code class="docutils literal notranslate"><span class="pre">CHECK</span></code> SQL clauses which were omitted on some backends
+when not using migrations (<a class="reference external" href="https://code.djangoproject.com/ticket/23416">#23416</a>).</li>
+<li>Fixed serialization of <code class="docutils literal notranslate"><span class="pre">type</span></code> objects in migrations (<a class="reference external" href="https://code.djangoproject.com/ticket/22951">#22951</a>).</li>
+<li>Allowed inline and hidden references to admin fields (<a class="reference external" href="https://code.djangoproject.com/ticket/23431">#23431</a>).</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">&#64;deconstructible</span></code> decorator now fails with a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if the
+decorated object cannot automatically be imported (<a class="reference external" href="https://code.djangoproject.com/ticket/23418">#23418</a>).</li>
+<li>Fixed a typo in an <code class="docutils literal notranslate"><span class="pre">inlineformset_factory()</span></code> error message that caused a
+crash (<a class="reference external" href="https://code.djangoproject.com/ticket/23451">#23451</a>).</li>
+<li>Restored the ability to use <a class="reference internal" href="../ref/settings.html#std:setting-ABSOLUTE_URL_OVERRIDES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">ABSOLUTE_URL_OVERRIDES</span></code></a> with the
+<code class="docutils literal notranslate"><span class="pre">'auth.User'</span></code> model (<a class="reference external" href="https://code.djangoproject.com/ticket/11775">#11775</a>). As a side effect, the setting now
+adds a <code class="docutils literal notranslate"><span class="pre">get_absolute_url()</span></code> method to any model that appears in
+<code class="docutils literal notranslate"><span class="pre">ABSOLUTE_URL_OVERRIDES</span></code> but doesn't define <code class="docutils literal notranslate"><span class="pre">get_absolute_url()</span></code>.</li>
+<li>Avoided masking some <cite>ImportError</cite> exceptions during application loading
+(<a class="reference external" href="https://code.djangoproject.com/ticket/22920">#22920</a>).</li>
+<li>Empty <code class="docutils literal notranslate"><span class="pre">index_together</span></code> or <code class="docutils literal notranslate"><span class="pre">unique_together</span></code> model options no longer
+results in infinite migrations (<a class="reference external" href="https://code.djangoproject.com/ticket/23452">#23452</a>).</li>
+<li>Fixed crash in <code class="docutils literal notranslate"><span class="pre">contrib.sitemaps</span></code> if <code class="docutils literal notranslate"><span class="pre">lastmod</span></code> returned a <code class="docutils literal notranslate"><span class="pre">date</span></code> rather
+than a <code class="docutils literal notranslate"><span class="pre">datetime</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/23403">#23403</a>).</li>
+<li>Allowed migrations to work with <code class="docutils literal notranslate"><span class="pre">app_label</span></code>s that have the same last
+part (e.g. <code class="docutils literal notranslate"><span class="pre">django.contrib.auth</span></code> and <code class="docutils literal notranslate"><span class="pre">vendor.auth</span></code>) (<a class="reference external" href="https://code.djangoproject.com/ticket/23483">#23483</a>).</li>
+<li>Restored the ability to deepcopy <code class="docutils literal notranslate"><span class="pre">F</span></code> objects (<a class="reference external" href="https://code.djangoproject.com/ticket/23492">#23492</a>).</li>
+<li>Formats for Welsh (<code class="docutils literal notranslate"><span class="pre">cy</span></code>) and several Chinese locales (<code class="docutils literal notranslate"><span class="pre">zh_CN</span></code>,
+<code class="docutils literal notranslate"><span class="pre">zh_Hans</span></code>, <code class="docutils literal notranslate"><span class="pre">zh_Hant</span></code> and <code class="docutils literal notranslate"><span class="pre">zh_TW</span></code>) have been added. Formats for
+Macedonian have been fixed (trailing dot removed, <a class="reference external" href="https://code.djangoproject.com/ticket/23532">#23532</a>).</li>
+<li>Added quoting of constraint names in the SQL generated by migrations to
+prevent crash with uppercase characters in the name (<a class="reference external" href="https://code.djangoproject.com/ticket/23065">#23065</a>).</li>
+<li>Fixed renaming of models with a self-referential many-to-many field
+(<code class="docutils literal notranslate"><span class="pre">ManyToManyField('self')</span></code>) (<a class="reference external" href="https://code.djangoproject.com/ticket/23503">#23503</a>).</li>
+<li>Added the <a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.InlineModelAdmin.get_extra" title="django.contrib.admin.InlineModelAdmin.get_extra"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_extra()</span></code></a>,
+<a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.InlineModelAdmin.get_max_num" title="django.contrib.admin.InlineModelAdmin.get_max_num"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_max_num()</span></code></a>, and
+<a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.InlineModelAdmin.get_min_num" title="django.contrib.admin.InlineModelAdmin.get_min_num"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_min_num()</span></code></a> hooks to
+<a class="reference internal" href="../ref/contrib/contenttypes.html#django.contrib.contenttypes.admin.GenericInlineModelAdmin" title="django.contrib.contenttypes.admin.GenericInlineModelAdmin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericInlineModelAdmin</span></code></a>
+(<a class="reference external" href="https://code.djangoproject.com/ticket/23539">#23539</a>).</li>
+<li>Made <code class="docutils literal notranslate"><span class="pre">migrations.RunSQL</span></code> no longer require percent sign escaping. This is
+now consistent with <code class="docutils literal notranslate"><span class="pre">cursor.execute()</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/23426">#23426</a>).</li>
+<li>Made the <a class="reference internal" href="../ref/settings.html#std:setting-TEST_SERIALIZE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">SERIALIZE</span></code></a> entry in the
+<a class="reference internal" href="../ref/settings.html#std:setting-DATABASE-TEST"><code class="xref std std-setting docutils literal notranslate"><span class="pre">TEST</span></code></a> dictionary usable (<a class="reference external" href="https://code.djangoproject.com/ticket/23421">#23421</a>).</li>
+<li>Fixed bug in migrations that prevented foreign key constraints to unmanaged
+models with a custom primary key (<a class="reference external" href="https://code.djangoproject.com/ticket/23415">#23415</a>).</li>
+<li>Added <code class="docutils literal notranslate"><span class="pre">SchemaEditor</span></code> for MySQL GIS backend so that spatial indexes will be
+created for apps with migrations (<a class="reference external" href="https://code.djangoproject.com/ticket/23538">#23538</a>).</li>
+<li>Added <code class="docutils literal notranslate"><span class="pre">SchemaEditor</span></code> for Oracle GIS backend so that spatial metadata and
+indexes will be created for apps with migrations (<a class="reference external" href="https://code.djangoproject.com/ticket/23537">#23537</a>).</li>
+<li>Coerced the <code class="docutils literal notranslate"><span class="pre">related_name</span></code> model field option to unicode during migration
+generation to generate migrations that work with both Python 2 and 3
+(<a class="reference external" href="https://code.djangoproject.com/ticket/23455">#23455</a>).</li>
+<li>Fixed <code class="docutils literal notranslate"><span class="pre">MigrationWriter</span></code> to handle builtin types without imports
+(<a class="reference external" href="https://code.djangoproject.com/ticket/23560">#23560</a>).</li>
+<li>Fixed <code class="docutils literal notranslate"><span class="pre">deepcopy</span></code> on <code class="docutils literal notranslate"><span class="pre">ErrorList</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/23594">#23594</a>).</li>
+<li>Made the <a class="reference internal" href="../ref/contrib/admin/admindocs.html#module-django.contrib.admindocs" title="django.contrib.admindocs: Django's admin documentation generator."><code class="xref py py-mod docutils literal notranslate"><span class="pre">admindocs</span></code></a> view to browse view details check
+if the view specified in the URL exists in the URLconf. Previously it was
+possible to import arbitrary packages from the Python path. This was not
+considered a security issue because <code class="docutils literal notranslate"><span class="pre">admindocs</span></code> is only accessible to staff
+users (<a class="reference external" href="https://code.djangoproject.com/ticket/23601">#23601</a>).</li>
+<li>Fixed <code class="docutils literal notranslate"><span class="pre">UnicodeDecodeError</span></code> crash in <code class="docutils literal notranslate"><span class="pre">AdminEmailHandler</span></code> with non-ASCII
+characters in the request (<a class="reference external" href="https://code.djangoproject.com/ticket/23593">#23593</a>).</li>
+<li>Fixed missing <code class="docutils literal notranslate"><span class="pre">get_or_create</span></code> and <code class="docutils literal notranslate"><span class="pre">update_or_create</span></code> on related managers
+causing <code class="docutils literal notranslate"><span class="pre">IntegrityError</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/23611">#23611</a>).</li>
+<li>Made <a class="reference internal" href="../ref/utils.html#django.utils.http.urlsafe_base64_decode" title="django.utils.http.urlsafe_base64_decode"><code class="xref py py-func docutils literal notranslate"><span class="pre">urlsafe_base64_decode()</span></code></a> return the proper
+type (byte string) on Python 3 (<a class="reference external" href="https://code.djangoproject.com/ticket/23333">#23333</a>).</li>
+<li><a class="reference internal" href="../ref/django-admin.html#django-admin-makemigrations"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">makemigrations</span></code></a> can now serialize timezone-aware values
+(<a class="reference external" href="https://code.djangoproject.com/ticket/23365">#23365</a>).</li>
+<li>Added a prompt to the migrations questioner when removing the null constraint
+from a field to prevent an IntegrityError on existing NULL rows
+(<a class="reference external" href="https://code.djangoproject.com/ticket/23609">#23609</a>).</li>
+<li>Fixed generic relations in <code class="docutils literal notranslate"><span class="pre">ModelAdmin.list_filter</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/23616">#23616</a>).</li>
+<li>Restored RFC compliance for the SMTP backend on Python 3 (<a class="reference external" href="https://code.djangoproject.com/ticket/23063">#23063</a>).</li>
+<li>Fixed a crash while parsing cookies containing invalid content
+(<a class="reference external" href="https://code.djangoproject.com/ticket/23638">#23638</a>).</li>
+<li>The system check framework now raises error <strong>models.E020</strong> when the
+class method <code class="docutils literal notranslate"><span class="pre">Model.check()</span></code> is unreachable (<a class="reference external" href="https://code.djangoproject.com/ticket/23615">#23615</a>).</li>
+<li>Made the Oracle test database creation drop the test user in the event of an
+unclean exit of a previous test run (<a class="reference external" href="https://code.djangoproject.com/ticket/23649">#23649</a>).</li>
+<li>Fixed <a class="reference internal" href="../ref/django-admin.html#django-admin-makemigrations"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">makemigrations</span></code></a> to detect changes to
+<a class="reference internal" href="../ref/models/options.html#django.db.models.Options.db_table" title="django.db.models.Options.db_table"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Meta.db_table</span></code></a> (<a class="reference external" href="https://code.djangoproject.com/ticket/23629">#23629</a>).</li>
+<li>Fixed a regression when feeding the Django test client with an empty data
+string (<a class="reference external" href="https://code.djangoproject.com/ticket/21740">#21740</a>).</li>
+<li>Fixed a regression in <a class="reference internal" href="../ref/django-admin.html#django-admin-makemessages"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">makemessages</span></code></a> where static files were
+unexpectedly ignored (<a class="reference external" href="https://code.djangoproject.com/ticket/23583">#23583</a>).</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Django 1.7.1 release notes</a><ul>
+<li><a class="reference internal" href="#bugfixes">Bugfixes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="1.7.2.html"
+                        title="previous chapter">Django 1.7.2 release notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="1.7.html"
+                        title="next chapter">Django 1.7 release notes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/releases/1.7.1.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="1.7.2.html" title="Django 1.7.2 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.7.html" title="Django 1.7 release notes">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

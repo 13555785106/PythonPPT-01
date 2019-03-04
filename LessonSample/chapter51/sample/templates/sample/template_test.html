@@ -1,0 +1,27 @@
+{% extends "./base.html" %}
+{% load humanize %}
+{% block title %}模板测试标题{% endblock title%}
+{% block content %}
+
+{{ STATIC_URL }}<br/>{{  MEDIA_URL }}<br/>
+{% filter lower %}
+{% for fruit in fruits %}
+{% cycle 'row1' 'row2' as rowcolors silent%}
+{{forloop.counter}} {{ rowcolors }} {{fruit}}<br/>
+{% cycle rowcolors %}
+{{forloop.counter}} {{ rowcolors }} {{fruit}}<br/>
+{% endfor %}
+{% endfilter %}
+
+{% for book in books|dictsort:"author.age" %}
+* {{ book.title }} ({{ book.author.name }})
+{% endfor %}
+{% load static %}
+{{ 1000000|ordinal }}
+
+{% load mytags %}
+{% myupper %}
+TT tT t t t {{ fruits.0 }}
+{% endmyupper %}
+
+{% endblock content%}

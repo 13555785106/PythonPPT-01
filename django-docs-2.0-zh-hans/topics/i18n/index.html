@@ -1,0 +1,216 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>国际化和本地化 &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Translation" href="translation.html" />
+    <link rel="prev" title="Sending email" href="../email.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="../email.html" title="Sending email">previous</a>
+     |
+    <a href="../index.html" title="Using Django" accesskey="U">up</a>
+   |
+    <a href="translation.html" title="Translation">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="topics-i18n-index">
+            
+  <div class="section" id="s-internationalization-and-localization">
+<span id="internationalization-and-localization"></span><h1>国际化和本地化<a class="headerlink" href="#internationalization-and-localization" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="s-overview">
+<span id="overview"></span><h2>概况<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>The goal of internationalization and localization is to allow a single Web
+application to offer its content in languages and formats tailored to the
+audience.</p>
+<p>Django has full support for <a class="reference internal" href="translation.html"><span class="doc">translation of text</span></a>, <a class="reference internal" href="formatting.html"><span class="doc">formatting of dates, times and numbers</span></a>, and <a class="reference internal" href="timezones.html"><span class="doc">time zones</span></a>.</p>
+<p>Essentially, Django does two things:</p>
+<ul class="simple">
+<li>It allows developers and template authors to specify which parts of their apps
+should be translated or formatted for local languages and cultures.</li>
+<li>It uses these hooks to localize Web apps for particular users according to
+their preferences.</li>
+</ul>
+<p>Obviously, translation depends on the target language, and formatting usually
+depends on the target country. This information is provided by browsers in
+the <code class="docutils literal notranslate"><span class="pre">Accept-Language</span></code> header. However, the time zone isn't readily available.</p>
+</div>
+<div class="section" id="s-definitions">
+<span id="definitions"></span><h2>Definitions<a class="headerlink" href="#definitions" title="Permalink to this headline">¶</a></h2>
+<p>The words &quot;internationalization&quot; and &quot;localization&quot; often cause confusion;
+here's a simplified definition:</p>
+<dl class="glossary docutils">
+<dt id="term-internationalization">internationalization</dt>
+<dd>Preparing the software for localization. Usually done by developers.</dd>
+<dt id="term-localization">localization</dt>
+<dd>Writing the translations and local formats. Usually done by translators.</dd>
+</dl>
+<p>More details can be found in the <a class="reference external" href="https://www.w3.org/International/questions/qa-i18n">W3C Web Internationalization FAQ</a>, the <a class="reference external" href="https://en.wikipedia.org/wiki/Internationalization_and_localization">Wikipedia article</a> or the <a class="reference external" href="https://www.gnu.org/software/gettext/manual/gettext.html#Concepts">GNU gettext documentation</a>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Translation and formatting are controlled by <a class="reference internal" href="../../ref/settings.html#std:setting-USE_I18N"><code class="xref std std-setting docutils literal notranslate"><span class="pre">USE_I18N</span></code></a> and
+<a class="reference internal" href="../../ref/settings.html#std:setting-USE_L10N"><code class="xref std std-setting docutils literal notranslate"><span class="pre">USE_L10N</span></code></a> settings respectively. However, both features involve
+internationalization and localization. The names of the settings are an
+unfortunate result of Django's history.</p>
+</div>
+<p>Here are some other terms that will help us to handle a common language:</p>
+<dl class="glossary docutils">
+<dt id="term-locale-name">locale name</dt>
+<dd>A locale name, either a language specification of the form <code class="docutils literal notranslate"><span class="pre">ll</span></code> or a
+combined language and country specification of the form <code class="docutils literal notranslate"><span class="pre">ll_CC</span></code>.
+Examples: <code class="docutils literal notranslate"><span class="pre">it</span></code>, <code class="docutils literal notranslate"><span class="pre">de_AT</span></code>, <code class="docutils literal notranslate"><span class="pre">es</span></code>, <code class="docutils literal notranslate"><span class="pre">pt_BR</span></code>. The language part is
+always in lower case and the country part in upper case. The separator
+is an underscore.</dd>
+<dt id="term-language-code">language code</dt>
+<dd>Represents the name of a language. Browsers send the names of the
+languages they accept in the <code class="docutils literal notranslate"><span class="pre">Accept-Language</span></code> HTTP header using this
+format. Examples: <code class="docutils literal notranslate"><span class="pre">it</span></code>, <code class="docutils literal notranslate"><span class="pre">de-at</span></code>, <code class="docutils literal notranslate"><span class="pre">es</span></code>, <code class="docutils literal notranslate"><span class="pre">pt-br</span></code>. Language codes
+are generally represented in lower-case, but the HTTP <code class="docutils literal notranslate"><span class="pre">Accept-Language</span></code>
+header is case-insensitive. The separator is a dash.</dd>
+<dt id="term-message-file">message file</dt>
+<dd>A message file is a plain-text file, representing a single language,
+that contains all available <a class="reference internal" href="#term-translation-string"><span class="xref std std-term">translation strings</span></a> and how they should be represented in the given
+language. Message files have a <code class="docutils literal notranslate"><span class="pre">.po</span></code> file extension.</dd>
+<dt id="term-translation-string">translation string</dt>
+<dd>A literal that can be translated.</dd>
+<dt id="term-format-file">format file</dt>
+<dd>A format file is a Python module that defines the data formats for a given
+locale.</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">国际化和本地化</a><ul>
+<li><a class="reference internal" href="#overview">概况</a></li>
+<li><a class="reference internal" href="#definitions">Definitions</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../email.html"
+                        title="previous chapter">Sending email</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="translation.html"
+                        title="next chapter">Translation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/topics/i18n/index.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="../email.html" title="Sending email">previous</a>
+     |
+    <a href="../index.html" title="Using Django" accesskey="U">up</a>
+   |
+    <a href="translation.html" title="Translation">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>Django教程首页</title>
+    <style>
+
+table{border-collapse:collapse;}
+table,th, td{border: 1px solid black;}
+table th{color:#FF9933}
+table td{font-size:10px}
+    </style>
+</head>
+<body>
+<h2 style="text-align:center">
+    欢迎使用Django
+</h2>
+<table align="center">
+    <tr><th>序号</th><th>示例</th><th>描述</th></tr>
+    <tr><td>1</td><td><a href="/sample/helloworld01">Hello World 1</a></td><td>最简单的请求回应,输出 "Hello World!"</td></tr>
+    <tr><td>2</td><td><a href="/sample/helloworld02">Hello World 2</a></td><td>使用模板输出输出 "Hello World!"</td></tr>
+    <tr><td>3</td><td><a href="/sample/reqattrs">reqattrs</a></td><td>django.http.HttpRequest对象中的常用属性</td></tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>custom_tags</title>
+</head>
+<body>
+{% load custom_tags %}
+
+{{line|cut:'o'}}
+<br/>
+{% current_time '%Y-%m-%d' %}
+<br/>
+{% minustwo 9 %}
+<br/>
+
+{% show_ul fruits %}
+<br/>
+
+{% upper %}This will appear in uppercase.{% endupper %}
+</body>
+</html>

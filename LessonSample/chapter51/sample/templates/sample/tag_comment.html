@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tag comment</title>
+</head>
+<body>
+<p>{{ pub_date|date:"Y年m月d日 H时i分s秒 u微秒" }}</p>
+{% comment "Optional note" %}
+    <p>{{ pub_date|date:"Y年m月d日 H时i分s秒 u微秒" }}</p>
+{% endcomment %}
+</body>
+</html>

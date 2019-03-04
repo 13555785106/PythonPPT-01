@@ -1,0 +1,233 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>为模型提供初始化的数据 &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="基于 Jython 的 Django" href="jython.html" />
+    <link rel="prev" title="Error reporting" href="error-reporting.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="error-reporting.html" title="Error reporting">previous</a>
+     |
+    <a href="index.html" title="&amp;quot;How-to&amp;quot; guides" accesskey="U">up</a>
+   |
+    <a href="jython.html" title="基于 Jython 的 Django">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="howto-initial-data">
+            
+  <div class="section" id="s-providing-initial-data-for-models">
+<span id="providing-initial-data-for-models"></span><h1>为模型提供初始化的数据<a class="headerlink" href="#providing-initial-data-for-models" title="Permalink to this headline">¶</a></h1>
+<p>It's sometimes useful to pre-populate your database with hard-coded data when
+you're first setting up an app. You can provide initial data with migrations or
+fixtures.</p>
+<div class="section" id="s-providing-initial-data-with-migrations">
+<span id="providing-initial-data-with-migrations"></span><h2>Providing initial data with migrations<a class="headerlink" href="#providing-initial-data-with-migrations" title="Permalink to this headline">¶</a></h2>
+<p>If you want to automatically load initial data for an app, create a
+<a class="reference internal" href="../topics/migrations.html#data-migrations"><span class="std std-ref">data migration</span></a>. Migrations are run when setting up the
+test database, so the data will be available there, subject to <a class="reference internal" href="../topics/testing/overview.html#test-case-serialized-rollback"><span class="std std-ref">some
+limitations</span></a>.</p>
+</div>
+<div class="section" id="s-providing-data-with-fixtures">
+<span id="s-initial-data-via-fixtures"></span><span id="providing-data-with-fixtures"></span><span id="initial-data-via-fixtures"></span><h2>Providing data with fixtures<a class="headerlink" href="#providing-data-with-fixtures" title="Permalink to this headline">¶</a></h2>
+<p>You can also provide data using fixtures, however, this data isn't loaded
+automatically, except if you use <a class="reference internal" href="../topics/testing/tools.html#django.test.TransactionTestCase.fixtures" title="django.test.TransactionTestCase.fixtures"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TransactionTestCase.fixtures</span></code></a>.</p>
+<p>A fixture is a collection of data that Django knows how to import into a
+database. The most straightforward way of creating a fixture if you've already
+got some data is to use the <a class="reference internal" href="../ref/django-admin.html#django-admin-dumpdata"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">manage.py</span> <span class="pre">dumpdata</span></code></a> command.
+Or, you can write fixtures by hand; fixtures can be written as JSON, XML or YAML
+(with <a class="reference external" href="https://www.pyyaml.org/">PyYAML</a> installed) documents. The <a class="reference internal" href="../topics/serialization.html"><span class="doc">serialization documentation</span></a> has more details about each of these supported
+<a class="reference internal" href="../topics/serialization.html#serialization-formats"><span class="std std-ref">serialization formats</span></a>.</p>
+<p>As an example, though, here's what a fixture for a simple <code class="docutils literal notranslate"><span class="pre">Person</span></code> model might
+look like in JSON:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+  <span class="p">{</span>
+    <span class="s2">&quot;model&quot;</span><span class="o">:</span> <span class="s2">&quot;myapp.person&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pk&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;fields&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;first_name&quot;</span><span class="o">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;last_name&quot;</span><span class="o">:</span> <span class="s2">&quot;Lennon&quot;</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="s2">&quot;model&quot;</span><span class="o">:</span> <span class="s2">&quot;myapp.person&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pk&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;fields&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;first_name&quot;</span><span class="o">:</span> <span class="s2">&quot;Paul&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;last_name&quot;</span><span class="o">:</span> <span class="s2">&quot;McCartney&quot;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>And here's that same fixture as YAML:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>- model: myapp.person
+  pk: 1
+  fields:
+    first_name: John
+    last_name: Lennon
+- model: myapp.person
+  pk: 2
+  fields:
+    first_name: Paul
+    last_name: McCartney
+</pre></div>
+</div>
+<p>You'll store this data in a <code class="docutils literal notranslate"><span class="pre">fixtures</span></code> directory inside your app.</p>
+<p>Loading data is easy: just call <a class="reference internal" href="../ref/django-admin.html#django-admin-loaddata"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">manage.py</span> <span class="pre">loaddata</span></code></a>
+<code class="docutils literal notranslate"><span class="pre">&lt;fixturename&gt;</span></code>, where <code class="docutils literal notranslate"><span class="pre">&lt;fixturename&gt;</span></code> is the name of the fixture file
+you've created. Each time you run <a class="reference internal" href="../ref/django-admin.html#django-admin-loaddata"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">loaddata</span></code></a>, the data will be read
+from the fixture and re-loaded into the database. Note this means that if you
+change one of the rows created by a fixture and then run <a class="reference internal" href="../ref/django-admin.html#django-admin-loaddata"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">loaddata</span></code></a>
+again, you'll wipe out any changes you've made.</p>
+<div class="section" id="s-where-django-finds-fixture-files">
+<span id="where-django-finds-fixture-files"></span><h3>Where Django finds fixture files<a class="headerlink" href="#where-django-finds-fixture-files" title="Permalink to this headline">¶</a></h3>
+<p>By default, Django looks in the <code class="docutils literal notranslate"><span class="pre">fixtures</span></code> directory inside each app for
+fixtures. You can set the <a class="reference internal" href="../ref/settings.html#std:setting-FIXTURE_DIRS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">FIXTURE_DIRS</span></code></a> setting to a list of
+additional directories where Django should look.</p>
+<p>When running <a class="reference internal" href="../ref/django-admin.html#django-admin-loaddata"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">manage.py</span> <span class="pre">loaddata</span></code></a>, you can also
+specify a path to a fixture file, which overrides searching the usual
+directories.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Fixtures are also used by the <a class="reference internal" href="../topics/testing/tools.html#topics-testing-fixtures"><span class="std std-ref">testing framework</span></a> to help set up a consistent test environment.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">为模型提供初始化的数据</a><ul>
+<li><a class="reference internal" href="#providing-initial-data-with-migrations">Providing initial data with migrations</a></li>
+<li><a class="reference internal" href="#providing-data-with-fixtures">Providing data with fixtures</a><ul>
+<li><a class="reference internal" href="#where-django-finds-fixture-files">Where Django finds fixture files</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="error-reporting.html"
+                        title="previous chapter">Error reporting</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="jython.html"
+                        title="next chapter">基于 Jython 的 Django</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/howto/initial-data.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="error-reporting.html" title="Error reporting">previous</a>
+     |
+    <a href="index.html" title="&amp;quot;How-to&amp;quot; guides" accesskey="U">up</a>
+   |
+    <a href="jython.html" title="基于 Jython 的 Django">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

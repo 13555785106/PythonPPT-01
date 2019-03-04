@@ -1,0 +1,383 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>初识 Django &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="快速安装指南" href="install.html" />
+    <link rel="prev" title="开始" href="index.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="index.html" title="开始">previous</a>
+     |
+    <a href="index.html" title="开始" accesskey="U">up</a>
+   |
+    <a href="install.html" title="快速安装指南">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="intro-overview">
+            
+  <div class="section" id="s-django-at-a-glance">
+<span id="django-at-a-glance"></span><h1>初识 Django<a class="headerlink" href="#django-at-a-glance" title="Permalink to this headline">¶</a></h1>
+<p>Django 最初被设计用于具有快速开发需求的新闻类站点，目的是要实现简单快捷的网站开发。以下内容简要介绍了如何使用 Django 实现一个数据库驱动的 Web 应用。</p>
+<p>为了让您充分理解 Django 的工作原理，这份文档为您详细描述了相关的技术细节，不过这并不是一份入门教程或者是参考文档（我们当然也为您准备了这些）。如果您想要马上开始一个项目，可以从 <a class="reference internal" href="tutorial01.html"><span class="doc">实例教程</span></a> 开始入手，或者直接开始阅读详细的 <a class="reference internal" href="../topics/index.html"><span class="doc">参考文档</span></a> 。</p>
+<div class="section" id="s-design-your-model">
+<span id="design-your-model"></span><h2>设计模型<a class="headerlink" href="#design-your-model" title="Permalink to this headline">¶</a></h2>
+<p>Django 无需数据库就可以使用，它提供了 <a class="reference external" href="https://en.wikipedia.org/wiki/Object-relational_mapping">对象关系映射器</a> 通过此技术，你可以使用 Python 代码来描述数据库结构。</p>
+<p>你可以使用强大的 <a class="reference internal" href="../topics/db/models.html"><span class="doc">数据-模型语句</span></a> 来描述你的数据模型，这解决了数年以来在数据库模式中的难题。以下是一个简明的例子：</p>
+<div class="highlight-default snippet"><div class="snippet-filename">mysite/news/models.py</div>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="k">import</span> <span class="n">models</span>
+
+<span class="k">class</span> <span class="nc">Reporter</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">full_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_name</span>
+
+<span class="k">class</span> <span class="nc">Article</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">pub_date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
+    <span class="n">headline</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">reporter</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Reporter</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">headline</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-install-it">
+<span id="install-it"></span><h2>应用数据模型<a class="headerlink" href="#install-it" title="Permalink to this headline">¶</a></h2>
+<p>然后，运行 Django 命令行工具来创建数据库表：</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python manage.py migrate
+</pre></div>
+</div>
+<p>这个 <a class="reference internal" href="../ref/django-admin.html#django-admin-migrate"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">migrate</span></code></a> 命令查找你所有可用的模型并将在数据库中创建那些不存在的表，还可提供了可选的 <a class="reference internal" href="../topics/migrations.html"><span class="doc">丰富 schema 控制</span></a>。</p>
+</div>
+<div class="section" id="s-enjoy-the-free-api">
+<span id="enjoy-the-free-api"></span><h2>享用便捷的 API<a class="headerlink" href="#enjoy-the-free-api" title="Permalink to this headline">¶</a></h2>
+<p>接下来，你就可以使用一套便捷而丰富的 <a class="reference internal" href="../topics/db/queries.html"><span class="doc">Python API</span></a>  访问你的数据。这些 API 是即时创建的，而不用显式的生成代码：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import the models we created from our &quot;news&quot; app</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">news.models</span> <span class="kn">import</span> <span class="n">Article</span><span class="p">,</span> <span class="n">Reporter</span>
+
+<span class="c1"># No reporters are in the system yet.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Reporter</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="o">&lt;</span><span class="n">QuerySet</span> <span class="p">[]</span><span class="o">&gt;</span>
+
+<span class="c1"># Create a new Reporter.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">r</span> <span class="o">=</span> <span class="n">Reporter</span><span class="p">(</span><span class="n">full_name</span><span class="o">=</span><span class="s1">&#39;John Smith&#39;</span><span class="p">)</span>
+
+<span class="c1"># Save the object into the database. You have to call save() explicitly.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">r</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<span class="c1"># Now it has an ID.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">r</span><span class="o">.</span><span class="n">id</span>
+<span class="mi">1</span>
+
+<span class="c1"># Now the new reporter is in the database.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Reporter</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="o">&lt;</span><span class="n">QuerySet</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">Reporter</span><span class="p">:</span> <span class="n">John</span> <span class="n">Smith</span><span class="o">&gt;</span><span class="p">]</span><span class="o">&gt;</span>
+
+<span class="c1"># Fields are represented as attributes on the Python object.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">r</span><span class="o">.</span><span class="n">full_name</span>
+<span class="s1">&#39;John Smith&#39;</span>
+
+<span class="c1"># Django provides a rich database lookup API.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Reporter</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">Reporter</span><span class="p">:</span> <span class="n">John</span> <span class="n">Smith</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Reporter</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">full_name__startswith</span><span class="o">=</span><span class="s1">&#39;John&#39;</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">Reporter</span><span class="p">:</span> <span class="n">John</span> <span class="n">Smith</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Reporter</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">full_name__contains</span><span class="o">=</span><span class="s1">&#39;mith&#39;</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">Reporter</span><span class="p">:</span> <span class="n">John</span> <span class="n">Smith</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Reporter</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+    <span class="o">...</span>
+<span class="n">DoesNotExist</span><span class="p">:</span> <span class="n">Reporter</span> <span class="n">matching</span> <span class="n">query</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">exist</span><span class="o">.</span>
+
+<span class="c1"># Create an article.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a</span> <span class="o">=</span> <span class="n">Article</span><span class="p">(</span><span class="n">pub_date</span><span class="o">=</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">(),</span> <span class="n">headline</span><span class="o">=</span><span class="s1">&#39;Django is cool&#39;</span><span class="p">,</span>
+<span class="o">...</span>     <span class="n">content</span><span class="o">=</span><span class="s1">&#39;Yeah.&#39;</span><span class="p">,</span> <span class="n">reporter</span><span class="o">=</span><span class="n">r</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<span class="c1"># Now the article is in the database.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="o">&lt;</span><span class="n">QuerySet</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">Article</span><span class="p">:</span> <span class="n">Django</span> <span class="ow">is</span> <span class="n">cool</span><span class="o">&gt;</span><span class="p">]</span><span class="o">&gt;</span>
+
+<span class="c1"># Article objects get API access to related Reporter objects.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">r</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">reporter</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">r</span><span class="o">.</span><span class="n">full_name</span>
+<span class="s1">&#39;John Smith&#39;</span>
+
+<span class="c1"># And vice versa: Reporter objects get API access to Article objects.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">r</span><span class="o">.</span><span class="n">article_set</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="o">&lt;</span><span class="n">QuerySet</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">Article</span><span class="p">:</span> <span class="n">Django</span> <span class="ow">is</span> <span class="n">cool</span><span class="o">&gt;</span><span class="p">]</span><span class="o">&gt;</span>
+
+<span class="c1"># The API follows relationships as far as you need, performing efficient</span>
+<span class="c1"># JOINs for you behind the scenes.</span>
+<span class="c1"># This finds all articles by a reporter whose name starts with &quot;John&quot;.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">reporter__full_name__startswith</span><span class="o">=</span><span class="s1">&#39;John&#39;</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">QuerySet</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">Article</span><span class="p">:</span> <span class="n">Django</span> <span class="ow">is</span> <span class="n">cool</span><span class="o">&gt;</span><span class="p">]</span><span class="o">&gt;</span>
+
+<span class="c1"># Change an object by altering its attributes and calling save().</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">r</span><span class="o">.</span><span class="n">full_name</span> <span class="o">=</span> <span class="s1">&#39;Billy Goat&#39;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">r</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<span class="c1"># Delete an object with delete().</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">r</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-a-dynamic-admin-interface-it-s-not-just-scaffolding-it-s-the-whole-house">
+<span id="a-dynamic-admin-interface-it-s-not-just-scaffolding-it-s-the-whole-house"></span><h2>一个动态管理接口：并非徒有其表<a class="headerlink" href="#a-dynamic-admin-interface-it-s-not-just-scaffolding-it-s-the-whole-house" title="Permalink to this headline">¶</a></h2>
+<p>当你的模型完成定义，Django 就会自动生成一个专业的生产级 <a class="reference internal" href="../ref/contrib/admin/index.html"><span class="doc">管理接口</span></a>  ——一个允许认证用户添加、更改和删除对象的 Web 站点。你只需简单的在 admin 站点上注册你的模型即可：</p>
+<div class="highlight-default snippet"><div class="snippet-filename">mysite/news/models.py</div>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="k">import</span> <span class="n">models</span>
+
+<span class="k">class</span> <span class="nc">Article</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">pub_date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
+    <span class="n">headline</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">reporter</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Reporter</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default snippet"><div class="snippet-filename">mysite/news/admin.py</div>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="k">import</span> <span class="n">admin</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">models</span>
+
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Article</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>这样设计所遵循的理念是，站点编辑人员可以是你的员工、你的客户、或者就是你自己——而你大概不会乐意去废半天劲创建一个只有内容管理功能的后台管理界面。</p>
+<p>创建 Django 应用的典型流程是，先建立数据模型，然后搭建管理站点，之后你的员工（或者客户）就可以向网站里填充数据了。后面我们会谈到如何展示这些数据。</p>
+</div>
+<div class="section" id="s-design-your-urls">
+<span id="design-your-urls"></span><h2>规划 URLs<a class="headerlink" href="#design-your-urls" title="Permalink to this headline">¶</a></h2>
+<p>简洁优雅的 URL 规划对于一个高质量 Web 应用来说至关重要。Django 推崇优美的 URL 设计，所以不要把诸如 <code class="docutils literal notranslate"><span class="pre">.php</span></code> 和  <code class="docutils literal notranslate"><span class="pre">.asp</span></code>  之类的冗余的后缀放到 URL 里。</p>
+<p>为了设计你自己的 <a class="reference internal" href="../topics/http/urls.html"><span class="doc">URLconf</span></a> ，你需要创建一个叫做 URLconf 的 Python 模块。这是网站的目录，它包含了一张 URL 和 Python 回调函数之间的映射表。URLconf 也有利于将 Python 代码与 URL 进行解耦（译注：使各个模块分离，独立）。</p>
+<p>下面这个 URLconf 适用于前面 <code class="docutils literal notranslate"><span class="pre">Reporter</span></code>/<code class="docutils literal notranslate"><span class="pre">Article</span></code>  的例子：</p>
+<div class="highlight-default snippet"><div class="snippet-filename">mysite/news/urls.py</div>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.urls</span> <span class="k">import</span> <span class="n">path</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">views</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;articles/&lt;int:year&gt;/&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">year_archive</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;articles/&lt;int:year&gt;/&lt;int:month&gt;/&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">month_archive</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;articles/&lt;int:year&gt;/&lt;int:month&gt;/&lt;int:pk&gt;/&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">article_detail</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>上述代码将 URL 路径映射到了 Python 回调函数（“视图”）。路径字符串使用参数标签从URL中“捕获”相应值。当用户请求页面时，Django 依次遍历路径，直至初次匹配到了请求的 URL。(如果无匹配项，Django 会调用 404 视图。) 这个过程非常快，因为路径在加载时就编译成了正则表达式。</p>
+<p>一旦有 URL 路径匹配成功，Django 会调用相应的视图函数。每个视图函数会接受一个请求对象——包含请求元信息——以及在匹配式中获取的参数值。</p>
+<p>例如，当用户请求了这样的 URL &quot;/articles/2005/05/39323/&quot;，Django 会调用 <code class="docutils literal notranslate"><span class="pre">news.views.article_detail(request,</span> <span class="pre">year=2005,</span> <span class="pre">month=5,</span> <span class="pre">pk=39323)</span></code>。</p>
+</div>
+<div class="section" id="s-write-your-views">
+<span id="write-your-views"></span><h2>编写视图<a class="headerlink" href="#write-your-views" title="Permalink to this headline">¶</a></h2>
+<p>视图函数的执行结果只可能有两种：返回一个包含请求页面元素的 <a class="reference internal" href="../ref/request-response.html#django.http.HttpResponse" title="django.http.HttpResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">HttpResponse</span></code></a>  对象，或者是抛出 <a class="reference internal" href="../topics/http/views.html#django.http.Http404" title="django.http.Http404"><code class="xref py py-class docutils literal notranslate"><span class="pre">Http404</span></code></a>  这类异常。至于执行过程中的其它的动作则由你决定。</p>
+<p>通常来说，一个视图的工作就是：从参数获取数据，装载一个模板，然后将根据获取的数据对模板进行渲染。下面是一个 <code class="docutils literal notranslate"><span class="pre">year_archive</span></code> 的视图样例：</p>
+<div class="highlight-default snippet"><div class="snippet-filename">mysite/news/views.py</div>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="k">import</span> <span class="n">render</span>
+
+<span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">Article</span>
+
+<span class="k">def</span> <span class="nf">year_archive</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">year</span><span class="p">):</span>
+    <span class="n">a_list</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pub_date__year</span><span class="o">=</span><span class="n">year</span><span class="p">)</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="n">year</span><span class="p">,</span> <span class="s1">&#39;article_list&#39;</span><span class="p">:</span> <span class="n">a_list</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;news/year_archive.html&#39;</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>这个例子使用了 Django <a class="reference internal" href="../topics/templates.html"><span class="doc">模板系统</span></a> ，它有着很多强大的功能，而且使用起来足够简单，即使不是程序员也可轻松使用。</p>
+</div>
+<div class="section" id="s-design-your-templates">
+<span id="design-your-templates"></span><h2>设计模板<a class="headerlink" href="#design-your-templates" title="Permalink to this headline">¶</a></h2>
+<p>上面的代码加载了 <code class="docutils literal notranslate"><span class="pre">news/year_archive.html</span></code> 模板。</p>
+<p>Django 允许设置搜索模板路径，这样可以最小化模板之间的冗余。在 Django 设置中，你可以通过 <a class="reference internal" href="../ref/settings.html#std:setting-TEMPLATES-DIRS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DIRS</span></code></a>  参数指定一个路径列表用于检索模板。如果第一个路径中不包含任何模板，就继续检查第二个，以此类推。</p>
+<p>让我们假设 <code class="docutils literal notranslate"><span class="pre">news/year_archive.html</span></code> 模板已经找到。它看起来可能是下面这个样子：</p>
+<div class="highlight-html+django snippet"><div class="snippet-filename">mysite/news/templates/news/year_archive.html</div>
+<div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">extends</span> <span class="s2">&quot;base.html&quot;</span> <span class="cp">%}</span>
+
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">title</span> <span class="cp">%}</span>Articles for <span class="cp">{{</span> <span class="nv">year</span> <span class="cp">}}{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">content</span> <span class="cp">%}</span>
+<span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Articles for <span class="cp">{{</span> <span class="nv">year</span> <span class="cp">}}</span><span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+
+<span class="cp">{%</span> <span class="k">for</span> <span class="nv">article</span> <span class="k">in</span> <span class="nv">article_list</span> <span class="cp">%}</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span><span class="cp">{{</span> <span class="nv">article.headline</span> <span class="cp">}}</span><span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>By <span class="cp">{{</span> <span class="nv">article.reporter.full_name</span> <span class="cp">}}</span><span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Published <span class="cp">{{</span> <span class="nv">article.pub_date</span><span class="o">|</span><span class="nf">date</span><span class="s2">:&quot;F j, Y&quot;</span> <span class="cp">}}</span><span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+</pre></div>
+</div>
+<p>我们看到变量都被双大括号括起来了。 <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">article.headline</span> <span class="pre">}}</span></code>  的意思是“输出 article 的 headline 属性值”。这个“点”还有更多的用途，比如查找字典键值、查找索引和函数调用。</p>
+<p>我们注意到 <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">article.pub_date|date:&quot;F</span> <span class="pre">j,</span> <span class="pre">Y&quot;</span> <span class="pre">}}</span></code>  使用了 Unix 风格的“管道符”（“|”字符）。这是一个模板过滤器，用于过滤变量值。在这里过滤器将一个 Python datetime 对象转化为指定的格式（就像 PHP 中的日期函数那样）。</p>
+<p>你可以将多个过滤器连在一起使用。你还可以使用你 <a class="reference internal" href="../howto/custom-template-tags.html#howto-writing-custom-template-filters"><span class="std std-ref">自定义的模板过滤器</span></a> 。你甚至可以自己编写 <a class="reference internal" href="../howto/custom-template-tags.html"><span class="doc">自定义的模板标签</span></a> ，相关的 Python 代码会在使用标签时在后台运行。</p>
+<p>Django 使用了 ''模板继承'' 的概念。这就是 <code class="docutils literal notranslate"><span class="pre">{%</span> <span class="pre">extends</span> <span class="pre">&quot;base.html&quot;</span> <span class="pre">%}</span></code> 的作用。它的含义是''先加载名为 base 的模板，并且用下面的标记块对模板中定义的标记块进行填充''。简而言之，模板继承可以使模板间的冗余内容最小化：每个模板只需包含与其它文档有区别的内容。</p>
+<p>下面是 base.html 可能的样子，它使用了 <a class="reference internal" href="../howto/static-files/index.html"><span class="doc">静态文件</span></a> ：</p>
+<div class="highlight-html+django snippet"><div class="snippet-filename">mysite/templates/base.html</div>
+<div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">load</span> <span class="nv">static</span> <span class="cp">%}</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span><span class="cp">{%</span> <span class="k">block</span> <span class="nv">title</span> <span class="cp">%}{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;</span><span class="cp">{%</span> <span class="k">static</span> <span class="s2">&quot;images/sitelogo.png&quot;</span> <span class="cp">%}</span><span class="s">&quot;</span> <span class="na">alt</span><span class="o">=</span><span class="s">&quot;Logo&quot;</span> <span class="p">/&gt;</span>
+    <span class="cp">{%</span> <span class="k">block</span> <span class="nv">content</span> <span class="cp">%}{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>简而言之，它定义了这个网站的外观（利用网站的 logo），并且给子模板们挖好了可以填的”坑“。这也让网站的改版变得简单无比——你只需更改这个根模板文件即可。</p>
+<p>它还可以让你利用不同的基础模板并重用子模板创建一个网站的多个版本。Django 的创建者已经利用这一技术来创造了明显不同的手机版本的网站——只需创建一个新的基础模板。</p>
+<p>注意，你并不是非得使用 Django 的模板系统，你可以使用其它你喜欢的模板系统。尽管 Django 的模板系统与其模型层能够集成得很好，但这不意味着你必须使用它。同样，你可以不使用 Django 的数据库 API。你可以用其他的数据库抽象层，像是直接读取 XML 文件，亦或直接读取磁盘文件，你可以使用任何方式。Django 的任何组成——模型、视图和模板——都是独立的。</p>
+</div>
+<div class="section" id="s-this-is-just-the-surface">
+<span id="this-is-just-the-surface"></span><h2>这仅是基本入门知识<a class="headerlink" href="#this-is-just-the-surface" title="Permalink to this headline">¶</a></h2>
+<p>以上只是 Django 的功能性概述。Django 还有更多实用的特性：</p>
+<ul class="simple">
+<li><a class="reference internal" href="../topics/cache.html"><span class="doc">缓存框架</span></a>  可以与 memcached 或其它后端集成。</li>
+<li><a class="reference internal" href="../ref/contrib/syndication.html"><span class="doc">聚合器框架</span></a>  可以通过简单编写一个 Python 类来推送 RRS 和 Atom。</li>
+<li>更多令人心动的自动化管理功能：概述里面仅仅浅尝辄止。</li>
+</ul>
+<p>接下来您可以 <a class="reference external" href="https://www.djangoproject.com/download/">下载 Django</a> ，阅读 <a class="reference internal" href="tutorial01.html"><span class="doc">实例教程</span></a> ，然后加入我们的 <a class="reference external" href="https://www.djangoproject.com/community/">社区</a> ！感谢您的关注！</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">初识 Django</a><ul>
+<li><a class="reference internal" href="#design-your-model">设计模型</a></li>
+<li><a class="reference internal" href="#install-it">应用数据模型</a></li>
+<li><a class="reference internal" href="#enjoy-the-free-api">享用便捷的 API</a></li>
+<li><a class="reference internal" href="#a-dynamic-admin-interface-it-s-not-just-scaffolding-it-s-the-whole-house">一个动态管理接口：并非徒有其表</a></li>
+<li><a class="reference internal" href="#design-your-urls">规划 URLs</a></li>
+<li><a class="reference internal" href="#write-your-views">编写视图</a></li>
+<li><a class="reference internal" href="#design-your-templates">设计模板</a></li>
+<li><a class="reference internal" href="#this-is-just-the-surface">这仅是基本入门知识</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">开始</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="next chapter">快速安装指南</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/intro/overview.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="index.html" title="开始">previous</a>
+     |
+    <a href="index.html" title="开始" accesskey="U">up</a>
+   |
+    <a href="install.html" title="快速安装指南">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

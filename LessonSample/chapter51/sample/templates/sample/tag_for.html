@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tag for</title>
+</head>
+<body>
+<hr/>
+{% for fruit in fruits %}
+{{forloop.counter}}.{{fruit}}<br/>
+{% endfor%}
+<hr/>
+{% for fruit in fruits reversed%}
+{{forloop.revcounter}}.{{fruit}}<br/>
+{% endfor%}
+<hr/>
+{% for animal in animals %}
+{{animal}}<br/>
+{% empty %}
+没有动物
+{% endfor %}
+<hr/>
+</body>
+</html>

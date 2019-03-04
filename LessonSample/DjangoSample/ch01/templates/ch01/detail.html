@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>详细信息</title>
+</head>
+<body>
+
+<table align="center" border="1">
+    <tr>
+        <td>
+
+            <h1 align="center">{{ question.question_text }}</h1>
+
+            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+            <form action="{% url 'ch01:vote' question.id %}" method="post">
+                {% csrf_token %}
+                {% for choice in question.choice_set.all %}
+                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}"/>
+                <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br/>
+                {% endfor %}
+                <input type="submit" value="投票"/>
+            </form>
+
+        </td>
+    </tr>
+</table>
+</body>
+</html>

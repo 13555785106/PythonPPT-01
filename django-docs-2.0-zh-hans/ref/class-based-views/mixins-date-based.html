@@ -1,0 +1,559 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Date-based mixins &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Class-based generic views - flattened index" href="flattened-index.html" />
+    <link rel="prev" title="Editing mixins" href="mixins-editing.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="mixins-editing.html" title="Editing mixins">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="flattened-index.html" title="Class-based generic views - flattened index">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="ref-class-based-views-mixins-date-based">
+            
+  <div class="section" id="s-date-based-mixins">
+<span id="date-based-mixins"></span><h1>Date-based mixins<a class="headerlink" href="#date-based-mixins" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">All the date formatting attributes in these mixins use
+<a class="reference external" href="https://docs.python.org/3/library/time.html#time.strftime" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">strftime()</span></code></a> format characters. Do not try to use the format
+characters from the <a class="reference internal" href="../templates/builtins.html#std:templatetag-now"><code class="xref std std-ttag docutils literal notranslate"><span class="pre">now</span></code></a> template tag as they are not compatible.</p>
+</div>
+<div class="section" id="s-yearmixin">
+<span id="yearmixin"></span><h2><code class="docutils literal notranslate"><span class="pre">YearMixin</span></code><a class="headerlink" href="#yearmixin" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.views.generic.dates.YearMixin">
+<em class="property">class </em><code class="descname">YearMixin</code><a class="reference internal" href="../../_modules/django/views/generic/dates.html#YearMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.YearMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>A mixin that can be used to retrieve and provide parsing information for a
+year component of a date.</p>
+<p><strong>Methods and Attributes</strong></p>
+<dl class="attribute">
+<dt id="django.views.generic.dates.YearMixin.year_format">
+<code class="descname">year_format</code><a class="headerlink" href="#django.views.generic.dates.YearMixin.year_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference external" href="https://docs.python.org/3/library/time.html#time.strftime" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">strftime()</span></code></a> format to use when parsing the year.
+By default, this is <code class="docutils literal notranslate"><span class="pre">'%Y'</span></code>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.views.generic.dates.YearMixin.year">
+<code class="descname">year</code><a class="headerlink" href="#django.views.generic.dates.YearMixin.year" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Optional</strong> The value for the year, as a string. By default, set to
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, which means the year will be determined using other means.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.YearMixin.get_year_format">
+<code class="descname">get_year_format</code>()<a class="reference internal" href="../../_modules/django/views/generic/dates.html#YearMixin.get_year_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.YearMixin.get_year_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the <a class="reference external" href="https://docs.python.org/3/library/time.html#time.strftime" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">strftime()</span></code></a> format to use when parsing the
+year. Returns <a class="reference internal" href="#django.views.generic.dates.YearMixin.year_format" title="django.views.generic.dates.YearMixin.year_format"><code class="xref py py-attr docutils literal notranslate"><span class="pre">year_format</span></code></a> by default.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.YearMixin.get_year">
+<code class="descname">get_year</code>()<a class="reference internal" href="../../_modules/django/views/generic/dates.html#YearMixin.get_year"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.YearMixin.get_year" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the year for which this view will display data, as a string.
+Tries the following sources, in order:</p>
+<ul class="simple">
+<li>The value of the <a class="reference internal" href="#django.views.generic.dates.YearMixin.year" title="django.views.generic.dates.YearMixin.year"><code class="xref py py-attr docutils literal notranslate"><span class="pre">YearMixin.year</span></code></a> attribute.</li>
+<li>The value of the <code class="docutils literal notranslate"><span class="pre">year</span></code> argument captured in the URL pattern.</li>
+<li>The value of the <code class="docutils literal notranslate"><span class="pre">year</span></code> <code class="docutils literal notranslate"><span class="pre">GET</span></code> query argument.</li>
+</ul>
+<p>Raises a 404 if no valid year specification can be found.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.YearMixin.get_next_year">
+<code class="descname">get_next_year</code>(<em>date</em>)<a class="reference internal" href="../../_modules/django/views/generic/dates.html#YearMixin.get_next_year"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.YearMixin.get_next_year" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a date object containing the first day of the year after the
+date provided. This function can also return <code class="docutils literal notranslate"><span class="pre">None</span></code> or raise an
+<a class="reference internal" href="../../topics/http/views.html#django.http.Http404" title="django.http.Http404"><code class="xref py py-class docutils literal notranslate"><span class="pre">Http404</span></code></a> exception, depending on the values of
+<a class="reference internal" href="#django.views.generic.dates.BaseDateListView.allow_empty" title="django.views.generic.dates.BaseDateListView.allow_empty"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_empty</span></code></a> and
+<a class="reference internal" href="#django.views.generic.dates.DateMixin.allow_future" title="django.views.generic.dates.DateMixin.allow_future"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_future</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.YearMixin.get_previous_year">
+<code class="descname">get_previous_year</code>(<em>date</em>)<a class="reference internal" href="../../_modules/django/views/generic/dates.html#YearMixin.get_previous_year"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.YearMixin.get_previous_year" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a date object containing the first day of the year before the
+date provided. This function can also return <code class="docutils literal notranslate"><span class="pre">None</span></code> or raise an
+<a class="reference internal" href="../../topics/http/views.html#django.http.Http404" title="django.http.Http404"><code class="xref py py-class docutils literal notranslate"><span class="pre">Http404</span></code></a> exception, depending on the values of
+<a class="reference internal" href="#django.views.generic.dates.BaseDateListView.allow_empty" title="django.views.generic.dates.BaseDateListView.allow_empty"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_empty</span></code></a> and
+<a class="reference internal" href="#django.views.generic.dates.DateMixin.allow_future" title="django.views.generic.dates.DateMixin.allow_future"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_future</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="s-monthmixin">
+<span id="monthmixin"></span><h2><code class="docutils literal notranslate"><span class="pre">MonthMixin</span></code><a class="headerlink" href="#monthmixin" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.views.generic.dates.MonthMixin">
+<em class="property">class </em><code class="descname">MonthMixin</code><a class="reference internal" href="../../_modules/django/views/generic/dates.html#MonthMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.MonthMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>A mixin that can be used to retrieve and provide parsing information for a
+month component of a date.</p>
+<p><strong>Methods and Attributes</strong></p>
+<dl class="attribute">
+<dt id="django.views.generic.dates.MonthMixin.month_format">
+<code class="descname">month_format</code><a class="headerlink" href="#django.views.generic.dates.MonthMixin.month_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference external" href="https://docs.python.org/3/library/time.html#time.strftime" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">strftime()</span></code></a> format to use when parsing the month. By
+default, this is <code class="docutils literal notranslate"><span class="pre">'%b'</span></code>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.views.generic.dates.MonthMixin.month">
+<code class="descname">month</code><a class="headerlink" href="#django.views.generic.dates.MonthMixin.month" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Optional</strong> The value for the month, as a string. By default, set to
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, which means the month will be determined using other means.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.MonthMixin.get_month_format">
+<code class="descname">get_month_format</code>()<a class="reference internal" href="../../_modules/django/views/generic/dates.html#MonthMixin.get_month_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.MonthMixin.get_month_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the <a class="reference external" href="https://docs.python.org/3/library/time.html#time.strftime" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">strftime()</span></code></a> format to use when parsing the
+month. Returns <a class="reference internal" href="#django.views.generic.dates.MonthMixin.month_format" title="django.views.generic.dates.MonthMixin.month_format"><code class="xref py py-attr docutils literal notranslate"><span class="pre">month_format</span></code></a> by default.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.MonthMixin.get_month">
+<code class="descname">get_month</code>()<a class="reference internal" href="../../_modules/django/views/generic/dates.html#MonthMixin.get_month"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.MonthMixin.get_month" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the month for which this view will display data, as a string.
+Tries the following sources, in order:</p>
+<ul class="simple">
+<li>The value of the <a class="reference internal" href="#django.views.generic.dates.MonthMixin.month" title="django.views.generic.dates.MonthMixin.month"><code class="xref py py-attr docutils literal notranslate"><span class="pre">MonthMixin.month</span></code></a> attribute.</li>
+<li>The value of the <code class="docutils literal notranslate"><span class="pre">month</span></code> argument captured in the URL pattern.</li>
+<li>The value of the <code class="docutils literal notranslate"><span class="pre">month</span></code> <code class="docutils literal notranslate"><span class="pre">GET</span></code> query argument.</li>
+</ul>
+<p>Raises a 404 if no valid month specification can be found.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.MonthMixin.get_next_month">
+<code class="descname">get_next_month</code>(<em>date</em>)<a class="reference internal" href="../../_modules/django/views/generic/dates.html#MonthMixin.get_next_month"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.MonthMixin.get_next_month" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a date object containing the first day of the month after the
+date provided. This function can also return <code class="docutils literal notranslate"><span class="pre">None</span></code> or raise an
+<a class="reference internal" href="../../topics/http/views.html#django.http.Http404" title="django.http.Http404"><code class="xref py py-class docutils literal notranslate"><span class="pre">Http404</span></code></a> exception, depending on the values of
+<a class="reference internal" href="#django.views.generic.dates.BaseDateListView.allow_empty" title="django.views.generic.dates.BaseDateListView.allow_empty"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_empty</span></code></a> and
+<a class="reference internal" href="#django.views.generic.dates.DateMixin.allow_future" title="django.views.generic.dates.DateMixin.allow_future"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_future</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.MonthMixin.get_previous_month">
+<code class="descname">get_previous_month</code>(<em>date</em>)<a class="reference internal" href="../../_modules/django/views/generic/dates.html#MonthMixin.get_previous_month"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.MonthMixin.get_previous_month" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a date object containing the first day of the month before the
+date provided. This function can also return <code class="docutils literal notranslate"><span class="pre">None</span></code> or raise an
+<a class="reference internal" href="../../topics/http/views.html#django.http.Http404" title="django.http.Http404"><code class="xref py py-class docutils literal notranslate"><span class="pre">Http404</span></code></a> exception, depending on the values of
+<a class="reference internal" href="#django.views.generic.dates.BaseDateListView.allow_empty" title="django.views.generic.dates.BaseDateListView.allow_empty"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_empty</span></code></a> and
+<a class="reference internal" href="#django.views.generic.dates.DateMixin.allow_future" title="django.views.generic.dates.DateMixin.allow_future"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_future</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="s-daymixin">
+<span id="daymixin"></span><h2><code class="docutils literal notranslate"><span class="pre">DayMixin</span></code><a class="headerlink" href="#daymixin" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.views.generic.dates.DayMixin">
+<em class="property">class </em><code class="descname">DayMixin</code><a class="reference internal" href="../../_modules/django/views/generic/dates.html#DayMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.DayMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>A mixin that can be used to retrieve and provide parsing information for a
+day component of a date.</p>
+<p><strong>Methods and Attributes</strong></p>
+<dl class="attribute">
+<dt id="django.views.generic.dates.DayMixin.day_format">
+<code class="descname">day_format</code><a class="headerlink" href="#django.views.generic.dates.DayMixin.day_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference external" href="https://docs.python.org/3/library/time.html#time.strftime" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">strftime()</span></code></a> format to use when parsing the day. By
+default, this is <code class="docutils literal notranslate"><span class="pre">'%d'</span></code>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.views.generic.dates.DayMixin.day">
+<code class="descname">day</code><a class="headerlink" href="#django.views.generic.dates.DayMixin.day" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Optional</strong> The value for the day, as a string. By default, set to
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, which means the day will be determined using other means.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.DayMixin.get_day_format">
+<code class="descname">get_day_format</code>()<a class="reference internal" href="../../_modules/django/views/generic/dates.html#DayMixin.get_day_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.DayMixin.get_day_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the <a class="reference external" href="https://docs.python.org/3/library/time.html#time.strftime" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">strftime()</span></code></a> format to use when parsing the day.
+Returns <a class="reference internal" href="#django.views.generic.dates.DayMixin.day_format" title="django.views.generic.dates.DayMixin.day_format"><code class="xref py py-attr docutils literal notranslate"><span class="pre">day_format</span></code></a> by default.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.DayMixin.get_day">
+<code class="descname">get_day</code>()<a class="reference internal" href="../../_modules/django/views/generic/dates.html#DayMixin.get_day"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.DayMixin.get_day" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the day for which this view will display data, as a string.
+Tries the following sources, in order:</p>
+<ul class="simple">
+<li>The value of the <a class="reference internal" href="#django.views.generic.dates.DayMixin.day" title="django.views.generic.dates.DayMixin.day"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DayMixin.day</span></code></a> attribute.</li>
+<li>The value of the <code class="docutils literal notranslate"><span class="pre">day</span></code> argument captured in the URL pattern.</li>
+<li>The value of the <code class="docutils literal notranslate"><span class="pre">day</span></code> <code class="docutils literal notranslate"><span class="pre">GET</span></code> query argument.</li>
+</ul>
+<p>Raises a 404 if no valid day specification can be found.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.DayMixin.get_next_day">
+<code class="descname">get_next_day</code>(<em>date</em>)<a class="reference internal" href="../../_modules/django/views/generic/dates.html#DayMixin.get_next_day"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.DayMixin.get_next_day" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a date object containing the next valid day after the date
+provided. This function can also return <code class="docutils literal notranslate"><span class="pre">None</span></code> or raise an
+<a class="reference internal" href="../../topics/http/views.html#django.http.Http404" title="django.http.Http404"><code class="xref py py-class docutils literal notranslate"><span class="pre">Http404</span></code></a> exception, depending on the values of
+<a class="reference internal" href="#django.views.generic.dates.BaseDateListView.allow_empty" title="django.views.generic.dates.BaseDateListView.allow_empty"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_empty</span></code></a> and
+<a class="reference internal" href="#django.views.generic.dates.DateMixin.allow_future" title="django.views.generic.dates.DateMixin.allow_future"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_future</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.DayMixin.get_previous_day">
+<code class="descname">get_previous_day</code>(<em>date</em>)<a class="reference internal" href="../../_modules/django/views/generic/dates.html#DayMixin.get_previous_day"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.DayMixin.get_previous_day" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a date object containing the previous valid day. This function
+can also return <code class="docutils literal notranslate"><span class="pre">None</span></code> or raise an <a class="reference internal" href="../../topics/http/views.html#django.http.Http404" title="django.http.Http404"><code class="xref py py-class docutils literal notranslate"><span class="pre">Http404</span></code></a>
+exception, depending on the values of
+<a class="reference internal" href="#django.views.generic.dates.BaseDateListView.allow_empty" title="django.views.generic.dates.BaseDateListView.allow_empty"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_empty</span></code></a> and
+<a class="reference internal" href="#django.views.generic.dates.DateMixin.allow_future" title="django.views.generic.dates.DateMixin.allow_future"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_future</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="s-weekmixin">
+<span id="weekmixin"></span><h2><code class="docutils literal notranslate"><span class="pre">WeekMixin</span></code><a class="headerlink" href="#weekmixin" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.views.generic.dates.WeekMixin">
+<em class="property">class </em><code class="descname">WeekMixin</code><a class="reference internal" href="../../_modules/django/views/generic/dates.html#WeekMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.WeekMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>A mixin that can be used to retrieve and provide parsing information for a
+week component of a date.</p>
+<p><strong>Methods and Attributes</strong></p>
+<dl class="attribute">
+<dt id="django.views.generic.dates.WeekMixin.week_format">
+<code class="descname">week_format</code><a class="headerlink" href="#django.views.generic.dates.WeekMixin.week_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference external" href="https://docs.python.org/3/library/time.html#time.strftime" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">strftime()</span></code></a> format to use when parsing the week. By
+default, this is <code class="docutils literal notranslate"><span class="pre">'%U'</span></code>, which means the week starts on Sunday. Set
+it to <code class="docutils literal notranslate"><span class="pre">'%W'</span></code> if your week starts on Monday.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.views.generic.dates.WeekMixin.week">
+<code class="descname">week</code><a class="headerlink" href="#django.views.generic.dates.WeekMixin.week" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Optional</strong> The value for the week, as a string. By default, set to
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, which means the week will be determined using other means.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.WeekMixin.get_week_format">
+<code class="descname">get_week_format</code>()<a class="reference internal" href="../../_modules/django/views/generic/dates.html#WeekMixin.get_week_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.WeekMixin.get_week_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the <a class="reference external" href="https://docs.python.org/3/library/time.html#time.strftime" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">strftime()</span></code></a> format to use when parsing the
+week. Returns <a class="reference internal" href="#django.views.generic.dates.WeekMixin.week_format" title="django.views.generic.dates.WeekMixin.week_format"><code class="xref py py-attr docutils literal notranslate"><span class="pre">week_format</span></code></a> by default.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.WeekMixin.get_week">
+<code class="descname">get_week</code>()<a class="reference internal" href="../../_modules/django/views/generic/dates.html#WeekMixin.get_week"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.WeekMixin.get_week" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the week for which this view will display data, as a string.
+Tries the following sources, in order:</p>
+<ul class="simple">
+<li>The value of the <a class="reference internal" href="#django.views.generic.dates.WeekMixin.week" title="django.views.generic.dates.WeekMixin.week"><code class="xref py py-attr docutils literal notranslate"><span class="pre">WeekMixin.week</span></code></a> attribute.</li>
+<li>The value of the <code class="docutils literal notranslate"><span class="pre">week</span></code> argument captured in the URL pattern</li>
+<li>The value of the <code class="docutils literal notranslate"><span class="pre">week</span></code> <code class="docutils literal notranslate"><span class="pre">GET</span></code> query argument.</li>
+</ul>
+<p>Raises a 404 if no valid week specification can be found.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.WeekMixin.get_next_week">
+<code class="descname">get_next_week</code>(<em>date</em>)<a class="reference internal" href="../../_modules/django/views/generic/dates.html#WeekMixin.get_next_week"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.WeekMixin.get_next_week" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a date object containing the first day of the week after the
+date provided. This function can also return <code class="docutils literal notranslate"><span class="pre">None</span></code> or raise an
+<a class="reference internal" href="../../topics/http/views.html#django.http.Http404" title="django.http.Http404"><code class="xref py py-class docutils literal notranslate"><span class="pre">Http404</span></code></a> exception, depending on the values of
+<a class="reference internal" href="#django.views.generic.dates.BaseDateListView.allow_empty" title="django.views.generic.dates.BaseDateListView.allow_empty"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_empty</span></code></a> and
+<a class="reference internal" href="#django.views.generic.dates.DateMixin.allow_future" title="django.views.generic.dates.DateMixin.allow_future"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_future</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.WeekMixin.get_prev_week">
+<code class="descname">get_prev_week</code>(<em>date</em>)<a class="headerlink" href="#django.views.generic.dates.WeekMixin.get_prev_week" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a date object containing the first day of the week before the
+date provided. This function can also return <code class="docutils literal notranslate"><span class="pre">None</span></code> or raise an
+<a class="reference internal" href="../../topics/http/views.html#django.http.Http404" title="django.http.Http404"><code class="xref py py-class docutils literal notranslate"><span class="pre">Http404</span></code></a> exception, depending on the values of
+<a class="reference internal" href="#django.views.generic.dates.BaseDateListView.allow_empty" title="django.views.generic.dates.BaseDateListView.allow_empty"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_empty</span></code></a> and
+<a class="reference internal" href="#django.views.generic.dates.DateMixin.allow_future" title="django.views.generic.dates.DateMixin.allow_future"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_future</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="s-datemixin">
+<span id="datemixin"></span><h2><code class="docutils literal notranslate"><span class="pre">DateMixin</span></code><a class="headerlink" href="#datemixin" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.views.generic.dates.DateMixin">
+<em class="property">class </em><code class="descname">DateMixin</code><a class="reference internal" href="../../_modules/django/views/generic/dates.html#DateMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.DateMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>A mixin class providing common behavior for all date-based views.</p>
+<p><strong>Methods and Attributes</strong></p>
+<dl class="attribute">
+<dt id="django.views.generic.dates.DateMixin.date_field">
+<code class="descname">date_field</code><a class="headerlink" href="#django.views.generic.dates.DateMixin.date_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the <code class="docutils literal notranslate"><span class="pre">DateField</span></code> or <code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code> in the
+<code class="docutils literal notranslate"><span class="pre">QuerySet</span></code>’s model that the date-based archive should use to
+determine the list of objects to display on the page.</p>
+<p>When <a class="reference internal" href="../../topics/i18n/timezones.html"><span class="doc">time zone support</span></a> is enabled and
+<code class="docutils literal notranslate"><span class="pre">date_field</span></code> is a <code class="docutils literal notranslate"><span class="pre">DateTimeField</span></code>, dates are assumed to be in the
+current time zone. Otherwise, the queryset could include objects from
+the previous or the next day in the end user's time zone.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">In this situation, if you have implemented per-user time zone
+selection, the same URL may show a different set of objects,
+depending on the end user's time zone. To avoid this, you should
+use a <code class="docutils literal notranslate"><span class="pre">DateField</span></code> as the <code class="docutils literal notranslate"><span class="pre">date_field</span></code> attribute.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.views.generic.dates.DateMixin.allow_future">
+<code class="descname">allow_future</code><a class="headerlink" href="#django.views.generic.dates.DateMixin.allow_future" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean specifying whether to include &quot;future&quot; objects on this page,
+where &quot;future&quot; means objects in which the field specified in
+<code class="docutils literal notranslate"><span class="pre">date_field</span></code> is greater than the current date/time. By default, this
+is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.DateMixin.get_date_field">
+<code class="descname">get_date_field</code>()<a class="reference internal" href="../../_modules/django/views/generic/dates.html#DateMixin.get_date_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.DateMixin.get_date_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of the field that contains the date data that this
+view will operate on. Returns <a class="reference internal" href="#django.views.generic.dates.DateMixin.date_field" title="django.views.generic.dates.DateMixin.date_field"><code class="xref py py-attr docutils literal notranslate"><span class="pre">date_field</span></code></a> by default.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.DateMixin.get_allow_future">
+<code class="descname">get_allow_future</code>()<a class="reference internal" href="../../_modules/django/views/generic/dates.html#DateMixin.get_allow_future"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.DateMixin.get_allow_future" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine whether to include &quot;future&quot; objects on this page, where
+&quot;future&quot; means objects in which the field specified in <code class="docutils literal notranslate"><span class="pre">date_field</span></code>
+is greater than the current date/time. Returns
+<a class="reference internal" href="#django.views.generic.dates.DateMixin.allow_future" title="django.views.generic.dates.DateMixin.allow_future"><code class="xref py py-attr docutils literal notranslate"><span class="pre">allow_future</span></code></a> by default.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="s-basedatelistview">
+<span id="basedatelistview"></span><h2><code class="docutils literal notranslate"><span class="pre">BaseDateListView</span></code><a class="headerlink" href="#basedatelistview" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.views.generic.dates.BaseDateListView">
+<em class="property">class </em><code class="descname">BaseDateListView</code><a class="reference internal" href="../../_modules/django/views/generic/dates.html#BaseDateListView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.BaseDateListView" title="Permalink to this definition">¶</a></dt>
+<dd><p>A base class that provides common behavior for all date-based views. There
+won't normally be a reason to instantiate
+<a class="reference internal" href="#django.views.generic.dates.BaseDateListView" title="django.views.generic.dates.BaseDateListView"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDateListView</span></code></a>; instantiate one of
+the subclasses instead.</p>
+<p>While this view (and its subclasses) are executing, <code class="docutils literal notranslate"><span class="pre">self.object_list</span></code>
+will contain the list of objects that the view is operating upon, and
+<code class="docutils literal notranslate"><span class="pre">self.date_list</span></code> will contain the list of dates for which data is
+available.</p>
+<p><strong>Mixins</strong></p>
+<ul class="simple">
+<li><a class="reference internal" href="#django.views.generic.dates.DateMixin" title="django.views.generic.dates.DateMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateMixin</span></code></a></li>
+<li><a class="reference internal" href="mixins-multiple-object.html#django.views.generic.list.MultipleObjectMixin" title="django.views.generic.list.MultipleObjectMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultipleObjectMixin</span></code></a></li>
+</ul>
+<p><strong>Methods and Attributes</strong></p>
+<dl class="attribute">
+<dt id="django.views.generic.dates.BaseDateListView.allow_empty">
+<code class="descname">allow_empty</code><a class="headerlink" href="#django.views.generic.dates.BaseDateListView.allow_empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean specifying whether to display the page if no objects are
+available. If this is <code class="docutils literal notranslate"><span class="pre">True</span></code> and no objects are available, the view
+will display an empty page instead of raising a 404.</p>
+<p>This is identical to
+<a class="reference internal" href="mixins-multiple-object.html#django.views.generic.list.MultipleObjectMixin.allow_empty" title="django.views.generic.list.MultipleObjectMixin.allow_empty"><code class="xref py py-attr docutils literal notranslate"><span class="pre">django.views.generic.list.MultipleObjectMixin.allow_empty</span></code></a>,
+except for the default value, which is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.views.generic.dates.BaseDateListView.date_list_period">
+<code class="descname">date_list_period</code><a class="headerlink" href="#django.views.generic.dates.BaseDateListView.date_list_period" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Optional</strong> A string defining the aggregation period for
+<code class="docutils literal notranslate"><span class="pre">date_list</span></code>. It must be one of <code class="docutils literal notranslate"><span class="pre">'year'</span></code> (default), <code class="docutils literal notranslate"><span class="pre">'month'</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">'day'</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.BaseDateListView.get_dated_items">
+<code class="descname">get_dated_items</code>()<a class="reference internal" href="../../_modules/django/views/generic/dates.html#BaseDateListView.get_dated_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.BaseDateListView.get_dated_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a 3-tuple containing (<code class="docutils literal notranslate"><span class="pre">date_list</span></code>, <code class="docutils literal notranslate"><span class="pre">object_list</span></code>,
+<code class="docutils literal notranslate"><span class="pre">extra_context</span></code>).</p>
+<p><code class="docutils literal notranslate"><span class="pre">date_list</span></code> is the list of dates for which data is available.
+<code class="docutils literal notranslate"><span class="pre">object_list</span></code> is the list of objects. <code class="docutils literal notranslate"><span class="pre">extra_context</span></code> is a
+dictionary of context data that will be added to any context data
+provided by the
+<a class="reference internal" href="mixins-multiple-object.html#django.views.generic.list.MultipleObjectMixin" title="django.views.generic.list.MultipleObjectMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultipleObjectMixin</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.BaseDateListView.get_dated_queryset">
+<code class="descname">get_dated_queryset</code>(<em>**lookup</em>)<a class="reference internal" href="../../_modules/django/views/generic/dates.html#BaseDateListView.get_dated_queryset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.BaseDateListView.get_dated_queryset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a queryset, filtered using the query arguments defined by
+<code class="docutils literal notranslate"><span class="pre">lookup</span></code>. Enforces any restrictions on the queryset, such as
+<code class="docutils literal notranslate"><span class="pre">allow_empty</span></code> and <code class="docutils literal notranslate"><span class="pre">allow_future</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.BaseDateListView.get_date_list_period">
+<code class="descname">get_date_list_period</code>()<a class="reference internal" href="../../_modules/django/views/generic/dates.html#BaseDateListView.get_date_list_period"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.BaseDateListView.get_date_list_period" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the aggregation period for <code class="docutils literal notranslate"><span class="pre">date_list</span></code>. Returns
+<a class="reference internal" href="#django.views.generic.dates.BaseDateListView.date_list_period" title="django.views.generic.dates.BaseDateListView.date_list_period"><code class="xref py py-attr docutils literal notranslate"><span class="pre">date_list_period</span></code></a> by default.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.views.generic.dates.BaseDateListView.get_date_list">
+<code class="descname">get_date_list</code>(<em>queryset</em>, <em>date_type=None</em>, <em>ordering='ASC'</em>)<a class="reference internal" href="../../_modules/django/views/generic/dates.html#BaseDateListView.get_date_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.views.generic.dates.BaseDateListView.get_date_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list of dates of type <code class="docutils literal notranslate"><span class="pre">date_type</span></code> for which <code class="docutils literal notranslate"><span class="pre">queryset</span></code>
+contains entries. For example, <code class="docutils literal notranslate"><span class="pre">get_date_list(qs,</span> <span class="pre">'year')</span></code> will
+return the list of years for which <code class="docutils literal notranslate"><span class="pre">qs</span></code> has entries. If
+<code class="docutils literal notranslate"><span class="pre">date_type</span></code> isn't provided, the result of
+<a class="reference internal" href="#django.views.generic.dates.BaseDateListView.get_date_list_period" title="django.views.generic.dates.BaseDateListView.get_date_list_period"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_date_list_period()</span></code></a> is used. <code class="docutils literal notranslate"><span class="pre">date_type</span></code>
+and <code class="docutils literal notranslate"><span class="pre">ordering</span></code> are simply passed to
+<a class="reference internal" href="../models/querysets.html#django.db.models.query.QuerySet.dates" title="django.db.models.query.QuerySet.dates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">QuerySet.dates()</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Date-based mixins</a><ul>
+<li><a class="reference internal" href="#yearmixin"><code class="docutils literal notranslate"><span class="pre">YearMixin</span></code></a></li>
+<li><a class="reference internal" href="#monthmixin"><code class="docutils literal notranslate"><span class="pre">MonthMixin</span></code></a></li>
+<li><a class="reference internal" href="#daymixin"><code class="docutils literal notranslate"><span class="pre">DayMixin</span></code></a></li>
+<li><a class="reference internal" href="#weekmixin"><code class="docutils literal notranslate"><span class="pre">WeekMixin</span></code></a></li>
+<li><a class="reference internal" href="#datemixin"><code class="docutils literal notranslate"><span class="pre">DateMixin</span></code></a></li>
+<li><a class="reference internal" href="#basedatelistview"><code class="docutils literal notranslate"><span class="pre">BaseDateListView</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="mixins-editing.html"
+                        title="previous chapter">Editing mixins</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="flattened-index.html"
+                        title="next chapter">Class-based generic views - flattened index</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/ref/class-based-views/mixins-date-based.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="mixins-editing.html" title="Editing mixins">previous</a>
+     |
+    <a href="../index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="flattened-index.html" title="Class-based generic views - flattened index">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

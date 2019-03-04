@@ -1,0 +1,860 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="f0134459-3f15-40ab-bf33-492b9f44825f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../../Django Web开发-V01.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Django Web开发-V01.pptx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/DjangoSample/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/DjangoSample/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/DjangoSample/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/DjangoSample/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch02/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch02/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch03/models/bookstore_01_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch03/models/bookstore_01_init.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch04/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch04/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch05/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch05/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/ch05/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/ch05/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/../DjangoSample/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/tmp_b6f96465ea8cf6f0b1734c66e2e902c4f05eaf8d2106caaf.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/tmp_de22c1b2658c88e28e74b4db29a7144b27423bc03f51448e.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx035e93fa926a51bf.o6zAJs7xuRxEaCg3exPp9V-U8gMA.bCkzOnV7NTan5ff77cc0f9861af47515b3738efe94a7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx035e93fa926a51bf.o6zAJs7xuRxEaCg3exPp9V-U8gMA.e2o7HHsijVFj8a6f127a5ba71eb34b7c837b5c17a9f1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx035e93fa926a51bf.o6zAJs7xuRxEaCg3exPp9V-U8gMA.i0vmBY5o8XFpee95c9b9f5b09020f58490f73f6277dd.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx0848c89352f68d41.o6zAJs5l2jbqomi48IoCoIF8NnU0.lFYrRsrdd4zL6ca211c6a65e710b42f3c8ecb8afd676.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx0848c89352f68d41.o6zAJs5l2jbqomi48IoCoIF8NnU0.usKL4t4b4fPg6ca211c6a65e710b42f3c8ecb8afd676.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx0fc0c41afb41a32a.o6zAJs6UfXXNgb75F4MJm7eetXMw.1pTVkwBvd23b67589cfd2f501d102af5a92eaa691e18.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx0fc0c41afb41a32a.o6zAJs6UfXXNgb75F4MJm7eetXMw.HN6gWTWHWVsj183b7d48fd44bff33fae8e6314a74220.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx0fc0c41afb41a32a.o6zAJs6UfXXNgb75F4MJm7eetXMw.IRP6nT9QzOE93f729ecbb77866b55f82ff84465e674c.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx0fc0c41afb41a32a.o6zAJs6UfXXNgb75F4MJm7eetXMw.dDCVqTKR72SX3f729ecbb77866b55f82ff84465e674c.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx0fc0c41afb41a32a.o6zAJs6UfXXNgb75F4MJm7eetXMw.guvVZyL1lYqI3f729ecbb77866b55f82ff84465e674c.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx0fc0c41afb41a32a.o6zAJs6UfXXNgb75F4MJm7eetXMw.hzSewvlAPg0k3f729ecbb77866b55f82ff84465e674c.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx0fc0c41afb41a32a.o6zAJs6UfXXNgb75F4MJm7eetXMw.l0ITQFampax567589cfd2f501d102af5a92eaa691e18.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx0fc0c41afb41a32a.o6zAJs6UfXXNgb75F4MJm7eetXMw.ltjmOUA4Mu5uea5b56034013a836ba9aadad00548d08.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx2cf9ca32dfd5928d.o6zAJs7tfNQUSJnGgdjnvq3AWk_E.Boy52lpUdmJdde052534679d054db9492e0ba017fb6e.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx30d33c096d54feb4.o6zAJs0ZW5Hb41LoB1IQLWd7a8T8.9swqTdMWfSQv190c8f5b344cfe7ecf4aa6f80c9f517f.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx30d33c096d54feb4.o6zAJs0ZW5Hb41LoB1IQLWd7a8T8.JwRYnk5ZZHMod07fd6a65a1ff57760a2f6497cc955c2.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx30d33c096d54feb4.o6zAJs0ZW5Hb41LoB1IQLWd7a8T8.p4ekLppz5XDo0647a9d2bdfda088c47a45d9202d0e22.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx44cb85cf75e6308b.o6zAJs68l9D1FaAQ0w-E3MXQkhV4.v2EcDfsnP9xZ3f729ecbb77866b55f82ff84465e674c.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx4ea15d2dca9b57da.o6zAJs8OhXkfeoS3D7FWwpd3n0ds.8yIXl4vbBIiq67589cfd2f501d102af5a92eaa691e18.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx5154ffd422c7673d.o6zAJs0kxD_xIDQrdvGvCNR9lSmU.M8memlXRkD8eea5b56034013a836ba9aadad00548d08.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx533c3e80ec9017b4.o6zAJs-RyVjPmvvWRWDPIk3TWxhs.3Nh8HYZ3hJuxea5b56034013a836ba9aadad00548d08.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx533c3e80ec9017b4.o6zAJs-RyVjPmvvWRWDPIk3TWxhs.kXs2L62gIQi0ea5b56034013a836ba9aadad00548d08.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx533c3e80ec9017b4.o6zAJs-RyVjPmvvWRWDPIk3TWxhs.xfuBVTxiN1XPea5b56034013a836ba9aadad00548d08.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx5c26631c4fad4348.o6zAJs_JZmRbqpDi0QTkixZ5JL0I.N2kKhoqN4BHkea5b56034013a836ba9aadad00548d08.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx5c26631c4fad4348.o6zAJs_JZmRbqpDi0QTkixZ5JL0I.TpL41xurdd506accb29651c3bed761fedf1e0ea7936c.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx5c26631c4fad4348.o6zAJs_JZmRbqpDi0QTkixZ5JL0I.qBku7ShHVQku1980e2ca0c1217a94d756c138141b9e4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx6129aaacd6a22cd8.o6zAJs4-EG6gGvz1mwD7Fdmy9kBs.2TLoOxHVZJpo1b9600cc720e0726d0be465634774ebe.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx6129aaacd6a22cd8.o6zAJs4-EG6gGvz1mwD7Fdmy9kBs.Aqmux4svum9Xbdb47320aac4b758f2886f8a7bfd20f9.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx6129aaacd6a22cd8.o6zAJs4-EG6gGvz1mwD7Fdmy9kBs.W6sXjUrd3yM87d0714e4388204861bd47854532dcc4e.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx6129aaacd6a22cd8.o6zAJs4-EG6gGvz1mwD7Fdmy9kBs.q2BRAgjkW49ybdb47320aac4b758f2886f8a7bfd20f9.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx6129aaacd6a22cd8.o6zAJs4-EG6gGvz1mwD7Fdmy9kBs.xtT5yl57dFjo416379dc2a3f634ce61e9e768e46b8a8.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx69a572df8ad5fdc9.o6zAJs0sE6LsrfSEtxKNRhHa1BAs.CniDpCNzi1TS13bef196d35cb8aaf9ee7ad7740c43bc.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx6d419675004d9ac0.o6zAJs82JjsuGzjW5eu-WTiAY8GM.0S7QRVNI4Mgra9ff26fccc671e4510b3d24c42cad4e0.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx6d419675004d9ac0.o6zAJs82JjsuGzjW5eu-WTiAY8GM.5gGTZYBhkzt7a9ff26fccc671e4510b3d24c42cad4e0.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx6d419675004d9ac0.o6zAJs82JjsuGzjW5eu-WTiAY8GM.INufO8D5kZSDa9ff26fccc671e4510b3d24c42cad4e0.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx6d419675004d9ac0.o6zAJs82JjsuGzjW5eu-WTiAY8GM.fB69cAT8y8Swa9ff26fccc671e4510b3d24c42cad4e0.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx6d419675004d9ac0.o6zAJs82JjsuGzjW5eu-WTiAY8GM.krIYk6Zlcfpfa9ff26fccc671e4510b3d24c42cad4e0.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx6d419675004d9ac0.o6zAJs82JjsuGzjW5eu-WTiAY8GM.m1hylNyxsEsMa9ff26fccc671e4510b3d24c42cad4e0.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx6d419675004d9ac0.o6zAJs82JjsuGzjW5eu-WTiAY8GM.qC1oVZA4u35fa9ff26fccc671e4510b3d24c42cad4e0.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx8f0fd15b432f9929.o6zAJs7u7TMtipQykTJdP9Oja6XU.suHnUXRcTGEk5ff77cc0f9861af47515b3738efe94a7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx90a5f744bc04d172.o6zAJs_6oMZf6-SMfxbvfOcQ1ccY.4tnwBITxPJKe67589cfd2f501d102af5a92eaa691e18.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx918434ff65339219.o6zAJs6wVb6vAoHoAGuhrQlXvfdU.9S4asnMVsckAea5b56034013a836ba9aadad00548d08.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx918434ff65339219.o6zAJs6wVb6vAoHoAGuhrQlXvfdU.ByUnytGdCX38ea5b56034013a836ba9aadad00548d08.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx918434ff65339219.o6zAJs6wVb6vAoHoAGuhrQlXvfdU.CpC4GdXJ4sZRea5b56034013a836ba9aadad00548d08.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx92fffd7a1b970945.o6zAJs6evRoJXQf7j-hX2jtQaLGQ.5mPIUhzA3m0W63f5df15f4c967d9070a1f47f80b87d4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wx92fffd7a1b970945.o6zAJs6evRoJXQf7j-hX2jtQaLGQ.huOqWUG1EC2s63f5df15f4c967d9070a1f47f80b87d4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxa9d542d250d1372d.o6zAJs78ctagOUa0G8jtsfDcuM70.aHa4Xj97xFn0ea5b56034013a836ba9aadad00548d08.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxade3efb9f7838376.o6zAJsyzkm9fzG9kRdDMJye7YVYs.HHlRnxtPICAAea5b56034013a836ba9aadad00548d08.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxade3efb9f7838376.o6zAJsyzkm9fzG9kRdDMJye7YVYs.y5abUwD51A6C3f729ecbb77866b55f82ff84465e674c.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxbda1312d44a83719.o6zAJs_QX_CA8mkKvYXlYt3KcrEY.SrSUIlZQHzzSb89de6c29c38cb10e42faeaf3a55e625.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxbda1312d44a83719.o6zAJs_QX_CA8mkKvYXlYt3KcrEY.quRiDWFCCuCIb89de6c29c38cb10e42faeaf3a55e625.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxc87b599dbc9a1409.o6zAJs-zZXNMgRLg6fCKZzC-L0M4.3H4ydTkx9E9o9249e9be95555c2bfb09956b2e2c9ce3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxc87b599dbc9a1409.o6zAJs-zZXNMgRLg6fCKZzC-L0M4.H3lv6n8uwwqS19eb813c0bd4d0be1979b9a3ad92d703.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxc87b599dbc9a1409.o6zAJs-zZXNMgRLg6fCKZzC-L0M4.KPVDgThaNRDXf48dcb512f08eed40cb6d1c7f215f898.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxe78682f189b00548.o6zAJs-W7C-KKFIpymNcwMHLutBw.0NeYcMrO3S8hd1142efa3d3454fa07cbe59c0bb8631b.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxe78682f189b00548.o6zAJs-W7C-KKFIpymNcwMHLutBw.2eMs4l8bV4L35ff77cc0f9861af47515b3738efe94a7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxe78682f189b00548.o6zAJs-W7C-KKFIpymNcwMHLutBw.3zUNNfydhyf05ff77cc0f9861af47515b3738efe94a7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxe78682f189b00548.o6zAJs-W7C-KKFIpymNcwMHLutBw.4vvg9DPIJUdld1142efa3d3454fa07cbe59c0bb8631b.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxe78682f189b00548.o6zAJs-W7C-KKFIpymNcwMHLutBw.8uT8Ym6RLYwD5ff77cc0f9861af47515b3738efe94a7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxe78682f189b00548.o6zAJs-W7C-KKFIpymNcwMHLutBw.GtILeKmwC8NP5ff77cc0f9861af47515b3738efe94a7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxe78682f189b00548.o6zAJs-W7C-KKFIpymNcwMHLutBw.H5PSCwvAAM775ff77cc0f9861af47515b3738efe94a7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxe78682f189b00548.o6zAJs-W7C-KKFIpymNcwMHLutBw.QDdsUY9cDvhBb803560996ae26cfd6f9585682e8ec61.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxe78682f189b00548.o6zAJs-W7C-KKFIpymNcwMHLutBw.XiC47SLw2EYnd1142efa3d3454fa07cbe59c0bb8631b.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxe78682f189b00548.o6zAJs-W7C-KKFIpymNcwMHLutBw.gP1ZaN3pEhkY96c7249dda5b401bb683ead77d97dea4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxe78682f189b00548.o6zAJs-W7C-KKFIpymNcwMHLutBw.jqaJN7oite4u3559af344bd5bc52742038de444b742a.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxe78682f189b00548.o6zAJs-W7C-KKFIpymNcwMHLutBw.kUKj3nMJq9xy5ff77cc0f9861af47515b3738efe94a7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxe78682f189b00548.o6zAJs-W7C-KKFIpymNcwMHLutBw.zasGnCXqMNbX8a6f127a5ba71eb34b7c837b5c17a9f1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxf5ddacc15f787321.o6zAJsxxd74t8JJf3P7g2bKKtUAg.fsSO9MaWSFFGea5b56034013a836ba9aadad00548d08.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DjangoSample/media/wxf8786e2ecaebef41.o6zAJs0yYYG2jUlvXuqM19znb92c.d2cv8CqRv5Rx3f729ecbb77866b55f82ff84465e674c.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../djangosample/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../djangosample/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sample/models.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret line="45" selection-start-line="45" selection-end-line="45" />
+              <folding>
+                <element signature="e#24#63#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="380">
+              <caret line="20" column="7" selection-start-line="20" selection-start-column="7" selection-end-line="20" selection-end-column="7" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/templates/registration/login.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="133">
+              <caret line="7" selection-start-line="7" selection-end-line="7" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/forms/fields.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="293">
+              <caret line="1035" column="16" selection-start-line="1035" selection-start-column="16" selection-end-line="1035" selection-end-column="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sample/views.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-174">
+              <caret line="108" column="26" lean-forward="true" selection-start-line="108" selection-start-column="26" selection-end-line="108" selection-end-column="26" />
+              <folding>
+                <element signature="e#24#63#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sample/templates/sample/upload.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="152">
+              <caret line="8" column="4" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="20" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>BACKENDS</find>
+      <find>sample01</find>
+      <find>sample</find>
+      <find>handler404</find>
+      <find>QueryDict</find>
+      <find>object</find>
+      <find>get_initial_for_field</find>
+      <find>process_view</find>
+      <find>initial</find>
+      <find>clean</find>
+      <find>replace(microsecond=0)</find>
+      <find>textin</find>
+      <find>MAX_NUM_FORMS</find>
+      <find>django</find>
+      <find>form-TOTAL_FORMS</find>
+      <find>USE_L10N</find>
+      <find>THOUSAND_SEPARATOR</find>
+      <find>TEMPLATES</find>
+      <find>print</find>
+      <find>first</find>
+      <find>now</find>
+      <find>SampleConfig</find>
+      <find>USE_I18N</find>
+      <find>classmethod</find>
+      <find>classmethod(object)</find>
+      <find>media</find>
+      <find>存在</find>
+      <find>field_label</find>
+      <find>field_value</find>
+      <find>model_name</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>sample</replace>
+    </replaceStrings>
+    <dirStrings>
+      <dir>$PROJECT_DIR$/media</dir>
+      <dir>/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/</dir>
+      <dir>$PROJECT_DIR$</dir>
+      <dir>/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django</dir>
+    </dirStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/sample/templates/sample/reqattrs.html" />
+        <option value="$PROJECT_DIR$/static/index.html" />
+        <option value="$PROJECT_DIR$/sample/initdb.py" />
+        <option value="$PROJECT_DIR$/initdb.py" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/tag_autoescape.html" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/tag_comment.html" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/tag_filter.html" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/tag_circle.html" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/tag_firstof.html" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/tag_for.html" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/tag_if.html" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/tag_now.html" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/test_tag.html" />
+        <option value="$PROJECT_DIR$/chapter19/formtest.py" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/1.html" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/upload.html" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/formtest.html" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/login.html" />
+        <option value="/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/conf/urls/__init__.py" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/helloworld02.html" />
+        <option value="$PROJECT_DIR$/sample01/views.py" />
+        <option value="$PROJECT_DIR$/sample01/urls.py" />
+        <option value="$PROJECT_DIR$/chapter19/views.py" />
+        <option value="$PROJECT_DIR$/chapter19/urls.py" />
+        <option value="$PROJECT_DIR$/sample/forms.py" />
+        <option value="$PROJECT_DIR$/dbtest.py" />
+        <option value="$PROJECT_DIR$/sample/models.py" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/author_list.html" />
+        <option value="$PROJECT_DIR$/1.html" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/test.html" />
+        <option value="$PROJECT_DIR$/sample/urls.py" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/base.html" />
+        <option value="/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/contrib/humanize/templatetags/humanize.py" />
+        <option value="$PROJECT_DIR$/1.json" />
+        <option value="/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loaders/filesystem.py" />
+        <option value="$PROJECT_DIR$/sample/views.py" />
+        <option value="$PROJECT_DIR$/sample/templatetags/show_list.html" />
+        <option value="$PROJECT_DIR$/sample/templatetags/mytags.py" />
+        <option value="$PROJECT_DIR$/sample/templates/sample/template_test.html" />
+        <option value="$PROJECT_DIR$/chapter19/settings.py" />
+        <option value="$PROJECT_DIR$/sample/apps.py" />
+        <option value="$PROJECT_DIR$/sample/__init__.py" />
+        <option value="$PROJECT_DIR$/management/commands/testcommand.py" />
+        <option value="$PROJECT_DIR$/sample/management/commands/testcommand.py" />
+        <option value="$PROJECT_DIR$/test.py" />
+        <option value="$PROJECT_DIR$/formtest.py" />
+        <option value="$PROJECT_DIR$/templates/registration/login.html" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="y" value="23" />
+    <option name="width" value="1280" />
+    <option name="height" value="730" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="chapter19" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chapter19" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="chapter19" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chapter19" type="462c0819:PsiDirectoryNode" />
+              <item name="media" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="chapter19" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chapter19" type="462c0819:PsiDirectoryNode" />
+              <item name="sample" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="chapter19" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chapter19" type="462c0819:PsiDirectoryNode" />
+              <item name="sample" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="chapter19" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chapter19" type="462c0819:PsiDirectoryNode" />
+              <item name="sample" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="sample" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="chapter19" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chapter19" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="chapter19" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chapter19" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="registration" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="chapter19" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+            <path>
+              <item name="chapter19" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 2.7 &gt;" type="70bed36:NamedLibraryElementNode" />
+            </path>
+            <path>
+              <item name="chapter19" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 2.7 &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="python2.7" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="chapter19" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 2.7 &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="python2.7" type="462c0819:PsiDirectoryNode" />
+              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="chapter19" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 2.7 &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="python2.7" type="462c0819:PsiDirectoryNode" />
+              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
+              <item name="django" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="last_opened_file_path" value="/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/sample01/templates/sample01" />
+      <recent name="$PROJECT_DIR$/sample01" />
+      <recent name="$PROJECT_DIR$/sample/templates/sample" />
+      <recent name="$PROJECT_DIR$/sample/static/sample" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/sample" />
+      <recent name="$PROJECT_DIR$/sample/templates/sample" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/chapter19" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.formtest">
+    <configuration name="dbtest" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter19" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/sample" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dbtest.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="formtest" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter19" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/formtest.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter19" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="views" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="chapter19" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/sample" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/sample/views.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.dbtest" />
+      <item itemvalue="Python.formtest" />
+      <item itemvalue="Python.test" />
+      <item itemvalue="Python.views" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.formtest" />
+        <item itemvalue="Python.test" />
+        <item itemvalue="Python.views" />
+        <item itemvalue="Python.dbtest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f0134459-3f15-40ab-bf33-492b9f44825f" name="Default Changelist" comment="" />
+      <created>1542547529786</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1542547529786</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="23" width="1280" height="730" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25655282" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.35893416" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.2554859" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.29467085" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.3291536" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/contrib/auth/context_processors.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="156">
+          <caret line="27" column="8" selection-start-line="27" selection-start-column="8" selection-end-line="27" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/defaultfilters.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4904" />
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/utils/safestring.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="203">
+          <caret line="128" column="4" selection-start-line="128" selection-start-column="4" selection-end-line="128" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/contrib/humanize/templatetags/humanize.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="19" selection-start-line="19" selection-end-line="19" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2and3/datetime.pyi">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4225" />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharmCE2018.2/python_stubs/-1698384448/datetime.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-10">
+          <caret line="186" column="42" selection-start-line="186" selection-start-column="39" selection-end-line="186" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/templates/sample/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="15" selection-start-column="15" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/templatetags/mytags.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1501">
+          <caret line="84" column="31" selection-start-line="84" selection-start-column="31" selection-end-line="84" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10507">
+          <caret line="582" column="8" selection-start-line="582" selection-start-column="8" selection-end-line="582" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/templates/sample/show_list.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="4" column="5" selection-start-line="4" selection-start-column="5" selection-end-line="4" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/templates/sample/template_test.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="437">
+          <caret line="23" column="26" selection-start-line="23" selection-start-column="26" selection-end-line="23" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/management/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2548">
+          <caret line="283" column="8" selection-start-line="283" selection-start-column="8" selection-end-line="283" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="456">
+          <caret line="26" column="25" lean-forward="true" selection-start-line="26" selection-start-column="25" selection-end-line="26" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/conf/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2527">
+          <caret line="19" column="6" selection-start-line="19" selection-start-column="6" selection-end-line="19" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/contrib/admin/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="28" column="41" lean-forward="true" selection-start-line="28" selection-start-column="22" selection-end-line="28" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/contrib/admin/apps.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter19/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/manage.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="53" selection-end-line="5" selection-end-column="71" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/management/commands/testcommand.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="456">
+          <caret line="24" selection-start-line="24" selection-end-line="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter19/wsgi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="15" column="24" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/wsgi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="4" column="4" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/admin.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="5" column="3" selection-start-line="5" selection-start-column="3" selection-end-line="5" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/inspect.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="270" column="45" selection-start-line="270" selection-start-column="45" selection-end-line="270" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/plat-mac/bundlebuilder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-219">
+          <caret line="64" column="31" selection-start-line="64" selection-start-column="31" selection-end-line="64" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/twisted/python/components.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4921">
+          <caret line="343" column="14" selection-start-line="343" selection-start-column="14" selection-end-line="343" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/apps.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="6" column="25" lean-forward="true" selection-start-line="6" selection-start-column="25" selection-end-line="6" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/apps/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="10" column="6" selection-start-line="10" selection-start-column="6" selection-end-line="10" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/formtest.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/conf/global_settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="205">
+          <caret line="573" column="12" lean-forward="true" selection-start-line="573" selection-start-column="12" selection-end-line="573" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/tests.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter19/views.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/static/sample/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="7" column="11" selection-start-line="7" selection-start-column="11" selection-end-line="7" selection-end-column="11" />
+          <folding>
+            <element signature="n#style#0;n#h2#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter19/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1121">
+          <caret line="59" selection-start-line="59" selection-end-line="65" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter19/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="19" selection-start-line="19" selection-end-line="19" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/templates/sample/formtest.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="12" column="12" selection-start-line="12" selection-start-column="12" selection-end-line="12" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/templates/sample/helloworld02.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/templates/sample/reqattrs.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="12" column="50" selection-start-line="12" selection-start-column="19" selection-end-line="12" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dbtest.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="266">
+          <caret line="21" column="18" selection-start-line="21" selection-start-column="18" selection-end-line="21" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="52" column="14" selection-start-line="52" selection-start-column="14" selection-end-line="52" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/forms/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="191">
+          <caret line="288" column="23" selection-start-line="288" selection-start-column="23" selection-end-line="288" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/forms/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-637">
+          <caret line="64" column="6" selection-start-line="64" selection-start-column="6" selection-end-line="64" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample01/models.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="20" column="7" selection-start-line="20" selection-start-column="7" selection-end-line="20" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-174">
+          <caret line="108" column="26" lean-forward="true" selection-start-line="108" selection-start-column="26" selection-end-line="108" selection-end-column="26" />
+          <folding>
+            <element signature="e#24#63#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/forms/fields.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="293">
+          <caret line="1035" column="16" selection-start-line="1035" selection-start-column="16" selection-end-line="1035" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/templates/sample/upload.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="8" column="4" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret line="45" selection-start-line="45" selection-end-line="45" />
+          <folding>
+            <element signature="e#24#63#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/registration/login.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bookstore>
+    书库
+    <book category="烹饪">
+        <title lang="en">Everyday Italian</title>
+        <author>Giada De Laurentiis</author>
+        <year>2005</year>
+        <price>30.00</price>
+    </book>
+
+    <book category="儿童">
+        <title lang="cn">哈利波特</title>
+        <author>莫言</author>
+        <year>2005</year>
+        <price>29.99</price>
+    </book>
+
+    <book category="互联网">
+        <title lang="en">XQuery Kick Start</title>
+        <author>James McGovern</author>
+        <author>Per Bothner</author>
+        <author>Kurt Cagle</author>
+        <author>James Linn</author>
+        <author>Vaidyanathan Nagarajan</author>
+        <year>2003</year>
+        <price>49.99</price>
+    </book>
+
+    <book category="互联网">
+        <title lang="cn">学习XML</title>
+        <author>肖俊峰</author>
+        <year>2003</year>
+        <price>39.95</price>
+    </book>
+
+</bookstore>

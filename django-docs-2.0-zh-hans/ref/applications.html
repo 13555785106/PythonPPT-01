@@ -1,0 +1,626 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Applications &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="System check framework" href="checks.html" />
+    <link rel="prev" title="API Reference" href="index.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="index.html" title="API Reference">previous</a>
+     |
+    <a href="index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="checks.html" title="System check framework">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="ref-applications">
+            
+  <div class="section" id="s-module-django.apps">
+<span id="s-applications"></span><span id="module-django.apps"></span><span id="applications"></span><h1>Applications<a class="headerlink" href="#module-django.apps" title="Permalink to this headline">¶</a></h1>
+<p>Django contains a registry of installed applications that stores configuration
+and provides introspection. It also maintains a list of available <a class="reference internal" href="../topics/db/models.html"><span class="doc">models</span></a>.</p>
+<p>This registry is simply called <a class="reference internal" href="#django.apps.apps" title="django.apps.apps"><code class="xref py py-attr docutils literal notranslate"><span class="pre">apps</span></code></a> and it's available in
+<a class="reference internal" href="#module-django.apps" title="django.apps"><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.apps</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.apps</span> <span class="k">import</span> <span class="n">apps</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">apps</span><span class="o">.</span><span class="n">get_app_config</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">verbose_name</span>
+<span class="go">&#39;Admin&#39;</span>
+</pre></div>
+</div>
+<div class="section" id="s-projects-and-applications">
+<span id="projects-and-applications"></span><h2>Projects and applications<a class="headerlink" href="#projects-and-applications" title="Permalink to this headline">¶</a></h2>
+<p>The term <strong>project</strong> describes a Django web application. The project Python
+package is defined primarily by a settings module, but it usually contains
+other things. For example, when you run  <code class="docutils literal notranslate"><span class="pre">django-admin</span> <span class="pre">startproject</span> <span class="pre">mysite</span></code>
+you'll get a <code class="docutils literal notranslate"><span class="pre">mysite</span></code> project directory that contains a <code class="docutils literal notranslate"><span class="pre">mysite</span></code> Python
+package with <code class="docutils literal notranslate"><span class="pre">settings.py</span></code>, <code class="docutils literal notranslate"><span class="pre">urls.py</span></code>, and <code class="docutils literal notranslate"><span class="pre">wsgi.py</span></code>. The project package
+is often extended to include things like fixtures, CSS, and templates which
+aren't tied to a particular application.</p>
+<p>A <strong>project's root directory</strong> (the one that contains <code class="docutils literal notranslate"><span class="pre">manage.py</span></code>) is usually
+the container for all of a project's applications which aren't installed
+separately.</p>
+<p>The term <strong>application</strong> describes a Python package that provides some set of
+features. Applications <a class="reference internal" href="../intro/reusable-apps.html"><span class="doc">may be reused</span></a> in various
+projects.</p>
+<p>Applications include some combination of models, views, templates, template
+tags, static files, URLs, middleware, etc. They're generally wired into
+projects with the <a class="reference internal" href="settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a> setting and optionally with other
+mechanisms such as URLconfs, the <a class="reference internal" href="settings.html#std:setting-MIDDLEWARE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">MIDDLEWARE</span></code></a> setting, or template
+inheritance.</p>
+<p>It is important to understand that a Django application is just a set of code
+that interacts with various parts of the framework. There's no such thing as
+an <code class="docutils literal notranslate"><span class="pre">Application</span></code> object. However, there's a few places where Django needs to
+interact with installed applications, mainly for configuration and also for
+introspection. That's why the application registry maintains metadata in an
+<a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a> instance for each installed application.</p>
+<p>There's no restriction that a project package can't also be considered an
+application and have models, etc. (which would require adding it to
+<a class="reference internal" href="settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a>).</p>
+</div>
+<div class="section" id="s-configuring-applications">
+<span id="s-configuring-applications-ref"></span><span id="configuring-applications"></span><span id="configuring-applications-ref"></span><h2>Configuring applications<a class="headerlink" href="#configuring-applications" title="Permalink to this headline">¶</a></h2>
+<p>To configure an application, subclass <a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a> and put
+the dotted path to that subclass in <a class="reference internal" href="settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a>.</p>
+<p>When <a class="reference internal" href="settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a> simply contains the dotted path to an
+application module, Django checks for a <code class="docutils literal notranslate"><span class="pre">default_app_config</span></code> variable in
+that module.</p>
+<p>If it's defined, it's the dotted path to the <a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a>
+subclass for that application.</p>
+<p>If there is no <code class="docutils literal notranslate"><span class="pre">default_app_config</span></code>, Django uses the base
+<a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a> class.</p>
+<p><code class="docutils literal notranslate"><span class="pre">default_app_config</span></code> allows applications that predate Django 1.7 such as
+<code class="docutils literal notranslate"><span class="pre">django.contrib.admin</span></code> to opt-in to <a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a> features
+without requiring users to update their <a class="reference internal" href="settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a>.</p>
+<p>New applications should avoid <code class="docutils literal notranslate"><span class="pre">default_app_config</span></code>. Instead they should
+require the dotted path to the appropriate <a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a>
+subclass to be configured explicitly in <a class="reference internal" href="settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a>.</p>
+<div class="section" id="s-for-application-authors">
+<span id="for-application-authors"></span><h3>For application authors<a class="headerlink" href="#for-application-authors" title="Permalink to this headline">¶</a></h3>
+<p>If you're creating a pluggable app called &quot;Rock ’n’ roll&quot;, here's how you
+would provide a proper name for the admin:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># rock_n_roll/apps.py</span>
+
+<span class="kn">from</span> <span class="nn">django.apps</span> <span class="k">import</span> <span class="n">AppConfig</span>
+
+<span class="k">class</span> <span class="nc">RockNRollConfig</span><span class="p">(</span><span class="n">AppConfig</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;rock_n_roll&#39;</span>
+    <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;Rock ’n’ roll&quot;</span>
+</pre></div>
+</div>
+<p>You can make your application load this <a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a>
+subclass by default as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># rock_n_roll/__init__.py</span>
+
+<span class="n">default_app_config</span> <span class="o">=</span> <span class="s1">&#39;rock_n_roll.apps.RockNRollConfig&#39;</span>
+</pre></div>
+</div>
+<p>That will cause <code class="docutils literal notranslate"><span class="pre">RockNRollConfig</span></code> to be used when <a class="reference internal" href="settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a>
+just contains <code class="docutils literal notranslate"><span class="pre">'rock_n_roll'</span></code>. This allows you to make use of
+<a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a> features without requiring your users to
+update their <a class="reference internal" href="settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a> setting. Besides this use case, it's
+best to avoid using <code class="docutils literal notranslate"><span class="pre">default_app_config</span></code> and instead specify the app config
+class in <a class="reference internal" href="settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a> as described next.</p>
+<p>Of course, you can also tell your users to put
+<code class="docutils literal notranslate"><span class="pre">'rock_n_roll.apps.RockNRollConfig'</span></code> in their <a class="reference internal" href="settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a>
+setting. You can even provide several different
+<a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a> subclasses with different behaviors and allow
+your users to choose one via their <a class="reference internal" href="settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a> setting.</p>
+<p>The recommended convention is to put the configuration class in a submodule of
+the application called <code class="docutils literal notranslate"><span class="pre">apps</span></code>. However, this isn't enforced by Django.</p>
+<p>You must include the <a class="reference internal" href="#django.apps.AppConfig.name" title="django.apps.AppConfig.name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">name</span></code></a> attribute for Django
+to determine which application this configuration applies to. You can define
+any attributes documented in the <a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a> API
+reference.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>If your code imports the application registry in an application's
+<code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>, the name <code class="docutils literal notranslate"><span class="pre">apps</span></code> will clash with the <code class="docutils literal notranslate"><span class="pre">apps</span></code> submodule.
+The best practice is to move that code to a submodule and import it. A
+workaround is to import the registry under a different name:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.apps</span> <span class="k">import</span> <span class="n">apps</span> <span class="k">as</span> <span class="n">django_apps</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="s-for-application-users">
+<span id="for-application-users"></span><h3>For application users<a class="headerlink" href="#for-application-users" title="Permalink to this headline">¶</a></h3>
+<p>If you're using &quot;Rock ’n’ roll&quot; in a project called <code class="docutils literal notranslate"><span class="pre">anthology</span></code>, but you
+want it to show up as &quot;Jazz Manouche&quot; instead, you can provide your own
+configuration:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># anthology/apps.py</span>
+
+<span class="kn">from</span> <span class="nn">rock_n_roll.apps</span> <span class="k">import</span> <span class="n">RockNRollConfig</span>
+
+<span class="k">class</span> <span class="nc">JazzManoucheConfig</span><span class="p">(</span><span class="n">RockNRollConfig</span><span class="p">):</span>
+    <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;Jazz Manouche&quot;</span>
+
+<span class="c1"># anthology/settings.py</span>
+
+<span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;anthology.apps.JazzManoucheConfig&#39;</span><span class="p">,</span>
+    <span class="c1"># ...</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Again, defining project-specific configuration classes in a submodule called
+<code class="docutils literal notranslate"><span class="pre">apps</span></code> is a convention, not a requirement.</p>
+</div>
+</div>
+<div class="section" id="s-application-configuration">
+<span id="application-configuration"></span><h2>Application configuration<a class="headerlink" href="#application-configuration" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="django.apps.AppConfig">
+<em class="property">class </em><code class="descname">AppConfig</code><a class="reference internal" href="../_modules/django/apps/config.html#AppConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.apps.AppConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Application configuration objects store metadata for an application. Some
+attributes can be configured in <a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a>
+subclasses. Others are set by Django and read-only.</p>
+</dd></dl>
+
+<div class="section" id="s-configurable-attributes">
+<span id="configurable-attributes"></span><h3>Configurable attributes<a class="headerlink" href="#configurable-attributes" title="Permalink to this headline">¶</a></h3>
+<dl class="attribute">
+<dt id="django.apps.AppConfig.name">
+<code class="descclassname">AppConfig.</code><code class="descname">name</code><a class="headerlink" href="#django.apps.AppConfig.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Full Python path to the application, e.g. <code class="docutils literal notranslate"><span class="pre">'django.contrib.admin'</span></code>.</p>
+<p>This attribute defines which application the configuration applies to. It
+must be set in all <a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a> subclasses.</p>
+<p>It must be unique across a Django project.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.apps.AppConfig.label">
+<code class="descclassname">AppConfig.</code><code class="descname">label</code><a class="headerlink" href="#django.apps.AppConfig.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Short name for the application, e.g. <code class="docutils literal notranslate"><span class="pre">'admin'</span></code></p>
+<p>This attribute allows relabeling an application when two applications
+have conflicting labels. It defaults to the last component of <code class="docutils literal notranslate"><span class="pre">name</span></code>.
+It should be a valid Python identifier.</p>
+<p>It must be unique across a Django project.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.apps.AppConfig.verbose_name">
+<code class="descclassname">AppConfig.</code><code class="descname">verbose_name</code><a class="headerlink" href="#django.apps.AppConfig.verbose_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Human-readable name for the application, e.g. &quot;Administration&quot;.</p>
+<p>This attribute defaults to <code class="docutils literal notranslate"><span class="pre">label.title()</span></code>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.apps.AppConfig.path">
+<code class="descclassname">AppConfig.</code><code class="descname">path</code><a class="headerlink" href="#django.apps.AppConfig.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filesystem path to the application directory, e.g.
+<code class="docutils literal notranslate"><span class="pre">'/usr/lib/python3.4/dist-packages/django/contrib/admin'</span></code>.</p>
+<p>In most cases, Django can automatically detect and set this, but you can
+also provide an explicit override as a class attribute on your
+<a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a> subclass. In a few situations this is
+required; for instance if the app package is a <a class="reference internal" href="#namespace-package">namespace package</a> with
+multiple paths.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="s-read-only-attributes">
+<span id="read-only-attributes"></span><h3>Read-only attributes<a class="headerlink" href="#read-only-attributes" title="Permalink to this headline">¶</a></h3>
+<dl class="attribute">
+<dt id="django.apps.AppConfig.module">
+<code class="descclassname">AppConfig.</code><code class="descname">module</code><a class="headerlink" href="#django.apps.AppConfig.module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Root module for the application, e.g. <code class="docutils literal notranslate"><span class="pre">&lt;module</span> <span class="pre">'django.contrib.admin'</span> <span class="pre">from</span>
+<span class="pre">'django/contrib/admin/__init__.py'&gt;</span></code>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.apps.AppConfig.models_module">
+<code class="descclassname">AppConfig.</code><code class="descname">models_module</code><a class="headerlink" href="#django.apps.AppConfig.models_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Module containing the models, e.g. <code class="docutils literal notranslate"><span class="pre">&lt;module</span> <span class="pre">'django.contrib.admin.models'</span>
+<span class="pre">from</span> <span class="pre">'django/contrib/admin/models.py'&gt;</span></code>.</p>
+<p>It may be <code class="docutils literal notranslate"><span class="pre">None</span></code> if the application doesn't contain a <code class="docutils literal notranslate"><span class="pre">models</span></code> module.
+Note that the database related signals such as
+<a class="reference internal" href="signals.html#django.db.models.signals.pre_migrate" title="django.db.models.signals.pre_migrate"><code class="xref py py-data docutils literal notranslate"><span class="pre">pre_migrate</span></code></a> and
+<a class="reference internal" href="signals.html#django.db.models.signals.post_migrate" title="django.db.models.signals.post_migrate"><code class="xref py py-data docutils literal notranslate"><span class="pre">post_migrate</span></code></a>
+are only emitted for applications that have a <code class="docutils literal notranslate"><span class="pre">models</span></code> module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="s-methods">
+<span id="methods"></span><h3>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="django.apps.AppConfig.get_models">
+<code class="descclassname">AppConfig.</code><code class="descname">get_models</code>()<a class="reference internal" href="../_modules/django/apps/config.html#AppConfig.get_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.apps.AppConfig.get_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterable of <a class="reference internal" href="models/instances.html#django.db.models.Model" title="django.db.models.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> classes for this
+application.</p>
+<p>Requires the app registry to be fully populated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.apps.AppConfig.get_model">
+<code class="descclassname">AppConfig.</code><code class="descname">get_model</code>(<em>model_name</em>, <em>require_ready=True</em>)<a class="reference internal" href="../_modules/django/apps/config.html#AppConfig.get_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.apps.AppConfig.get_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the <a class="reference internal" href="models/instances.html#django.db.models.Model" title="django.db.models.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> with the given
+<code class="docutils literal notranslate"><span class="pre">model_name</span></code>. <code class="docutils literal notranslate"><span class="pre">model_name</span></code> is case-insensitive.</p>
+<p>Raises <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#LookupError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">LookupError</span></code></a> if no such model exists in this application.</p>
+<p>Requires the app registry to be fully populated unless the
+<code class="docutils literal notranslate"><span class="pre">require_ready</span></code> argument is set to <code class="docutils literal notranslate"><span class="pre">False</span></code>. <code class="docutils literal notranslate"><span class="pre">require_ready</span></code> behaves
+exactly as in <a class="reference internal" href="#django.apps.apps.get_model" title="django.apps.apps.get_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">apps.get_model()</span></code></a>.</p>
+<div class="versionadded">
+<span class="title">New in Django 1.11:</span> <p>The <code class="docutils literal notranslate"><span class="pre">require_ready</span></code> keyword argument was added.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.apps.AppConfig.ready">
+<code class="descclassname">AppConfig.</code><code class="descname">ready</code>()<a class="reference internal" href="../_modules/django/apps/config.html#AppConfig.ready"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.apps.AppConfig.ready" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subclasses can override this method to perform initialization tasks such
+as registering signals. It is called as soon as the registry is fully
+populated.</p>
+<p>Although you can't import models at the module-level where
+<a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a> classes are defined, you can import them in
+<code class="docutils literal notranslate"><span class="pre">ready()</span></code>, using either an <code class="docutils literal notranslate"><span class="pre">import</span></code> statement or
+<a class="reference internal" href="#django.apps.AppConfig.get_model" title="django.apps.AppConfig.get_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_model()</span></code></a>.</p>
+<p>If you're registering <a class="reference internal" href="signals.html#module-django.db.models.signals" title="django.db.models.signals: Signals sent by the model system."><code class="xref py py-mod docutils literal notranslate"><span class="pre">model</span> <span class="pre">signals</span></code></a>, you
+can refer to the sender by its string label instead of using the model
+class itself.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db.models.signals</span> <span class="k">import</span> <span class="n">pre_save</span>
+
+<span class="k">def</span> <span class="nf">ready</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># importing model classes</span>
+    <span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">MyModel</span>  <span class="c1"># or...</span>
+    <span class="n">MyModel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;MyModel&#39;</span><span class="p">)</span>
+
+    <span class="c1"># registering signals with the model&#39;s string label</span>
+    <span class="n">pre_save</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">receiver</span><span class="p">,</span> <span class="n">sender</span><span class="o">=</span><span class="s1">&#39;app_label.MyModel&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Although you can access model classes as described above, avoid
+interacting with the database in your <a class="reference internal" href="#django.apps.AppConfig.ready" title="django.apps.AppConfig.ready"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ready()</span></code></a> implementation.
+This includes model methods that execute queries
+(<a class="reference internal" href="models/instances.html#django.db.models.Model.save" title="django.db.models.Model.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save()</span></code></a>,
+<a class="reference internal" href="models/instances.html#django.db.models.Model.delete" title="django.db.models.Model.delete"><code class="xref py py-meth docutils literal notranslate"><span class="pre">delete()</span></code></a>, manager methods etc.), and
+also raw SQL queries via <code class="docutils literal notranslate"><span class="pre">django.db.connection</span></code>. Your
+<a class="reference internal" href="#django.apps.AppConfig.ready" title="django.apps.AppConfig.ready"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ready()</span></code></a> method will run during startup of every management
+command. For example, even though the test database configuration is
+separate from the production settings, <code class="docutils literal notranslate"><span class="pre">manage.py</span> <span class="pre">test</span></code> would still
+execute some queries against your <strong>production</strong> database!</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In the usual initialization process, the <code class="docutils literal notranslate"><span class="pre">ready</span></code> method is only called
+once by Django. But in some corner cases, particularly in tests which
+are fiddling with installed applications, <code class="docutils literal notranslate"><span class="pre">ready</span></code> might be called more
+than once. In that case, either write idempotent methods, or put a flag
+on your <code class="docutils literal notranslate"><span class="pre">AppConfig</span></code> classes to prevent re-running code which should
+be executed exactly one time.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="s-namespace-packages-as-apps">
+<span id="s-namespace-package"></span><span id="namespace-packages-as-apps"></span><span id="namespace-package"></span><h3>Namespace packages as apps<a class="headerlink" href="#namespace-packages-as-apps" title="Permalink to this headline">¶</a></h3>
+<p>Python packages without an <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> file are known as &quot;namespace
+packages&quot; and may be spread across multiple directories at different locations
+on <code class="docutils literal notranslate"><span class="pre">sys.path</span></code> (see <span class="target" id="index-0"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0420"><strong>PEP 420</strong></a>).</p>
+<p>Django applications require a single base filesystem path where Django
+(depending on configuration) will search for templates, static assets,
+etc. Thus, namespace packages may only be Django applications if one of the
+following is true:</p>
+<ol class="arabic simple">
+<li>The namespace package actually has only a single location (i.e. is not
+spread across more than one directory.)</li>
+<li>The <a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a> class used to configure the application
+has a <a class="reference internal" href="#django.apps.AppConfig.path" title="django.apps.AppConfig.path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">path</span></code></a> class attribute, which is the
+absolute directory path Django will use as the single base path for the
+application.</li>
+</ol>
+<p>If neither of these conditions is met, Django will raise
+<a class="reference internal" href="exceptions.html#django.core.exceptions.ImproperlyConfigured" title="django.core.exceptions.ImproperlyConfigured"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ImproperlyConfigured</span></code></a>.</p>
+</div>
+</div>
+<div class="section" id="s-application-registry">
+<span id="application-registry"></span><h2>Application registry<a class="headerlink" href="#application-registry" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="django.apps.apps">
+<code class="descname">apps</code><a class="headerlink" href="#django.apps.apps" title="Permalink to this definition">¶</a></dt>
+<dd><p>The application registry provides the following public API. Methods that
+aren't listed below are considered private and may change without notice.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="django.apps.apps.ready">
+<code class="descclassname">apps.</code><code class="descname">ready</code><a class="headerlink" href="#django.apps.apps.ready" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean attribute that is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> after the registry is fully
+populated and all <a class="reference internal" href="#django.apps.AppConfig.ready" title="django.apps.AppConfig.ready"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AppConfig.ready()</span></code></a> methods are called.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.apps.apps.get_app_configs">
+<code class="descclassname">apps.</code><code class="descname">get_app_configs</code>()<a class="headerlink" href="#django.apps.apps.get_app_configs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterable of <a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a> instances.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.apps.apps.get_app_config">
+<code class="descclassname">apps.</code><code class="descname">get_app_config</code>(<em>app_label</em>)<a class="headerlink" href="#django.apps.apps.get_app_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an <a class="reference internal" href="#django.apps.AppConfig" title="django.apps.AppConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></a> for the application with the
+given <code class="docutils literal notranslate"><span class="pre">app_label</span></code>. Raises <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#LookupError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">LookupError</span></code></a> if no such application
+exists.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.apps.apps.is_installed">
+<code class="descclassname">apps.</code><code class="descname">is_installed</code>(<em>app_name</em>)<a class="headerlink" href="#django.apps.apps.is_installed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether an application with the given name exists in the registry.
+<code class="docutils literal notranslate"><span class="pre">app_name</span></code> is the full name of the app, e.g. <code class="docutils literal notranslate"><span class="pre">'django.contrib.admin'</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="django.apps.apps.get_model">
+<code class="descclassname">apps.</code><code class="descname">get_model</code>(<em>app_label</em>, <em>model_name</em>, <em>require_ready=True</em>)<a class="headerlink" href="#django.apps.apps.get_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the <a class="reference internal" href="models/instances.html#django.db.models.Model" title="django.db.models.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> with the given <code class="docutils literal notranslate"><span class="pre">app_label</span></code>
+and <code class="docutils literal notranslate"><span class="pre">model_name</span></code>. As a shortcut, this method also accepts a single
+argument in the form <code class="docutils literal notranslate"><span class="pre">app_label.model_name</span></code>. <code class="docutils literal notranslate"><span class="pre">model_name</span></code> is
+case-insensitive.</p>
+<p>Raises <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#LookupError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">LookupError</span></code></a> if no such application or model exists. Raises
+<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> when called with a single argument that doesn't contain
+exactly one dot.</p>
+<p>Requires the app registry to be fully populated unless the
+<code class="docutils literal notranslate"><span class="pre">require_ready</span></code> argument is set to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+<p>Setting <code class="docutils literal notranslate"><span class="pre">require_ready</span></code> to <code class="docutils literal notranslate"><span class="pre">False</span></code> allows looking up models
+<a class="reference internal" href="#app-loading-process"><span class="std std-ref">while the app registry is being populated</span></a>,
+specifically during the second phase where it imports models. Then
+<code class="docutils literal notranslate"><span class="pre">get_model()</span></code> has the same effect as importing the model. The main use
+case is to configure model classes with settings, such as
+<a class="reference internal" href="settings.html#std:setting-AUTH_USER_MODEL"><code class="xref std std-setting docutils literal notranslate"><span class="pre">AUTH_USER_MODEL</span></code></a>.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">require_ready</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>, <code class="docutils literal notranslate"><span class="pre">get_model()</span></code> returns a model class
+that may not be fully functional (reverse accessors may be missing, for
+example) until the app registry is fully populated. For this reason, it's
+best to leave <code class="docutils literal notranslate"><span class="pre">require_ready</span></code> to the default value of <code class="docutils literal notranslate"><span class="pre">True</span></code> whenever
+possible.</p>
+<div class="versionadded">
+<span class="title">New in Django 1.11:</span> <p>The <code class="docutils literal notranslate"><span class="pre">require_ready</span></code> keyword argument was added.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="s-initialization-process">
+<span id="s-app-loading-process"></span><span id="initialization-process"></span><span id="app-loading-process"></span><h2>Initialization process<a class="headerlink" href="#initialization-process" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-how-applications-are-loaded">
+<span id="how-applications-are-loaded"></span><h3>How applications are loaded<a class="headerlink" href="#how-applications-are-loaded" title="Permalink to this headline">¶</a></h3>
+<p>When Django starts, <a class="reference internal" href="#django.setup" title="django.setup"><code class="xref py py-func docutils literal notranslate"><span class="pre">django.setup()</span></code></a> is responsible for populating the
+application registry.</p>
+<dl class="function">
+<dt id="django.setup">
+<code class="descname">setup</code>(<em>set_prefix=True</em>)<a class="reference internal" href="../_modules/django.html#setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#django.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configures Django by:</p>
+<ul class="simple">
+<li>Loading the settings.</li>
+<li>Setting up logging.</li>
+<li>If <code class="docutils literal notranslate"><span class="pre">set_prefix</span></code> is True, setting the URL resolver script prefix to
+<a class="reference internal" href="settings.html#std:setting-FORCE_SCRIPT_NAME"><code class="xref std std-setting docutils literal notranslate"><span class="pre">FORCE_SCRIPT_NAME</span></code></a> if defined, or <code class="docutils literal notranslate"><span class="pre">/</span></code> otherwise.</li>
+<li>Initializing the application registry.</li>
+</ul>
+<p>This function is called automatically:</p>
+<ul class="simple">
+<li>When running an HTTP server via Django's WSGI support.</li>
+<li>When invoking a management command.</li>
+</ul>
+<p>It must be called explicitly in other cases, for instance in plain Python
+scripts.</p>
+</dd></dl>
+
+<p>The application registry is initialized in three stages. At each stage, Django
+processes all applications in the order of <a class="reference internal" href="settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a>.</p>
+<ol class="arabic">
+<li><p class="first">First Django imports each item in <a class="reference internal" href="settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a>.</p>
+<p>If it's an application configuration class, Django imports the root package
+of the application, defined by its <a class="reference internal" href="#django.apps.AppConfig.name" title="django.apps.AppConfig.name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">name</span></code></a> attribute. If
+it's a Python package, Django creates a default application configuration.</p>
+<p><em>At this stage, your code shouldn't import any models!</em></p>
+<p>In other words, your applications' root packages and the modules that
+define your application configuration classes shouldn't import any models,
+even indirectly.</p>
+<p>Strictly speaking, Django allows importing models once their application
+configuration is loaded. However, in order to avoid needless constraints on
+the order of <a class="reference internal" href="settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a>, it's strongly recommended not
+import any models at this stage.</p>
+<p>Once this stage completes, APIs that operate on application configurations
+such as <a class="reference internal" href="#django.apps.apps.get_app_config" title="django.apps.apps.get_app_config"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_app_config()</span></code></a> become usable.</p>
+</li>
+<li><p class="first">Then Django attempts to import the <code class="docutils literal notranslate"><span class="pre">models</span></code> submodule of each application,
+if there is one.</p>
+<p>You must define or import all models in your application's <code class="docutils literal notranslate"><span class="pre">models.py</span></code> or
+<code class="docutils literal notranslate"><span class="pre">models/__init__.py</span></code>. Otherwise, the application registry may not be fully
+populated at this point, which could cause the ORM to malfunction.</p>
+<p>Once this stage completes, APIs that operate on models such as
+<a class="reference internal" href="#django.apps.apps.get_model" title="django.apps.apps.get_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_model()</span></code></a> become usable.</p>
+</li>
+<li><p class="first">Finally Django runs the <a class="reference internal" href="#django.apps.AppConfig.ready" title="django.apps.AppConfig.ready"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ready()</span></code></a> method of each application
+configuration.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="s-troubleshooting">
+<span id="s-applications-troubleshooting"></span><span id="troubleshooting"></span><span id="applications-troubleshooting"></span><h3>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h3>
+<p>Here are some common problems that you may encounter during initialization:</p>
+<ul>
+<li><p class="first"><a class="reference internal" href="exceptions.html#django.core.exceptions.AppRegistryNotReady" title="django.core.exceptions.AppRegistryNotReady"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppRegistryNotReady</span></code></a>: This happens when
+importing an application configuration or a models module triggers code that
+depends on the app registry.</p>
+<p>For example, <a class="reference internal" href="utils.html#django.utils.translation.gettext" title="django.utils.translation.gettext"><code class="xref py py-func docutils literal notranslate"><span class="pre">gettext()</span></code></a> uses the app
+registry to look up translation catalogs in applications. To translate at
+import time, you need <a class="reference internal" href="utils.html#django.utils.translation.gettext_lazy" title="django.utils.translation.gettext_lazy"><code class="xref py py-func docutils literal notranslate"><span class="pre">gettext_lazy()</span></code></a>
+instead. (Using <a class="reference internal" href="utils.html#django.utils.translation.gettext" title="django.utils.translation.gettext"><code class="xref py py-func docutils literal notranslate"><span class="pre">gettext()</span></code></a> would be a bug,
+because the translation would happen at import time, rather than at each
+request depending on the active language.)</p>
+<p>Executing database queries with the ORM at import time in models modules
+will also trigger this exception. The ORM cannot function properly until all
+models are available.</p>
+<p>This exception also happens if you forget to call <a class="reference internal" href="#django.setup" title="django.setup"><code class="xref py py-func docutils literal notranslate"><span class="pre">django.setup()</span></code></a> in
+a standalone Python script.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">ImportError:</span> <span class="pre">cannot</span> <span class="pre">import</span> <span class="pre">name</span> <span class="pre">...</span></code> This happens if the import sequence
+ends up in a loop.</p>
+<p>To eliminate such problems, you should minimize dependencies between your
+models modules and do as little work as possible at import time. To avoid
+executing code at import time, you can move it into a function and cache its
+results. The code will be executed when you first need its results. This
+concept is known as &quot;lazy evaluation&quot;.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">django.contrib.admin</span></code> automatically performs autodiscovery of <code class="docutils literal notranslate"><span class="pre">admin</span></code>
+modules in installed applications. To prevent it, change your
+<a class="reference internal" href="settings.html#std:setting-INSTALLED_APPS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code></a> to contain
+<code class="docutils literal notranslate"><span class="pre">'django.contrib.admin.apps.SimpleAdminConfig'</span></code> instead of
+<code class="docutils literal notranslate"><span class="pre">'django.contrib.admin'</span></code>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Applications</a><ul>
+<li><a class="reference internal" href="#projects-and-applications">Projects and applications</a></li>
+<li><a class="reference internal" href="#configuring-applications">Configuring applications</a><ul>
+<li><a class="reference internal" href="#for-application-authors">For application authors</a></li>
+<li><a class="reference internal" href="#for-application-users">For application users</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#application-configuration">Application configuration</a><ul>
+<li><a class="reference internal" href="#configurable-attributes">Configurable attributes</a></li>
+<li><a class="reference internal" href="#read-only-attributes">Read-only attributes</a></li>
+<li><a class="reference internal" href="#methods">Methods</a></li>
+<li><a class="reference internal" href="#namespace-packages-as-apps">Namespace packages as apps</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#application-registry">Application registry</a></li>
+<li><a class="reference internal" href="#initialization-process">Initialization process</a><ul>
+<li><a class="reference internal" href="#how-applications-are-loaded">How applications are loaded</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">API Reference</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="checks.html"
+                        title="next chapter">System check framework</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/ref/applications.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="index.html" title="API Reference">previous</a>
+     |
+    <a href="index.html" title="API Reference" accesskey="U">up</a>
+   |
+    <a href="checks.html" title="System check framework">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

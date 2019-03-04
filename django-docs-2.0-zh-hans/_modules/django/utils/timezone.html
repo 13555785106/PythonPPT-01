@@ -1,0 +1,406 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>django.utils.timezone &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+
+
+
+ 
+<script type="text/javascript" src="../../../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../../../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../../../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../../../index.html">Home</a>  |
+        <a title="Table of contents" href="../../../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../../../genindex.html">Index</a>  |
+        <a title="Module index" href="../../../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    <a href="../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="_modules-django-utils-timezone">
+            
+  <h1>Source code for django.utils.timezone</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Timezone-related classes and functions.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="k">import</span> <span class="n">ContextDecorator</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">tzinfo</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">local</span>
+
+<span class="kn">import</span> <span class="nn">pytz</span>
+
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="k">import</span> <span class="n">settings</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;utc&#39;</span><span class="p">,</span> <span class="s1">&#39;get_fixed_timezone&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;get_default_timezone&#39;</span><span class="p">,</span> <span class="s1">&#39;get_default_timezone_name&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;get_current_timezone&#39;</span><span class="p">,</span> <span class="s1">&#39;get_current_timezone_name&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;activate&#39;</span><span class="p">,</span> <span class="s1">&#39;deactivate&#39;</span><span class="p">,</span> <span class="s1">&#39;override&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;localtime&#39;</span><span class="p">,</span> <span class="s1">&#39;now&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;is_aware&#39;</span><span class="p">,</span> <span class="s1">&#39;is_naive&#39;</span><span class="p">,</span> <span class="s1">&#39;make_aware&#39;</span><span class="p">,</span> <span class="s1">&#39;make_naive&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="c1"># UTC and local time zones</span>
+
+<span class="n">ZERO</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="FixedOffset"><a class="viewcode-back" href="../../../ref/utils.html#django.utils.timezone.FixedOffset">[docs]</a><span class="k">class</span> <span class="nc">FixedOffset</span><span class="p">(</span><span class="n">tzinfo</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fixed offset in minutes east from UTC. Taken from Python&#39;s docs.</span>
+
+<span class="sd">    Kept as close as possible to the reference version. __init__ was changed</span>
+<span class="sd">    to make its arguments optional, according to Python&#39;s requirement that</span>
+<span class="sd">    tzinfo subclasses can be instantiated without arguments.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__offset</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">offset</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">utcoffset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__offset</span>
+
+    <span class="k">def</span> <span class="nf">tzname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__name</span>
+
+    <span class="k">def</span> <span class="nf">dst</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ZERO</span></div>
+
+
+<span class="c1"># UTC time zone as a tzinfo instance.</span>
+<span class="n">utc</span> <span class="o">=</span> <span class="n">pytz</span><span class="o">.</span><span class="n">utc</span>
+
+
+<div class="viewcode-block" id="get_fixed_timezone"><a class="viewcode-back" href="../../../ref/utils.html#django.utils.timezone.get_fixed_timezone">[docs]</a><span class="k">def</span> <span class="nf">get_fixed_timezone</span><span class="p">(</span><span class="n">offset</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a tzinfo instance with a fixed offset from UTC.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">):</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span><span class="o">.</span><span class="n">seconds</span> <span class="o">//</span> <span class="mi">60</span>
+    <span class="n">sign</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span> <span class="k">if</span> <span class="n">offset</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;+&#39;</span>
+    <span class="n">hhmm</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%02d%02d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">divmod</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">offset</span><span class="p">),</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">sign</span> <span class="o">+</span> <span class="n">hhmm</span>
+    <span class="k">return</span> <span class="n">FixedOffset</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="c1"># In order to avoid accessing settings at compile time,</span>
+<span class="c1"># wrap the logic in a function and cache the result.</span>
+<div class="viewcode-block" id="get_default_timezone"><a class="viewcode-back" href="../../../ref/utils.html#django.utils.timezone.get_default_timezone">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">get_default_timezone</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the default time zone as a tzinfo instance.</span>
+
+<span class="sd">    This is the time zone defined by settings.TIME_ZONE.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">TIME_ZONE</span><span class="p">)</span></div>
+
+
+<span class="c1"># This function exists for consistency with get_current_timezone_name</span>
+<div class="viewcode-block" id="get_default_timezone_name"><a class="viewcode-back" href="../../../ref/utils.html#django.utils.timezone.get_default_timezone_name">[docs]</a><span class="k">def</span> <span class="nf">get_default_timezone_name</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Return the name of the default time zone.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_timezone_name</span><span class="p">(</span><span class="n">get_default_timezone</span><span class="p">())</span></div>
+
+
+<span class="n">_active</span> <span class="o">=</span> <span class="n">local</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="get_current_timezone"><a class="viewcode-back" href="../../../ref/utils.html#django.utils.timezone.get_current_timezone">[docs]</a><span class="k">def</span> <span class="nf">get_current_timezone</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Return the currently active time zone as a tzinfo instance.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_active</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">get_default_timezone</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="get_current_timezone_name"><a class="viewcode-back" href="../../../ref/utils.html#django.utils.timezone.get_current_timezone_name">[docs]</a><span class="k">def</span> <span class="nf">get_current_timezone_name</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Return the name of the currently active time zone.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_timezone_name</span><span class="p">(</span><span class="n">get_current_timezone</span><span class="p">())</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_timezone_name</span><span class="p">(</span><span class="n">timezone</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the name of ``timezone``.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># for pytz timezones</span>
+        <span class="k">return</span> <span class="n">timezone</span><span class="o">.</span><span class="n">zone</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="c1"># for regular tzinfo objects</span>
+        <span class="k">return</span> <span class="n">timezone</span><span class="o">.</span><span class="n">tzname</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+<span class="c1"># Timezone selection functions.</span>
+
+<span class="c1"># These functions don&#39;t change os.environ[&#39;TZ&#39;] and call time.tzset()</span>
+<span class="c1"># because it isn&#39;t thread safe.</span>
+
+
+<div class="viewcode-block" id="activate"><a class="viewcode-back" href="../../../ref/utils.html#django.utils.timezone.activate">[docs]</a><span class="k">def</span> <span class="nf">activate</span><span class="p">(</span><span class="n">timezone</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the time zone for the current thread.</span>
+
+<span class="sd">    The ``timezone`` argument must be an instance of a tzinfo subclass or a</span>
+<span class="sd">    time zone name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timezone</span><span class="p">,</span> <span class="n">tzinfo</span><span class="p">):</span>
+        <span class="n">_active</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">timezone</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timezone</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">_active</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="n">timezone</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid timezone: </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">timezone</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="deactivate"><a class="viewcode-back" href="../../../ref/utils.html#django.utils.timezone.deactivate">[docs]</a><span class="k">def</span> <span class="nf">deactivate</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unset the time zone for the current thread.</span>
+
+<span class="sd">    Django will then use the time zone defined by settings.TIME_ZONE.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_active</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
+        <span class="k">del</span> <span class="n">_active</span><span class="o">.</span><span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="override"><a class="viewcode-back" href="../../../ref/utils.html#django.utils.timezone.override">[docs]</a><span class="k">class</span> <span class="nc">override</span><span class="p">(</span><span class="n">ContextDecorator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Temporarily set the time zone for the current thread.</span>
+
+<span class="sd">    This is a context manager that uses django.utils.timezone.activate()</span>
+<span class="sd">    to set the timezone on entry and restores the previously active timezone</span>
+<span class="sd">    on exit.</span>
+
+<span class="sd">    The ``timezone`` argument must be an instance of a ``tzinfo`` subclass, a</span>
+<span class="sd">    time zone name, or ``None``. If it is ``None``, Django enables the default</span>
+<span class="sd">    time zone.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timezone</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timezone</span> <span class="o">=</span> <span class="n">timezone</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">old_timezone</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_active</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">timezone</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">deactivate</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">activate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timezone</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_timezone</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">deactivate</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_active</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_timezone</span></div>
+
+
+<span class="c1"># Templates</span>
+
+<span class="k">def</span> <span class="nf">template_localtime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">use_tz</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if value is a datetime and converts it to local time if necessary.</span>
+
+<span class="sd">    If use_tz is provided and is not None, that will force the value to</span>
+<span class="sd">    be converted (or not), overriding the value of settings.USE_TZ.</span>
+
+<span class="sd">    This function is designed for use by the template engine.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">should_convert</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">datetime</span><span class="p">)</span> <span class="ow">and</span>
+        <span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">USE_TZ</span> <span class="k">if</span> <span class="n">use_tz</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">use_tz</span><span class="p">)</span> <span class="ow">and</span>
+        <span class="ow">not</span> <span class="n">is_naive</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;convert_to_local_time&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">localtime</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">should_convert</span> <span class="k">else</span> <span class="n">value</span>
+
+
+<span class="c1"># Utilities</span>
+
+<div class="viewcode-block" id="localtime"><a class="viewcode-back" href="../../../ref/utils.html#django.utils.timezone.localtime">[docs]</a><span class="k">def</span> <span class="nf">localtime</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timezone</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert an aware datetime.datetime to local time.</span>
+
+<span class="sd">    Only aware datetimes are allowed. When value is omitted, it defaults to</span>
+<span class="sd">    now().</span>
+
+<span class="sd">    Local time is defined by the current time zone, unless another time zone</span>
+<span class="sd">    is specified.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">timezone</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">timezone</span> <span class="o">=</span> <span class="n">get_current_timezone</span><span class="p">()</span>
+    <span class="c1"># Emulate the behavior of astimezone() on Python &lt; 3.6.</span>
+    <span class="k">if</span> <span class="n">is_naive</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;localtime() cannot be applied to a naive datetime&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="localdate"><a class="viewcode-back" href="../../../ref/utils.html#django.utils.timezone.localdate">[docs]</a><span class="k">def</span> <span class="nf">localdate</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timezone</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert an aware datetime to local time and return the value&#39;s date.</span>
+
+<span class="sd">    Only aware datetimes are allowed. When value is omitted, it defaults to</span>
+<span class="sd">    now().</span>
+
+<span class="sd">    Local time is defined by the current time zone, unless another time zone is</span>
+<span class="sd">    specified.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">localtime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">timezone</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="now"><a class="viewcode-back" href="../../../ref/utils.html#django.utils.timezone.now">[docs]</a><span class="k">def</span> <span class="nf">now</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return an aware or naive datetime.datetime, depending on settings.USE_TZ.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">USE_TZ</span><span class="p">:</span>
+        <span class="c1"># timeit shows that datetime.now(tz=utc) is 24% slower</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">utc</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span></div>
+
+
+<span class="c1"># By design, these four functions don&#39;t perform any checks on their arguments.</span>
+<span class="c1"># The caller should ensure that they don&#39;t receive an invalid value like None.</span>
+
+<div class="viewcode-block" id="is_aware"><a class="viewcode-back" href="../../../ref/utils.html#django.utils.timezone.is_aware">[docs]</a><span class="k">def</span> <span class="nf">is_aware</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine if a given datetime.datetime is aware.</span>
+
+<span class="sd">    The concept is defined in Python&#39;s docs:</span>
+<span class="sd">    http://docs.python.org/library/datetime.html#datetime.tzinfo</span>
+
+<span class="sd">    Assuming value.tzinfo is either None or a proper datetime.tzinfo,</span>
+<span class="sd">    value.utcoffset() implements the appropriate logic.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">utcoffset</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="is_naive"><a class="viewcode-back" href="../../../ref/utils.html#django.utils.timezone.is_naive">[docs]</a><span class="k">def</span> <span class="nf">is_naive</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine if a given datetime.datetime is naive.</span>
+
+<span class="sd">    The concept is defined in Python&#39;s docs:</span>
+<span class="sd">    http://docs.python.org/library/datetime.html#datetime.tzinfo</span>
+
+<span class="sd">    Assuming value.tzinfo is either None or a proper datetime.tzinfo,</span>
+<span class="sd">    value.utcoffset() implements the appropriate logic.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">utcoffset</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="make_aware"><a class="viewcode-back" href="../../../ref/utils.html#django.utils.timezone.make_aware">[docs]</a><span class="k">def</span> <span class="nf">make_aware</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">timezone</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_dst</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make a naive datetime.datetime in a given time zone aware.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">timezone</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">timezone</span> <span class="o">=</span> <span class="n">get_current_timezone</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">timezone</span><span class="p">,</span> <span class="s1">&#39;localize&#39;</span><span class="p">):</span>
+        <span class="c1"># This method is available for pytz time zones.</span>
+        <span class="k">return</span> <span class="n">timezone</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">is_dst</span><span class="o">=</span><span class="n">is_dst</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Check that we won&#39;t overwrite the timezone of an aware datetime.</span>
+        <span class="k">if</span> <span class="n">is_aware</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;make_aware expects a naive datetime, got </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">value</span><span class="p">)</span>
+        <span class="c1"># This may be wrong around DST changes!</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="make_naive"><a class="viewcode-back" href="../../../ref/utils.html#django.utils.timezone.make_naive">[docs]</a><span class="k">def</span> <span class="nf">make_naive</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">timezone</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make an aware datetime.datetime naive in a given time zone.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">timezone</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">timezone</span> <span class="o">=</span> <span class="n">get_current_timezone</span><span class="p">()</span>
+    <span class="c1"># Emulate the behavior of astimezone() on Python &lt; 3.6.</span>
+    <span class="k">if</span> <span class="n">is_naive</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;make_naive() cannot be applied to a naive datetime&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    <a href="../../index.html" title="Module code" accesskey="U">up</a></div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

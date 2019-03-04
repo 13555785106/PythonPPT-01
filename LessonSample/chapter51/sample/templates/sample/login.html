@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>上传测试</title>
+</head>
+<body>
+<form method="post">
+    {% csrf_token %}
+    用户<input type="text" name="username"/><br/>
+    密码<input type="text" name="password"/><br/>
+    <input type="submit" value="确定"/><br/>
+</form>
+</body>
+</html>

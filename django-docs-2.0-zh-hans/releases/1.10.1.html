@@ -1,0 +1,213 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Django 1.10.1 release notes &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Django 1.10 release notes" href="1.10.html" />
+    <link rel="prev" title="Django 1.10.2 release notes" href="1.10.2.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="1.10.2.html" title="Django 1.10.2 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.10.html" title="Django 1.10 release notes">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="releases-1.10.1">
+            
+  <div class="section" id="s-django-1-10-1-release-notes">
+<span id="django-1-10-1-release-notes"></span><h1>Django 1.10.1 release notes<a class="headerlink" href="#django-1-10-1-release-notes" title="Permalink to this headline">¶</a></h1>
+<p><em>September 1, 2016</em></p>
+<p>Django 1.10.1 fixes several bugs in 1.10.</p>
+<div class="section" id="s-bugfixes">
+<span id="bugfixes"></span><h2>Bugfixes<a class="headerlink" href="#bugfixes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Fixed a crash in MySQL connections where <code class="docutils literal notranslate"><span class="pre">SELECT</span> <span class="pre">&#64;&#64;SQL_AUTO_IS_NULL</span></code>
+doesn't return a result (<a class="reference external" href="https://code.djangoproject.com/ticket/26991">#26991</a>).</li>
+<li>Allowed <code class="docutils literal notranslate"><span class="pre">User.is_authenticated</span></code> and <code class="docutils literal notranslate"><span class="pre">User.is_anonymous</span></code> properties to be
+compared using <code class="docutils literal notranslate"><span class="pre">==</span></code>, <code class="docutils literal notranslate"><span class="pre">!=</span></code>, and <code class="docutils literal notranslate"><span class="pre">|</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/26988">#26988</a>, <a class="reference external" href="https://code.djangoproject.com/ticket/27154">#27154</a>).</li>
+<li>Removed the broken <code class="docutils literal notranslate"><span class="pre">BaseCommand.usage()</span></code> method which was for
+<code class="docutils literal notranslate"><span class="pre">optparse</span></code> support (<a class="reference external" href="https://code.djangoproject.com/ticket/27000">#27000</a>).</li>
+<li>Fixed a checks framework crash with an empty <code class="docutils literal notranslate"><span class="pre">Meta.default_permissions</span></code>
+(<a class="reference external" href="https://code.djangoproject.com/ticket/26997">#26997</a>).</li>
+<li>Fixed a regression in the number of queries when using <code class="docutils literal notranslate"><span class="pre">RadioSelect</span></code> with a
+<code class="docutils literal notranslate"><span class="pre">ModelChoiceField</span></code> form field (<a class="reference external" href="https://code.djangoproject.com/ticket/27001">#27001</a>).</li>
+<li>Fixed a crash if <code class="docutils literal notranslate"><span class="pre">request.META['CONTENT_LENGTH']</span></code> is an empty string
+(<a class="reference external" href="https://code.djangoproject.com/ticket/27005">#27005</a>).</li>
+<li>Fixed the <code class="docutils literal notranslate"><span class="pre">isnull</span></code> lookup on a <code class="docutils literal notranslate"><span class="pre">ForeignKey</span></code> with its <code class="docutils literal notranslate"><span class="pre">to_field</span></code>
+pointing to a <code class="docutils literal notranslate"><span class="pre">CharField</span></code> or pointing to a <code class="docutils literal notranslate"><span class="pre">CharField</span></code> defined with
+<code class="docutils literal notranslate"><span class="pre">primary_key=True</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/26983">#26983</a>).</li>
+<li>Prevented the <code class="docutils literal notranslate"><span class="pre">migrate</span></code> command from raising
+<code class="docutils literal notranslate"><span class="pre">InconsistentMigrationHistory</span></code> in the presence of unapplied squashed
+migrations (<a class="reference external" href="https://code.djangoproject.com/ticket/27004">#27004</a>).</li>
+<li>Fixed a regression in <code class="docutils literal notranslate"><span class="pre">Client.force_login()</span></code> which required specifying a
+<code class="docutils literal notranslate"><span class="pre">backend</span></code> rather than automatically using the first one if multiple
+backends are configured (<a class="reference external" href="https://code.djangoproject.com/ticket/27027">#27027</a>).</li>
+<li>Made <code class="docutils literal notranslate"><span class="pre">QuerySet.bulk_create()</span></code> properly initialize model instances on
+backends, such as PostgreSQL, that support returning the IDs of the created
+records so that many-to-many relationships can be used on the new objects
+(<a class="reference external" href="https://code.djangoproject.com/ticket/27026">#27026</a>).</li>
+<li>Fixed crash of <code class="docutils literal notranslate"><span class="pre">django.views.static.serve()</span></code> with <code class="docutils literal notranslate"><span class="pre">show_indexes</span></code> enabled
+(<a class="reference external" href="https://code.djangoproject.com/ticket/26973">#26973</a>).</li>
+<li>Fixed <code class="docutils literal notranslate"><span class="pre">ClearableFileInput</span></code> to avoid the <code class="docutils literal notranslate"><span class="pre">required</span></code> HTML attribute when
+initial data exists (<a class="reference external" href="https://code.djangoproject.com/ticket/27037">#27037</a>).</li>
+<li>Fixed annotations with database functions when combined with lookups on
+PostGIS (<a class="reference external" href="https://code.djangoproject.com/ticket/27014">#27014</a>).</li>
+<li>Reallowed the <code class="docutils literal notranslate"><span class="pre">{%</span> <span class="pre">for</span> <span class="pre">%}</span></code> tag to unpack any iterable (<a class="reference external" href="https://code.djangoproject.com/ticket/27058">#27058</a>).</li>
+<li>Made <code class="docutils literal notranslate"><span class="pre">makemigrations</span></code> skip inconsistent history checks on non-default
+databases if database routers aren't in use or if no apps can be migrated
+to the database (<a class="reference external" href="https://code.djangoproject.com/ticket/27054">#27054</a>, <a class="reference external" href="https://code.djangoproject.com/ticket/27110">#27110</a>, <a class="reference external" href="https://code.djangoproject.com/ticket/27142">#27142</a>).</li>
+<li>Removed duplicated managers in <code class="docutils literal notranslate"><span class="pre">Model._meta.managers</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/27073">#27073</a>).</li>
+<li>Fixed <code class="docutils literal notranslate"><span class="pre">contrib.admindocs</span></code> crash when a view is in a class, such as some of
+the admin views (<a class="reference external" href="https://code.djangoproject.com/ticket/27018">#27018</a>).</li>
+<li>Reverted a few admin checks that checked <code class="docutils literal notranslate"><span class="pre">field.many_to_many</span></code> back to
+<code class="docutils literal notranslate"><span class="pre">isinstance(field,</span> <span class="pre">models.ManyToManyField)</span></code> since it turned out the checks
+weren't suitable to be generalized like that (<a class="reference external" href="https://code.djangoproject.com/ticket/26998">#26998</a>).</li>
+<li>Added the database alias to the <code class="docutils literal notranslate"><span class="pre">InconsistentMigrationHistory</span></code> message
+raised by <code class="docutils literal notranslate"><span class="pre">makemigrations</span></code> and <code class="docutils literal notranslate"><span class="pre">migrate</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/27089">#27089</a>).</li>
+<li>Fixed the creation of <code class="docutils literal notranslate"><span class="pre">ContentType</span></code> and <code class="docutils literal notranslate"><span class="pre">Permission</span></code> objects for models
+of applications without migrations when calling the <code class="docutils literal notranslate"><span class="pre">migrate</span></code> command with
+no migrations to apply (<a class="reference external" href="https://code.djangoproject.com/ticket/27044">#27044</a>).</li>
+<li>Included the already applied migration state changes in the <code class="docutils literal notranslate"><span class="pre">Apps</span></code> instance
+provided to the <code class="docutils literal notranslate"><span class="pre">pre_migrate</span></code> signal receivers to allow <code class="docutils literal notranslate"><span class="pre">ContentType</span></code>
+renaming to be performed on model rename (<a class="reference external" href="https://code.djangoproject.com/ticket/27100">#27100</a>).</li>
+<li>Reallowed subclassing <code class="docutils literal notranslate"><span class="pre">UserCreationForm</span></code> without <code class="docutils literal notranslate"><span class="pre">USERNAME_FIELD</span></code> in
+<code class="docutils literal notranslate"><span class="pre">Meta.fields</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/27111">#27111</a>).</li>
+<li>Fixed a regression in model forms where model fields with a <code class="docutils literal notranslate"><span class="pre">default</span></code> that
+didn't appear in POST data no longer used the <code class="docutils literal notranslate"><span class="pre">default</span></code> (<a class="reference external" href="https://code.djangoproject.com/ticket/27039">#27039</a>).</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Django 1.10.1 release notes</a><ul>
+<li><a class="reference internal" href="#bugfixes">Bugfixes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="1.10.2.html"
+                        title="previous chapter">Django 1.10.2 release notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="1.10.html"
+                        title="next chapter">Django 1.10 release notes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/releases/1.10.1.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="1.10.2.html" title="Django 1.10.2 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.10.html" title="Django 1.10 release notes">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

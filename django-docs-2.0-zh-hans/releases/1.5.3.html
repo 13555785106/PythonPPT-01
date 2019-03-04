@@ -1,0 +1,194 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Django 1.5.3 release notes &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Django 1.5.2 release notes" href="1.5.2.html" />
+    <link rel="prev" title="Django 1.5.4 release notes" href="1.5.4.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="1.5.4.html" title="Django 1.5.4 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.5.2.html" title="Django 1.5.2 release notes">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="releases-1.5.3">
+            
+  <div class="section" id="s-django-1-5-3-release-notes">
+<span id="django-1-5-3-release-notes"></span><h1>Django 1.5.3 release notes<a class="headerlink" href="#django-1-5-3-release-notes" title="Permalink to this headline">¶</a></h1>
+<p><em>September 10, 2013</em></p>
+<p>This is Django 1.5.3, the third release in the Django 1.5 series. It addresses
+one security issue and also contains an opt-in feature to enhance the security
+of <a class="reference internal" href="../topics/http/sessions.html#module-django.contrib.sessions" title="django.contrib.sessions: Provides session management for Django projects."><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.sessions</span></code></a>.</p>
+<div class="section" id="s-directory-traversal-vulnerability-in-ssi-template-tag">
+<span id="directory-traversal-vulnerability-in-ssi-template-tag"></span><h2>Directory traversal vulnerability in <code class="docutils literal notranslate"><span class="pre">ssi</span></code> template tag<a class="headerlink" href="#directory-traversal-vulnerability-in-ssi-template-tag" title="Permalink to this headline">¶</a></h2>
+<p>In previous versions of Django it was possible to bypass the
+<code class="docutils literal notranslate"><span class="pre">ALLOWED_INCLUDE_ROOTS</span></code> setting used for security with the <code class="docutils literal notranslate"><span class="pre">ssi</span></code>
+template tag by specifying a relative path that starts with one of the allowed
+roots. For example, if <code class="docutils literal notranslate"><span class="pre">ALLOWED_INCLUDE_ROOTS</span> <span class="pre">=</span> <span class="pre">(&quot;/var/www&quot;,)</span></code> the following
+would be possible:</p>
+<div class="highlight-html+django notranslate"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">ssi</span> <span class="s2">&quot;/var/www/../../etc/passwd&quot;</span> <span class="cp">%}</span>
+</pre></div>
+</div>
+<p>In practice this is not a very common problem, as it would require the template
+author to put the <code class="docutils literal notranslate"><span class="pre">ssi</span></code> file in a user-controlled variable, but it's possible
+in principle.</p>
+</div>
+<div class="section" id="s-mitigating-a-remote-code-execution-vulnerability-in-django-contrib-sessions">
+<span id="mitigating-a-remote-code-execution-vulnerability-in-django-contrib-sessions"></span><h2>Mitigating a remote-code execution vulnerability in <a class="reference internal" href="../topics/http/sessions.html#module-django.contrib.sessions" title="django.contrib.sessions: Provides session management for Django projects."><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.sessions</span></code></a><a class="headerlink" href="#mitigating-a-remote-code-execution-vulnerability-in-django-contrib-sessions" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../topics/http/sessions.html#module-django.contrib.sessions" title="django.contrib.sessions: Provides session management for Django projects."><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.sessions</span></code></a> currently uses <a class="reference external" href="https://docs.python.org/3/library/pickle.html#module-pickle" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pickle</span></code></a> to serialize
+session data before storing it in the backend. If you're using the <a class="reference internal" href="../topics/http/sessions.html#cookie-session-backend"><span class="std std-ref">signed
+cookie session backend</span></a> and <a class="reference internal" href="../ref/settings.html#std:setting-SECRET_KEY"><code class="xref std std-setting docutils literal notranslate"><span class="pre">SECRET_KEY</span></code></a> is
+known by an attacker (there isn't an inherent vulnerability in Django that
+would cause it to leak), the attacker could insert a string into his session
+which, when unpickled, executes arbitrary code on the server. The technique for
+doing so is simple and easily available on the internet. Although the cookie
+session storage signs the cookie-stored data to prevent tampering, a
+<a class="reference internal" href="../ref/settings.html#std:setting-SECRET_KEY"><code class="xref std std-setting docutils literal notranslate"><span class="pre">SECRET_KEY</span></code></a> leak immediately escalates to a remote code execution
+vulnerability.</p>
+<p>This attack can be mitigated by serializing session data using JSON rather
+than <a class="reference external" href="https://docs.python.org/3/library/pickle.html#module-pickle" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pickle</span></code></a>. To facilitate this, Django 1.5.3 introduces a new setting,
+<a class="reference internal" href="../ref/settings.html#std:setting-SESSION_SERIALIZER"><code class="xref std std-setting docutils literal notranslate"><span class="pre">SESSION_SERIALIZER</span></code></a>, to customize the session serialization format.
+For backwards compatibility, this setting defaults to using <a class="reference external" href="https://docs.python.org/3/library/pickle.html#module-pickle" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pickle</span></code></a>.
+While JSON serialization does not support all Python objects like <a class="reference external" href="https://docs.python.org/3/library/pickle.html#module-pickle" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pickle</span></code></a>
+does, we highly recommend switching to JSON-serialized values. Also,
+as JSON requires string keys, you will likely run into problems if you are
+using non-string keys in <code class="docutils literal notranslate"><span class="pre">request.session</span></code>. See the
+<a class="reference internal" href="../topics/http/sessions.html#session-serialization"><span class="std std-ref">Session serialization</span></a> documentation for more details.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Django 1.5.3 release notes</a><ul>
+<li><a class="reference internal" href="#directory-traversal-vulnerability-in-ssi-template-tag">Directory traversal vulnerability in <code class="docutils literal notranslate"><span class="pre">ssi</span></code> template tag</a></li>
+<li><a class="reference internal" href="#mitigating-a-remote-code-execution-vulnerability-in-django-contrib-sessions">Mitigating a remote-code execution vulnerability in <code class="docutils literal notranslate"><span class="pre">django.contrib.sessions</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="1.5.4.html"
+                        title="previous chapter">Django 1.5.4 release notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="1.5.2.html"
+                        title="next chapter">Django 1.5.2 release notes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/releases/1.5.3.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="1.5.4.html" title="Django 1.5.4 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.5.2.html" title="Django 1.5.2 release notes">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

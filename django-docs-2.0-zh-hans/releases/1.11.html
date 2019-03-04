@@ -1,0 +1,962 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_Hans">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Django 1.11 release notes &#8212; Django 2.0.9.dev20180801150728 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Django 1.10.8 release notes" href="1.10.8.html" />
+    <link rel="prev" title="Django 1.11.1 release notes" href="1.11.1.html" />
+
+
+
+ 
+<script type="text/javascript" src="../templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "../ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+
+  </head><body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="../index.html">Django 2.0.9.dev20180801150728 documentation</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="../index.html">Home</a>  |
+        <a title="Table of contents" href="../contents.html">Table of contents</a>  |
+        <a title="Global index" href="../genindex.html">Index</a>  |
+        <a title="Module index" href="../py-modindex.html">Modules</a>
+      </div>
+      <div class="nav">
+    &laquo; <a href="1.11.1.html" title="Django 1.11.1 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.10.8.html" title="Django 1.10.8 release notes">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="releases-1.11">
+            
+  <div class="section" id="s-django-1-11-release-notes">
+<span id="django-1-11-release-notes"></span><h1>Django 1.11 release notes<a class="headerlink" href="#django-1-11-release-notes" title="Permalink to this headline">¶</a></h1>
+<p><em>April 4, 2017</em></p>
+<p>Welcome to Django 1.11!</p>
+<p>These release notes cover the <a class="reference internal" href="#whats-new-1-11"><span class="std std-ref">new features</span></a>, as well as
+some <a class="reference internal" href="#backwards-incompatible-1-11"><span class="std std-ref">backwards incompatible changes</span></a> you'll
+want to be aware of when upgrading from Django 1.10 or older versions. We've
+<a class="reference internal" href="#deprecated-features-1-11"><span class="std std-ref">begun the deprecation process for some features</span></a>.</p>
+<p>See the <a class="reference internal" href="../howto/upgrade-version.html"><span class="doc">Upgrading Django to a newer version</span></a> guide if you're updating an existing
+project.</p>
+<p>Django 1.11 is designated as a <a class="reference internal" href="../internals/release-process.html#term-long-term-support-release"><span class="xref std std-term">long-term support release</span></a>. It will
+receive security updates for at least three years after its release. Support
+for the previous LTS, Django 1.8, will end in April 2018.</p>
+<div class="section" id="s-python-compatibility">
+<span id="python-compatibility"></span><h2>Python compatibility<a class="headerlink" href="#python-compatibility" title="Permalink to this headline">¶</a></h2>
+<p>Django 1.11 requires Python 2.7, 3.4, 3.5, or 3.6. Django 1.11 is the first
+release to support Python 3.6. We <strong>highly recommend</strong> and only officially
+support the latest release of each series.</p>
+<p>The Django 1.11.x series is the last to support Python 2. The next major
+release, Django 2.0, will only support Python 3.4+.</p>
+</div>
+<div class="section" id="s-deprecating-warnings-are-no-longer-loud-by-default">
+<span id="deprecating-warnings-are-no-longer-loud-by-default"></span><h2>Deprecating warnings are no longer loud by default<a class="headerlink" href="#deprecating-warnings-are-no-longer-loud-by-default" title="Permalink to this headline">¶</a></h2>
+<p>Unlike older versions of Django, Django's own deprecation warnings are no
+longer displayed by default. This is consistent with Python's default behavior.</p>
+<p>This change allows third-party apps to support both Django 1.11 LTS and Django
+1.8 LTS without having to add code to avoid deprecation warnings.</p>
+<p>Following the release of Django 2.0, we suggest that third-party app authors
+drop support for all versions of Django prior to 1.11. At that time, you should
+be able run your package's tests using <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-Wd</span></code> so that deprecation
+warnings do appear. After making the deprecation warning fixes, your app should
+be compatible with Django 2.0.</p>
+</div>
+<div class="section" id="s-what-s-new-in-django-1-11">
+<span id="s-whats-new-1-11"></span><span id="what-s-new-in-django-1-11"></span><span id="whats-new-1-11"></span><h2>What's new in Django 1.11<a class="headerlink" href="#what-s-new-in-django-1-11" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-class-based-model-indexes">
+<span id="class-based-model-indexes"></span><h3>Class-based model indexes<a class="headerlink" href="#class-based-model-indexes" title="Permalink to this headline">¶</a></h3>
+<p>The new <a class="reference internal" href="../ref/models/indexes.html#module-django.db.models.indexes" title="django.db.models.indexes"><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.db.models.indexes</span></code></a> module contains classes which ease
+creating database indexes. Indexes are added to models using the
+<a class="reference internal" href="../ref/models/options.html#django.db.models.Options.indexes" title="django.db.models.Options.indexes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Meta.indexes</span></code></a> option.</p>
+<p>The <a class="reference internal" href="../ref/models/indexes.html#django.db.models.Index" title="django.db.models.Index"><code class="xref py py-class docutils literal notranslate"><span class="pre">Index</span></code></a> class creates a b-tree index, as if you
+used <a class="reference internal" href="../ref/models/fields.html#django.db.models.Field.db_index" title="django.db.models.Field.db_index"><code class="xref py py-attr docutils literal notranslate"><span class="pre">db_index</span></code></a> on the model field or
+<a class="reference internal" href="../ref/models/options.html#django.db.models.Options.index_together" title="django.db.models.Options.index_together"><code class="xref py py-attr docutils literal notranslate"><span class="pre">index_together</span></code></a> on the model <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class.
+It can be subclassed to support different index types, such as
+<a class="reference internal" href="../ref/contrib/postgres/indexes.html#django.contrib.postgres.indexes.GinIndex" title="django.contrib.postgres.indexes.GinIndex"><code class="xref py py-class docutils literal notranslate"><span class="pre">GinIndex</span></code></a>. It also allows defining the
+order (ASC/DESC) for the columns of the index.</p>
+</div>
+<div class="section" id="s-template-based-widget-rendering">
+<span id="template-based-widget-rendering"></span><h3>Template-based widget rendering<a class="headerlink" href="#template-based-widget-rendering" title="Permalink to this headline">¶</a></h3>
+<p>To ease customizing widgets, form widget rendering is now done using the
+template system rather than in Python. See <a class="reference internal" href="../ref/forms/renderers.html"><span class="doc">The form rendering API</span></a>.</p>
+<p>You may need to adjust any custom widgets that you've written for a few
+<a class="reference internal" href="#template-widget-incompatibilities-1-11"><span class="std std-ref">backwards incompatible changes</span></a>.</p>
+</div>
+<div class="section" id="s-subquery-expressions">
+<span id="subquery-expressions"></span><h3><code class="docutils literal notranslate"><span class="pre">Subquery</span></code> expressions<a class="headerlink" href="#subquery-expressions" title="Permalink to this headline">¶</a></h3>
+<p>The new <a class="reference internal" href="../ref/models/expressions.html#django.db.models.Subquery" title="django.db.models.Subquery"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subquery</span></code></a> and
+<a class="reference internal" href="../ref/models/expressions.html#django.db.models.Exists" title="django.db.models.Exists"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exists</span></code></a> database expressions allow creating
+explicit subqueries. Subqueries may refer to fields from the outer queryset
+using the <a class="reference internal" href="../ref/models/expressions.html#django.db.models.OuterRef" title="django.db.models.OuterRef"><code class="xref py py-class docutils literal notranslate"><span class="pre">OuterRef</span></code></a> class.</p>
+</div>
+<div class="section" id="s-minor-features">
+<span id="minor-features"></span><h3>Minor features<a class="headerlink" href="#minor-features" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="s-django-contrib-admin">
+<span id="django-contrib-admin"></span><h4><a class="reference internal" href="../ref/contrib/admin/index.html#module-django.contrib.admin" title="django.contrib.admin: Django's admin site."><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.admin</span></code></a><a class="headerlink" href="#django-contrib-admin" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.ModelAdmin.date_hierarchy" title="django.contrib.admin.ModelAdmin.date_hierarchy"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ModelAdmin.date_hierarchy</span></code></a> can now reference fields across relations.</li>
+<li>The new <a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.ModelAdmin.get_exclude" title="django.contrib.admin.ModelAdmin.get_exclude"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ModelAdmin.get_exclude()</span></code></a> hook allows specifying the
+exclude fields based on the request or model instance.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">popup_response.html</span></code> template can now be overridden per app, per
+model, or by setting the <a class="reference internal" href="../ref/contrib/admin/index.html#django.contrib.admin.ModelAdmin.popup_response_template" title="django.contrib.admin.ModelAdmin.popup_response_template"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ModelAdmin.popup_response_template</span></code></a>
+attribute.</li>
+</ul>
+</div>
+<div class="section" id="s-django-contrib-auth">
+<span id="django-contrib-auth"></span><h4><a class="reference internal" href="../topics/auth/index.html#module-django.contrib.auth" title="django.contrib.auth: Django's authentication framework."><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.auth</span></code></a><a class="headerlink" href="#django-contrib-auth" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>The default iteration count for the PBKDF2 password hasher is increased by
+20%.</li>
+<li>The <a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.LoginView" title="django.contrib.auth.views.LoginView"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginView</span></code></a> and
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.LogoutView" title="django.contrib.auth.views.LogoutView"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogoutView</span></code></a> class-based views supersede the
+deprecated <code class="docutils literal notranslate"><span class="pre">login()</span></code> and <code class="docutils literal notranslate"><span class="pre">logout()</span></code> function-based views.</li>
+<li>The <a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.PasswordChangeView" title="django.contrib.auth.views.PasswordChangeView"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordChangeView</span></code></a>,
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.PasswordChangeDoneView" title="django.contrib.auth.views.PasswordChangeDoneView"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordChangeDoneView</span></code></a>,
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.PasswordResetView" title="django.contrib.auth.views.PasswordResetView"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordResetView</span></code></a>,
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.PasswordResetDoneView" title="django.contrib.auth.views.PasswordResetDoneView"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordResetDoneView</span></code></a>,
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.PasswordResetConfirmView" title="django.contrib.auth.views.PasswordResetConfirmView"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordResetConfirmView</span></code></a>, and
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.PasswordResetCompleteView" title="django.contrib.auth.views.PasswordResetCompleteView"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordResetCompleteView</span></code></a> class-based
+views supersede the deprecated <code class="docutils literal notranslate"><span class="pre">password_change()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">password_change_done()</span></code>, <code class="docutils literal notranslate"><span class="pre">password_reset()</span></code>, <code class="docutils literal notranslate"><span class="pre">password_reset_done()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">password_reset_confirm()</span></code>, and <code class="docutils literal notranslate"><span class="pre">password_reset_complete()</span></code> function-based
+views.</li>
+<li>The new <code class="docutils literal notranslate"><span class="pre">post_reset_login</span></code> attribute for
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.PasswordResetConfirmView" title="django.contrib.auth.views.PasswordResetConfirmView"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordResetConfirmView</span></code></a> allows
+automatically logging in a user after a successful password reset.
+If you have multiple <code class="docutils literal notranslate"><span class="pre">AUTHENTICATION_BACKENDS</span></code> configured, use the
+<code class="docutils literal notranslate"><span class="pre">post_reset_login_backend</span></code> attribute to choose which one to use.</li>
+<li>To avoid the possibility of leaking a password reset token via the HTTP
+Referer header (for example, if the reset page includes a reference to CSS or
+JavaScript hosted on another domain), the
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.PasswordResetConfirmView" title="django.contrib.auth.views.PasswordResetConfirmView"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordResetConfirmView</span></code></a> (but not the
+deprecated <code class="docutils literal notranslate"><span class="pre">password_reset_confirm()</span></code> function-based view) stores the token
+in a session and redirects to itself to present the password change form to
+the user without the token in the URL.</li>
+<li><a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.update_session_auth_hash" title="django.contrib.auth.update_session_auth_hash"><code class="xref py py-func docutils literal notranslate"><span class="pre">update_session_auth_hash()</span></code></a> now rotates the session
+key to allow a password change to invalidate stolen session cookies.</li>
+<li>The new <code class="docutils literal notranslate"><span class="pre">success_url_allowed_hosts</span></code> attribute for
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.LoginView" title="django.contrib.auth.views.LoginView"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginView</span></code></a> and
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.LogoutView" title="django.contrib.auth.views.LogoutView"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogoutView</span></code></a> allows specifying a set of
+hosts that are safe for redirecting after login and logout.</li>
+<li>Added password validators <code class="docutils literal notranslate"><span class="pre">help_text</span></code> to
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.forms.UserCreationForm" title="django.contrib.auth.forms.UserCreationForm"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserCreationForm</span></code></a>.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">HttpRequest</span></code> is now passed to <a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.authenticate" title="django.contrib.auth.authenticate"><code class="xref py py-func docutils literal notranslate"><span class="pre">authenticate()</span></code></a>
+which in turn passes it to the authentication backend if it accepts a
+<code class="docutils literal notranslate"><span class="pre">request</span></code> argument.</li>
+<li>The <a class="reference internal" href="../ref/contrib/auth.html#django.contrib.auth.signals.user_login_failed" title="django.contrib.auth.signals.user_login_failed"><code class="xref py py-func docutils literal notranslate"><span class="pre">user_login_failed()</span></code></a> signal now
+receives a <code class="docutils literal notranslate"><span class="pre">request</span></code> argument.</li>
+<li><a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.forms.PasswordResetForm" title="django.contrib.auth.forms.PasswordResetForm"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordResetForm</span></code></a> supports custom user
+models that use an email field named something other than <code class="docutils literal notranslate"><span class="pre">'email'</span></code>.
+Set <a class="reference internal" href="../topics/auth/customizing.html#django.contrib.auth.models.CustomUser.EMAIL_FIELD" title="django.contrib.auth.models.CustomUser.EMAIL_FIELD"><code class="xref py py-attr docutils literal notranslate"><span class="pre">CustomUser.EMAIL_FIELD</span></code></a> to the name of the field.</li>
+<li><a class="reference internal" href="../topics/auth/customizing.html#django.contrib.auth.get_user_model" title="django.contrib.auth.get_user_model"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_user_model()</span></code></a> can now be called at import time,
+even in modules that define models.</li>
+</ul>
+</div>
+<div class="section" id="s-django-contrib-contenttypes">
+<span id="django-contrib-contenttypes"></span><h4><a class="reference internal" href="../ref/contrib/contenttypes.html#module-django.contrib.contenttypes" title="django.contrib.contenttypes: Provides generic interface to installed models."><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.contenttypes</span></code></a><a class="headerlink" href="#django-contrib-contenttypes" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>When stale content types are detected in the
+<a class="reference internal" href="../ref/django-admin.html#django-admin-remove_stale_contenttypes"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">remove_stale_contenttypes</span></code></a> command, there's now a list of related
+objects such as <code class="docutils literal notranslate"><span class="pre">auth.Permission</span></code>s that will also be deleted. Previously,
+only the content types were listed (and this prompt was after <code class="docutils literal notranslate"><span class="pre">migrate</span></code>
+rather than in a separate command).</li>
+</ul>
+</div>
+<div class="section" id="s-django-contrib-gis">
+<span id="django-contrib-gis"></span><h4><a class="reference internal" href="../ref/contrib/gis/index.html#module-django.contrib.gis" title="django.contrib.gis: Geographic Information System (GIS) extensions for Django"><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.gis</span></code></a><a class="headerlink" href="#django-contrib-gis" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>The new <a class="reference internal" href="../ref/contrib/gis/geos.html#django.contrib.gis.geos.GEOSGeometry.from_gml" title="django.contrib.gis.geos.GEOSGeometry.from_gml"><code class="xref py py-meth docutils literal notranslate"><span class="pre">GEOSGeometry.from_gml()</span></code></a> and <a class="reference internal" href="../ref/contrib/gis/gdal.html#django.contrib.gis.gdal.OGRGeometry.from_gml" title="django.contrib.gis.gdal.OGRGeometry.from_gml"><code class="xref py py-meth docutils literal notranslate"><span class="pre">OGRGeometry.from_gml()</span></code></a>
+methods allow creating geometries from GML.</li>
+<li>Added support for the <a class="reference internal" href="../ref/contrib/gis/geoquerysets.html#std:fieldlookup-dwithin"><code class="xref std std-lookup docutils literal notranslate"><span class="pre">dwithin</span></code></a> lookup on SpatiaLite.</li>
+<li>The <a class="reference internal" href="../ref/contrib/gis/functions.html#django.contrib.gis.db.models.functions.Area" title="django.contrib.gis.db.models.functions.Area"><code class="xref py py-class docutils literal notranslate"><span class="pre">Area</span></code></a> function,
+<a class="reference internal" href="../ref/contrib/gis/functions.html#django.contrib.gis.db.models.functions.Distance" title="django.contrib.gis.db.models.functions.Distance"><code class="xref py py-class docutils literal notranslate"><span class="pre">Distance</span></code></a> function, and
+distance lookups now work with geodetic coordinates on SpatiaLite.</li>
+<li>The OpenLayers-based form widgets now use <code class="docutils literal notranslate"><span class="pre">OpenLayers.js</span></code> from
+<code class="docutils literal notranslate"><span class="pre">https://cdnjs.cloudflare.com</span></code> which is more suitable for production use
+than the the old <code class="docutils literal notranslate"><span class="pre">http://openlayers.org</span></code> source. They are also updated to
+use OpenLayers 3.</li>
+<li>PostGIS migrations can now change field dimensions.</li>
+<li>Added the ability to pass the <cite>size</cite>, <cite>shape</cite>, and <cite>offset</cite> parameter when
+creating <a class="reference internal" href="../ref/contrib/gis/gdal.html#django.contrib.gis.gdal.GDALRaster" title="django.contrib.gis.gdal.GDALRaster"><code class="xref py py-class docutils literal notranslate"><span class="pre">GDALRaster</span></code></a> objects.</li>
+<li>Added SpatiaLite support for the
+<a class="reference internal" href="../ref/contrib/gis/functions.html#django.contrib.gis.db.models.functions.IsValid" title="django.contrib.gis.db.models.functions.IsValid"><code class="xref py py-class docutils literal notranslate"><span class="pre">IsValid</span></code></a> function,
+<a class="reference internal" href="../ref/contrib/gis/functions.html#django.contrib.gis.db.models.functions.MakeValid" title="django.contrib.gis.db.models.functions.MakeValid"><code class="xref py py-class docutils literal notranslate"><span class="pre">MakeValid</span></code></a> function, and
+<a class="reference internal" href="../ref/contrib/gis/geoquerysets.html#std:fieldlookup-isvalid"><code class="xref std std-lookup docutils literal notranslate"><span class="pre">isvalid</span></code></a> lookup.</li>
+<li>Added Oracle support for the
+<a class="reference internal" href="../ref/contrib/gis/functions.html#django.contrib.gis.db.models.functions.AsGML" title="django.contrib.gis.db.models.functions.AsGML"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsGML</span></code></a> function,
+<a class="reference internal" href="../ref/contrib/gis/functions.html#django.contrib.gis.db.models.functions.BoundingCircle" title="django.contrib.gis.db.models.functions.BoundingCircle"><code class="xref py py-class docutils literal notranslate"><span class="pre">BoundingCircle</span></code></a> function,
+<a class="reference internal" href="../ref/contrib/gis/functions.html#django.contrib.gis.db.models.functions.IsValid" title="django.contrib.gis.db.models.functions.IsValid"><code class="xref py py-class docutils literal notranslate"><span class="pre">IsValid</span></code></a> function, and
+<a class="reference internal" href="../ref/contrib/gis/geoquerysets.html#std:fieldlookup-isvalid"><code class="xref std std-lookup docutils literal notranslate"><span class="pre">isvalid</span></code></a> lookup.</li>
+</ul>
+</div>
+<div class="section" id="s-django-contrib-postgres">
+<span id="django-contrib-postgres"></span><h4><a class="reference internal" href="../ref/contrib/postgres/index.html#module-django.contrib.postgres" title="django.contrib.postgres: PostgreSQL-specific fields and features"><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.postgres</span></code></a><a class="headerlink" href="#django-contrib-postgres" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>The new <code class="docutils literal notranslate"><span class="pre">distinct</span></code> argument for
+<a class="reference internal" href="../ref/contrib/postgres/aggregates.html#django.contrib.postgres.aggregates.StringAgg" title="django.contrib.postgres.aggregates.StringAgg"><code class="xref py py-class docutils literal notranslate"><span class="pre">StringAgg</span></code></a> determines if
+concatenated values will be distinct.</li>
+<li>The new <a class="reference internal" href="../ref/contrib/postgres/indexes.html#django.contrib.postgres.indexes.GinIndex" title="django.contrib.postgres.indexes.GinIndex"><code class="xref py py-class docutils literal notranslate"><span class="pre">GinIndex</span></code></a> and
+<a class="reference internal" href="../ref/contrib/postgres/indexes.html#django.contrib.postgres.indexes.BrinIndex" title="django.contrib.postgres.indexes.BrinIndex"><code class="xref py py-class docutils literal notranslate"><span class="pre">BrinIndex</span></code></a> classes allow
+creating <code class="docutils literal notranslate"><span class="pre">GIN</span></code> and <code class="docutils literal notranslate"><span class="pre">BRIN</span></code> indexes in the database.</li>
+<li><a class="reference internal" href="../ref/contrib/postgres/fields.html#django.contrib.postgres.fields.JSONField" title="django.contrib.postgres.fields.JSONField"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONField</span></code></a> accepts a new <code class="docutils literal notranslate"><span class="pre">encoder</span></code>
+parameter to specify a custom class to encode data types not supported by the
+standard encoder.</li>
+<li>The new <a class="reference internal" href="../ref/contrib/postgres/fields.html#django.contrib.postgres.fields.CIText" title="django.contrib.postgres.fields.CIText"><code class="xref py py-class docutils literal notranslate"><span class="pre">CIText</span></code></a> mixin and
+<a class="reference internal" href="../ref/contrib/postgres/operations.html#django.contrib.postgres.operations.CITextExtension" title="django.contrib.postgres.operations.CITextExtension"><code class="xref py py-class docutils literal notranslate"><span class="pre">CITextExtension</span></code></a> migration
+operation allow using PostgreSQL's <code class="docutils literal notranslate"><span class="pre">citext</span></code> extension for case-insensitive
+lookups. Three fields are provided: <a class="reference internal" href="../ref/contrib/postgres/fields.html#django.contrib.postgres.fields.CICharField" title="django.contrib.postgres.fields.CICharField"><code class="xref py py-class docutils literal notranslate"><span class="pre">CICharField</span></code></a>,
+<a class="reference internal" href="../ref/contrib/postgres/fields.html#django.contrib.postgres.fields.CIEmailField" title="django.contrib.postgres.fields.CIEmailField"><code class="xref py py-class docutils literal notranslate"><span class="pre">CIEmailField</span></code></a>, and <a class="reference internal" href="../ref/contrib/postgres/fields.html#django.contrib.postgres.fields.CITextField" title="django.contrib.postgres.fields.CITextField"><code class="xref py py-class docutils literal notranslate"><span class="pre">CITextField</span></code></a>.</li>
+<li>The new <a class="reference internal" href="../ref/contrib/postgres/aggregates.html#django.contrib.postgres.aggregates.JSONBAgg" title="django.contrib.postgres.aggregates.JSONBAgg"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONBAgg</span></code></a> allows
+aggregating values as a JSON array.</li>
+<li>The <a class="reference internal" href="../ref/contrib/postgres/fields.html#django.contrib.postgres.fields.HStoreField" title="django.contrib.postgres.fields.HStoreField"><code class="xref py py-class docutils literal notranslate"><span class="pre">HStoreField</span></code></a> (model field) and
+<a class="reference internal" href="../ref/contrib/postgres/forms.html#django.contrib.postgres.forms.HStoreField" title="django.contrib.postgres.forms.HStoreField"><code class="xref py py-class docutils literal notranslate"><span class="pre">HStoreField</span></code></a> (form field) allow
+storing null values.</li>
+</ul>
+</div>
+<div class="section" id="s-cache">
+<span id="cache"></span><h4>Cache<a class="headerlink" href="#cache" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Memcached backends now pass the contents of <a class="reference internal" href="../ref/settings.html#std:setting-CACHES-OPTIONS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">OPTIONS</span></code></a>
+as keyword arguments to the client constructors, allowing for more advanced
+control of client behavior. See the <a class="reference internal" href="../topics/cache.html#cache-arguments"><span class="std std-ref">cache arguments</span></a>
+documentation for examples.</li>
+<li>Memcached backends now allow defining multiple servers as a comma-delimited
+string in <a class="reference internal" href="../ref/settings.html#std:setting-CACHES-LOCATION"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOCATION</span></code></a>, for convenience with
+third-party services that use such strings in environment variables.</li>
+</ul>
+</div>
+<div class="section" id="s-csrf">
+<span id="csrf"></span><h4>CSRF<a class="headerlink" href="#csrf" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Added the <a class="reference internal" href="../ref/settings.html#std:setting-CSRF_USE_SESSIONS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">CSRF_USE_SESSIONS</span></code></a> setting to allow storing the CSRF
+token in the user's session rather than in a cookie.</li>
+</ul>
+</div>
+<div class="section" id="s-database-backends">
+<span id="database-backends"></span><h4>Database backends<a class="headerlink" href="#database-backends" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Added the <code class="docutils literal notranslate"><span class="pre">skip_locked</span></code> argument to <a class="reference internal" href="../ref/models/querysets.html#django.db.models.query.QuerySet.select_for_update" title="django.db.models.query.QuerySet.select_for_update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">QuerySet.select_for_update()</span></code></a>
+on PostgreSQL 9.5+ and Oracle to execute queries with
+<code class="docutils literal notranslate"><span class="pre">FOR</span> <span class="pre">UPDATE</span> <span class="pre">SKIP</span> <span class="pre">LOCKED</span></code>.</li>
+<li>Added the <a class="reference internal" href="../ref/settings.html#std:setting-TEST_TEMPLATE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">TEST['TEMPLATE']</span></code></a> setting to let
+PostgreSQL users specify a template for creating the test database.</li>
+<li><a class="reference internal" href="../ref/models/querysets.html#django.db.models.query.QuerySet.iterator" title="django.db.models.query.QuerySet.iterator"><code class="xref py py-meth docutils literal notranslate"><span class="pre">QuerySet.iterator()</span></code></a> now uses <a class="reference external" href="http://initd.org/psycopg/docs/usage.html#server-side-cursors" title="(in Psycopg v2.7)"><span class="xref std std-ref">server-side cursors</span></a> on PostgreSQL. This feature transfers some of
+the worker memory load (used to hold query results) to the database and might
+increase database memory usage.</li>
+<li>Added MySQL support for the <code class="docutils literal notranslate"><span class="pre">'isolation_level'</span></code> option in
+<a class="reference internal" href="../ref/settings.html#std:setting-OPTIONS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">OPTIONS</span></code></a> to allow specifying the <a class="reference internal" href="../ref/databases.html#mysql-isolation-level"><span class="std std-ref">transaction isolation level</span></a>. To avoid possible data loss, it's recommended to
+switch from MySQL's default level, repeatable read, to read committed.</li>
+<li>Added support for <code class="docutils literal notranslate"><span class="pre">cx_Oracle</span></code> 5.3.</li>
+</ul>
+</div>
+<div class="section" id="s-email">
+<span id="email"></span><h4>Email<a class="headerlink" href="#email" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Added the <a class="reference internal" href="../ref/settings.html#std:setting-EMAIL_USE_LOCALTIME"><code class="xref std std-setting docutils literal notranslate"><span class="pre">EMAIL_USE_LOCALTIME</span></code></a> setting to allow sending SMTP date
+headers in the local time zone rather than in UTC.</li>
+<li><code class="docutils literal notranslate"><span class="pre">EmailMessage.attach()</span></code> and <code class="docutils literal notranslate"><span class="pre">attach_file()</span></code> now fall back to MIME type
+<code class="docutils literal notranslate"><span class="pre">application/octet-stream</span></code> when binary content that can't be decoded as
+UTF-8 is specified for a <code class="docutils literal notranslate"><span class="pre">text/*</span></code> attachment.</li>
+</ul>
+</div>
+<div class="section" id="s-file-storage">
+<span id="file-storage"></span><h4>File Storage<a class="headerlink" href="#file-storage" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>To make it wrappable by <a class="reference external" href="https://docs.python.org/3/library/io.html#io.TextIOWrapper" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">io.TextIOWrapper</span></code></a>,
+<a class="reference internal" href="../ref/files/file.html#django.core.files.File" title="django.core.files.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> now has the <code class="docutils literal notranslate"><span class="pre">readable()</span></code>, <code class="docutils literal notranslate"><span class="pre">writable()</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">seekable()</span></code> methods.</li>
+</ul>
+</div>
+<div class="section" id="s-forms">
+<span id="forms"></span><h4>Forms<a class="headerlink" href="#forms" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>The new <a class="reference internal" href="../ref/forms/fields.html#django.forms.CharField.empty_value" title="django.forms.CharField.empty_value"><code class="xref py py-attr docutils literal notranslate"><span class="pre">CharField.empty_value</span></code></a>
+attribute allows specifying the Python value to use to represent &quot;empty&quot;.</li>
+<li>The new <a class="reference internal" href="../ref/forms/api.html#django.forms.Form.get_initial_for_field" title="django.forms.Form.get_initial_for_field"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Form.get_initial_for_field()</span></code></a> method returns initial data for a
+form field.</li>
+</ul>
+</div>
+<div class="section" id="s-internationalization">
+<span id="internationalization"></span><h4>Internationalization<a class="headerlink" href="#internationalization" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Number formatting and the <a class="reference internal" href="../ref/settings.html#std:setting-NUMBER_GROUPING"><code class="xref std std-setting docutils literal notranslate"><span class="pre">NUMBER_GROUPING</span></code></a> setting support
+non-uniform digit grouping.</li>
+</ul>
+</div>
+<div class="section" id="s-management-commands">
+<span id="management-commands"></span><h4>Management Commands<a class="headerlink" href="#management-commands" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>The new <a class="reference internal" href="../ref/django-admin.html#cmdoption-loaddata-exclude"><code class="xref std std-option docutils literal notranslate"><span class="pre">loaddata</span> <span class="pre">--exclude</span></code></a> option allows excluding models and apps
+while loading data from fixtures.</li>
+<li>The new <a class="reference internal" href="../ref/django-admin.html#cmdoption-diffsettings-default"><code class="xref std std-option docutils literal notranslate"><span class="pre">diffsettings</span> <span class="pre">--default</span></code></a> option allows specifying a settings
+module other than Django's default settings to compare against.</li>
+<li><code class="docutils literal notranslate"><span class="pre">app_label</span></code>s arguments now limit the <a class="reference internal" href="../ref/django-admin.html#cmdoption-showmigrations-plan"><code class="xref std std-option docutils literal notranslate"><span class="pre">showmigrations</span> <span class="pre">--plan</span></code></a>
+output.</li>
+</ul>
+</div>
+<div class="section" id="s-migrations">
+<span id="migrations"></span><h4>Migrations<a class="headerlink" href="#migrations" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Added support for serialization of <code class="docutils literal notranslate"><span class="pre">uuid.UUID</span></code> objects.</li>
+</ul>
+</div>
+<div class="section" id="s-models">
+<span id="models"></span><h4>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Added support for callable values in the <code class="docutils literal notranslate"><span class="pre">defaults</span></code> argument of
+<a class="reference internal" href="../ref/models/querysets.html#django.db.models.query.QuerySet.update_or_create" title="django.db.models.query.QuerySet.update_or_create"><code class="xref py py-meth docutils literal notranslate"><span class="pre">QuerySet.update_or_create()</span></code></a> and
+<a class="reference internal" href="../ref/models/querysets.html#django.db.models.query.QuerySet.get_or_create" title="django.db.models.query.QuerySet.get_or_create"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_or_create()</span></code></a>.</li>
+<li><a class="reference internal" href="../ref/models/fields.html#django.db.models.ImageField" title="django.db.models.ImageField"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageField</span></code></a> now has a default
+<a class="reference internal" href="../ref/validators.html#django.core.validators.validate_image_file_extension" title="django.core.validators.validate_image_file_extension"><code class="xref py py-data docutils literal notranslate"><span class="pre">validate_image_file_extension</span></code></a> validator.
+(This validator moved to the form field in <a class="reference internal" href="1.11.2.html"><span class="doc">Django 1.11.2</span></a>.)</li>
+<li>Added support for time truncation to
+<a class="reference internal" href="../ref/models/database-functions.html#django.db.models.functions.Trunc" title="django.db.models.functions.Trunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trunc</span></code></a> functions.</li>
+<li>Added the <a class="reference internal" href="../ref/models/database-functions.html#django.db.models.functions.ExtractWeek" title="django.db.models.functions.ExtractWeek"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractWeek</span></code></a> function to
+extract the week from <a class="reference internal" href="../ref/models/fields.html#django.db.models.DateField" title="django.db.models.DateField"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateField</span></code></a> and
+<a class="reference internal" href="../ref/models/fields.html#django.db.models.DateTimeField" title="django.db.models.DateTimeField"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateTimeField</span></code></a> and exposed it through the
+<a class="reference internal" href="../ref/models/querysets.html#std:fieldlookup-week"><code class="xref std std-lookup docutils literal notranslate"><span class="pre">week</span></code></a> lookup.</li>
+<li>Added the <a class="reference internal" href="../ref/models/database-functions.html#django.db.models.functions.TruncTime" title="django.db.models.functions.TruncTime"><code class="xref py py-class docutils literal notranslate"><span class="pre">TruncTime</span></code></a> function to truncate
+<a class="reference internal" href="../ref/models/fields.html#django.db.models.DateTimeField" title="django.db.models.DateTimeField"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateTimeField</span></code></a> to its time component and exposed it
+through the <a class="reference internal" href="../ref/models/querysets.html#std:fieldlookup-time"><code class="xref std std-lookup docutils literal notranslate"><span class="pre">time</span></code></a> lookup.</li>
+<li>Added support for expressions in <a class="reference internal" href="../ref/models/querysets.html#django.db.models.query.QuerySet.values" title="django.db.models.query.QuerySet.values"><code class="xref py py-meth docutils literal notranslate"><span class="pre">QuerySet.values()</span></code></a> and
+<a class="reference internal" href="../ref/models/querysets.html#django.db.models.query.QuerySet.values_list" title="django.db.models.query.QuerySet.values_list"><code class="xref py py-meth docutils literal notranslate"><span class="pre">values_list()</span></code></a>.</li>
+<li>Added support for query expressions on lookups that take multiple arguments,
+such as <code class="docutils literal notranslate"><span class="pre">range</span></code>.</li>
+<li>You can now use the <code class="docutils literal notranslate"><span class="pre">unique=True</span></code> option with
+<a class="reference internal" href="../ref/models/fields.html#django.db.models.FileField" title="django.db.models.FileField"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileField</span></code></a>.</li>
+<li>Added the <code class="docutils literal notranslate"><span class="pre">nulls_first</span></code> and <code class="docutils literal notranslate"><span class="pre">nulls_last</span></code> parameters to
+<a class="reference internal" href="../ref/models/expressions.html#django.db.models.Expression.asc" title="django.db.models.Expression.asc"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression.asc()</span></code></a> and
+<a class="reference internal" href="../ref/models/expressions.html#django.db.models.Expression.desc" title="django.db.models.Expression.desc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">desc()</span></code></a> to control
+the ordering of null values.</li>
+<li>The new <code class="docutils literal notranslate"><span class="pre">F</span></code> expression <code class="docutils literal notranslate"><span class="pre">bitleftshift()</span></code> and <code class="docutils literal notranslate"><span class="pre">bitrightshift()</span></code> methods
+allow <a class="reference internal" href="../topics/db/queries.html#using-f-expressions-in-filters"><span class="std std-ref">bitwise shift operations</span></a>.</li>
+<li>Added <a class="reference internal" href="../ref/models/querysets.html#django.db.models.query.QuerySet.union" title="django.db.models.query.QuerySet.union"><code class="xref py py-meth docutils literal notranslate"><span class="pre">QuerySet.union()</span></code></a>, <a class="reference internal" href="../ref/models/querysets.html#django.db.models.query.QuerySet.intersection" title="django.db.models.query.QuerySet.intersection"><code class="xref py py-meth docutils literal notranslate"><span class="pre">intersection()</span></code></a>, and
+<a class="reference internal" href="../ref/models/querysets.html#django.db.models.query.QuerySet.difference" title="django.db.models.query.QuerySet.difference"><code class="xref py py-meth docutils literal notranslate"><span class="pre">difference()</span></code></a>.</li>
+</ul>
+</div>
+<div class="section" id="s-requests-and-responses">
+<span id="requests-and-responses"></span><h4>Requests and Responses<a class="headerlink" href="#requests-and-responses" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Added <a class="reference internal" href="../ref/request-response.html#django.http.QueryDict.fromkeys" title="django.http.QueryDict.fromkeys"><code class="xref py py-meth docutils literal notranslate"><span class="pre">QueryDict.fromkeys()</span></code></a>.</li>
+<li><a class="reference internal" href="../ref/middleware.html#django.middleware.common.CommonMiddleware" title="django.middleware.common.CommonMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">CommonMiddleware</span></code></a> now sets the
+<code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> response header for non-streaming responses.</li>
+<li>Added the <a class="reference internal" href="../ref/settings.html#std:setting-SECURE_HSTS_PRELOAD"><code class="xref std std-setting docutils literal notranslate"><span class="pre">SECURE_HSTS_PRELOAD</span></code></a> setting to allow appending the
+<code class="docutils literal notranslate"><span class="pre">preload</span></code> directive to the <code class="docutils literal notranslate"><span class="pre">Strict-Transport-Security</span></code> header.</li>
+<li><a class="reference internal" href="../ref/middleware.html#django.middleware.http.ConditionalGetMiddleware" title="django.middleware.http.ConditionalGetMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConditionalGetMiddleware</span></code></a> now adds the
+<code class="docutils literal notranslate"><span class="pre">ETag</span></code> header to responses.</li>
+</ul>
+</div>
+<div class="section" id="s-serialization">
+<span id="serialization"></span><h4>Serialization<a class="headerlink" href="#serialization" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>The new <code class="docutils literal notranslate"><span class="pre">django.core.serializers.base.Serializer.stream_class</span></code> attribute
+allows subclasses to customize the default stream.</li>
+<li>The encoder used by the <a class="reference internal" href="../topics/serialization.html#serialization-formats-json"><span class="std std-ref">JSON serializer</span></a>
+can now be customized by passing a <code class="docutils literal notranslate"><span class="pre">cls</span></code> keyword argument to the
+<code class="docutils literal notranslate"><span class="pre">serializers.serialize()</span></code> function.</li>
+<li><a class="reference internal" href="../topics/serialization.html#django.core.serializers.json.DjangoJSONEncoder" title="django.core.serializers.json.DjangoJSONEncoder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DjangoJSONEncoder</span></code></a> now serializes
+<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">timedelta</span></code></a> objects (used by
+<a class="reference internal" href="../ref/models/fields.html#django.db.models.DurationField" title="django.db.models.DurationField"><code class="xref py py-class docutils literal notranslate"><span class="pre">DurationField</span></code></a>).</li>
+</ul>
+</div>
+<div class="section" id="s-templates">
+<span id="templates"></span><h4>Templates<a class="headerlink" href="#templates" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><a class="reference internal" href="../ref/utils.html#django.utils.safestring.mark_safe" title="django.utils.safestring.mark_safe"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mark_safe()</span></code></a> can now be used as a decorator.</li>
+<li>The <a class="reference internal" href="../topics/templates.html#django.template.backends.jinja2.Jinja2" title="django.template.backends.jinja2.Jinja2"><code class="xref py py-class docutils literal notranslate"><span class="pre">Jinja2</span></code></a> template backend now
+supports context processors by setting the <code class="docutils literal notranslate"><span class="pre">'context_processors'</span></code> option in
+<a class="reference internal" href="../ref/settings.html#std:setting-TEMPLATES-OPTIONS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">OPTIONS</span></code></a>.</li>
+<li>The <a class="reference internal" href="../ref/templates/builtins.html#std:templatetag-regroup"><code class="xref std std-ttag docutils literal notranslate"><span class="pre">regroup</span></code></a> tag now returns <code class="docutils literal notranslate"><span class="pre">namedtuple</span></code>s instead of dictionaries
+so you can unpack the group object directly in a loop, e.g.
+<code class="docutils literal notranslate"><span class="pre">{%</span> <span class="pre">for</span> <span class="pre">grouper,</span> <span class="pre">list</span> <span class="pre">in</span> <span class="pre">regrouped</span> <span class="pre">%}</span></code>.</li>
+<li>Added a <a class="reference internal" href="../ref/templates/builtins.html#std:templatetag-resetcycle"><code class="xref std std-ttag docutils literal notranslate"><span class="pre">resetcycle</span></code></a> template tag to allow resetting the sequence of
+the <a class="reference internal" href="../ref/templates/builtins.html#std:templatetag-cycle"><code class="xref std std-ttag docutils literal notranslate"><span class="pre">cycle</span></code></a> template tag.</li>
+<li>You can now specify specific directories for a particular
+<a class="reference internal" href="../ref/templates/api.html#django.template.loaders.filesystem.Loader" title="django.template.loaders.filesystem.Loader"><code class="xref py py-class docutils literal notranslate"><span class="pre">filesystem.Loader</span></code></a>.</li>
+</ul>
+</div>
+<div class="section" id="s-tests">
+<span id="tests"></span><h4>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Added <a class="reference internal" href="../topics/testing/advanced.html#django.test.runner.DiscoverRunner.get_test_runner_kwargs" title="django.test.runner.DiscoverRunner.get_test_runner_kwargs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DiscoverRunner.get_test_runner_kwargs()</span></code></a> to allow customizing the
+keyword arguments passed to the test runner.</li>
+<li>Added the <a class="reference internal" href="../ref/django-admin.html#cmdoption-test-debug-mode"><code class="xref std std-option docutils literal notranslate"><span class="pre">test</span> <span class="pre">--debug-mode</span></code></a> option to help troubleshoot test
+failures by setting the <a class="reference internal" href="../ref/settings.html#std:setting-DEBUG"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DEBUG</span></code></a> setting to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</li>
+<li>The new <a class="reference internal" href="../topics/testing/advanced.html#django.test.utils.setup_databases" title="django.test.utils.setup_databases"><code class="xref py py-func docutils literal notranslate"><span class="pre">django.test.utils.setup_databases()</span></code></a> (moved from
+<code class="docutils literal notranslate"><span class="pre">django.test.runner</span></code>) and <a class="reference internal" href="../topics/testing/advanced.html#django.test.utils.teardown_databases" title="django.test.utils.teardown_databases"><code class="xref py py-func docutils literal notranslate"><span class="pre">teardown_databases()</span></code></a>
+functions make it easier to build custom test runners.</li>
+<li>Added support for <a class="reference external" href="https://docs.python.org/3/library/unittest.html#unittest.TestCase.subTest" title="(in Python v3.7)"><code class="docutils literal notranslate"><span class="pre">unittest.TestCase.subTest()</span></code></a>’s when using the
+<a class="reference internal" href="../ref/django-admin.html#cmdoption-test-parallel"><code class="xref std std-option docutils literal notranslate"><span class="pre">test</span> <span class="pre">--parallel</span></code></a> option.</li>
+<li><code class="docutils literal notranslate"><span class="pre">DiscoverRunner</span></code> now runs the system checks at the start of a test run.
+Override the <a class="reference internal" href="../topics/testing/advanced.html#django.test.runner.DiscoverRunner.run_checks" title="django.test.runner.DiscoverRunner.run_checks"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DiscoverRunner.run_checks()</span></code></a> method if you want to disable
+that.</li>
+</ul>
+</div>
+<div class="section" id="s-validators">
+<span id="validators"></span><h4>Validators<a class="headerlink" href="#validators" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Added <a class="reference internal" href="../ref/validators.html#django.core.validators.FileExtensionValidator" title="django.core.validators.FileExtensionValidator"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileExtensionValidator</span></code></a> to validate
+file extensions and
+<a class="reference internal" href="../ref/validators.html#django.core.validators.validate_image_file_extension" title="django.core.validators.validate_image_file_extension"><code class="xref py py-data docutils literal notranslate"><span class="pre">validate_image_file_extension</span></code></a> to validate
+image files.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="s-backwards-incompatible-changes-in-1-11">
+<span id="s-backwards-incompatible-1-11"></span><span id="backwards-incompatible-changes-in-1-11"></span><span id="backwards-incompatible-1-11"></span><h2>Backwards incompatible changes in 1.11<a class="headerlink" href="#backwards-incompatible-changes-in-1-11" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-id1">
+<span id="id1"></span><h3><a class="reference internal" href="../ref/contrib/gis/index.html#module-django.contrib.gis" title="django.contrib.gis: Geographic Information System (GIS) extensions for Django"><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.gis</span></code></a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>To simplify the codebase and because it's easier to install than when
+<code class="docutils literal notranslate"><span class="pre">contrib.gis</span></code> was first released, <a class="reference internal" href="../ref/contrib/gis/install/geolibs.html#gdalbuild"><span class="std std-ref">GDAL</span></a> is now a required
+dependency for GeoDjango. In older versions, it's only required for SQLite.</li>
+<li><code class="docutils literal notranslate"><span class="pre">contrib.gis.maps</span></code> is removed as it interfaces with a retired version of
+the Google Maps API and seems to be unmaintained. If you're using it, <a class="reference external" href="https://code.djangoproject.com/ticket/14284">let
+us know</a>.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">GEOSGeometry</span></code> equality operator now also compares SRID.</li>
+<li>The OpenLayers-based form widgets now use OpenLayers 3, and the
+<code class="docutils literal notranslate"><span class="pre">gis/openlayers.html</span></code> and <code class="docutils literal notranslate"><span class="pre">gis/openlayers-osm.html</span></code> templates have been
+updated. Check your project if you subclass these widgets or extend the
+templates. Also, the new widgets work a bit differently than the old ones.
+Instead of using a toolbar in the widget, you click to draw, click and drag
+to move the map, and click and drag a point/vertex/corner to move it.</li>
+<li>Support for SpatiaLite &lt; 4.0 is dropped.</li>
+<li>Support for GDAL 1.7 and 1.8 is dropped.</li>
+<li>The widgets in <code class="docutils literal notranslate"><span class="pre">contrib.gis.forms.widgets</span></code> and the admin's
+<code class="docutils literal notranslate"><span class="pre">OpenLayersWidget</span></code> use the <a class="reference internal" href="../ref/forms/renderers.html"><span class="doc">form rendering API</span></a>
+rather than <code class="docutils literal notranslate"><span class="pre">loader.render_to_string()</span></code>. If you're using a custom widget
+template, you'll need to be sure your form renderer can locate it. For
+example, you could use the <a class="reference internal" href="../ref/forms/renderers.html#django.forms.renderers.TemplatesSetting" title="django.forms.renderers.TemplatesSetting"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemplatesSetting</span></code></a>
+renderer.</li>
+</ul>
+</div>
+<div class="section" id="s-django-contrib-staticfiles">
+<span id="django-contrib-staticfiles"></span><h3><a class="reference internal" href="../ref/contrib/staticfiles.html#module-django.contrib.staticfiles" title="django.contrib.staticfiles: An app for handling static files."><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.staticfiles</span></code></a><a class="headerlink" href="#django-contrib-staticfiles" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">collectstatic</span></code> may now fail during post-processing when using a hashed
+static files storage if a reference loop exists (e.g. <code class="docutils literal notranslate"><span class="pre">'foo.css'</span></code>
+references <code class="docutils literal notranslate"><span class="pre">'bar.css'</span></code> which itself references <code class="docutils literal notranslate"><span class="pre">'foo.css'</span></code>) or if the
+chain of files referencing other files is too deep to resolve in several
+passes. In the latter case, increase the number of passes using
+<a class="reference internal" href="../ref/contrib/staticfiles.html#django.contrib.staticfiles.storage.ManifestStaticFilesStorage.max_post_process_passes" title="django.contrib.staticfiles.storage.ManifestStaticFilesStorage.max_post_process_passes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ManifestStaticFilesStorage.max_post_process_passes</span></code></a>.</li>
+<li>When using <code class="docutils literal notranslate"><span class="pre">ManifestStaticFilesStorage</span></code>, static files not found in the
+manifest at runtime now raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> instead of returning an
+unchanged path. You can revert to the old behavior by setting
+<a class="reference internal" href="../ref/contrib/staticfiles.html#django.contrib.staticfiles.storage.ManifestStaticFilesStorage.manifest_strict" title="django.contrib.staticfiles.storage.ManifestStaticFilesStorage.manifest_strict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ManifestStaticFilesStorage.manifest_strict</span></code></a> to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</li>
+</ul>
+</div>
+<div class="section" id="s-database-backend-api">
+<span id="database-backend-api"></span><h3>Database backend API<a class="headerlink" href="#database-backend-api" title="Permalink to this headline">¶</a></h3>
+<p>This section describes changes that may be needed in third-party database
+backends.</p>
+<ul class="simple">
+<li>The <code class="docutils literal notranslate"><span class="pre">DatabaseOperations.time_trunc_sql()</span></code> method is added to support
+<code class="docutils literal notranslate"><span class="pre">TimeField</span></code> truncation. It accepts a <code class="docutils literal notranslate"><span class="pre">lookup_type</span></code> and <code class="docutils literal notranslate"><span class="pre">field_name</span></code>
+arguments and returns the appropriate SQL to truncate the given time field
+<code class="docutils literal notranslate"><span class="pre">field_name</span></code> to a time object with only the given specificity. The
+<code class="docutils literal notranslate"><span class="pre">lookup_type</span></code> argument can be either <code class="docutils literal notranslate"><span class="pre">'hour'</span></code>, <code class="docutils literal notranslate"><span class="pre">'minute'</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">'second'</span></code>.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">DatabaseOperations.datetime_cast_time_sql()</span></code> method is added to
+support the <a class="reference internal" href="../ref/models/querysets.html#std:fieldlookup-time"><code class="xref std std-lookup docutils literal notranslate"><span class="pre">time</span></code></a> lookup. It accepts a <code class="docutils literal notranslate"><span class="pre">field_name</span></code> and <code class="docutils literal notranslate"><span class="pre">tzname</span></code>
+arguments and returns the SQL necessary to cast a datetime value to time value.</li>
+<li>To enable <code class="docutils literal notranslate"><span class="pre">FOR</span> <span class="pre">UPDATE</span> <span class="pre">SKIP</span> <span class="pre">LOCKED</span></code> support, set
+<code class="docutils literal notranslate"><span class="pre">DatabaseFeatures.has_select_for_update_skip_locked</span> <span class="pre">=</span> <span class="pre">True</span></code>.</li>
+<li>The new <code class="docutils literal notranslate"><span class="pre">DatabaseFeatures.supports_index_column_ordering</span></code> attribute
+specifies if a database allows defining ordering for columns in indexes. The
+default value is <code class="docutils literal notranslate"><span class="pre">True</span></code> and the <code class="docutils literal notranslate"><span class="pre">DatabaseIntrospection.get_constraints()</span></code>
+method should include an <code class="docutils literal notranslate"><span class="pre">'orders'</span></code> key in each of the returned
+dictionaries with a list of <code class="docutils literal notranslate"><span class="pre">'ASC'</span></code> and/or <code class="docutils literal notranslate"><span class="pre">'DESC'</span></code> values corresponding
+to the the ordering of each column in the index.</li>
+<li><a class="reference internal" href="../ref/django-admin.html#django-admin-inspectdb"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">inspectdb</span></code></a> no longer calls <code class="docutils literal notranslate"><span class="pre">DatabaseIntrospection.get_indexes()</span></code>
+which is deprecated. Custom database backends should ensure all types of
+indexes are returned by <code class="docutils literal notranslate"><span class="pre">DatabaseIntrospection.get_constraints()</span></code>.</li>
+<li>Renamed the <code class="docutils literal notranslate"><span class="pre">ignores_quoted_identifier_case</span></code> feature to
+<code class="docutils literal notranslate"><span class="pre">ignores_table_name_case</span></code> to more accurately reflect how it is used.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">name</span></code> keyword argument is added to the
+<code class="docutils literal notranslate"><span class="pre">DatabaseWrapper.create_cursor(self,</span> <span class="pre">name=None)</span></code> method to allow usage of
+server-side cursors on backends that support it.</li>
+</ul>
+</div>
+<div class="section" id="s-dropped-support-for-postgresql-9-2-and-postgis-2-0">
+<span id="dropped-support-for-postgresql-9-2-and-postgis-2-0"></span><h3>Dropped support for PostgreSQL 9.2 and PostGIS 2.0<a class="headerlink" href="#dropped-support-for-postgresql-9-2-and-postgis-2-0" title="Permalink to this headline">¶</a></h3>
+<p>Upstream support for PostgreSQL 9.2 ends in September 2017. As a consequence,
+Django 1.11 sets PostgreSQL 9.3 as the minimum version it officially supports.</p>
+<p>Support for PostGIS 2.0 is also removed as PostgreSQL 9.2 is the last version
+to support it.</p>
+<p>Also, the minimum supported version of psycopg2 is increased from 2.4.5 to
+2.5.4.</p>
+</div>
+<div class="section" id="s-liveservertestcase-binds-to-port-zero">
+<span id="s-liveservertestcase-port-zero-change"></span><span id="liveservertestcase-binds-to-port-zero"></span><span id="liveservertestcase-port-zero-change"></span><h3><code class="docutils literal notranslate"><span class="pre">LiveServerTestCase</span></code> binds to port zero<a class="headerlink" href="#liveservertestcase-binds-to-port-zero" title="Permalink to this headline">¶</a></h3>
+<p>Rather than taking a port range and iterating to find a free port,
+<code class="docutils literal notranslate"><span class="pre">LiveServerTestCase</span></code> binds to port zero and relies on the operating system
+to assign a free port. The <code class="docutils literal notranslate"><span class="pre">DJANGO_LIVE_TEST_SERVER_ADDRESS</span></code> environment
+variable is no longer used, and as it's also no longer used, the
+<code class="docutils literal notranslate"><span class="pre">manage.py</span> <span class="pre">test</span> <span class="pre">--liveserver</span></code> option is removed.</p>
+<p>If you need to bind <code class="docutils literal notranslate"><span class="pre">LiveServerTestCase</span></code> to a specific port, use the <code class="docutils literal notranslate"><span class="pre">port</span></code>
+attribute added in Django 1.11.2.</p>
+</div>
+<div class="section" id="s-protection-against-insecure-redirects-in-django-contrib-auth-and-i18n-views">
+<span id="protection-against-insecure-redirects-in-django-contrib-auth-and-i18n-views"></span><h3>Protection against insecure redirects in <a class="reference internal" href="../topics/auth/index.html#module-django.contrib.auth" title="django.contrib.auth: Django's authentication framework."><code class="xref py py-mod docutils literal notranslate"><span class="pre">django.contrib.auth</span></code></a> and <code class="docutils literal notranslate"><span class="pre">i18n</span></code> views<a class="headerlink" href="#protection-against-insecure-redirects-in-django-contrib-auth-and-i18n-views" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">LoginView</span></code>, <code class="docutils literal notranslate"><span class="pre">LogoutView</span></code> (and the deprecated function-based equivalents),
+and <a class="reference internal" href="../topics/i18n/translation.html#django.views.i18n.set_language" title="django.views.i18n.set_language"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_language()</span></code></a> protect users from being redirected
+to non-HTTPS <code class="docutils literal notranslate"><span class="pre">next</span></code> URLs when the app is running over HTTPS.</p>
+</div>
+<div class="section" id="s-queryset-get-or-create-and-update-or-create-validate-arguments">
+<span id="queryset-get-or-create-and-update-or-create-validate-arguments"></span><h3><code class="docutils literal notranslate"><span class="pre">QuerySet.get_or_create()</span></code> and <code class="docutils literal notranslate"><span class="pre">update_or_create()</span></code> validate arguments<a class="headerlink" href="#queryset-get-or-create-and-update-or-create-validate-arguments" title="Permalink to this headline">¶</a></h3>
+<p>To prevent typos from passing silently,
+<a class="reference internal" href="../ref/models/querysets.html#django.db.models.query.QuerySet.get_or_create" title="django.db.models.query.QuerySet.get_or_create"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_or_create()</span></code></a> and
+<a class="reference internal" href="../ref/models/querysets.html#django.db.models.query.QuerySet.update_or_create" title="django.db.models.query.QuerySet.update_or_create"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_or_create()</span></code></a> check that their
+arguments are model fields. This should be backwards-incompatible only in the
+fact that it might expose a bug in your project.</p>
+</div>
+<div class="section" id="s-pytz-is-a-required-dependency-and-support-for-settings-time-zone-none-is-removed">
+<span id="pytz-is-a-required-dependency-and-support-for-settings-time-zone-none-is-removed"></span><h3><code class="docutils literal notranslate"><span class="pre">pytz</span></code> is a required dependency and support for <code class="docutils literal notranslate"><span class="pre">settings.TIME_ZONE</span> <span class="pre">=</span> <span class="pre">None</span></code> is removed<a class="headerlink" href="#pytz-is-a-required-dependency-and-support-for-settings-time-zone-none-is-removed" title="Permalink to this headline">¶</a></h3>
+<p>To simplify Django's timezone handling, <code class="docutils literal notranslate"><span class="pre">pytz</span></code> is now a required dependency.
+It's automatically installed along with Django.</p>
+<p>Support for <code class="docutils literal notranslate"><span class="pre">settings.TIME_ZONE</span> <span class="pre">=</span> <span class="pre">None</span></code> is removed as the behavior isn't
+commonly used and is questionably useful. If you want to automatically detect
+the timezone based on the system timezone, you can use <a class="reference external" href="https://pypi.org/project/tzlocal/">tzlocal</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tzlocal</span> <span class="k">import</span> <span class="n">get_localzone</span>
+
+<span class="n">TIME_ZONE</span> <span class="o">=</span> <span class="n">get_localzone</span><span class="p">()</span><span class="o">.</span><span class="n">zone</span>
+</pre></div>
+</div>
+<p>This works similar to <code class="docutils literal notranslate"><span class="pre">settings.TIME_ZONE</span> <span class="pre">=</span> <span class="pre">None</span></code> except that it also sets
+<code class="docutils literal notranslate"><span class="pre">os.environ['TZ']</span></code>. <a class="reference external" href="https://groups.google.com/d/topic/django-developers/OAV3FChfuPM/discussion">Let us know</a>
+if there's a use case where you find you can't adapt your code to set a
+<code class="docutils literal notranslate"><span class="pre">TIME_ZONE</span></code>.</p>
+</div>
+<div class="section" id="s-html-changes-in-admin-templates">
+<span id="html-changes-in-admin-templates"></span><h3>HTML changes in admin templates<a class="headerlink" href="#html-changes-in-admin-templates" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;p</span> <span class="pre">class=&quot;help&quot;&gt;</span></code> is replaced with a <code class="docutils literal notranslate"><span class="pre">&lt;div&gt;</span></code> tag to allow including lists
+inside help text.</p>
+<p>Read-only fields are wrapped in <code class="docutils literal notranslate"><span class="pre">&lt;div</span> <span class="pre">class=&quot;readonly&quot;&gt;...&lt;/div&gt;</span></code> instead of
+<code class="docutils literal notranslate"><span class="pre">&lt;p&gt;...&lt;/p&gt;</span></code> to allow any kind of HTML as the field's content.</p>
+</div>
+<div class="section" id="s-changes-due-to-the-introduction-of-template-based-widget-rendering">
+<span id="s-template-widget-incompatibilities-1-11"></span><span id="changes-due-to-the-introduction-of-template-based-widget-rendering"></span><span id="template-widget-incompatibilities-1-11"></span><h3>Changes due to the introduction of template-based widget rendering<a class="headerlink" href="#changes-due-to-the-introduction-of-template-based-widget-rendering" title="Permalink to this headline">¶</a></h3>
+<p>Some undocumented classes in <code class="docutils literal notranslate"><span class="pre">django.forms.widgets</span></code> are removed:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">SubWidget</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">RendererMixin</span></code>, <code class="docutils literal notranslate"><span class="pre">ChoiceFieldRenderer</span></code>, <code class="docutils literal notranslate"><span class="pre">RadioFieldRenderer</span></code>,
+<code class="docutils literal notranslate"><span class="pre">CheckboxFieldRenderer</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">ChoiceInput</span></code>, <code class="docutils literal notranslate"><span class="pre">RadioChoiceInput</span></code>, <code class="docutils literal notranslate"><span class="pre">CheckboxChoiceInput</span></code></li>
+</ul>
+<p>The undocumented <code class="docutils literal notranslate"><span class="pre">Select.render_option()</span></code> method is removed.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Widget.format_output()</span></code> method is removed. Use a custom widget template
+instead.</p>
+<p>Some widget values, such as <code class="docutils literal notranslate"><span class="pre">&lt;select&gt;</span></code> options, are now localized if
+<code class="docutils literal notranslate"><span class="pre">settings.USE_L10N=True</span></code>. You could revert to the old behavior with custom
+widget templates that uses the <a class="reference internal" href="../topics/i18n/formatting.html#std:templatetag-localize"><code class="xref std std-ttag docutils literal notranslate"><span class="pre">localize</span></code></a> template tag to turn off
+localization.</p>
+</div>
+<div class="section" id="s-django-template-backends-django-template-render-prohibits-non-dict-context">
+<span id="django-template-backends-django-template-render-prohibits-non-dict-context"></span><h3><code class="docutils literal notranslate"><span class="pre">django.template.backends.django.Template.render()</span></code> prohibits non-dict context<a class="headerlink" href="#django-template-backends-django-template-render-prohibits-non-dict-context" title="Permalink to this headline">¶</a></h3>
+<p>For compatibility with multiple template engines,
+<code class="docutils literal notranslate"><span class="pre">django.template.backends.django.Template.render()</span></code> (returned from high-level
+template loader APIs such as <code class="docutils literal notranslate"><span class="pre">loader.get_template()</span></code>) must receive a
+dictionary of context rather than <code class="docutils literal notranslate"><span class="pre">Context</span></code> or <code class="docutils literal notranslate"><span class="pre">RequestContext</span></code>. If you
+were passing either of the two classes, pass a dictionary instead -- doing so
+is backwards-compatible with older versions of Django.</p>
+</div>
+<div class="section" id="s-model-state-changes-in-migration-operations">
+<span id="model-state-changes-in-migration-operations"></span><h3>Model state changes in migration operations<a class="headerlink" href="#model-state-changes-in-migration-operations" title="Permalink to this headline">¶</a></h3>
+<p>To improve the speed of applying migrations, rendering of related models is
+delayed until an operation that needs them (e.g. <code class="docutils literal notranslate"><span class="pre">RunPython</span></code>). If you have a
+custom operation that works with model classes or model instances from the
+<code class="docutils literal notranslate"><span class="pre">from_state</span></code> argument in <code class="docutils literal notranslate"><span class="pre">database_forwards()</span></code> or <code class="docutils literal notranslate"><span class="pre">database_backwards()</span></code>,
+you must render model states using the <code class="docutils literal notranslate"><span class="pre">clear_delayed_apps_cache()</span></code> method as
+described in <a class="reference internal" href="../ref/migration-operations.html#writing-your-own-migration-operation"><span class="std std-ref">writing your own migration operation</span></a>.</p>
+</div>
+<div class="section" id="s-server-side-cursors-on-postgresql">
+<span id="server-side-cursors-on-postgresql"></span><h3>Server-side cursors on PostgreSQL<a class="headerlink" href="#server-side-cursors-on-postgresql" title="Permalink to this headline">¶</a></h3>
+<p>The change to make <a class="reference internal" href="../ref/models/querysets.html#django.db.models.query.QuerySet.iterator" title="django.db.models.query.QuerySet.iterator"><code class="xref py py-meth docutils literal notranslate"><span class="pre">QuerySet.iterator()</span></code></a> use server-side cursors on
+PostgreSQL prevents running Django with <cite>pgBouncer</cite> in transaction pooling
+mode. To reallow that, use the <a class="reference internal" href="../ref/settings.html#std:setting-DATABASE-DISABLE_SERVER_SIDE_CURSORS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DISABLE_SERVER_SIDE_CURSORS</span></code></a> setting (added in Django 1.11.1) in
+<a class="reference internal" href="../ref/settings.html#std:setting-DATABASES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DATABASES</span></code></a>.</p>
+<p>See <a class="reference internal" href="../ref/databases.html#transaction-pooling-server-side-cursors"><span class="std std-ref">Transaction pooling and server-side cursors</span></a> for more discussion.</p>
+</div>
+<div class="section" id="s-miscellaneous">
+<span id="miscellaneous"></span><h3>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">If no items in the feed have a <code class="docutils literal notranslate"><span class="pre">pubdate</span></code> or <code class="docutils literal notranslate"><span class="pre">updateddate</span></code> attribute,
+<a class="reference internal" href="../ref/utils.html#django.utils.feedgenerator.SyndicationFeed.latest_post_date" title="django.utils.feedgenerator.SyndicationFeed.latest_post_date"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SyndicationFeed.latest_post_date()</span></code></a> now returns
+the current UTC date/time, instead of a datetime without any timezone
+information.</p>
+</li>
+<li><p class="first">CSRF failures are logged to the <code class="docutils literal notranslate"><span class="pre">django.security.csrf</span></code> logger instead of
+<code class="docutils literal notranslate"><span class="pre">django.request</span></code>.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="../ref/settings.html#std:setting-ALLOWED_HOSTS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">ALLOWED_HOSTS</span></code></a> validation is no longer disabled when running tests.
+If your application includes tests with custom host names, you must include
+those host names in <a class="reference internal" href="../ref/settings.html#std:setting-ALLOWED_HOSTS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">ALLOWED_HOSTS</span></code></a>. See
+<a class="reference internal" href="../topics/testing/advanced.html#topics-testing-advanced-multiple-hosts"><span class="std std-ref">Tests and multiple host names</span></a>.</p>
+</li>
+<li><p class="first">Using a foreign key's id (e.g. <code class="docutils literal notranslate"><span class="pre">'field_id'</span></code>) in <code class="docutils literal notranslate"><span class="pre">ModelAdmin.list_display</span></code>
+displays the related object's ID. Remove the <code class="docutils literal notranslate"><span class="pre">_id</span></code> suffix if you want the
+old behavior of the string representation of the object.</p>
+</li>
+<li><p class="first">In model forms, <a class="reference internal" href="../ref/models/fields.html#django.db.models.CharField" title="django.db.models.CharField"><code class="xref py py-class docutils literal notranslate"><span class="pre">CharField</span></code></a> with <code class="docutils literal notranslate"><span class="pre">null=True</span></code> now
+saves <code class="docutils literal notranslate"><span class="pre">NULL</span></code> for blank values instead of empty strings.</p>
+</li>
+<li><p class="first">On Oracle, <a class="reference internal" href="../ref/models/instances.html#django.db.models.Model.validate_unique" title="django.db.models.Model.validate_unique"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Model.validate_unique()</span></code></a> no longer checks empty strings for
+uniqueness as the database interprets the value as <code class="docutils literal notranslate"><span class="pre">NULL</span></code>.</p>
+</li>
+<li><p class="first">If you subclass <a class="reference internal" href="../topics/auth/customizing.html#django.contrib.auth.models.AbstractUser" title="django.contrib.auth.models.AbstractUser"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractUser</span></code></a> and override <code class="docutils literal notranslate"><span class="pre">clean()</span></code>, be sure it
+calls <code class="docutils literal notranslate"><span class="pre">super()</span></code>. <a class="reference internal" href="../topics/auth/customizing.html#django.contrib.auth.models.BaseUserManager.normalize_email" title="django.contrib.auth.models.BaseUserManager.normalize_email"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseUserManager.normalize_email()</span></code></a> is called in a
+new <a class="reference internal" href="../topics/auth/customizing.html#django.contrib.auth.models.AbstractUser.clean" title="django.contrib.auth.models.AbstractUser.clean"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AbstractUser.clean()</span></code></a> method so that normalization is applied in
+cases like model form validation.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">EmailField</span></code> and <code class="docutils literal notranslate"><span class="pre">URLField</span></code> no longer accept the <code class="docutils literal notranslate"><span class="pre">strip</span></code> keyword
+argument. Remove it because it doesn't have an effect in older versions of
+Django as these fields always strip whitespace.</p>
+</li>
+<li><p class="first">The <code class="docutils literal notranslate"><span class="pre">checked</span></code> and <code class="docutils literal notranslate"><span class="pre">selected</span></code> attribute rendered by form widgets now uses
+HTML5 boolean syntax rather than XHTML's <code class="docutils literal notranslate"><span class="pre">checked='checked'</span></code> and
+<code class="docutils literal notranslate"><span class="pre">selected='selected'</span></code>.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="../ref/models/relations.html#django.db.models.fields.related.RelatedManager.add" title="django.db.models.fields.related.RelatedManager.add"><code class="xref py py-meth docutils literal notranslate"><span class="pre">RelatedManager.add()</span></code></a>,
+<a class="reference internal" href="../ref/models/relations.html#django.db.models.fields.related.RelatedManager.remove" title="django.db.models.fields.related.RelatedManager.remove"><code class="xref py py-meth docutils literal notranslate"><span class="pre">remove()</span></code></a>,
+<a class="reference internal" href="../ref/models/relations.html#django.db.models.fields.related.RelatedManager.clear" title="django.db.models.fields.related.RelatedManager.clear"><code class="xref py py-meth docutils literal notranslate"><span class="pre">clear()</span></code></a>, and
+<a class="reference internal" href="../ref/models/relations.html#django.db.models.fields.related.RelatedManager.set" title="django.db.models.fields.related.RelatedManager.set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set()</span></code></a> now
+clear the <code class="docutils literal notranslate"><span class="pre">prefetch_related()</span></code> cache.</p>
+</li>
+<li><p class="first">To prevent possible loss of saved settings,
+<a class="reference internal" href="../topics/testing/advanced.html#django.test.utils.setup_test_environment" title="django.test.utils.setup_test_environment"><code class="xref py py-func docutils literal notranslate"><span class="pre">setup_test_environment()</span></code></a> now raises an exception if
+called a second time before calling
+<a class="reference internal" href="../topics/testing/advanced.html#django.test.utils.teardown_test_environment" title="django.test.utils.teardown_test_environment"><code class="xref py py-func docutils literal notranslate"><span class="pre">teardown_test_environment()</span></code></a>.</p>
+</li>
+<li><p class="first">The undocumented <code class="docutils literal notranslate"><span class="pre">DateTimeAwareJSONEncoder</span></code> alias for
+<a class="reference internal" href="../topics/serialization.html#django.core.serializers.json.DjangoJSONEncoder" title="django.core.serializers.json.DjangoJSONEncoder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DjangoJSONEncoder</span></code></a> (renamed in Django
+1.0) is removed.</p>
+</li>
+<li><p class="first">The <a class="reference internal" href="../ref/templates/api.html#django.template.loaders.cached.Loader" title="django.template.loaders.cached.Loader"><code class="xref py py-class docutils literal notranslate"><span class="pre">cached</span> <span class="pre">template</span> <span class="pre">loader</span></code></a>
+is now enabled if <a class="reference internal" href="../ref/settings.html#std:setting-TEMPLATES-OPTIONS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">OPTIONS['loaders']</span></code></a> isn't
+specified and <a class="reference internal" href="../ref/settings.html#std:setting-TEMPLATES-OPTIONS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">OPTIONS['debug']</span></code></a> is <code class="docutils literal notranslate"><span class="pre">False</span></code>
+(the latter option defaults to the value of <a class="reference internal" href="../ref/settings.html#std:setting-DEBUG"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DEBUG</span></code></a>). This could
+be backwards-incompatible if you have some <a class="reference internal" href="../howto/custom-template-tags.html#template-tag-thread-safety"><span class="std std-ref">template tags that aren't
+thread safe</span></a>.</p>
+</li>
+<li><p class="first">The prompt for stale content type deletion no longer occurs after running the
+<code class="docutils literal notranslate"><span class="pre">migrate</span></code> command. Use the new <a class="reference internal" href="../ref/django-admin.html#django-admin-remove_stale_contenttypes"><code class="xref std std-djadmin docutils literal notranslate"><span class="pre">remove_stale_contenttypes</span></code></a> command
+instead.</p>
+</li>
+<li><p class="first">The admin's widget for <code class="docutils literal notranslate"><span class="pre">IntegerField</span></code> uses <code class="docutils literal notranslate"><span class="pre">type=&quot;number&quot;</span></code> rather than
+<code class="docutils literal notranslate"><span class="pre">type=&quot;text&quot;</span></code>.</p>
+</li>
+<li><p class="first">Conditional HTTP headers are now parsed and compared according to the
+<span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7232.html"><strong>RFC 7232</strong></a> Conditional Requests specification rather than the older
+<span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2616.html"><strong>RFC 2616</strong></a>.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="../ref/utils.html#django.utils.cache.patch_response_headers" title="django.utils.cache.patch_response_headers"><code class="xref py py-func docutils literal notranslate"><span class="pre">patch_response_headers()</span></code></a> no longer adds a
+<code class="docutils literal notranslate"><span class="pre">Last-Modified</span></code> header. According to the <span class="target" id="index-2"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7234.html#section-4.2.2"><strong>RFC 7234#section-4.2.2</strong></a>, this
+header is useless alongside other caching headers that provide an explicit
+expiration time, e.g. <code class="docutils literal notranslate"><span class="pre">Expires</span></code> or <code class="docutils literal notranslate"><span class="pre">Cache-Control</span></code>.
+<a class="reference internal" href="../ref/middleware.html#django.middleware.cache.UpdateCacheMiddleware" title="django.middleware.cache.UpdateCacheMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">UpdateCacheMiddleware</span></code></a> and
+<a class="reference internal" href="../ref/utils.html#django.utils.cache.add_never_cache_headers" title="django.utils.cache.add_never_cache_headers"><code class="xref py py-func docutils literal notranslate"><span class="pre">add_never_cache_headers()</span></code></a> call
+<code class="docutils literal notranslate"><span class="pre">patch_response_headers()</span></code> and therefore are also affected by this change.</p>
+</li>
+<li><p class="first">In the admin templates, <code class="docutils literal notranslate"><span class="pre">&lt;p</span> <span class="pre">class=&quot;help&quot;&gt;</span></code> is replaced with a <code class="docutils literal notranslate"><span class="pre">&lt;div&gt;</span></code> tag
+to allow including lists inside help text.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="../ref/middleware.html#django.middleware.http.ConditionalGetMiddleware" title="django.middleware.http.ConditionalGetMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConditionalGetMiddleware</span></code></a> no longer sets the
+<code class="docutils literal notranslate"><span class="pre">Date</span></code> header as Web servers set that header. It also no longer sets the
+<code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header as this is now done by
+<a class="reference internal" href="../ref/middleware.html#django.middleware.common.CommonMiddleware" title="django.middleware.common.CommonMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">CommonMiddleware</span></code></a>.</p>
+<p>If you have a middleware that modifies a response's content and appears
+before <code class="docutils literal notranslate"><span class="pre">CommonMiddleware</span></code> in the <code class="docutils literal notranslate"><span class="pre">MIDDLEWARE</span></code> or <code class="docutils literal notranslate"><span class="pre">MIDDLEWARE_CLASSES</span></code>
+settings, you must reorder your middleware so that responses aren't modified
+after <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> is set, or have the response modifying middleware
+reset the <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="../ref/applications.html#django.apps.AppConfig.get_model" title="django.apps.AppConfig.get_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_model()</span></code></a> and
+<a class="reference internal" href="../ref/applications.html#django.apps.AppConfig.get_models" title="django.apps.AppConfig.get_models"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_models()</span></code></a> now raise
+<a class="reference internal" href="../ref/exceptions.html#django.core.exceptions.AppRegistryNotReady" title="django.core.exceptions.AppRegistryNotReady"><code class="xref py py-exc docutils literal notranslate"><span class="pre">AppRegistryNotReady</span></code></a> if they're called before
+models of all applications have been loaded. Previously they only required
+the target application's models to be loaded and thus could return models
+without all their relations set up. If you need the old behavior of
+<code class="docutils literal notranslate"><span class="pre">get_model()</span></code>, set the <code class="docutils literal notranslate"><span class="pre">require_ready</span></code> argument to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</li>
+<li><p class="first">The unused <code class="docutils literal notranslate"><span class="pre">BaseCommand.can_import_settings</span></code> attribute is removed.</p>
+</li>
+<li><p class="first">The undocumented <code class="docutils literal notranslate"><span class="pre">django.utils.functional.lazy_property</span></code> is removed.</p>
+</li>
+<li><p class="first">For consistency with non-multipart requests, <code class="docutils literal notranslate"><span class="pre">MultiPartParser.parse()</span></code> now
+leaves <code class="docutils literal notranslate"><span class="pre">request.POST</span></code> immutable. If you're modifying that <code class="docutils literal notranslate"><span class="pre">QueryDict</span></code>,
+you must now first copy it, e.g. <code class="docutils literal notranslate"><span class="pre">request.POST.copy()</span></code>.</p>
+</li>
+<li><p class="first">Support for <code class="docutils literal notranslate"><span class="pre">cx_Oracle</span></code> &lt; 5.2 is removed.</p>
+</li>
+<li><p class="first">Support for IPython &lt; 1.0 is removed from the <code class="docutils literal notranslate"><span class="pre">shell</span></code> command.</p>
+</li>
+<li><p class="first">The signature of private API <code class="docutils literal notranslate"><span class="pre">Widget.build_attrs()</span></code> changed from
+<code class="docutils literal notranslate"><span class="pre">extra_attrs=None,</span> <span class="pre">**kwargs</span></code> to <code class="docutils literal notranslate"><span class="pre">base_attrs,</span> <span class="pre">extra_attrs=None</span></code>.</p>
+</li>
+<li><p class="first">File-like objects (e.g., <a class="reference external" href="https://docs.python.org/3/library/io.html#io.StringIO" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">StringIO</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/io.html#io.BytesIO" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BytesIO</span></code></a>)
+uploaded to an <a class="reference internal" href="../ref/models/fields.html#django.db.models.ImageField" title="django.db.models.ImageField"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageField</span></code></a> using the test client
+now require a <code class="docutils literal notranslate"><span class="pre">name</span></code> attribute with a value that passes the
+<a class="reference internal" href="../ref/validators.html#django.core.validators.validate_image_file_extension" title="django.core.validators.validate_image_file_extension"><code class="xref py py-data docutils literal notranslate"><span class="pre">validate_image_file_extension</span></code></a> validator.
+See the note in <a class="reference internal" href="../topics/testing/tools.html#django.test.Client.post" title="django.test.Client.post"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.post()</span></code></a>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="s-features-deprecated-in-1-11">
+<span id="s-deprecated-features-1-11"></span><span id="features-deprecated-in-1-11"></span><span id="deprecated-features-1-11"></span><h2>Features deprecated in 1.11<a class="headerlink" href="#features-deprecated-in-1-11" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-models-permalink-decorator">
+<span id="models-permalink-decorator"></span><h3><code class="docutils literal notranslate"><span class="pre">models.permalink()</span></code> decorator<a class="headerlink" href="#models-permalink-decorator" title="Permalink to this headline">¶</a></h3>
+<p>Use <a class="reference internal" href="../ref/urlresolvers.html#django.urls.reverse" title="django.urls.reverse"><code class="xref py py-func docutils literal notranslate"><span class="pre">django.urls.reverse()</span></code></a> instead. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="k">import</span> <span class="n">models</span>
+
+<span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="o">...</span>
+
+    <span class="nd">@models</span><span class="o">.</span><span class="n">permalink</span>
+    <span class="k">def</span> <span class="nf">url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;guitarist_detail&#39;</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">slug</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>becomes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="k">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="k">import</span> <span class="n">reverse</span>
+
+<span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">reverse</span><span class="p">(</span><span class="s1">&#39;guitarist_detail&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">slug</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-id2">
+<span id="id2"></span><h3>Miscellaneous<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">contrib.auth</span></code>’s <code class="docutils literal notranslate"><span class="pre">login()</span></code> and <code class="docutils literal notranslate"><span class="pre">logout()</span></code> function-based views are
+deprecated in favor of new class-based views
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.LoginView" title="django.contrib.auth.views.LoginView"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginView</span></code></a> and
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.LogoutView" title="django.contrib.auth.views.LogoutView"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogoutView</span></code></a>.</li>
+<li>The unused <code class="docutils literal notranslate"><span class="pre">extra_context</span></code> parameter of
+<code class="docutils literal notranslate"><span class="pre">contrib.auth.views.logout_then_login()</span></code>  is deprecated.</li>
+<li><code class="docutils literal notranslate"><span class="pre">contrib.auth</span></code>’s <code class="docutils literal notranslate"><span class="pre">password_change()</span></code>, <code class="docutils literal notranslate"><span class="pre">password_change_done()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">password_reset()</span></code>, <code class="docutils literal notranslate"><span class="pre">password_reset_done()</span></code>, <code class="docutils literal notranslate"><span class="pre">password_reset_confirm()</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">password_reset_complete()</span></code> function-based views are deprecated in favor
+of new class-based views
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.PasswordChangeView" title="django.contrib.auth.views.PasswordChangeView"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordChangeView</span></code></a>,
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.PasswordChangeDoneView" title="django.contrib.auth.views.PasswordChangeDoneView"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordChangeDoneView</span></code></a>,
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.PasswordResetView" title="django.contrib.auth.views.PasswordResetView"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordResetView</span></code></a>,
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.PasswordResetDoneView" title="django.contrib.auth.views.PasswordResetDoneView"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordResetDoneView</span></code></a>,
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.PasswordResetConfirmView" title="django.contrib.auth.views.PasswordResetConfirmView"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordResetConfirmView</span></code></a>, and
+<a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.views.PasswordResetCompleteView" title="django.contrib.auth.views.PasswordResetCompleteView"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordResetCompleteView</span></code></a>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">django.test.runner.setup_databases()</span></code> is moved to
+<a class="reference internal" href="../topics/testing/advanced.html#django.test.utils.setup_databases" title="django.test.utils.setup_databases"><code class="xref py py-func docutils literal notranslate"><span class="pre">django.test.utils.setup_databases()</span></code></a>. The old location is deprecated.</li>
+<li><code class="docutils literal notranslate"><span class="pre">django.utils.translation.string_concat()</span></code> is deprecated in
+favor of <a class="reference internal" href="../ref/utils.html#django.utils.text.format_lazy" title="django.utils.text.format_lazy"><code class="xref py py-func docutils literal notranslate"><span class="pre">django.utils.text.format_lazy()</span></code></a>. <code class="docutils literal notranslate"><span class="pre">string_concat(*strings)</span></code>
+can be replaced by <code class="docutils literal notranslate"><span class="pre">format_lazy('{}'</span> <span class="pre">*</span> <span class="pre">len(strings),</span> <span class="pre">*strings)</span></code>.</li>
+<li>For the <code class="docutils literal notranslate"><span class="pre">PyLibMCCache</span></code> cache backend, passing <code class="docutils literal notranslate"><span class="pre">pylibmc</span></code> behavior settings
+as top-level attributes of <code class="docutils literal notranslate"><span class="pre">OPTIONS</span></code> is deprecated. Set them under a
+<code class="docutils literal notranslate"><span class="pre">behaviors</span></code> key within <code class="docutils literal notranslate"><span class="pre">OPTIONS</span></code> instead.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">host</span></code> parameter of <code class="docutils literal notranslate"><span class="pre">django.utils.http.is_safe_url()</span></code> is deprecated
+in favor of the new <code class="docutils literal notranslate"><span class="pre">allowed_hosts</span></code> parameter.</li>
+<li>Silencing exceptions raised while rendering the
+<a class="reference internal" href="../ref/templates/builtins.html#std:templatetag-include"><code class="xref std std-ttag docutils literal notranslate"><span class="pre">{%</span> <span class="pre">include</span> <span class="pre">%}</span></code></a> template tag is deprecated as the behavior is
+often more confusing than helpful. In Django 2.1, the exception will be
+raised.</li>
+<li><code class="docutils literal notranslate"><span class="pre">DatabaseIntrospection.get_indexes()</span></code> is deprecated in favor of
+<code class="docutils literal notranslate"><span class="pre">DatabaseIntrospection.get_constraints()</span></code>.</li>
+<li><a class="reference internal" href="../topics/auth/default.html#django.contrib.auth.authenticate" title="django.contrib.auth.authenticate"><code class="xref py py-func docutils literal notranslate"><span class="pre">authenticate()</span></code></a> now passes a <code class="docutils literal notranslate"><span class="pre">request</span></code> argument
+to the <code class="docutils literal notranslate"><span class="pre">authenticate()</span></code> method of authentication backends. Support for
+methods that don't accept <code class="docutils literal notranslate"><span class="pre">request</span></code> as the first positional argument will
+be removed in Django 2.1.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">USE_ETAGS</span></code> setting is deprecated in favor of
+<a class="reference internal" href="../ref/middleware.html#django.middleware.http.ConditionalGetMiddleware" title="django.middleware.http.ConditionalGetMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConditionalGetMiddleware</span></code></a> which now adds the
+<code class="docutils literal notranslate"><span class="pre">ETag</span></code> header to responses regardless of the setting. <code class="docutils literal notranslate"><span class="pre">CommonMiddleware</span></code>
+and <code class="docutils literal notranslate"><span class="pre">django.utils.cache.patch_response_headers()</span></code> will no longer set ETags
+when the deprecation ends.</li>
+<li><code class="docutils literal notranslate"><span class="pre">Model._meta.has_auto_field</span></code> is deprecated in favor of checking if
+<code class="docutils literal notranslate"><span class="pre">Model._meta.auto_field</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">None</span></code>.</li>
+<li>Using regular expression groups with <code class="docutils literal notranslate"><span class="pre">iLmsu#</span></code> in <code class="docutils literal notranslate"><span class="pre">url()</span></code> is deprecated.
+The only group that's useful is <code class="docutils literal notranslate"><span class="pre">(?i)</span></code> for case-insensitive URLs, however,
+case-insensitive URLs aren't a good practice because they create multiple
+entries for search engines, for example. An alternative solution could be to
+create a <a class="reference internal" href="../ref/urls.html#django.conf.urls.handler404" title="django.conf.urls.handler404"><code class="xref py py-data docutils literal notranslate"><span class="pre">handler404</span></code></a> that looks for uppercase
+characters in the URL and redirects to a lowercase equivalent.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">renderer</span></code> argument is added to the <a class="reference internal" href="../ref/forms/widgets.html#django.forms.Widget.render" title="django.forms.Widget.render"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Widget.render()</span></code></a> method. Methods that don't accept that argument
+will work through a deprecation period.</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Django 1.11 release notes</a><ul>
+<li><a class="reference internal" href="#python-compatibility">Python compatibility</a></li>
+<li><a class="reference internal" href="#deprecating-warnings-are-no-longer-loud-by-default">Deprecating warnings are no longer loud by default</a></li>
+<li><a class="reference internal" href="#what-s-new-in-django-1-11">What's new in Django 1.11</a><ul>
+<li><a class="reference internal" href="#class-based-model-indexes">Class-based model indexes</a></li>
+<li><a class="reference internal" href="#template-based-widget-rendering">Template-based widget rendering</a></li>
+<li><a class="reference internal" href="#subquery-expressions"><code class="docutils literal notranslate"><span class="pre">Subquery</span></code> expressions</a></li>
+<li><a class="reference internal" href="#minor-features">Minor features</a><ul>
+<li><a class="reference internal" href="#django-contrib-admin"><code class="docutils literal notranslate"><span class="pre">django.contrib.admin</span></code></a></li>
+<li><a class="reference internal" href="#django-contrib-auth"><code class="docutils literal notranslate"><span class="pre">django.contrib.auth</span></code></a></li>
+<li><a class="reference internal" href="#django-contrib-contenttypes"><code class="docutils literal notranslate"><span class="pre">django.contrib.contenttypes</span></code></a></li>
+<li><a class="reference internal" href="#django-contrib-gis"><code class="docutils literal notranslate"><span class="pre">django.contrib.gis</span></code></a></li>
+<li><a class="reference internal" href="#django-contrib-postgres"><code class="docutils literal notranslate"><span class="pre">django.contrib.postgres</span></code></a></li>
+<li><a class="reference internal" href="#cache">Cache</a></li>
+<li><a class="reference internal" href="#csrf">CSRF</a></li>
+<li><a class="reference internal" href="#database-backends">Database backends</a></li>
+<li><a class="reference internal" href="#email">Email</a></li>
+<li><a class="reference internal" href="#file-storage">File Storage</a></li>
+<li><a class="reference internal" href="#forms">Forms</a></li>
+<li><a class="reference internal" href="#internationalization">Internationalization</a></li>
+<li><a class="reference internal" href="#management-commands">Management Commands</a></li>
+<li><a class="reference internal" href="#migrations">Migrations</a></li>
+<li><a class="reference internal" href="#models">Models</a></li>
+<li><a class="reference internal" href="#requests-and-responses">Requests and Responses</a></li>
+<li><a class="reference internal" href="#serialization">Serialization</a></li>
+<li><a class="reference internal" href="#templates">Templates</a></li>
+<li><a class="reference internal" href="#tests">Tests</a></li>
+<li><a class="reference internal" href="#validators">Validators</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#backwards-incompatible-changes-in-1-11">Backwards incompatible changes in 1.11</a><ul>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">django.contrib.gis</span></code></a></li>
+<li><a class="reference internal" href="#django-contrib-staticfiles"><code class="docutils literal notranslate"><span class="pre">django.contrib.staticfiles</span></code></a></li>
+<li><a class="reference internal" href="#database-backend-api">Database backend API</a></li>
+<li><a class="reference internal" href="#dropped-support-for-postgresql-9-2-and-postgis-2-0">Dropped support for PostgreSQL 9.2 and PostGIS 2.0</a></li>
+<li><a class="reference internal" href="#liveservertestcase-binds-to-port-zero"><code class="docutils literal notranslate"><span class="pre">LiveServerTestCase</span></code> binds to port zero</a></li>
+<li><a class="reference internal" href="#protection-against-insecure-redirects-in-django-contrib-auth-and-i18n-views">Protection against insecure redirects in <code class="docutils literal notranslate"><span class="pre">django.contrib.auth</span></code> and <code class="docutils literal notranslate"><span class="pre">i18n</span></code> views</a></li>
+<li><a class="reference internal" href="#queryset-get-or-create-and-update-or-create-validate-arguments"><code class="docutils literal notranslate"><span class="pre">QuerySet.get_or_create()</span></code> and <code class="docutils literal notranslate"><span class="pre">update_or_create()</span></code> validate arguments</a></li>
+<li><a class="reference internal" href="#pytz-is-a-required-dependency-and-support-for-settings-time-zone-none-is-removed"><code class="docutils literal notranslate"><span class="pre">pytz</span></code> is a required dependency and support for <code class="docutils literal notranslate"><span class="pre">settings.TIME_ZONE</span> <span class="pre">=</span> <span class="pre">None</span></code> is removed</a></li>
+<li><a class="reference internal" href="#html-changes-in-admin-templates">HTML changes in admin templates</a></li>
+<li><a class="reference internal" href="#changes-due-to-the-introduction-of-template-based-widget-rendering">Changes due to the introduction of template-based widget rendering</a></li>
+<li><a class="reference internal" href="#django-template-backends-django-template-render-prohibits-non-dict-context"><code class="docutils literal notranslate"><span class="pre">django.template.backends.django.Template.render()</span></code> prohibits non-dict context</a></li>
+<li><a class="reference internal" href="#model-state-changes-in-migration-operations">Model state changes in migration operations</a></li>
+<li><a class="reference internal" href="#server-side-cursors-on-postgresql">Server-side cursors on PostgreSQL</a></li>
+<li><a class="reference internal" href="#miscellaneous">Miscellaneous</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#features-deprecated-in-1-11">Features deprecated in 1.11</a><ul>
+<li><a class="reference internal" href="#models-permalink-decorator"><code class="docutils literal notranslate"><span class="pre">models.permalink()</span></code> decorator</a></li>
+<li><a class="reference internal" href="#id2">Miscellaneous</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="1.11.1.html"
+                        title="previous chapter">Django 1.11.1 release notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="1.10.8.html"
+                        title="next chapter">Django 1.10.8 release notes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/releases/1.11.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">8月 01, 2018</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="1.11.1.html" title="Django 1.11.1 release notes">previous</a>
+     |
+    <a href="index.html" title="Release notes" accesskey="U">up</a>
+   |
+    <a href="1.10.8.html" title="Django 1.10.8 release notes">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>
